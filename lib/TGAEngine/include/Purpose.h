@@ -1,0 +1,7 @@
+namespace TGA
+{
+	enum Purpose
+	{
+
+	};
+}
