@@ -657,9 +657,9 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = "C:/Users/Tag/Documents/Cal Poly Classes/Third Year/476-Project/src" \
-                         "C:/Users/Tag/Documents/Cal Poly Classes/Third Year/476-Project/lib/TGAEngine/src" \
-                         "C:/Users/Tag/Documents/Cal Poly Classes/Third Year/476-Project/lib/TGAEngine/include"
+INPUT                  = "./src" \
+                         "./lib/TGAEngine/src" \
+                         "./lib/TGAEngine/include"
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
