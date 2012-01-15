@@ -14,7 +14,7 @@ namespace TGA
 		bool keyDown(Key key);
 
 		// Update the timers and key states
-		void update();
+		bool update();
 
 		SDL_Point getMouseCoords();
 

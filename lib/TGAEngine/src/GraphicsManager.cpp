@@ -1,4 +1,5 @@
 #include "GraphicsManager.h"
+#include "TextureManager.h"
 
 namespace TGA
 {

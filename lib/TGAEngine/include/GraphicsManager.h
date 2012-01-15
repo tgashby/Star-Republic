@@ -24,6 +24,7 @@ namespace TGA
 
 		int screenWidth;
 		int screenHeight;
+      std::string winTitle;
 
 		bool isLoaded;
 		SDL_bool isFullScreen;

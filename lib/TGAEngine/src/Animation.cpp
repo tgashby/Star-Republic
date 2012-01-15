@@ -170,7 +170,7 @@ namespace TGA
 
 	GLuint Animation::getFrameCount()
 	{
-		return frames.size();
+		return (GLuint)frames.size();
 	}
 
 	std::string Animation::printFrames()
