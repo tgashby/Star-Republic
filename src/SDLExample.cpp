@@ -5,13 +5,19 @@
 //
 
 /* SDL */
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
+#ifdef _WIN32
+	#include <SDL.h>
+	#include <SDL_opengl.h>
+#else
+	#include <SDL/SDL.h>
+	#include <SDL/SDL_opengl.h>
+#endif
 
 #include <iostream>
 
-int main (int argc, const char * argv[])
+int main(int argc, char** argv)
 {
+
    SDL_Window* window;
    SDL_GLContext glCtx;
    
