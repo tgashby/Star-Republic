@@ -1,5 +1,6 @@
 lib/SDL
 lib/sdl_image
+lib/sdl_ttf
 .DS_Store
 *.xcodeproj/
 html/
