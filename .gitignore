@@ -2,3 +2,6 @@ lib/SDL
 lib/sdl_image
 .DS_Store
 *.xcodeproj/
+html/
+latex/
+*.tmp
