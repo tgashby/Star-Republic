@@ -17,9 +17,7 @@
 
 int main(int argc, char** argv)
 {
-
-   SDL_Window* window;
-   SDL_GLContext glCtx;
+   SDL_Surface* screen;
    
    // Call SDL_INIT(SDL_EVERYTHING)
    SDL_Init(SDL_INIT_EVERYTHING);
@@ -34,11 +32,9 @@ int main(int argc, char** argv)
    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
    
    // Create the window
-   window = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
-                             800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+   screen = SDL_SetVideoMode(800, 600, 32, SDL_SWSURFACE | SDL_OPENGL);
    
-   // Create the GL context
-   glCtx = SDL_GL_CreateContext(window);
+   SDL_WM_SetCaption("Test", NULL);
    
    // Boring OGL
    glPushMatrix();
@@ -49,7 +45,7 @@ int main(int argc, char** argv)
    glPopMatrix();
    
    // Swap buffers to display what you've drawn
-   SDL_GL_SwapWindow(window);
+   SDL_GL_SwapBuffers();
    
    SDL_Event myEvent;
    bool running = true;
@@ -62,8 +58,6 @@ int main(int argc, char** argv)
          running = false;
    }
    
-   SDL_GL_DeleteContext(glCtx);
-   SDL_DestroyWindow(window);
    SDL_Quit();
    return 0;
 }
