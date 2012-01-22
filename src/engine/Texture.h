@@ -13,8 +13,12 @@ namespace TGA
 		Texture();
 		Texture(std::string fileName);
 		~Texture();
-
-		// Load texture from an image
+      
+      /**
+       Load an image from a file.
+       @param imgFileName the file name of the texture
+       @return True if successful, false if any failures occur
+       */
 		bool loadTexture(std::string imgFileName);
 
 		// Delete texture
