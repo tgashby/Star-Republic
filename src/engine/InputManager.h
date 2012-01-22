@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../include/Key.h"
+#include "Key.h"
 
 namespace TGA
 {

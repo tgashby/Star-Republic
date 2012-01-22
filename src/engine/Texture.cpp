@@ -1,5 +1,5 @@
-#include "../include/Texture.h"
-#include "../include/TextureManager.h"
+#include "Texture.h"
+#include "TextureManager.h"
 
 namespace TGA
 {

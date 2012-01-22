@@ -1,4 +1,4 @@
-#include "../include/TextureManager.h"
+#include "TextureManager.h"
 
 namespace TGA
 {

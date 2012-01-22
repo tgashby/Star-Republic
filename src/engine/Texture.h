@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../include/ProjIncludes.h"
+#include "ProjIncludes.h"
 
 namespace TGA
 {

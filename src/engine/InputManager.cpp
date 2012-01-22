@@ -1,4 +1,4 @@
-#include "../include/InputManager.h"
+#include "InputManager.h"
 
 namespace TGA
 {

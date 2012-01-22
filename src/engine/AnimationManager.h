@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../include/ProjIncludes.h"
-#include "../include/Animation.h"
+#include "ProjIncludes.h"
+#include "Animation.h"
 
 namespace TGA
 {

@@ -1,5 +1,5 @@
-#include "../include/Animation.h"
-#include "../include/AnimationManager.h"
+#include "Animation.h"
+#include "AnimationManager.h"
 
 namespace TGA
 {

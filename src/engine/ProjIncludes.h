@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../include/Singleton.h"
+#include "Singleton.h"
 
 #ifdef _WIN32
 #include <SDL.h>

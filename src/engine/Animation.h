@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../include/ProjIncludes.h"
-#include "../include/TextureManager.h"
+#include "ProjIncludes.h"
+#include "TextureManager.h"
  
 namespace TGA
 {
