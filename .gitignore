@@ -6,3 +6,4 @@ lib/sdl_ttf
 html/
 latex/
 *.tmp
+build/
