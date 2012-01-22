@@ -4,7 +4,7 @@
  * @author Andrew J. Musselman
  */
 
-class GameObject {
+class GameObject : Drawable {
    pubic:
       virtual void tic(int dt) = 0;
       virtual void doCollision(GameObject & other) = 0;
