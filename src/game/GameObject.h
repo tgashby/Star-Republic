@@ -4,12 +4,14 @@
  * @author Andrew J. Musselman
  */
 
+#include "Drawable.h"
+
 class GameObject : Drawable {
-   pubic:
+   public:
       virtual void tic(int dt) = 0;
       virtual void doCollision(GameObject & other) = 0;
       virtual Model getModel() = 0;
       virtual BoundingObject getBoundingObject() = 0;
    private:
     
-}
+};
