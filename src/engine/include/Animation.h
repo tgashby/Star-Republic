@@ -5,6 +5,10 @@
  
 namespace TGA
 {
+   /**
+      Animation Class
+    */
+   
 	class Animation
 	{
 		friend class AnimationManager;
