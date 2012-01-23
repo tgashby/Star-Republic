@@ -1,9 +1,16 @@
+#SDL Libary
 lib/SDL
 lib/sdl_image
 lib/sdl_ttf
 .DS_Store
-*.xcodeproj/
+#Doxygen generated docs
 html/
 latex/
-*.tmp
 build/
+# IDE and editor temporary files
+# Vim swapfiles
+*.swp
+# XCode project files
+*.xcodeproj/
+#Other Temp
+*.tmp
