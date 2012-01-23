@@ -10,9 +10,11 @@
 #include "Turret.h"
 
 void Turret::Turret(Vector3<float> position, Vector3<float> direction, 
-                    float velocity, BoundingStructure bounds, BoundingStructre range) 
+                    float velocity, BoundingStructure bounds, BoundingStructre range,
+                    Player& plyr) 
 : GameObject(position, direction, velocity, bounds), BoundingSphere(range)
 {
+   player = plyr;
    firing = false;
 }
 
@@ -21,12 +23,12 @@ void Turret::tic( int dt )
 {
 	GameObject::tic(dt);
 
-	if (!firing || checkRange(player))
+	if (firing || checkRange(player))
 	{
 		fire();
 	}
 
-	for (std::list<Bullet>::iterator i = bullets.begin(); i < bullets.end(); i++)
+	for (std::list<Bullet>::iterator i = bullets.begin(); i != bullets.end(); i++)
 	{
 		i->tic(dt);
 	}	
@@ -49,7 +51,12 @@ bool Turret::checkRange()
       (position.z - playerPos.z) * (position.x - playerPos.z);
 
    // Square root is expensive, just compare the squares
-   return sqr_dist < range.getRadius() * range.getRadius();  
+   if (sqr_dist < range.getRadius() * range.getRadius())
+   {
+      firing = true;
+   }
+   
+   return firing;
 }
 
 void Turret::doCollision( GameObject & other )

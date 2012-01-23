@@ -23,12 +23,8 @@
 class Turret : GameObject
 {
 public:
-	/**
-	 * Turret Constructor
-	 * @param position
-	 */
    Turret(Vector3<float> position, Vector3<float> direction, 
-	   float velocity, BoundingStructure bounds, BoundingStructre range);
+	   float velocity, BoundingStructure bounds, BoundingStructre range, Player& player);
 
    virtual void tic(int dt);
 
@@ -36,9 +32,15 @@ public:
 
    virtual void doCollision( GameObject & other );
 
-
 private:
+   /**
+    * Check range determines if the player is within the turret's sight range.                                                                 
+    */
    bool checkRange();
+
+   /**
+    * Fire shoots a single bullet at the player's current position                                                                 
+    */
    void fire();
 
    virtual Model getModel();
