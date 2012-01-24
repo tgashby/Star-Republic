@@ -1,11 +1,9 @@
-#ifndef BOUNDINGOBJECT_H
-#define BOUNDINGOBJECT_H
 /* 
- * BoundingObject - Define's and object's hitbox
+ * BoundingObject - Define a hitbox for an object or portion of one
  */
+#include <typeinfo>
+
 class BoundingObject {
    public:
-      bool collides(const BoundingObject);
-}
-
-#endif
+      virtual bool collidesWith(BoundingObject &other) = 0;
+};
