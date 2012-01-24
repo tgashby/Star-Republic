@@ -1,7 +1,28 @@
+#include "GameObject.h"
 /**
  * GameObject base class definition. All movable in-game objects are derived
  * from this class
  */
+
+/**
+ * GameObject Constructor. Used for creating a new game object from scrach.
+ * @param startPoint - The point where the object is created
+ * @param startHeading - The direction that the model is pointed when it is
+ * created.
+ * @param startVelocity - The speed and direction of the object when it is 
+ * created.
+ * @param boundingStructure - The game object's bounding structure
+ */ 
+GameObject::GameObject(Coordiante startPoint, 
+                       Coordinate startVelocity, 
+                       Angle startHeading, 
+                       BoundingStructure boundingStructure){
+   m_location = startPoint;
+   m_direction = startHeading;
+   m_velocity = startVelocity;
+   m_boundingStructure = boundingStructure;
+}
+
 
 /**
  * tic - Runs once per game loop to update the game object's location and
@@ -36,3 +57,23 @@ bool GameObject::setAngularVelocity(const Angle angularVelocity){
    m_angularVelocity = angularVelocity;
    return true;
 }
+
+/**
+ * getLocation gets the object's current location
+ * @return the object's current location
+ */
+const Coordinate getLocation(){
+   return m_location;
+}
+
+/**
+ * getBoundingStructure gets the object's current location
+ * @return the object's current location
+ */
+const BoundingStructure getBoundingStructure(){
+   return m_boundingStructure;
+}
+
+
+
+
