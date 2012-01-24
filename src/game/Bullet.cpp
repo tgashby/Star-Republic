@@ -27,12 +27,12 @@ void Bullet::doCollision( GameObject & other )
 
 Model Bullet::getModel()
 {
-   throw std::exception("The method or operation is not implemented.");
+   GameObject::getModel();
 }
 
 BoundingObject Bullet::getBoundingObject()
 {
-   throw std::exception("The method or operation is not implemented.");
+   GameObject::getBoundingObject();
 }
 
 GameObject& Bullet::getParent()

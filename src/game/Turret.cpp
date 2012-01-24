@@ -68,17 +68,21 @@ bool Turret::checkRange()
    return firing;
 }
 
-void Turret::doCollision( GameObject & other )
+void Turret::doCollision(GameObject & other)
 {
 	const type_info otherId = typeid(other);
 
 	if (otherId == typeid(Player))
 	{
 		// Asplode
+      other.takeDamage();
+      this->takeDamage();
 	} 
 	else if (otherId == typeid(Bullet) && ((Bullet)other).getParent() != this)
 	{
 		// Still asplode
+      other.takeDamage();
+      this->takeDamage();
 	}	
 }
 
