@@ -26,7 +26,17 @@ void Turret::tic( int dt )
 	{
 		fire();
 	}
+   
+   // Clean up the dead bullets
+   for (std::list<Bullet>::iterator i = bullets.begin(); i != bullets.end(); i++) 
+   {
+      if (!i.isAlive()) 
+      {
+         bullets.erase(i);
+      }
+   }
 
+   // Move the bullets
 	for (std::list<Bullet>::iterator i = bullets.begin(); i != bullets.end(); i++)
 	{
 		i->tic(dt);

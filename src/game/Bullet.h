@@ -23,7 +23,13 @@ public:
     * Returns the Bullet's parent, useful in collision detection                                                                 
     */
    GameObject& getParent();
+   
+   /**
+    * Determines if the bullet needs to be cleaned up.
+    */
+   bool isAlive();
 
 private:
    GameObject& parent;
+   bool stillAlive;
 };

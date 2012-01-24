@@ -5,6 +5,7 @@ Bullet::Bullet(Coordiante loc, Coordiante vel, Angle dir, Angle angVel, GameObje
    : GameObject(loc, vel, dir, angVel)
 {
    this->parent = parent;
+   stillAlive = true;
 }
 
 
@@ -14,9 +15,13 @@ Bullet::~Bullet(void)
 
 void Bullet::doCollision( GameObject & other )
 {
-   if (other != parent)
+   if (stillAlive && other != parent)
    {
       // Injure the target!
+      other.takeDamage();
+      
+      // Register that you are going away to your parent
+      stillAlive = false;
    }
 }
 
@@ -33,4 +38,9 @@ BoundingObject Bullet::getBoundingObject()
 GameObject& Bullet::getParent()
 {
    return parent;
+}
+
+bool Bullet::isAlive()
+{
+   return stillAlive;
 }
