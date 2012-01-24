@@ -1,12 +1,9 @@
 #pragma once
 
-namespace TGA
+class ProcessManager
 {
-	class ProcessManager
-	{
-	public:
-		ProcessManager(void);
-		~ProcessManager(void);
-	};
-}
+public:
+	ProcessManager(void);
+	~ProcessManager(void);
+};
 

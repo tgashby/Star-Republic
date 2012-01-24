@@ -1,7 +1,4 @@
-namespace TGA
+enum Purpose
 {
-	enum Purpose
-	{
 
-	};
-}
+};

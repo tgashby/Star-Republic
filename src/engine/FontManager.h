@@ -1,12 +1,9 @@
 #pragma once
 
-namespace TGA
+class FontManager
 {
-	class FontManager
-	{
-	public:
-		FontManager(void);
-		~FontManager(void);
-	};
-}
+public:
+	FontManager(void);
+	~FontManager(void);
+};
 

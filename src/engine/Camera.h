@@ -2,23 +2,20 @@
 
 #include "ProjIncludes.h"
 
-namespace TGA
+class Camera
 {
-	class Camera
-	{
-	public:
-		Camera();
-		~Camera();
+public:
+	Camera();
+	~Camera();
 
-		void moveOver(GLfloat xVal, GLfloat yVal);
-		void setPosition(GLfloat xPos, GLfloat yPos);
+	void moveOver(GLfloat xVal, GLfloat yVal);
+	void setPosition(GLfloat xPos, GLfloat yPos);
 
-		GLfloat getX();
-		GLfloat	getY();
+	GLfloat getX();
+	GLfloat	getY();
 
-	private:
-		GLfloat xPos, yPos;
-	};
-}
+private:
+	GLfloat xPos, yPos;
+};
 
 

@@ -1,12 +1,9 @@
 #pragma once
 
-namespace TGA
+class Sound
 {
-	class Sound
-	{
-	public:
-		Sound(void);
-		~Sound(void);
-	};
-}
+public:
+	Sound(void);
+	~Sound(void);
+};
 
