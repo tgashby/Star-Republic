@@ -1,50 +1,47 @@
 #include "InputManager.h"
 
-namespace TGA
+InputManager::InputManager() {}
+
+InputManager::~InputManager() {}
+
+bool InputManager::keyDown(Key key)
 {
-	InputManager::InputManager() {}
+	return keystates[key];
+}
 
-	InputManager::~InputManager() {}
+bool InputManager::update()
+{
+	SDL_Event event;
 
-	bool InputManager::keyDown(Key key)
+	while(SDL_PollEvent(&event))
 	{
-		return keystates[key];
-	}
-
-	bool InputManager::update()
-	{
-		SDL_Event event;
-
-		while(SDL_PollEvent(&event))
+		switch(event.type)
 		{
-			switch(event.type)
-			{
-			case SDL_KEYDOWN:
-				keystates[event.key.keysym.sym] = true;
-				break;
+		case SDL_KEYDOWN:
+			keystates[event.key.keysym.sym] = true;
+			break;
 
-			case SDL_KEYUP:
-				keystates[event.key.keysym.sym] = false;
-				break;
+		case SDL_KEYUP:
+			keystates[event.key.keysym.sym] = false;
+			break;
 
-			case SDL_MOUSEBUTTONUP:
-				SDL_GetMouseState(&mouseX, &mouseY);
-				break;
+		case SDL_MOUSEBUTTONUP:
+			SDL_GetMouseState(&mouseX, &mouseY);
+			break;
 
-			case SDL_QUIT:
-				return false;
-			}
+		case SDL_QUIT:
+			return false;
 		}
-
-		return true;
 	}
 
-	SDL_Point InputManager::getMouseCoords()
-	{
-		SDL_Point pt;
-		pt.x = mouseX;
-		pt.y = mouseY;
+	return true;
+}
 
-		return pt;
-	}
-};
+SDL_Point InputManager::getMouseCoords()
+{
+	SDL_Point pt;
+	pt.x = mouseX;
+	pt.y = mouseY;
+
+	return pt;
+}

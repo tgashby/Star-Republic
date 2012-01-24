@@ -1,12 +1,9 @@
 #pragma once
 
-namespace TGA
+class StateManager
 {
-	class StateManager
-	{
-	public:
-		StateManager(void);
-		~StateManager(void);
-	};
-}
+public:
+	StateManager(void);
+	~StateManager(void);
+};
 

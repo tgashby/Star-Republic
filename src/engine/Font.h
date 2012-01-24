@@ -1,13 +1,10 @@
 #pragma once
 
-namespace TGA
+class Font
 {
-	class Font
-	{
-	public:
-		Font(void);
-		~Font(void);
-	};
-}
+public:
+   Font(void);
+   ~Font(void);
+};
 
 

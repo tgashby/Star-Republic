@@ -3,29 +3,26 @@
 #include "ProjIncludes.h"
 #include "Texture.h"
 
-namespace TGA
+class TextureManager
 {
-	class TextureManager
-	{
-		friend class Texture;
+	friend class Texture;
 
-	public:
-		TextureManager();
-		~TextureManager();
+public:
+	TextureManager();
+	~TextureManager();
 
-		// Reset all textures, useful after a screen resize
-		void resetTextures();
+	// Reset all textures, useful after a screen resize
+	void resetTextures();
 
-		// Remove all textures in storage
-		void removeAllTextures();
+	// Remove all textures in storage
+	void removeAllTextures();
 
-	protected:
-		// Add a texture to be managed
-		void addTexture(Texture* texture);
-		// Remove a texture from being managed
-		void removeTexture(Texture* texture);
+protected:
+	// Add a texture to be managed
+	void addTexture(Texture* texture);
+	// Remove a texture from being managed
+	void removeTexture(Texture* texture);
 
-		// The stored textures
-		std::vector<Texture*> textures;
-	};
-}
+	// The stored textures
+	std::vector<Texture*> textures;
+};

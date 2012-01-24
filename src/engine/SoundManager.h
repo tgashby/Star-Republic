@@ -1,12 +1,9 @@
 #pragma once
 
-namespace TGA
+class SoundManager
 {
-	class SoundManager
-	{
-	public:
-		SoundManager(void);
-		~SoundManager(void);
-	};
-}
+public:
+	SoundManager(void);
+	~SoundManager(void);
+};
 

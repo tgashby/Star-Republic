@@ -12,24 +12,21 @@
 #ifndef SINGLETON
 #define SINGLETON
 
-namespace TGA
+template<class T> class Singleton
 {
-    template<class T> class Singleton
-    {
-        public:
-            /// Get a pointer to the singleton
-            static T* GetSingletonPtr()
-            {
-                static T m_Instance;
-                return &m_Instance;
-            }
+   public:
+      /// Get a pointer to the singleton
+      static T* GetSingletonPtr()
+      {
+            static T m_Instance;
+            return &m_Instance;
+      }
 
-        private:
-            Singleton();
-            ~Singleton();
-            Singleton(Singleton const&);
-            Singleton& operator=(Singleton const&);
-    };
-}
+   private:
+      Singleton();
+      ~Singleton();
+      Singleton(Singleton const&);
+      Singleton& operator=(Singleton const&);
+};
 
 #endif

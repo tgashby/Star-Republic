@@ -1,3 +1,5 @@
+#ifndef DRAWABLE_H
+#define DRAWABLE_H
 /* An abstract class to define what methods a drawable class must 
  * implement. 
  *
@@ -11,3 +13,5 @@ class Drawable {
    private:
 
    }
+
+#endif

@@ -2,17 +2,14 @@
 
 #include "ProjIncludes.h"
 
-namespace TGA
+class App
 {
-	class App
-	{
-	public:
-		App();
-		virtual ~App();
+public:
+	App();
+	virtual ~App();
 
-		virtual void init() = 0;
-		virtual void run() = 0;
-		virtual void shutDown() = 0;
-	};
-}
+	virtual void init() = 0;
+	virtual void run() = 0;
+	virtual void shutDown() = 0;
+};
 

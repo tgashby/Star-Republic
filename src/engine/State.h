@@ -1,7 +1,4 @@
-namespace TGA
+enum State
 {
-	enum State
-	{
 
-	};
-}
+};
