@@ -9,10 +9,9 @@
 #include <iostream>
 #include "Turret.h"
 
-void Turret::Turret(Vector3<float> position, Vector3<float> direction, 
-                    float velocity, BoundingStructure bounds, BoundingStructre range,
-                    Player& plyr) 
-: GameObject(position, direction, velocity, bounds), BoundingSphere(range)
+void Turret::Turret(Coordiante position, Coordiante direction, 
+   BoundingObject bounds, BoundingObject range, Player& plyr)
+   : GameObject(position, direction, Angle(0), bounds), BoundingObject(range)
 {
    player = plyr;
    firing = false;
@@ -67,7 +66,7 @@ void Turret::doCollision( GameObject & other )
 	{
 		// Asplode
 	} 
-	else if (otherId == typeid(Bullet)
+	else if (otherId == typeid(Bullet) && ((Bullet)other).getParent() != this)
 	{
 		// Still asplode
 	}	
@@ -81,7 +80,7 @@ void Turret::fire()
 
 	bulletDir.Normalize();
 
-	bullets.push_back(Bullet(position, bulletDir, 10f, BoundingSphere(0.5f));
+	bullets.push_back(Bullet(position, this->getPosition()*10f, bulletDir, Angle(0), this, BoundingObject(0.5f));
 }
 
 Model Turret::getModel()

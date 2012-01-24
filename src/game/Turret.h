@@ -14,6 +14,10 @@
 #include "../engine/ProjIncludes.h"
 #include "../engine/Vector.hpp"
 #include "GameObject.h"
+#include "Bullet.h"
+#include "Angle.h"
+#include "Coordinate.h"
+#include "BoundingObject.h"
 #include "Player.h"
 
 /**
@@ -23,8 +27,8 @@
 class Turret : GameObject
 {
 public:
-   Turret(Vector3<float> position, Vector3<float> direction, 
-	   float velocity, BoundingStructure bounds, BoundingStructre range, Player& player);
+   Turret(Coordiante position, Coordiante direction, 
+	   BoundingObject bounds, BoundingObject range, Player& player);
 
    virtual void tic(int dt);
 
