@@ -2,6 +2,7 @@
 
 #include <typeinfo>
 #include "GameObject.h"
+#include "BoundingCylinder.h"
 
 /**
  * Bullet Class, represents a bullet shot from anything                                                                 
@@ -10,7 +11,7 @@ class Bullet :
    public GameObject
 {
 public:
-   Bullet(Coordiante loc, Coordiante vel, Angle dir, Angle angVel, GameObject& parent, BoundingObject bounds);
+   Bullet(Coordiante loc, Coordiante vel, Angle dir, Angle angVel, GameObject& parent, BoundingCylinder bounds);
    ~Bullet(void);
 
    virtual void doCollision( GameObject & other );

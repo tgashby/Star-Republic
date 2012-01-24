@@ -17,7 +17,7 @@
 #include "Bullet.h"
 #include "Angle.h"
 #include "Coordinate.h"
-#include "BoundingObject.h"
+#include "BoundingCylinder.h"
 #include "Player.h"
 
 /**
@@ -28,7 +28,7 @@ class Turret : GameObject
 {
 public:
    Turret(Coordiante position, Coordiante direction, 
-	   BoundingObject bounds, BoundingObject range, Player& player);
+	   BoundingCylinder bounds, BoundingCylinder range, GameObject& player);
 
    virtual void tic(int dt);
 
@@ -51,7 +51,7 @@ private:
 
    virtual BoundingObject getBoundingObject();
 
-   Player& player;
+   GameObject& player;
    BoundingStructure range;
    std::list<Bullet> bullets;
    bool firing;

@@ -1,8 +1,8 @@
 #include "Bullet.h"
 
 
-Bullet::Bullet(Coordiante loc, Coordiante vel, Angle dir, Angle angVel, GameObject& parent)
-   : GameObject(loc, vel, dir, angVel)
+Bullet::Bullet(Coordiante loc, Coordiante vel, Angle dir, Angle angVel, GameObject& parent, BoundingCylinder bounds)
+   : GameObject(loc, vel, dir, angVel, bounds)
 {
    this->parent = parent;
    stillAlive = true;

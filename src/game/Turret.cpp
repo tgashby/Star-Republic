@@ -10,8 +10,8 @@
 #include "Turret.h"
 
 void Turret::Turret(Coordiante position, Coordiante direction, 
-   BoundingObject bounds, BoundingObject range, Player& plyr)
-   : GameObject(position, direction, Angle(0), bounds), BoundingObject(range)
+   BoundingCylinder bounds, BoundingCylinder range, GameObject& plyr)
+   : GameObject(position, direction, Angle(0), bounds), BoundingCylinder(range)
 {
    player = plyr;
    firing = false;
