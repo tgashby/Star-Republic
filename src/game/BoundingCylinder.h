@@ -6,6 +6,8 @@
 //  Copyright 2012 __MyCompanyName__. All rights reserved.
 //
 
+#pragma once
+
 #include <typeinfo>
 #include "BoundingObject.h"
 
@@ -15,8 +17,9 @@ public:
   BoundingCylinder(float radius, float height);
    float getRadius();
    float getHeight();
-   virtual bool collidesWith(BoundingObject &other);
-   
+   virtual bool collidesWith(BoundingObject &other, Coordinate &thisLoc, 
+			     Coordinate &otherLoc);
+
 private:
    float radius;
    float height;
