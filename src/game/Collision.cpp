@@ -21,3 +21,9 @@ static bool collisionCheck(GameObject &obj, GameObject &other) {
 				    obj.getLocation(), 
 					    other.getLocation());
 }
+
+int main() 
+{
+  
+  return 0;
+}
