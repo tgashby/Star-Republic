@@ -14,6 +14,4 @@ public:
 	World();
 	~World();
 	Line* getInitialLine();
-		
-
 }

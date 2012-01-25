@@ -11,7 +11,7 @@
 
 class GameObject : Drawable {
    public:
-      GameObject(Coordiante startPoint, 
+      GameObject(Coordinate startPoint, 
                  Coordinate startVelocity,
                  Angle startHeading, 
                  BoundingStructure boundingStructure
@@ -30,8 +30,8 @@ class GameObject : Drawable {
       const Coordiante getLocation(); 
    private:
       BoundingStructure m_boundingStructure;
-      Coordiante m_location;
-      Coordiante m_velocity; 
+      Coordinate m_location;
+      Coordinate m_velocity; 
       Angle m_direction;
       Angle m_angularVelocity;
 };
