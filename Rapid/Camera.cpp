@@ -16,62 +16,23 @@ Camera::Camera (int x, int y, int z)
 
 	Direction.X = 0;
 	Direction.Y = 0;
-	Direction.Z = 0;
+	Direction.Z = 1;
 }
 
 Camera::~Camera(){
 	
 }
 
-float Camera::calcVx()
+
+void Camera::update()
 {
-	float vx = Position.X;
-	vx -= 3 * sin(Direction.Y * DEGTORAD);
-	return vx;
-}
-float Camera::calcVy()
-{
-	float vy = Position.Y;
-	vy -= 3 * sin(Direction.X * DEGTORAD);
-	return vy;
-}
-float Camera::calcVz()
-{
-	float vz = Position.Z;
-	vz -= 3 * cos(Direction.Y * DEGTORAD);
-	return vz;
+	
 }
 
-void Camera::update(float dtime, int w, int a, int s, int d)
+void Camera::setLookAt()
 {
-	if (w)
-	{
-		Position.Z += MOVEMENTSPEED * sin((Direction.Y - 90) * DEGTORAD) * dtime;
-		Position.X -= MOVEMENTSPEED * cos((Direction.Y - 90) * DEGTORAD) * dtime;
-		Position.Y += MOVEMENTSPEED * cos((Direction.X + 90) * DEGTORAD) * dtime;
-	}
-	if (s)
-	{
-		Position.Z -= MOVEMENTSPEED * sin((Direction.Y - 90) * DEGTORAD) * dtime;
-		Position.X += MOVEMENTSPEED * cos((Direction.Y - 90) * DEGTORAD) * dtime;
-		Position.Y -= MOVEMENTSPEED * cos((Direction.X + 90) * DEGTORAD) * dtime;
-	}
-	if (a)
-	{
-		Position.Z += MOVEMENTSPEED * sin((Direction.Y) * DEGTORAD) * dtime;
-		Position.X -= MOVEMENTSPEED * cos((Direction.Y) * DEGTORAD) * dtime;
-	}
-	if (d)
-	{
-		Position.Z -= MOVEMENTSPEED * sin((Direction.Y) * DEGTORAD) * dtime;
-		Position.X += MOVEMENTSPEED * cos((Direction.Y) * DEGTORAD) * dtime;
-	}
-
-	if (Position.Y < 0.3) Position.Y = 0.3;
-	if (Position.Z < 0) Position.Z = 0;
-	if (Position.Z > 10) Position.Z = 10;
-	if (Position.X < 0) Position.X = 0;
-	if (Position.X > 10) Position.X = 10;
-
-	glutWarpPointer(200, 200);
+   gluLookAt(
+      Position.X, Position.Y, Position.Z, 
+      Position.X, Position.Y, Position.Z + Direction.Z, 
+      0, 1, 0);
 }

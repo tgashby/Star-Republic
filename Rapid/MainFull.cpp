@@ -42,7 +42,7 @@ time_t *timeTracker;
 int numEnemiesKilled = 0, numEnemiesOnScreen = 1;
 
 Enemy *e;
-Camera *player;
+Camera *camera;
 Map *map;
 
 /***************************
@@ -181,7 +181,7 @@ void checkNumEnemies()
 
 void detectPlayerEnemyCollisions()
 {
-	Enemy *temp = e;
+	/*Enemy *temp = e;
 	if (player->Position.Y < 1.5)
 	{
 		while(temp != 0)
@@ -202,7 +202,7 @@ void detectPlayerEnemyCollisions()
 			temp = temp->next;
 		}
 	}
-	checkNumEnemies();
+	checkNumEnemies();*/
 }
 
 
@@ -255,12 +255,13 @@ void initEnemies()
 
 void update(float dtime)
 {
-	player->update(dtime, w, a, s, d);
+	//player->update(dtime, w, a, s, d);
+	camera->update();
 
 	if (shouldAddEnemy()) addEnemy();
 
 	detectEnemyEnemyCollisions(dtime);
-	detectPlayerEnemyCollisions();
+	//detectPlayerEnemyCollisions();
 }
 
 // Manages time independant movement and draws the VBO
@@ -287,7 +288,7 @@ void Display()
 	    }
 	    time(timeTracker);
 
-        }
+  }
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -296,10 +297,7 @@ void Display()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	gluLookAt(
-		player->Position.X, player->Position.Y, player->Position.Z, 
-		player->calcVx(), player->calcVy(), player->calcVz(), 
-		0, 1, 0);
+	camera->setLookAt();
 
 	Enemy *temp = e;
     	while(temp != 0)
@@ -323,7 +321,7 @@ void Reshape(int width, int height)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	float AspectRatio = (float)WindowWidth / (float)WindowHeight;
-	gluPerspective(60.0, AspectRatio, 0.01, 100.0);
+	gluPerspective(60.0, AspectRatio, 0.01, 1000.0);
 }
 
 void keyCallback(unsigned char key, int x, int y) {
@@ -358,9 +356,6 @@ void mouseMotion(int x, int y)
 	{
 	    int dx = prevX - x;
 	    int dy = prevY - y;
-
-	    player->Direction.X -= dy * LOOK_SPEED;
-            player->Direction.Y += dx * LOOK_SPEED;
 	}
 }
 
@@ -368,29 +363,28 @@ void mouseMotion(int x, int y)
 int main(int argc, char * argv[])
 {
 	glutInit(& argc, argv);
-   	glutInitWindowPosition(100, 200);
-   	glutInitWindowSize(WindowWidth, WindowHeight);
-   	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+ 	glutInitWindowPosition(100, 200);
+ 	glutInitWindowSize(WindowWidth, WindowHeight);
+ 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
-   	glutCreateWindow("476 Lab 1: Make Haste!");
-   	glutReshapeFunc(Reshape);
-   	glutDisplayFunc(Display);
+ 	glutCreateWindow("476 Lab 1: Make Haste!");
+	glutReshapeFunc(Reshape);
+ 	glutDisplayFunc(Display);
 	
-        timeTracker = (time_t*)malloc(sizeof(time_t));
-	*timeTracker = time(timeTracker);
+  timeTracker = (time_t*)malloc(sizeof(time_t));
+  *timeTracker = time(timeTracker);
 
 	prevX = 200;
 	prevY = 200;
-	glutWarpPointer(200, 200);
 	glutSetCursor(GLUT_CURSOR_NONE); 
 	
 	glutKeyboardFunc(keyCallback);
 	glutKeyboardUpFunc(keyUpCallback);
-    	glutPassiveMotionFunc(mouseMotion);
+ 	glutPassiveMotionFunc(mouseMotion);
 
-   	Initialize();
+ 	Initialize();
 
-	player = new Camera(0, 0, 3);
+	camera = new Camera(6, 4, 3);
 	map = new Map();
 	initEnemies();
 

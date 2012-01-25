@@ -13,8 +13,6 @@ public:
 
 	Camera (int x, int y, int z);
 	~Camera();
-	float calcVx();
-	float calcVy();
-	float calcVz();
-	void update(float dtime, int w, int a, int s, int d);
+	void update();
+	void setLookAt();
 };

@@ -38,7 +38,7 @@ Map::Map ()
 	}
 
 	// Now attempt to load the shaders
-	Shader = ShaderLoader.loadShader("Shaders/Lab1_vert2.glsl", "Shaders/Lab3_frag.glsl");
+	Shader = ShaderLoader.loadShader("Shaders/GameVert1.glsl", "Shaders/Lab3_frag.glsl");
 	if (! Shader)
 	{
 		std::cerr << "Unable to open or compile necessary shader." << std::endl;
@@ -75,7 +75,8 @@ void Map::draw()
 {
 	
 	{
-		// Shader context works by cleaning up the shader settings once it
+		// Shader context works 
+		// by cleaning up the shader settings once it
 		// goes out of scope
 		CShaderContext ShaderContext(* Shader);
 		ShaderContext.bindBuffer("aPosition", PositionBufferHandle, 4);
@@ -90,7 +91,7 @@ void Map::draw()
 		glRotatef(Rotation.X, 1, 0, 0);
 		glScalef(Scale.X, Scale.Y, Scale.Z);
 
-		glDrawArrays(GL_LINES, 0, 44);
+		glDrawArrays(GL_TRIANGLES, 0, 100);
 
 		glPopMatrix();
 	}
