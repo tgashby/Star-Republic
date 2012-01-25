@@ -1,0 +1,3 @@
+import os
+generalEnv = Environment( CC = 'g++', CCFLAGS="-lGL -lSDL -lGLU -I./game -I./engine")
+generalEnv.Program("Main.cpp")

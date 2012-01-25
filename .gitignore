@@ -12,6 +12,8 @@ build/
 *.swp
 # XCode project files
 *.xcodeproj/
+#Scons temp files
+.sconsign.dblite
 #Other Temp
 *.tmp
 *~
