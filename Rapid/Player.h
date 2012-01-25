@@ -21,7 +21,7 @@ public:
    int cooldown;
    bool firing;
    CShader* shade;
-   int refx, refy; // for movement
+   float refx, refy; // for movement
 
    // Handles for VBOs
    GLuint PositionBufferHandle, ColorBufferHandle, NormalBufferHandle;

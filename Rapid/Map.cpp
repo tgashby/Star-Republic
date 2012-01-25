@@ -16,7 +16,6 @@ void waitForUserTwo()
 
 Map::Map ()
 {
-
 	Translation.X = 0;
 	Translation.Y = 0;
 	Translation.Z = 0;
@@ -28,6 +27,11 @@ Map::Map ()
 	Rotation.Z = 0;
 	Rotation.X = 0;
 	Rotation.Y = 0;
+
+        xmin = 0;
+        xmax = 0;
+        ymin = 0;
+        ymax = 0;
 
 
 	// First create a shader loader and check if our hardware supports shaders

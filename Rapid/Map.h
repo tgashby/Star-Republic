@@ -21,6 +21,8 @@ public:
 	SVector3 Translation, Rotation, Scale;
 	int TriangleCount;
 
+	int xmin, xmax, ymin, ymax;
+
 	Map ();
 	~Map();
 	void draw ();

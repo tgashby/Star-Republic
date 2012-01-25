@@ -93,15 +93,21 @@ SVector3* Player::getPosition()
 
 void Player::update(float dt, Map* bounds)
 {
-        velocity->X = -(refx - position->X);
-        velocity->Y = -(refy - position->Y);
+        velocity->X = (refx - position->X);
+        velocity->Y = (refy - position->Y);
 
 	position->X += velocity->X * dt;
 	position->Y += velocity->Y * dt;
 	position->Z += velocity->Z * dt;
 	
-	Rotation.X = velocity->X * 5.0;
-	Rotation.Y = 90 + velocity->Y * 5.0;
+	if (position->X > bounds->xmax) position->X = bounds->xmax;
+	if (position->X < bounds->xmin) position->X = bounds->xmin;
+	if (position->Y > bounds->ymax) position->Y = bounds->ymax;
+	if (position->Y < bounds->ymin) position->Y = bounds->ymin;
+        printf("%f, %f\n", position->X, position->Y);
+
+	Rotation.X = velocity->X * -5.0;
+	Rotation.Y = 90 + velocity->Y * -5.0;
 
 	Translation.X = position->X;
 	Translation.Y = position->Y;
