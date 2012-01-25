@@ -51,17 +51,18 @@ void HUD::drawText(int FPS, int curTime)
  	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseComp);
 
 	char timer[14];
-	timer[0] = (((int)curTime)/10000) % 10 + 48;
-	timer[1] = (((int)curTime)/1000) % 10 + 48;
-	timer[2] ='s';
-	timer[3]='\0';
-	renderBitmapString(-0.25, 2.7, -4.5, timer);
+	timer[0] = (((int)curTime)/100000) % 10 + 48;
+	timer[1] = (((int)curTime)/10000) % 10 + 48;
+	timer[2] = (((int)curTime)/1000) % 10 + 48;
+	timer[3] ='s';
+	timer[4]='\0';
+	renderBitmapString(-0.2, 2.7, -4.5, timer);
 
 	char fps[9] = "FPS: ";
 	fps[5] = FPS/100 % 10 + 48;
 	fps[6] = FPS/10 % 10 + 48;
 	fps[7] = FPS/1 % 10 + 48;
-	renderBitmapString(-0.6, 2.5, -4.5, fps);
+	renderBitmapString(-0.45, 2.5, -4.5, fps);
 
 	glDisable(GL_LIGHT0);
 }

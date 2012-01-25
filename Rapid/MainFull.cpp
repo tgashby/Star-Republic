@@ -19,6 +19,7 @@
 #include "Camera.h"
 #include "Map.h"
 #include "HUD.h"
+#include "Player.h"
 
 #define LOOK_SPEED 0.1
 
@@ -29,7 +30,7 @@
 
 
 // Window information
-int WindowWidth = 400, WindowHeight = 400;
+int WindowWidth = 1000, WindowHeight = 600;
 
 // Time-independant movement variables
 int Time0, Time1;
@@ -44,6 +45,7 @@ int numEnemiesKilled = 0, numEnemiesOnScreen = 1;
 
 Enemy *e;
 Camera *camera;
+Player *player;
 Map *map;
 HUD* hud;
 
@@ -313,6 +315,7 @@ int main(int argc, char * argv[])
  	Initialize();
 
 	camera = new Camera(6, 4, 3);
+	player = new Player(new SVector3(6,4,12), new SVector3(1,0,0), NULL);
 	map = new Map();
 	hud = new HUD();
 	initEnemies();

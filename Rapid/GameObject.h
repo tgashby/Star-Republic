@@ -10,14 +10,13 @@
 class GameObject{
 public:
    CMesh * model;
-   SVector3 position;
-   SVector3 velocity;
+   SVector3* position;
+   SVector3* velocity;
    
-   GameObject (SVector3 pos, SVector3 vel, CMesh * mod);
+   GameObject (SVector3* pos, SVector3* vel, CMesh * mod);
    ~GameObject();
-   virtual void draw();
-   virtual void collideWith(GameObject collided);
+   void draw();
+   void collideWith(GameObject collided);
    void update(float time);
-   //void fixRotate(char val, int place);
 };
    
