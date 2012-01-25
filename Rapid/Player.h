@@ -1,3 +1,4 @@
+#pragma once
 #include "GameObject.h"
 #include <typeinfo>
 
@@ -25,7 +26,7 @@ public:
    SVector3 Translation, Rotation, Scale;
    int TriangleCount;
 
-   Player(SVector3* pos, SVector3* vel, CMesh * mod);
+   Player(SVector3* pos, SVector3* vel, CMesh * mod, float* size);
    ~Player();
    virtual void update(float dt);
    void draw();

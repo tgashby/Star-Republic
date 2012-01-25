@@ -1,3 +1,4 @@
+#pragma once
 #ifndef BASICS
 #define BASICS
 
@@ -12,8 +13,9 @@ public:
    CMesh * model;
    SVector3* position;
    SVector3* velocity;
+   float size;
    
-   GameObject (SVector3* pos, SVector3* vel, CMesh * mod);
+   GameObject (SVector3* pos, SVector3* vel, CMesh * mod, float* size);
    ~GameObject();
    void draw();
    void collideWith(GameObject collided);

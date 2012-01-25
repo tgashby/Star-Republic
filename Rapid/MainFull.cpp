@@ -19,6 +19,7 @@
 #include "Camera.h"
 #include "Map.h"
 #include "HUD.h"
+#include "InputManager.h"
 #include "Player.h"
 
 #define LOOK_SPEED 0.1
@@ -48,6 +49,7 @@ Camera *camera;
 Player *player;
 Map *map;
 HUD* hud;
+InputManager* manager;
 
 
 /***************************
@@ -255,38 +257,16 @@ void Reshape(int width, int height)
 }
 
 void keyCallback(unsigned char key, int x, int y) {
-   
-   if (key == 'w')
-	   w = 1;
-   if (key == 's')
-	   s = 1;
-   if (key == 'a')
-	   a = 1;
-   if (key == 'd')
-	   d = 1;
+        manager->keyCallBack(key, x, y);
 }
 
 void keyUpCallback(unsigned char key, int x, int y) {
-   if (key == 27)
-	   exit(0);
-
-   if (key == 'w')
-	   w = 0;
-   if (key == 's')
-	   s = 0;
-   if (key == 'a')
-	   a = 0;
-   if (key == 'd')
-	   d = 0;
+        manager->keyUpCallBack(key, x, y);
 }
 
 void mouseMotion(int x, int y)
 {
-	if (curTime < 60000)
-	{
-	    int dx = prevX - x;
-	    int dy = prevY - y;
-	}
+	manager->mouseMotion(x,y);
 }
 
 
@@ -308,19 +288,20 @@ int main(int argc, char * argv[])
 	prevY = 200;
 	glutSetCursor(GLUT_CURSOR_NONE); 
 	
-	glutKeyboardFunc(keyCallback);
-	glutKeyboardUpFunc(keyUpCallback);
- 	glutPassiveMotionFunc(mouseMotion);
 
  	Initialize();
+        float size = 1.0;
 
 	camera = new Camera(6, 4, 3);
-	player = new Player(new SVector3(6,4,12), new SVector3(1,0,0), NULL);
+	player = new Player(new SVector3(6,4,12), new SVector3(1,0,0), NULL, &size);
+        manager = new InputManager(player);
 	map = new Map();
 	hud = new HUD();
 	initEnemies();
 
-
+	glutKeyboardFunc(keyCallback);
+	glutKeyboardUpFunc(keyUpCallback);
+ 	glutPassiveMotionFunc(mouseMotion);
 	// ... and begin!
 	glutMainLoop();
 	

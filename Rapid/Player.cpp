@@ -19,7 +19,7 @@ void waitForUser3()
 	std::cin.get();
 }
 
-Player::Player(SVector3* pos, SVector3* vel, CMesh* mod) : GameObject(pos, vel, mod) {
+Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float* size) : GameObject(pos, vel, mod, size) {
 	 
   int health = 100;
   int cooldown = 0;

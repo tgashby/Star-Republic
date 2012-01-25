@@ -1,6 +1,7 @@
 #include "InputManager.h"
+#include "Player.h"
 
-InputManager::InputManager(Player p)
+InputManager::InputManager(Player* p)
 {
    this->player = p;
 }
@@ -37,4 +38,6 @@ void InputManager::keyUpCallBack(unsigned char key, int x, int y) {
 void InputManager::mouseMotion(int x, int y) {
    int dx = prevX - x;
    int dy = prevY - y;
+   prevX = x;
+   prevY = y;
 }

@@ -7,11 +7,12 @@
 #include "Enemy.h"
 #include "GameObject.h"
 
-GameObject::GameObject(SVector3* pos, SVector3* vel, CMesh * mod)
+GameObject::GameObject(SVector3* pos, SVector3* vel, CMesh * mod, float* size)
 {
    position = pos;
    velocity = vel;
    model = mod;
+   this->size = *size;
 }
 
 GameObject::~GameObject()
