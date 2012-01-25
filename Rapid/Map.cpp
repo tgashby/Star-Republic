@@ -28,10 +28,10 @@ Map::Map ()
 	Rotation.X = 0;
 	Rotation.Y = 0;
 
-        xmin = 0;
-        xmax = 0;
-        ymin = 0;
-        ymax = 0;
+        xmin = -2.2;
+        xmax = 2.2;
+        ymin = -1.9;
+        ymax = 1.9;
 
 
 	// First create a shader loader and check if our hardware supports shaders
