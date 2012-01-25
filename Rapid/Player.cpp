@@ -19,8 +19,8 @@ void waitForUser3()
 	std::cin.get();
 }
 
-Player::Player(SVector3* pos, SVector3* vel, CMesh* mod) : GameObject(pos, vel, mod) {
-	 
+Player::Player(SVector3* pos, SVector3* vel, CMesh* mod) : GameObject(pos, vel, mod) 
+{	 
   int health = 100;
   int cooldown = 0;
   bool firing = false;
@@ -33,9 +33,9 @@ Player::Player(SVector3* pos, SVector3* vel, CMesh* mod) : GameObject(pos, vel, 
 	Scale.Y = 1;
 	Scale.Z = 1;
 
-	Rotation.Z = 0;
 	Rotation.X = 0;
-	Rotation.Y = 0;
+	Rotation.Y = 90;
+	Rotation.Z = 0;
 
   // First create a shader loader and check if our hardware supports shaders
 	CShaderLoader ShaderLoader;
@@ -46,7 +46,7 @@ Player::Player(SVector3* pos, SVector3* vel, CMesh* mod) : GameObject(pos, vel, 
 	}
 
 	// Now attempt to load the shaders
-	shade = ShaderLoader.loadShader("Shaders/Lab3_vert.glsl", "Shaders/Lab3_frag.glsl");
+	shade = ShaderLoader.loadShader("Shaders/GameVert2.glsl", "Shaders/Lab3_frag.glsl");
 	if (! shade)
 	{
 		std::cerr << "Unable to open or compile necessary shader." << std::endl;
@@ -76,9 +76,21 @@ Player::Player(SVector3* pos, SVector3* vel, CMesh* mod) : GameObject(pos, vel, 
 Player::~Player()
 { }
 
+
+SVector3* Player::getPosition()
+{
+   return position;
+}
+
 void Player::update(float dt)
 {
-
+	position->X += velocity->X * dt;
+	position->Y += velocity->Y * dt;
+	position->Z += velocity->Z * dt;
+	
+	Translation.X = position->X;
+	Translation.Y = position->Y;
+	Translation.Z = position->Z;
 }
 void Player::draw()
 {

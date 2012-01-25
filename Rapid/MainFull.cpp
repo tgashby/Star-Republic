@@ -184,24 +184,23 @@ void Initialize()
 
 void initEnemies()
 {
-	e = new Enemy(rand());
+
 }
 
 void update(float dtime)
 {
-	//player->update(dtime, w, a, s, d);
+	player->update(dtime);
 	camera->update();
 
-	if (shouldAddEnemy()) addEnemy();
+	/*if (shouldAddEnemy()) addEnemy();
 
 	detectEnemyEnemyCollisions(dtime);
-	//detectPlayerEnemyCollisions();
+	detectPlayerEnemyCollisions();*/
 }
 
-// Manages time independant movement and draws the VBO
+// Manages time independent movement and draws the VBO
 void Display()
 {
-
 	// Determine time since last draw
 	Time1 = glutGet(GLUT_ELAPSED_TIME);
 	float Delta = (float) (Time1 - Time0) / 1000.f;
@@ -223,19 +222,21 @@ void Display()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	hud->drawText(FPS, curTime);
+  hud->renderGlutAimer(2, 2, -3, -3);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	camera->setLookAt();
 
-	Enemy *temp = e;
+	/*Enemy *temp = e;
   while(temp != 0)
 	{
 		temp->draw();
 		temp = temp->next;
-	}
+	}*/
 	map->draw();
+  player->draw();
 
 	glutSwapBuffers();
 	glutPostRedisplay();
@@ -314,8 +315,9 @@ int main(int argc, char * argv[])
 
  	Initialize();
 
-	camera = new Camera(6, 4, 3);
-	player = new Player(new SVector3(6,4,12), new SVector3(1,0,0), NULL);
+
+	player = new Player(new SVector3(6,4,6), new SVector3(0,0,4), NULL);
+	camera = new Camera(6, 4, 3, player);
 	map = new Map();
 	hud = new HUD();
 	initEnemies();

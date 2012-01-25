@@ -1,4 +1,6 @@
+#pragma once
 #include "GameObject.h"
+
 #include <typeinfo>
 
 #ifndef BASICS
@@ -30,4 +32,5 @@ public:
    virtual void update(float dt);
    void draw();
    void collideWith(GameObject collided);
+   SVector3* getPosition();
 };

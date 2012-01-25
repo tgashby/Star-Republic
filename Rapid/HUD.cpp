@@ -66,3 +66,42 @@ void HUD::drawText(int FPS, int curTime)
 
 	glDisable(GL_LIGHT0);
 }
+
+void HUD::renderGlutAimer(float px, float py, float dx, float dy)
+{
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   gluLookAt(0.0, 0.0, 1.0, 
+            0.0, 0.0, 0.0, 
+            0.0, 1.0, 0.0);
+   GLfloat color[3] = {0.4, 1.0, 0.1};
+	
+   glMaterialfv(GL_FRONT, GL_DIFFUSE, color); 
+		
+   GLfloat lightDir[] = {0, -1, -1, 0.0};
+   GLfloat diffuseComp[] = {0.1, 0.1, 0.1, 1.0};
+
+   glEnable(GL_LIGHT0);
+   glLightfv(GL_LIGHT0, GL_POSITION, lightDir);
+   glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseComp);
+
+   glTranslatef(dx, dy, -9);
+   glutSolidTorus(0.02, 0.6, 8, 8);
+   glTranslatef(-dx, -dy, 0);
+   dx = 0.4 * px + 0.6 * dx;
+   dy = 0.4 * py + 0.6 * dy;
+
+   glTranslatef(dx, dy, 2);
+   glutSolidTorus(0.02, 0.7, 8, 8);
+   glTranslatef(-dx, -dy, 0);
+   dx = 0.5 * px + 0.5 * dx;
+   dy = 0.5 * py + 0.5 * dy;
+
+   glTranslatef(dx, dy, 2);
+   glutSolidTorus(0.02, 0.8, 8, 8);
+   glTranslatef(-dx, -dy, 0);
+
+   glDisable(GL_LIGHT0);
+}
+
+

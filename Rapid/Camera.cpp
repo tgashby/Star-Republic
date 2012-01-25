@@ -8,7 +8,7 @@
 #define DEGTORAD 3.1415926 / 180
 #define MOVEMENTSPEED 1.8
 
-Camera::Camera (int x, int y, int z)
+Camera::Camera (int x, int y, int z, Player* p)
 {
 	Position.X = x;
 	Position.Y = y;
@@ -17,6 +17,8 @@ Camera::Camera (int x, int y, int z)
 	Direction.X = 0;
 	Direction.Y = 0;
 	Direction.Z = 1;
+
+	player = p;
 }
 
 Camera::~Camera(){
@@ -26,7 +28,7 @@ Camera::~Camera(){
 
 void Camera::update()
 {
-	
+   Position.Z = player->getPosition()->Z - 3;
 }
 
 void Camera::setLookAt()
