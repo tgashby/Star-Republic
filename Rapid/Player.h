@@ -11,6 +11,8 @@
 
 #endif
 
+#include "Map.h"
+
 class Player : GameObject
 {
 public:
@@ -19,6 +21,7 @@ public:
    int cooldown;
    bool firing;
    CShader* shade;
+   int refx, refy; // for movement
 
    // Handles for VBOs
    GLuint PositionBufferHandle, ColorBufferHandle, NormalBufferHandle;
@@ -29,8 +32,10 @@ public:
 
    Player(SVector3* pos, SVector3* vel, CMesh * mod, float size);
    ~Player();
-   virtual void update(float dt);
+   void update(float dt, Map* m);
    void draw();
+   void setRefx(float rx);
+   void setRefy(float ry);
    void collideWith(GameObject collided);
    SVector3* getPosition();
 };

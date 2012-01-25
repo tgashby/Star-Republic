@@ -75,19 +75,34 @@ Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObjec
 
 Player::~Player()
 { }
-
+#pragma once
+void Player::setRefx(float rx)
+{
+   refx = rx;
+}
+void Player::setRefy(float ry)
+{
+   refy = ry;
+}
 
 SVector3* Player::getPosition()
 {
    return position;
 }
 
-void Player::update(float dt)
+
+void Player::update(float dt, Map* bounds)
 {
+        velocity->X = -(refx - position->X);
+        velocity->Y = -(refy - position->Y);
+
 	position->X += velocity->X * dt;
 	position->Y += velocity->Y * dt;
 	position->Z += velocity->Z * dt;
 	
+	Rotation.X = velocity->X * 5.0;
+	Rotation.Y = 90 + velocity->Y * 5.0;
+
 	Translation.X = position->X;
 	Translation.Y = position->Y;
 	Translation.Z = position->Z;
@@ -100,14 +115,13 @@ void Player::draw()
 		CShaderContext ShaderContext(*shade);
 		ShaderContext.bindBuffer("aPosition", PositionBufferHandle, 4);
 		ShaderContext.bindBuffer("aColor", ColorBufferHandle, 3);
-    ShaderContext.bindBuffer("aNormal", NormalBufferHandle, 3);
+		ShaderContext.bindBuffer("aNormal", NormalBufferHandle, 3);
 
 		glPushMatrix();
 
-		glTranslatef(Translation.X + 6, Translation.Y + 4, Translation.Z);
-		glRotatef(Rotation.Z, 0, 0, 1);
-		glRotatef(Rotation.Y, 0, 1, 0);
+		glTranslatef(Translation.Y + 6, Translation.X + 4, Translation.Z);
 		glRotatef(Rotation.X, 1, 0, 0);
+		glRotatef(Rotation.Y, 0, 1, 0);
 		glScalef(Scale.X, Scale.Y, Scale.Z);
 
 		glDrawArrays(GL_TRIANGLES, 0, TriangleCount*3);

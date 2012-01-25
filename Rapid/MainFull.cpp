@@ -191,7 +191,7 @@ void initEnemies()
 
 void update(float dtime)
 {
-	player->update(dtime);
+	player->update(dtime, map);
 	camera->update();
 
 	/*if (shouldAddEnemy()) addEnemy();

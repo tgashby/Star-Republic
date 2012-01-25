@@ -4,6 +4,8 @@
 InputManager::InputManager(Player* p)
 {
    this->player = p;
+   p->setRefx(500);
+   p->setRefy(300);
    SENSITIVITY = 80;
    AbsX = 0;
    AbsY = 0;
@@ -51,4 +53,6 @@ void InputManager::mouseMotion(int x, int y) {
    // assuming 500,500 is the glutWarpedPointer location
    AbsX = (x - 500) / SENSITIVITY;
    AbsY = (300 - y) / SENSITIVITY;
+   player->setRefx(AbsY);
+   player->setRefy(AbsX);
 }
