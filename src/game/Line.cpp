@@ -1,3 +1,5 @@
+#include "Line.h"
+
 
 Line::Line(float sx, float sy, float sz, float ex, float ey, float ez, float sp, float sy, float es, float ey)
 {

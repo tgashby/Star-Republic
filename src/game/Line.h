@@ -8,14 +8,15 @@
 #include <list>
 #endif
 
+#include "Terrain.h"
+#include "GameObject.h"
+
 class Line
 {
 public:
-	static const float FRACTALSLICESINLINE 1.0f;
-
 	Line* nextLines;
 	std::list<Terrain> slices;
-	GameObjects* enemies;
+	std::list<GameObject> enemies;
 	/** Global Coordinates **/
 	Vector3<float> start, end;
 	float StartPitch, StartYaw, EndPitch, EndYaw;
