@@ -22,7 +22,7 @@ GameObject::~GameObject()
 void draw() 
 {
 }
-void collideWith(GameObject collided)
+void collideWith(GameObject* collided)
 {
 }
 
@@ -31,4 +31,9 @@ void GameObject::update(float dt)
    this->position->X += this->velocity->X * dt;
    this->position->Y += this->velocity->Y * dt;
    this->position->Z += this->velocity->Z * dt;
+}
+
+SVector3* GameObject::getPosition()
+{
+   return this->position;
 }

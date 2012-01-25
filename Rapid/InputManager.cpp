@@ -1,5 +1,6 @@
 #include "InputManager.h"
 #include "Player.h"
+#include <stdio.h>
 
 InputManager::InputManager(Player* p)
 {
@@ -25,8 +26,11 @@ void InputManager::keyCallBack(unsigned char key, int x, int y) {
 	   w = 1;
    if (key == 's')
 	   s = 1;
-   if (key == 'a')
+   if (key == 'a'){
 	   a = 1;
+           player->setFiring(true);
+           printf("\nA Button Was Pressed!\n");
+   }
    if (key == 'd')
 	   d = 1;
 }
@@ -39,8 +43,9 @@ void InputManager::keyUpCallBack(unsigned char key, int x, int y) {
 	   w = 0;
    if (key == 's')
 	   s = 0;
-   if (key == 'a')
+   if (key == 'a'){
 	   a = 0;
+   }
    if (key == 'd')
 	   d = 0;
 }

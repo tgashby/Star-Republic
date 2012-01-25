@@ -18,4 +18,5 @@ public:
 	~Camera();
 	void update();
 	void setLookAt();
+        SVector3 getPosition();
 };

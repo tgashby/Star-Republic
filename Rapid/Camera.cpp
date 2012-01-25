@@ -39,3 +39,8 @@ void Camera::setLookAt()
       Position.X, Position.Y, Position.Z + Direction.Z, 
       0, 1, 0);
 }
+
+SVector3 Camera::getPosition()
+{
+   return Position;
+}

@@ -18,7 +18,8 @@ public:
    GameObject (SVector3* pos, SVector3* vel, CMesh * mod, float size);
    ~GameObject();
    void draw();
-   void collideWith(GameObject collided);
+   void collideWith(GameObject* collided);
    void update(float time);
+   SVector3* getPosition();
 };
    

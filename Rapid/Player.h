@@ -36,6 +36,9 @@ public:
    void draw();
    void setRefx(float rx);
    void setRefy(float ry);
+   void setFiring(bool state);
+   void setCooldown();
+   bool canFire();
    void collideWith(GameObject collided);
    SVector3* getPosition();
 };

@@ -21,6 +21,10 @@
 #include "HUD.h"
 #include "InputManager.h"
 #include "Player.h"
+#include "Bullets.h"
+#include "Bullet.h"
+#include "Collision.h"
+#include "GameObject.h"
 
 #define LOOK_SPEED 0.1
 
@@ -50,6 +54,7 @@ Player *player;
 Map *map;
 HUD* hud;
 InputManager* manager;
+Bullets* bullets;
 
 
 /***************************
@@ -192,7 +197,22 @@ void initEnemies()
 void update(float dtime)
 {
 	player->update(dtime, map);
+        SVector3* temp = new SVector3();
+        temp->X = 0;
+        temp->Y = 0;
+        temp->Z = -8.0;
+        if (player->canFire()) {
+           bullets->addBullet(player->getPosition(), temp, NULL, 1.0, 10);
+           printf("\nLook Pa! A Bullet!\n");
+           player->setFiring(false);
+        }
 	camera->update();
+        bullets->update(dtime, map);
+        
+        /*COLLISION CALLS HERE*/
+        bullets->collideWith((GameObject*)player);
+
+       // bullets->removeDead(camera->getPosition());
 
 	/*if (shouldAddEnemy()) addEnemy();
 
@@ -239,6 +259,7 @@ void Display()
 	}*/
 	map->draw();
   player->draw();
+        bullets->draw();
 
 	glutSwapBuffers();
 	glutPostRedisplay();
@@ -298,6 +319,7 @@ int main(int argc, char * argv[])
   manager = new InputManager(player);
 	map = new Map();
 	hud = new HUD();
+        bullets = new Bullets();
 	initEnemies();
 
 	glutKeyboardFunc(keyCallback);
