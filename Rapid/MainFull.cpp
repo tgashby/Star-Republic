@@ -18,6 +18,7 @@
 #include "Enemy.h"
 #include "Camera.h"
 #include "Map.h"
+#include "HUD.h"
 
 #define LOOK_SPEED 0.1
 
@@ -44,77 +45,8 @@ int numEnemiesKilled = 0, numEnemiesOnScreen = 1;
 Enemy *e;
 Camera *camera;
 Map *map;
+HUD* hud;
 
-/***************************
- * Drawing Text            *
- ***************************/
-
-void renderBitmapString (float x, float y, float z, char *string) 
-{  
-  char *c;
-  glRasterPos3f(x, y, z);
-  for (c=string; *c != '\0'; c++) 
-  {
-     glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *c);
-  }
-}
-
-void drawText()
-{
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-    	gluLookAt(0.0, 0.0, 1.0, 
-              0.0, 0.0, 0.0, 
-              0.0, 1.0, 0.0);
-	GLfloat color[3] = {0.4, 1.0, 0.1};
-	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color); 
-		
-   	GLfloat lightDir[] = {0, 0, -1, 0.0};
-  	GLfloat diffuseComp[] = {1.0, 1.0, 1.0, 1.0};
-
-    	glEnable(GL_LIGHT0);
-    	glLightfv(GL_LIGHT0, GL_POSITION, lightDir);
-    	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseComp);
-
-	if (curTime > 59000)
-	{
-		char* gameover = "Game Over";
-		renderBitmapString(-0.3, -0.3, -4.5, gameover);
-	}
-
-	char timer[14];
-	timer[0] = (((int)curTime)/10000) % 10 + 48;
-	timer[1] = (((int)curTime)/1000) % 10 + 48;
-	timer[2] =' ';
-	timer[3] ='/';
-	timer[4] =' ';
-	timer[5] ='6';
-	timer[6] ='0';
-	timer[7]='\0';
-	renderBitmapString(-2.7, 2.7, -4.5, timer);
-
-
-	char screen[15] = "On Screen: ";
-	screen[11] = numEnemiesOnScreen/100 % 10 + 48;
-	screen[12] = numEnemiesOnScreen/10 % 10 + 48;
-	screen[13] = numEnemiesOnScreen/1 % 10 + 48;
-	renderBitmapString(1.1, 2.7, -4.5, screen);
-
-	char caught[12] = "Caught: ";
-	caught[8] = numEnemiesKilled/100 % 10 + 48;
-	caught[9] = numEnemiesKilled/10 % 10 + 48;
-	caught[10] = numEnemiesKilled/1 % 10 + 48;
-	renderBitmapString(1.53, 2.5, -4.5, caught);
-
-	char fps[9] = "FPS: ";
-	fps[5] = FPS/100 % 10 + 48;
-	fps[6] = FPS/10 % 10 + 48;
-	fps[7] = FPS/1 % 10 + 48;
-	renderBitmapString(-2.7, 2.5, -4.5, fps);
-
-	glDisable(GL_LIGHT0);
-}
 
 /***************************
  * Enemies and Game Logic  *
@@ -273,26 +205,22 @@ void Display()
 	float Delta = (float) (Time1 - Time0) / 1000.f;
 	Time0 = Time1;
 
-	if (curTime < 60000)
-        {
-	    update(Delta);
+	update(Delta);
 
-	    int dtime = (time(NULL) - *timeTracker) * 1000;
-	    curTime += dtime;
-	    numFrames++;
-            if (curTime / 1000 > lastSecond)
-	    {
-		    lastSecond++;
-		    FPS = numFrames;
-		    numFrames = 0;
-	    }
-	    time(timeTracker);
-
-  }
+	int dtime = (time(NULL) - *timeTracker) * 1000;
+	curTime += dtime;
+	numFrames++;
+  if (curTime / 1000 > lastSecond)
+	{
+		lastSecond++;
+	  FPS = numFrames;
+	  numFrames = 0;
+	}
+	time(timeTracker);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	drawText();
+	hud->drawText(FPS, curTime);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -300,7 +228,7 @@ void Display()
 	camera->setLookAt();
 
 	Enemy *temp = e;
-    	while(temp != 0)
+  while(temp != 0)
 	{
 		temp->draw();
 		temp = temp->next;
@@ -386,7 +314,9 @@ int main(int argc, char * argv[])
 
 	camera = new Camera(6, 4, 3);
 	map = new Map();
+	hud = new HUD();
 	initEnemies();
+
 
 	// ... and begin!
 	glutMainLoop();
