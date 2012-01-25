@@ -1,0 +1,7 @@
+CPE 476 Lab 1
+Tim Adam
+Nick Alereza
+
+compile: 'make'
+run: 'make haste'
+  or 'lab1'
