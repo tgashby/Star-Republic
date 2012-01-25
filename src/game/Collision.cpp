@@ -1,5 +1,5 @@
 
-#include "Collisions.h"
+#include "Collision.h"
 
 static void checkCollisions(GameObject[] objs, int size) 
 {
@@ -7,11 +7,17 @@ static void checkCollisions(GameObject[] objs, int size)
     {
       for (int indexJ = indexI; indexJ < size; indexJ++)
 	{
-	  collisionCheck(objs[indexI], objs[indexJ]);
+	  if (collisionCheck(objs[indexI], objs[indexJ]))
+	    {
+	      objs[indexI].collidesWith(objs[indexJ]);
+	      objs[indexJ].collidesWith(objs[indexI]);
+	    }
 	}
     }
 }
 
-static void collisionCheck(GameObject &one, GameObject &other) {
-  
+static bool collisionCheck(GameObject &obj, GameObject &other) {
+  obj.getBoundingStructure().checkCollision(other.getBoundingStructure(), 
+				    obj.getLocation(), 
+					    other.getLocation());
 }
