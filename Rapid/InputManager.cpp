@@ -1,8 +1,17 @@
 #include "InputManager.h"
+#include "Player.h"
 
-InputManager::InputManager(Player p)
+InputManager::InputManager(Player* p)
 {
    this->player = p;
+   SENSITIVITY = 80;
+   AbsX = 0;
+   AbsY = 0;
+   dx = 0;
+   dy = 0;
+   prevX = 0;
+   prevY = 0;
+   glutWarpPointer(500, 300);
 }
 
 InputManager::~InputManager(){
@@ -35,6 +44,11 @@ void InputManager::keyUpCallBack(unsigned char key, int x, int y) {
 }
 
 void InputManager::mouseMotion(int x, int y) {
-   int dx = prevX - x;
-   int dy = prevY - y;
+   dx = prevX - x;
+   dy = prevY - y;
+   prevX = x;
+   prevY = y;
+   // assuming 500,500 is the glutWarpedPointer location
+   AbsX = (x - 500) / SENSITIVITY;
+   AbsY = (300 - y) / SENSITIVITY;
 }

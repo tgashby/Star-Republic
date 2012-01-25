@@ -19,6 +19,7 @@
 #include "Camera.h"
 #include "Map.h"
 #include "HUD.h"
+#include "InputManager.h"
 #include "Player.h"
 
 #define LOOK_SPEED 0.1
@@ -48,6 +49,7 @@ Camera *camera;
 Player *player;
 Map *map;
 HUD* hud;
+InputManager* manager;
 
 
 /***************************
@@ -222,7 +224,7 @@ void Display()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	hud->drawText(FPS, curTime);
-  hud->renderGlutAimer(2, 2, -3, -3);
+  hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -256,38 +258,16 @@ void Reshape(int width, int height)
 }
 
 void keyCallback(unsigned char key, int x, int y) {
-   
-   if (key == 'w')
-	   w = 1;
-   if (key == 's')
-	   s = 1;
-   if (key == 'a')
-	   a = 1;
-   if (key == 'd')
-	   d = 1;
+        manager->keyCallBack(key, x, y);
 }
 
 void keyUpCallback(unsigned char key, int x, int y) {
-   if (key == 27)
-	   exit(0);
-
-   if (key == 'w')
-	   w = 0;
-   if (key == 's')
-	   s = 0;
-   if (key == 'a')
-	   a = 0;
-   if (key == 'd')
-	   d = 0;
+        manager->keyUpCallBack(key, x, y);
 }
 
 void mouseMotion(int x, int y)
 {
-	if (curTime < 60000)
-	{
-	    int dx = prevX - x;
-	    int dy = prevY - y;
-	}
+	manager->mouseMotion(x,y);
 }
 
 
@@ -298,7 +278,7 @@ int main(int argc, char * argv[])
  	glutInitWindowSize(WindowWidth, WindowHeight);
  	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
- 	glutCreateWindow("476 Lab 1: Make Haste!");
+ 	glutCreateWindow("Star Republic - The Destruction Of Helios");
 	glutReshapeFunc(Reshape);
  	glutDisplayFunc(Display);
 	
@@ -307,22 +287,22 @@ int main(int argc, char * argv[])
 
 	prevX = 200;
 	prevY = 200;
-	glutSetCursor(GLUT_CURSOR_NONE); 
+	//glutSetCursor(GLUT_CURSOR_NONE); 
 	
-	glutKeyboardFunc(keyCallback);
-	glutKeyboardUpFunc(keyUpCallback);
- 	glutPassiveMotionFunc(mouseMotion);
 
  	Initialize();
+  float size = 1.0;
 
-
-	player = new Player(new SVector3(6,4,6), new SVector3(0,0,4), NULL);
+	player = new Player(new SVector3(0,0,6), new SVector3(0,0,4), NULL, size);
 	camera = new Camera(6, 4, 3, player);
+  manager = new InputManager(player);
 	map = new Map();
 	hud = new HUD();
 	initEnemies();
 
-
+	glutKeyboardFunc(keyCallback);
+	glutKeyboardUpFunc(keyUpCallback);
+ 	glutPassiveMotionFunc(mouseMotion);
 	// ... and begin!
 	glutMainLoop();
 	

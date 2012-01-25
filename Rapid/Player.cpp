@@ -19,8 +19,8 @@ void waitForUser3()
 	std::cin.get();
 }
 
-Player::Player(SVector3* pos, SVector3* vel, CMesh* mod) : GameObject(pos, vel, mod) 
-{	 
+Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObject(pos, vel, mod, size) {
+	 
   int health = 100;
   int cooldown = 0;
   bool firing = false;
@@ -104,7 +104,7 @@ void Player::draw()
 
 		glPushMatrix();
 
-		glTranslatef(Translation.X, Translation.Y, Translation.Z);
+		glTranslatef(Translation.X + 6, Translation.Y + 4, Translation.Z);
 		glRotatef(Rotation.Z, 0, 0, 1);
 		glRotatef(Rotation.Y, 0, 1, 0);
 		glRotatef(Rotation.X, 1, 0, 0);
