@@ -18,7 +18,7 @@ GameObject::~GameObject()
 {
 }
 
-GameObject::Update(float dt)
+void GameObject::update(float dt)
 {
    this->position.X += this->velocity.X * dt;
    this->position.Y += this->velocity.Y * dt;
