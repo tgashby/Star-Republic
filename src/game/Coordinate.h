@@ -9,6 +9,6 @@ class Coordinate {
       
    private:
 
-}
+};
 
 #endif

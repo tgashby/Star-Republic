@@ -8,6 +8,8 @@
 #define GAMEOBJECT_H
 
 #include "Drawable.h"
+#include "Angle.h"
+#include "BoundingStructure.h"
 
 class GameObject : Drawable {
    public:
