@@ -25,11 +25,12 @@ void waitForUser4()
 	std::cin.get();
 }
 
-Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage) : GameObject(pos, vel, mod, size) {
+Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage) : GameObject(pos, vel, mod) {
 
    this->damage = damage;
    this->size = size;
    toDie = false;
+   ignore = false;
    Translation.X = pos->X;
 	Translation.Y = pos->Y;
 	Translation.Z = pos->Z;
@@ -63,7 +64,7 @@ Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage)
   shade->loadAttribute("aNormal");
 	
 	// Attempt to load mesh
-	mod = CMeshLoader::loadASCIIMesh("bullet.obj");
+	mod = CMeshLoader::loadASCIIMesh("Models/bullet.obj");
 	if (! mod)
 	{
 		std::cerr << "Unable to load necessary mesh." << std::endl;
@@ -88,10 +89,15 @@ SVector3* Bullet::getPosition()
    return position;
 }
 
+bool Bullet::getIgnore()
+{
+    return ignore;
+}
 
 void Bullet::draw()
 {
 	{
+                if (ignore == false) {
 		// Shader context works by cleaning up the shader settings once it
 		// goes out of scope
 		CShaderContext ShaderContext(*shade);
@@ -110,6 +116,7 @@ void Bullet::draw()
 		glDrawArrays(GL_TRIANGLES, 0, TriangleCount*3);
 
 		glPopMatrix();
+                }
 	}
 }
 
@@ -118,6 +125,55 @@ void Bullet::collideWith(GameObject * collided)
    toDie = true;
 }
 
+void Bullet::nullify()
+{
+   ignore = true;
+}
+
+void Bullet::collisionCheck(Player* object)
+{
+   if (ignore == false) {
+   fprintf(stderr, "\nSTAGE1\n");
+   float temp = object->size/2 + this->size/2;
+   SVector3* a = new SVector3();
+   a = object->getPosition();
+   SVector3* b = new SVector3();
+   b = this->getPosition();
+   float aX = a->X;
+fprintf(stderr, "\nSTAGEA\n");
+   float aY = a->Y;
+fprintf(stderr, "\nSTAGEB\n");
+   float aZ = a->Z;
+fprintf(stderr, "\nSTAGEC\n");
+   float bX = b->X;
+fprintf(stderr, "\nSTAGED\n");
+   float bY = b->Y;
+fprintf(stderr, "\nSTAGEE\n");
+   float bZ = b->Z;
+fprintf(stderr, "\nSTAGEF\n");
+   //float x2 = x1->X;
+   //float x2 = second->getPosition()->X;
+   fprintf(stderr, "\nSTAGE2\n");
+   float distance = sqrt((aX - bX) * (aX - bX) + (aY - bY) * (aY - bY) + (aZ - bZ) * (aZ - bZ));
+   //float distance = 1;
+   fprintf(stderr, "\nSTAGE3\n");
+   if (distance < temp) {
+   fprintf(stderr, "\nSTAGE4\n");
+      //first->collideWith((GameObject*)second);
+   fprintf(stderr, "\nSTAGE5\n");
+      //this->collideWith((GameObject*)object);
+   fprintf(stderr, "\nSTAGE6\n");
+   //return true;
+   toDie = true;
+   }
+   }
+   else {
+        toDie = false;
+   }
+   //return false;
+}
+
+
 bool Bullet::gettoDie()
 {
    return toDie;
@@ -125,6 +181,7 @@ bool Bullet::gettoDie()
 
 void Bullet::update(float dt)
 {
+        if (ignore == false) {
         //printf("\nUpdate on a bullet!");
 	position->X -= velocity->X * dt;
 	position->Y -= velocity->Y * dt;
@@ -136,4 +193,5 @@ void Bullet::update(float dt)
 	Translation.X = -position->X;
 	Translation.Y = position->Y;
 	Translation.Z = position->Z;
+        }
 }

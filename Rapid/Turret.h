@@ -21,9 +21,12 @@ public:
    Player* aim;
    int health, cooldown;
    CShader* shade;
+   CMesh *mod;
 
    // Handles for VBOs
-   GLuint PositionBufferHandle, ColorBufferHandle, NormalBufferHandle;
+   GLuint PositionBufferHandle1, ColorBufferHandle1, NormalBufferHandle1;
+   GLuint PositionBufferHandle2, ColorBufferHandle2, NormalBufferHandle2;
+   GLuint PositionBufferHandle3, ColorBufferHandle3, NormalBufferHandle3;
 
    // Information about mesh
    SVector3 Translation, Rotation, Scale;

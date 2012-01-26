@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include <typeinfo>
+#include "Player.h"
 
 #ifndef BASICS
 #define BASICS
@@ -18,6 +19,8 @@ public:
    CShader* shade;
    int damage;
    bool toDie;
+   bool ignore;
+   float size;
 
    // Handles for VBOs
    GLuint PositionBufferHandle, ColorBufferHandle, NormalBufferHandle;
@@ -33,4 +36,7 @@ public:
    void collideWith(GameObject* collided);
    SVector3* getPosition();
    bool gettoDie();
+   bool getIgnore();
+   void nullify();
+   void collisionCheck(Player* object);
 };

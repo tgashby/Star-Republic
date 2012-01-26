@@ -20,6 +20,7 @@ public:
    int health;
    int cooldown;
    bool firing;
+   float size;
    CShader* shade;
    float refx, refy; // for movement
 
@@ -41,7 +42,8 @@ public:
    void speedUp();
    void slowDown();
    float getSize();
-   void collideWith(GameObject collided);
+   void collideWith(GameObject* collided);
+   void collideWithBullet(int damage);
    SVector3* getPosition();
    SVector3* getTranslation();
    SVector3* getVelocity();

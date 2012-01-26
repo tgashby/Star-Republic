@@ -236,9 +236,10 @@ void update(float dtime)
   bullets->update(dtime, map);
   if(i)  printf("\nIt isn't updating bullets\n");
   /**COLLISION CALLS HERE**/
-  //bullets->collideWith((GameObject*)player);
+  bullets->collideWith(player);
   if(i) printf("\nIt isn't collideWith.\n");
   bullets->removeDead(camera->getPosition());
+  if(i) fprintf(stderr, "\nIt's removeDead");
 
 	turrets->collideAllWith(player);
 }
@@ -338,10 +339,10 @@ int main(int argc, char * argv[])
  	Initialize();
   float size = 1.0;
 
-	player = new Player(new SVector3(0,0,6), new SVector3(0,0,4), NULL, size);
-	camera = new Camera(6, 4, 3, player);
-  manager = new InputManager(player);
 	map = new Map();
+	player = new Player(new SVector3(0,0,6), new SVector3(0,0,4), NULL, size);
+	camera = new Camera(6, 4, 3, player,map);
+  manager = new InputManager(player);
   turrets = new Turrets(map, 20, player);
 	hud = new HUD();
   bullets = new Bullets();

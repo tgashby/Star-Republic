@@ -72,8 +72,8 @@ Map::Map ()
 	Shader->loadAttribute("aNormal");
 
 	// Attempt to load mesh
-   CMesh * Mesh = CMeshLoader::loadASCIIMesh("Models/canyon.obj");
-	//CMesh * Mesh = CMeshLoader::loadASCIIMesh("Models/grid.m");
+	//CMesh * Mesh = CMeshLoader::loadASCIIMesh("Models/canyon.obj");
+	CMesh * Mesh = CMeshLoader::loadASCIIMesh("Models/grid.m");
 	if (! Mesh)
 	{
 		std::cerr << "Unable to load necessary mesh." << std::endl;
@@ -96,8 +96,7 @@ Map::~Map(){
 
 
 void Map::draw()
-{
-	
+{	
 	{
 		// Shader context works 
 		// by cleaning up the shader settings once it
@@ -115,7 +114,7 @@ void Map::draw()
 		glRotatef(Rotation.X, 1, 0, 0);
 		glScalef(Scale.X, Scale.Y, Scale.Z);
 
-		glDrawArrays(GL_TRIANGLES, 0, 100);
+		glDrawArrays(GL_TRIANGLES, 0, 3 * TriangleCount);
 
 		glPopMatrix();
 	}
