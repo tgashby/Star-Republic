@@ -7,7 +7,9 @@
 class Collision{
 public: 
 
-   static int collisionCheck(GameObject * first, GameObject * second);
+   Collision();
+   ~Collision();
+   void collisionCheck(GameObject * first, GameObject * second);
 };
 
 
