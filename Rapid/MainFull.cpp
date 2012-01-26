@@ -240,10 +240,7 @@ void update(float dtime)
   if(i) printf("\nIt isn't collideWith.\n");
   bullets->removeDead(camera->getPosition());
 
-	/*if (shouldAddEnemy()) addEnemy();
-
-	detectEnemyEnemyCollisions(dtime);
-	detectPlayerEnemyCollisions();*/
+	turrets->collideAllWith(player);
 }
    
 // Manages time independent movement and draws the VBO
@@ -269,7 +266,7 @@ void Display()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	hud->drawText(FPS, curTime);
+	hud->drawText(FPS, curTime, player->health);
   hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
 
 	glMatrixMode(GL_MODELVIEW);

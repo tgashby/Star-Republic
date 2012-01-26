@@ -48,8 +48,8 @@ Map::Map ()
         
 	groundxmin = 1;
         groundxmax = 11;
-        groundzmin = 5;
-        groundzmax = 120;
+        groundzmin = 45;
+        groundzmax = 500;
 
 
 	// First create a shader loader and check if our hardware supports shaders

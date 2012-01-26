@@ -40,7 +40,9 @@ public:
    bool canFire();
    void speedUp();
    void slowDown();
+   float getSize();
    void collideWith(GameObject collided);
    SVector3* getPosition();
+   SVector3* getTranslation();
    SVector3* getVelocity();
 };

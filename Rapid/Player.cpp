@@ -110,6 +110,10 @@ SVector3* Player::getPosition()
 {
    return position;
 }
+SVector3* Player::getTranslation()
+{
+   return &Translation;
+}
 
 void Player::speedUp()
 {
@@ -123,8 +127,8 @@ void Player::slowDown()
 
 void Player::update(float dt, Map* bounds)
 {
-        velocity->X = (position->X - refx);
-        velocity->Y = (position->Y - refy);
+  velocity->X = (position->X - refx);
+  velocity->Y = (position->Y - refy);
 
 	position->X -= velocity->X * dt;
 	position->Y -= velocity->Y * dt;
@@ -146,6 +150,10 @@ void Player::update(float dt, Map* bounds)
         if (cooldown > 0) {
            cooldown--;
         }
+}
+float Player::getSize()
+{
+   return 1;
 }
 void Player::draw()
 {

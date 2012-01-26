@@ -1,4 +1,5 @@
 #include "Turret.h"
+#include <stdio.h>
 
 Turret::Turret(int xloc, int zloc, Player* toAimAt)
 {
@@ -36,7 +37,6 @@ void Turret::draw()
 {
    if (health > 0)
    {
-
       glPushMatrix();
 
       glTranslatef(Translation.X, Translation.Y, Translation.Z);
@@ -59,9 +59,26 @@ void Turret::tryToShoot()
 {
 
 }
-void Turret::collideWith(Player p)
+float Turret::getSize()
 {
-
+   return 1.5;
+}
+void Turret::collideWith(Player* p)
+{
+   if (p->getTranslation()->Y < -0.8)
+   { 
+      float x = p->getTranslation()->X + 6;
+      if (x - p->getSize() < Translation.X + getSize()  && x + p->getSize() > Translation.X - getSize())
+      {
+         float z = p->getTranslation()->Z + 3;
+         if (z - p->getSize() < Translation.Z + getSize()  && z + p->getSize() > Translation.Z - getSize())
+         {
+            printf("hit: player - %f, %f, %f  ;  turret - %f, %f, %f\n", p->getTranslation()->X, p->getTranslation()->Y, p->getTranslation()->Z, Translation.X, Translation.Y, Translation.Z);
+            p->health -= 20;
+            this->health = 0;
+         }
+      }
+   }
 }
 void Turret::collideWith(Bullet b)
 {

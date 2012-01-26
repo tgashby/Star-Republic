@@ -38,7 +38,7 @@ void HUD::renderBitmapString (float x, float y, float z, char *string)
   }
 }
 
-void HUD::drawText(int FPS, int curTime)
+void HUD::drawText(int FPS, int curTime, int playerHealth)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -69,6 +69,15 @@ void HUD::drawText(int FPS, int curTime)
 	fps[6] = FPS/10 % 10 + 48;
 	fps[7] = FPS/1 % 10 + 48;
 	renderBitmapString(-0.45, 2.5, -4.5, fps);
+        
+        char ph[9] = "FPS: ";
+	ph[0] = playerHealth/100 % 10 + 48;
+	ph[1] = playerHealth/10 % 10 + 48;
+	ph[2] = playerHealth/1 % 10 + 48;
+	ph[3] = ' ';
+        ph[4] = '%';
+        ph[5] = '\0';
+	renderBitmapString(-0.23, 2.3, -4.5, ph);
 
 	glDisable(GL_LIGHT0);
 }

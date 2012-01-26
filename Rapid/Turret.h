@@ -33,7 +33,8 @@ public:
    ~Turret();
    void update(float dt);
    void draw();
+   float getSize();
    void tryToShoot();
-   void collideWith(Player p);
+   void collideWith(Player* p);
    void collideWith(Bullet b);
 };
