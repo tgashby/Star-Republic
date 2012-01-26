@@ -233,6 +233,7 @@ void update(float dtime)
   bullets->update(dtime, map);
   /**COLLISION CALLS HERE**/
   bullets->collideWith(player);
+  bullets->collideWith(turrets);
   bullets->removeDead(camera->getPosition());
 
 	turrets->collideAllWith(player);

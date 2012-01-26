@@ -65,6 +65,10 @@ void Bullets::collideWith(Player* object)
    delete(collider);
 }
 
+void Bullets::collideWith(Turrets* turrets)
+{
+}
+
 void Bullets::removeDead(SVector3 cameraPosition)
 {
    for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {

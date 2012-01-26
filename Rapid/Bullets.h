@@ -4,6 +4,8 @@
 #include "Collision.h"
 #include "GameObject.h"
 #include "Player.h"
+#include "Turrets.h"
+#include "Turret.h"
 #include <list>
 
 /*
@@ -27,4 +29,5 @@ public:
    void removeDead(SVector3 cameraPosition);
    void addBullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage);
    void collideWith(Player* object);
+   void collideWith(Turrets* turrets);
 };
