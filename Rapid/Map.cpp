@@ -72,7 +72,8 @@ Map::Map ()
 	Shader->loadAttribute("aNormal");
 
 	// Attempt to load mesh
-	CMesh * Mesh = CMeshLoader::loadASCIIMesh("Models/grid.m");
+   CMesh * Mesh = CMeshLoader::loadASCIIMesh("Models/canyon.obj");
+	//CMesh * Mesh = CMeshLoader::loadASCIIMesh("Models/grid.m");
 	if (! Mesh)
 	{
 		std::cerr << "Unable to load necessary mesh." << std::endl;
