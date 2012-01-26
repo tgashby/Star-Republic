@@ -32,6 +32,7 @@
 #include "Collision.h"
 #include "GameObject.h"
 #include "Turrets.h"
+#include "Util/Vector.hpp"
 
 #define LOOK_SPEED 0.1
 
@@ -206,23 +207,37 @@ void update(float dtime)
 {
 	player->update(dtime, map);
   SVector3* temp = new SVector3();
+//AbsX - temp2->X, AbsY - temp2->Y, 5.0
+//vec3 vector = vec3{x,y,z};
+//vector.Normalize();
+  int i = 0;
   temp->X = 0;
   temp->Y = 0;
-  temp->Z = 8.0;
+  temp->Z = 5.0;
   SVector3* temp2 = new SVector3();
   temp2->X = -player->getPosition()->X;
   temp2->Y = player->getPosition()->Y;
   temp2->Z = player->getPosition()->Z;
+  vec3 aim = vec3(manager->AbsX - temp2->X, -(manager->AbsY - temp2->Y), 5.0);
+  aim.Normalize();
+  temp->X = aim.x * 8.0;
+  temp->Y = aim.y * 8.0;
+  temp->Z = aim.z * 8.0;
+  //printf("\nThe aim is %f, %f, %f.\n", temp->X, temp->Y, temp->Z);
   if (player->canFire()) {
      bullets->addBullet(temp2, temp, NULL, 1.0, 10);
      printf("\nLook Pa! A Bullet!\n");
+     i = 1;
   }
 	camera->update();
   turrets->update(dtime);
+  if(i) printf("\nIt isn't updating turrets\n");
 
   bullets->update(dtime, map);
+  if(i)  printf("\nIt isn't updating bullets\n");
   /**COLLISION CALLS HERE**/
-  bullets->collideWith((GameObject*)player);
+  //bullets->collideWith((GameObject*)player);
+  if(i) printf("\nIt isn't collideWith.\n");
   bullets->removeDead(camera->getPosition());
 
 	/*if (shouldAddEnemy()) addEnemy();
@@ -230,7 +245,7 @@ void update(float dtime)
 	detectEnemyEnemyCollisions(dtime);
 	detectPlayerEnemyCollisions();*/
 }
-
+   
 // Manages time independent movement and draws the VBO
 void Display()
 {

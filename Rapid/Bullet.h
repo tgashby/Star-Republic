@@ -17,7 +17,7 @@ public:
 
    CShader* shade;
    int damage;
-   int toDie;
+   bool toDie;
 
    // Handles for VBOs
    GLuint PositionBufferHandle, ColorBufferHandle, NormalBufferHandle;
@@ -32,5 +32,5 @@ public:
    void draw();
    void collideWith(GameObject* collided);
    SVector3* getPosition();
-   int gettoDie();
+   bool gettoDie();
 };

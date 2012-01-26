@@ -29,6 +29,7 @@ Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage)
 
    this->damage = damage;
    this->size = size;
+   toDie = false;
    Translation.X = pos->X;
 	Translation.Y = pos->Y;
 	Translation.Z = pos->Z;
@@ -62,7 +63,7 @@ Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage)
   shade->loadAttribute("aNormal");
 	
 	// Attempt to load mesh
-	mod = CMeshLoader::loadASCIIMesh("Models/bunny500.m");
+	mod = CMeshLoader::loadASCIIMesh("bullet.obj");
 	if (! mod)
 	{
 		std::cerr << "Unable to load necessary mesh." << std::endl;
@@ -117,14 +118,14 @@ void Bullet::collideWith(GameObject * collided)
    toDie = true;
 }
 
-int Bullet::gettoDie()
+bool Bullet::gettoDie()
 {
    return toDie;
 }
 
 void Bullet::update(float dt)
 {
-
+        //printf("\nUpdate on a bullet!");
 	position->X -= velocity->X * dt;
 	position->Y -= velocity->Y * dt;
 	position->Z += velocity->Z * dt;

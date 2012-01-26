@@ -42,4 +42,5 @@ public:
    void slowDown();
    void collideWith(GameObject collided);
    SVector3* getPosition();
+   SVector3* getVelocity();
 };
