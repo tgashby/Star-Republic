@@ -8,7 +8,6 @@
 
 CMesh * const CMeshLoader::loadASCIIMesh(std::string const & fileName)
 {
-   std::cout << "load mesh\n";
    
    MeshData *meshData = loadMesh(fileName, LOAD_NORMAL_FACE, 1.0);
    CMesh *Mesh = new CMesh();
@@ -25,8 +24,6 @@ CMesh * const CMeshLoader::loadASCIIMesh(std::string const & fileName)
       Mesh->Vertices.push_back(Vertex);
    }
    
-   std::cout << "loaded vertices\n";
-   
    for (int i = 0; i < meshData->indexCount;) {
       CMesh::STriangle Triangle;
       Triangle.VertexIndex1 = meshData->indices[i++];
@@ -35,8 +32,6 @@ CMesh * const CMeshLoader::loadASCIIMesh(std::string const & fileName)
       
       Mesh->Triangles.push_back(Triangle);
    }
-   
-   std::cout << "loaded triangles\n";
    
    return Mesh;
    //return 0;
