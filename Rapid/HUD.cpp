@@ -55,6 +55,10 @@ void HUD::drawText(int FPS, int curTime, int playerHealth, int num)
 	glEnable(GL_LIGHT0);
  	glLightfv(GL_LIGHT0, GL_POSITION, lightDir);
  	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseComp);
+   
+   // Fixes?
+   glDisable(GL_DEPTH);
+   glDisable(GL_DEPTH_TEST);
 
 	char timer[14];
 	timer[0] = (((int)curTime)/100000) % 10 + 48;
@@ -87,6 +91,10 @@ void HUD::drawText(int FPS, int curTime, int playerHealth, int num)
 	renderBitmapString(-0.48, 2.1, -4.5, n);
 
 	glDisable(GL_LIGHT0);
+   
+   // Fixes?
+   glEnable(GL_DEPTH);
+   glEnable(GL_DEPTH_TEST);
 }
 
 void HUD::drawWin()
@@ -106,11 +114,18 @@ void HUD::drawWin()
 	glEnable(GL_LIGHT0);
  	glLightfv(GL_LIGHT0, GL_POSITION, lightDir);
  	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseComp);
+   
+   // Fixes?
+   glDisable(GL_DEPTH);
+   glDisable(GL_DEPTH_TEST);
 
         char win[] = "Congratulations!";
 	renderBitmapString(-0.5, 0.7, -4.5, win);
 
 	glDisable(GL_LIGHT0);
+   
+   glEnable(GL_DEPTH);
+   glEnable(GL_DEPTH_TEST);
 }
 void HUD::drawLose()
 {
@@ -129,11 +144,19 @@ void HUD::drawLose()
 	glEnable(GL_LIGHT0);
  	glLightfv(GL_LIGHT0, GL_POSITION, lightDir);
  	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseComp);
+   
+   // Fixes?
+   glDisable(GL_DEPTH);
+   glDisable(GL_DEPTH_TEST);
 
         char win[] = "Mission Failed!";
 	renderBitmapString(-0.5, 0.7, -4.5, win);
 
 	glDisable(GL_LIGHT0);
+   
+   // Fixes?
+   glEnable(GL_DEPTH);
+   glEnable(GL_DEPTH_TEST);
 }
 
 void HUD::renderGlutAimer(float px, float py, float dx, float dy)

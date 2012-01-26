@@ -276,8 +276,8 @@ void Display()
 
    	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	   hud->drawText(FPS, curTime, player->health, turrets->countAll());
-     hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
+//	   hud->drawText(FPS, curTime, player->health, turrets->countAll());
+//     hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
 
 	   glMatrixMode(GL_MODELVIEW);
 	   glLoadIdentity();
@@ -288,6 +288,10 @@ void Display()
      player->draw();
      turrets->drawAll();
      bullets->draw();
+     
+     hud->drawText(FPS, curTime, player->health, turrets->countAll());
+     hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
+
 
   }
   else if (curTime >= 120000)
