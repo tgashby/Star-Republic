@@ -25,11 +25,12 @@ void waitForUser3()
 	std::cin.get();
 }
 
-Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObject(pos, vel, mod, size) {
+Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObject(pos, vel, mod) {
 	 
   health = 100;
   cooldown = 0;
   firing = false;
+  this->size = size;
 
   Translation.X = pos->X;
   Translation.Y = pos->Y;
@@ -169,9 +170,19 @@ void Player::draw()
 		glPopMatrix();
 	}
 }
-void Player::collideWith(GameObject collided)
+void Player::collideWith(GameObject* collided)
 {
 
 }
+
+void Player::collideWithBullet(int damage)
+{
+   health = health - damage;
+   if (health < 0) {
+      health = 0;
+   }
+}
+
+
 
 

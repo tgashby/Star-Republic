@@ -236,9 +236,10 @@ void update(float dtime)
   bullets->update(dtime, map);
   if(i)  printf("\nIt isn't updating bullets\n");
   /**COLLISION CALLS HERE**/
-  //bullets->collideWith((GameObject*)player);
+  bullets->collideWith(player);
   if(i) printf("\nIt isn't collideWith.\n");
   bullets->removeDead(camera->getPosition());
+  if(i) fprintf(stderr, "\nIt's removeDead");
 
 	/*if (shouldAddEnemy()) addEnemy();
 
