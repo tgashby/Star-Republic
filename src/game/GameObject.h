@@ -8,30 +8,28 @@
 #define GAMEOBJECT_H
 
 #include "Drawable.h"
+#include "Angle.h"
+#include "BoundingStructure.h"
+#include "Vector.hpp"
 
 class GameObject : Drawable {
    public:
-      GameObject(Coordinate startPoint, 
-                 Coordinate startVelocity,
+      GameObject(Vector3<float> startPoint, 
+                 Vector3<float> startVelocity,
                  Angle startHeading, 
                  BoundingStructure boundingStructure
                  );
-      GameObject(Coordiante startPoint, 
-                 Angle startHeading, 
-
-                 BoundingStructure boundingStructure
-      //We might also need copy constructors and stuff
       void tic(int dt);
-      bool setVelocity(const Coordinate velocity);
+      bool setVelocity(const Vector3<float> velocity);
       bool setAngularVelocity(const Angle angularVelocity); 
       virtual void doCollision(GameObject & other) = 0;
       virtual Model getModel() = 0;
-      const BoundingStructure getBoundingStructure() = 0;
-      const Coordiante getLocation(); 
+      const BoundingStructure getBoundingStructure();
+      const Vector3<float> getLocation(); 
    private:
       BoundingStructure m_boundingStructure;
-      Coordinate m_location;
-      Coordinate m_velocity; 
+      Vector3<float> m_location;
+      Vector3<float> m_velocity; 
       Angle m_direction;
       Angle m_angularVelocity;
 };

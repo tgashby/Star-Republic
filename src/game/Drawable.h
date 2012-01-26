@@ -1,5 +1,7 @@
 #ifndef DRAWABLE_H
 #define DRAWABLE_H
+
+#include "Model.h"
 /* An abstract class to define what methods a drawable class must 
  * implement. 
  *
@@ -8,10 +10,10 @@
 
 class Drawable {
    public:
-      virtual list<Model> getModels(const Coordinate translation) = 0;
+      //virtual list<Model> getModels(const Coordinate translation) = 0;
 
    private:
 
-   }
+};
 
 #endif

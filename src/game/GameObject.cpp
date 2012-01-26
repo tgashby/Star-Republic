@@ -1,4 +1,5 @@
 #include "GameObject.h"
+
 /**
  * GameObject base class definition. All movable in-game objects are derived
  * from this class
@@ -13,7 +14,7 @@
  * created.
  * @param boundingStructure - The game object's bounding structure
  */ 
-GameObject::GameObject(Coordiante startPoint, 
+GameObject::GameObject(Coordinate startPoint, 
                        Coordinate startVelocity, 
                        Angle startHeading, 
                        BoundingStructure boundingStructure){

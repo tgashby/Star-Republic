@@ -7,9 +7,13 @@
 
 class Angle{
    public:
+      //This needs a constructor at some point
+      void roll(float degrees);
+      void pitch(float degrees);
+      void yaw(float degrees);
       
    private:
 
-}
+};
 
 #endif
