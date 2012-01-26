@@ -4,9 +4,46 @@
 #include <fstream>
 #include <sstream>
 
+//#include "MeshParser.h"
+
 CMesh * const CMeshLoader::loadASCIIMesh(std::string const & fileName)
 {
+   std::cout << "load mesh\n";
+   
+   MeshData *meshData = loadMesh(fileName, LOAD_NORMAL_FACE, 1.0);
+   CMesh *Mesh = new CMesh();
+   
+   for (int i = 0; i < meshData->vertexCount; ++i) {
+      SVector3 Position;
+      Position.X = meshData->vertices[i*11];
+      Position.Y = meshData->vertices[i*11+1];
+      Position.Z = meshData->vertices[i*11+2];
+      
+      SVertex Vertex;
+      Vertex.Position = Position;
+      
+      Mesh->Vertices.push_back(Vertex);
+   }
+   
+   std::cout << "loaded vertices\n";
+   
+   for (int i = 0; i < meshData->indexCount;) {
+      CMesh::STriangle Triangle;
+      Triangle.VertexIndex1 = meshData->indices[i++];
+      Triangle.VertexIndex2 = meshData->indices[i++];
+      Triangle.VertexIndex3 = meshData->indices[i++];
+      
+      Mesh->Triangles.push_back(Triangle);
+   }
+   
+   std::cout << "loaded triangles\n";
+   
+   return Mesh;
+   //return 0;
+}
+   /*
 	std::ifstream File;
+   std::cout << fileName << std::endl;
 	File.open(fileName.c_str());
 
 	if (! File.is_open())
@@ -33,10 +70,10 @@ CMesh * const CMeshLoader::loadASCIIMesh(std::string const & fileName)
 			continue;
 		}
 
-		if ("Vertex" == Label)
+		if ("v " == Label)
 		{
 			int Index;
-			Stream >> Index; // We don't care, throw it away
+			//Stream >> Index; // We don't care, throw it away
 
 			SVector3 Position;
 			Stream >> Position.X;
@@ -103,7 +140,7 @@ CMesh * const CMeshLoader::loadASCIIMesh(std::string const & fileName)
 	}
 
 	return Mesh;
-}
+}*/
 
 void CMeshLoader::createVertexBufferObject(CMesh const & Mesh, int & TriangleCount, GLuint & PositionBufferHandle, GLuint & ColorBufferHandle, GLuint & NormalBufferHandle)
 {
