@@ -1,5 +1,17 @@
+#ifdef __APPLE__
+#include "GLUT/glut.h"
+#include <OPENGL/gl.h>
+#endif
 
+#ifdef __unix__
 #include <GL/glut.h>
+#endif
+
+#ifdef _WIN32
+#include <GL\glew.h>
+#include <GL\glut.h>
+#endif
+
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>

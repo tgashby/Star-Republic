@@ -4,13 +4,15 @@
 #include "Collision.h"
 #include "GameObject.h"
 #include <list>
+
+/*
 #ifdef _WIN32
 	#include <SDL.h>
 	#include <SDL_opengl.h>
 #else
 	#include <SDL/SDL.h>
 	#include <SDL/SDL_opengl.h>
-#endif
+#endif*/
 
 class Bullets{
 public:

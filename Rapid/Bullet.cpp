@@ -9,6 +9,12 @@
 #include <GL/glut.h>
 #endif
 
+#ifdef _WIN32
+#include <GL\glew.h>
+#include <GL\glut.h>
+#endif
+
+
 #include <stdio.h>
 
 #include "Bullet.h"
