@@ -40,7 +40,7 @@ Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObjec
   Scale.Z = 1;
 
   Rotation.X = 0;
-  Rotation.Y = 90;
+  Rotation.Y = 0;
   Rotation.Z = 0;
 
   // First create a shader loader and check if our hardware supports shaders
