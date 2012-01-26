@@ -207,9 +207,7 @@ void update(float dtime)
 {
 	player->update(dtime, map);
   SVector3* temp = new SVector3();
-//AbsX - temp2->X, AbsY - temp2->Y, 5.0
-//vec3 vector = vec3{x,y,z};
-//vector.Normalize();
+
   int i = 0;
   temp->X = 0;
   temp->Y = 0;
@@ -246,40 +244,48 @@ void Display()
 	float Delta = (float) (Time1 - Time0) / 1000.f;
 	Time0 = Time1;
 
-	update(Delta);
+  
+  if (player->health > 0 && curTime < 120000)
+  {
+	   update(Delta);
 
-	int dtime = (time(NULL) - *timeTracker) * 1000;
-	curTime += dtime;
-	numFrames++;
-  if (curTime / 1000 > lastSecond)
-	{
-		lastSecond++;
-	  FPS = numFrames;
-	  numFrames = 0;
-	}
-	time(timeTracker);
+     int dtime = (time(NULL) - *timeTracker) * 1000; 
+	   curTime += dtime;
+	   numFrames++;
+     if (curTime / 1000 > lastSecond)
+	   {
+		    lastSecond++;
+	      FPS = numFrames;
+	      numFrames = 0;
+	   }
+	   time(timeTracker);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	hud->drawText(FPS, curTime, player->health);
-  hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
+	   hud->drawText(FPS, curTime, player->health);
+     hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	   glMatrixMode(GL_MODELVIEW);
+	   glLoadIdentity();
 
-	camera->setLookAt();
+	   camera->setLookAt();
 
-	/*Enemy *temp = e;
-  while(temp != 0)
-	{
-		temp->draw();
-		temp = temp->next;
-	}*/
-	map->draw();
-  player->draw();
-  turrets->drawAll();
-  bullets->draw();
+	   map->draw();
+     player->draw();
+     turrets->drawAll();
+     bullets->draw();
 
+  }
+  else if (curTime >= 120000)
+  {
+	   hud->drawText(FPS, curTime, player->health);
+     hud->drawWin();
+  }
+  else
+  {
+	   hud->drawText(FPS, curTime, 0);
+     hud->drawLose();
+  }
 	glutSwapBuffers();
 	glutPostRedisplay();
 }
