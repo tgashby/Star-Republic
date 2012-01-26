@@ -208,9 +208,13 @@ void update(float dtime)
   SVector3* temp = new SVector3();
   temp->X = 0;
   temp->Y = 0;
-  temp->Z = -8.0;
+  temp->Z = 8.0;
+  SVector3* temp2 = new SVector3();
+  temp2->X = -player->getPosition()->X;
+  temp2->Y = player->getPosition()->Y;
+  temp2->Z = player->getPosition()->Z;
   if (player->canFire()) {
-     bullets->addBullet(player->getPosition(), temp, NULL, 1.0, 10);
+     bullets->addBullet(temp2, temp, NULL, 1.0, 10);
      printf("\nLook Pa! A Bullet!\n");
   }
 	camera->update();
@@ -219,7 +223,7 @@ void update(float dtime)
   bullets->update(dtime, map);
   /**COLLISION CALLS HERE**/
   bullets->collideWith((GameObject*)player);
-  // bullets->removeDead(camera->getPosition());
+  bullets->removeDead(camera->getPosition());
 
 	/*if (shouldAddEnemy()) addEnemy();
 

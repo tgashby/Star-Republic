@@ -45,13 +45,14 @@ void Bullets::addBullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, in
 
 void Bullets::collideWith(GameObject* object)
 {
- /*  for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
-      if (Collision::collisionCheck(object, (GameObject*)&i)) {
-         object->collideWith((GameObject*)&i);
-         i->~Bullet();
-         list.erase(i);
-      }
-   } */
+   Collision* collider = new Collision();
+   for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
+      collider->collisionCheck(object, (GameObject*)&i);
+         //object->colideWith((GameObject*)&i);
+         //list.erase(i);
+     // }
+   }
+   delete(collider);
 }
 
 void Bullets::removeDead(SVector3 cameraPosition)

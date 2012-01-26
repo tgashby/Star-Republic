@@ -35,7 +35,7 @@ GameObject::~GameObject()
 void draw() 
 {
 }
-void collideWith(GameObject* collided)
+void GameObject::collideWith(GameObject* collided)
 {
 }
 
