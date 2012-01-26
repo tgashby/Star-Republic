@@ -2,6 +2,7 @@
 #include "Map.h"
 #include "GameObject.h"
 #include "Bullet.h"
+#include <stdio.h>
 
 Bullets::Bullets()
 {
@@ -15,6 +16,7 @@ void Bullets::update(float dt, Map* map)
 {
    for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++)
    {
+   //printf("\nHalfway through update.");
      if (i->gettoDie())
      {
          list.erase(i);
@@ -23,10 +25,11 @@ void Bullets::update(float dt, Map* map)
 
    for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
       i->update(dt);
-      if (i->getPosition()->X < map->xmin || i->getPosition()->X > map->xmax
+   //printf("\nNear end through update.");
+      /*if (i->getPosition()->X < map->xmin || i->getPosition()->X > map->xmax
          || i->getPosition()->Y < map->ymin || i->getPosition()->Y > map->ymax) {
          list.erase(i);
-      }
+      }*/
    }
 
 }
@@ -45,9 +48,12 @@ void Bullets::addBullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, in
 
 void Bullets::collideWith(GameObject* object)
 {
+   //fprintf(stderr, "\nCollidewithisbeingrun!");
    Collision* collider = new Collision();
    for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
+      fprintf(stderr, "\nCollisioncheck is being run!\n");
       collider->collisionCheck(object, (GameObject*)&i);
+      fprintf(stderr, "\nCollisioncheck doesn't crash!\n");
          //object->colideWith((GameObject*)&i);
          //list.erase(i);
      // }
