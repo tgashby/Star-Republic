@@ -19,14 +19,11 @@ MeshData* loadMesh(const string fileName, LOAD_NORMAL_TYPE type, float scale) {
    max.x = max.y = max.z = 1.1754E-38F;
    min.x = min.y = min.z = 1.1754E+38F;
    
-   std::cout << "file: " << fileName << "\n";
-   
    string line;
    streampos linestart;
    ifstream infile(fileName.c_str());
    vec3 *v;
    vec2 *t;
-   std::cout << "test 1\n";
    if (infile.is_open())  
    {
       while (!infile.eof())
@@ -95,8 +92,6 @@ MeshData* loadMesh(const string fileName, LOAD_NORMAL_TYPE type, float scale) {
    meshData->mean = mean / (float) vertices.size();
    meshData->min = min;
    meshData->max = max;
-   
-   std::cout << "vertices: " << faces.size() << "\n";
    
    vector<Face *>::iterator face;
    float *vertLoc = meshData->vertices;
