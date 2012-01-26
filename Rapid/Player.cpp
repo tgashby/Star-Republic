@@ -39,7 +39,7 @@ Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObjec
   Scale.Y = 1;
   Scale.Z = 1;
 
-  Rotation.X = 0;
+  Rotation.X = 90;
   Rotation.Y = 0;
   Rotation.Z = 0;
 
@@ -63,7 +63,7 @@ Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObjec
   shade->loadAttribute("aNormal");
 	
 	// Attempt to load mesh
-   //mod = CMeshLoader::loadASCIIMesh("Models/spaceship.obj");
+   mod = CMeshLoader::loadASCIIMesh("Models/spaceship.obj");
 	//mod = CMeshLoader::loadASCIIMesh("Models/cessna_color500.m");
 	if (! mod)
 	{

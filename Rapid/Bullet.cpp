@@ -63,7 +63,7 @@ Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage)
   shade->loadAttribute("aNormal");
 	
 	// Attempt to load mesh
-	mod = CMeshLoader::loadASCIIMesh("bullet.obg");
+	mod = CMeshLoader::loadASCIIMesh("bullet.obj");
 	if (! mod)
 	{
 		std::cerr << "Unable to load necessary mesh." << std::endl;
