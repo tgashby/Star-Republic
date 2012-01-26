@@ -78,7 +78,7 @@ Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage)
 	// Now load our mesh into a VBO, retrieving the number of triangles and the handles to each VBO
 	CMeshLoader::createVertexBufferObject(* mod, TriangleCount, 
 		PositionBufferHandle, ColorBufferHandle, NormalBufferHandle);
-        printf("\nLook ma! It's a bullet!\n");
+        //printf("\nLook ma! It's a bullet!\n");
 }
 
 Bullet::~Bullet() {
@@ -133,36 +133,24 @@ void Bullet::nullify()
 void Bullet::collisionCheck(Player* object)
 {
    if (ignore == false) {
-   fprintf(stderr, "\nSTAGE1\n");
    float temp = object->size/2 + this->size/2;
    SVector3* a = new SVector3();
    a = object->getPosition();
    SVector3* b = new SVector3();
    b = this->getPosition();
    float aX = a->X;
-fprintf(stderr, "\nSTAGEA\n");
    float aY = a->Y;
-fprintf(stderr, "\nSTAGEB\n");
    float aZ = a->Z;
-fprintf(stderr, "\nSTAGEC\n");
    float bX = b->X;
-fprintf(stderr, "\nSTAGED\n");
    float bY = b->Y;
-fprintf(stderr, "\nSTAGEE\n");
    float bZ = b->Z;
-fprintf(stderr, "\nSTAGEF\n");
    //float x2 = x1->X;
    //float x2 = second->getPosition()->X;
-   fprintf(stderr, "\nSTAGE2\n");
    float distance = sqrt((aX - bX) * (aX - bX) + (aY - bY) * (aY - bY) + (aZ - bZ) * (aZ - bZ));
    //float distance = 1;
-   fprintf(stderr, "\nSTAGE3\n");
    if (distance < temp) {
-   fprintf(stderr, "\nSTAGE4\n");
       //first->collideWith((GameObject*)second);
-   fprintf(stderr, "\nSTAGE5\n");
       //this->collideWith((GameObject*)object);
-   fprintf(stderr, "\nSTAGE6\n");
    //return true;
    toDie = true;
    }

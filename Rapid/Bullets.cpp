@@ -17,7 +17,7 @@ void Bullets::update(float dt, Map* map)
 {
    for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++)
    {
-   printf("\nHalfway through update.");
+   //printf("\nHalfway through update.");
      if (i->gettoDie())
      {
          i->nullify();
@@ -26,7 +26,7 @@ void Bullets::update(float dt, Map* map)
 
    for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
       i->update(dt);
-   printf("\nNear end through update.");
+   //printf("\nNear end through update.");
       /*if (i->getPosition()->X < map->xmin || i->getPosition()->X > map->xmax
          || i->getPosition()->Y < map->ymin || i->getPosition()->Y > map->ymax) {
          list.erase(i);
@@ -53,11 +53,11 @@ void Bullets::collideWith(Player* object)
    Collision* collider = new Collision();
    Bullet* temp = NULL;
    for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
-      fprintf(stderr, "\nCollisioncheck is being run!\n");
+      //fprintf(stderr, "\nCollisioncheck is being run!\n");
       //Bullet* temp = &(*i);
       i->collisionCheck(object);
       if (i->gettoDie()) {
-      fprintf(stderr, "\nCollisioncheck doesn't crash!\n");
+      //fprintf(stderr, "\nCollisioncheck doesn't crash!\n");
         object->collideWithBullet(10);
          //list.erase(i);
       }
@@ -69,10 +69,10 @@ void Bullets::removeDead(SVector3 cameraPosition)
 {
    for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
      if (i->getIgnore() == false) {
-     fprintf(stderr, "BRING OUT YER DEAD\n");
+     //fprintf(stderr, "BRING OUT YER DEAD\n");
      if (i->gettoDie())
      {
-         fprintf(stderr, "HI DEAD\n");
+         //fprintf(stderr, "HI DEAD\n");
          //list.erase(i);
          //i = list.begin();
          i->nullify();

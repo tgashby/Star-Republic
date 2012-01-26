@@ -83,7 +83,7 @@ Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObjec
 
 Player::~Player()
 { }
-#pragma once
+
 void Player::setRefx(float rx)
 {
    refx = rx;
@@ -110,6 +110,9 @@ bool Player::canFire()
 SVector3* Player::getPosition()
 {
    return position;
+}SVector3* Player::getVelocity()
+{
+   return velocity;
 }
 SVector3* Player::getTranslation()
 {

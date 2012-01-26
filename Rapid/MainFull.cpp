@@ -207,9 +207,7 @@ void update(float dtime)
 {
 	player->update(dtime, map);
   SVector3* temp = new SVector3();
-//AbsX - temp2->X, AbsY - temp2->Y, 5.0
-//vec3 vector = vec3{x,y,z};
-//vector.Normalize();
+
   int i = 0;
   temp->X = 0;
   temp->Y = 0;
@@ -218,7 +216,7 @@ void update(float dtime)
   temp2->X = -player->getPosition()->X;
   temp2->Y = player->getPosition()->Y;
   temp2->Z = player->getPosition()->Z;
-  vec3 aim = vec3(manager->AbsX - temp2->X, -(manager->AbsY - temp2->Y), 5.0);
+  vec3 aim = vec3(0 - player->getVelocity()->X / 3, 0 + player->getVelocity()->Y / 3, 5.0);
   aim.Normalize();
   temp->X = aim.x * 8.0;
   temp->Y = aim.y * 8.0;
@@ -226,20 +224,14 @@ void update(float dtime)
   //printf("\nThe aim is %f, %f, %f.\n", temp->X, temp->Y, temp->Z);
   if (player->canFire()) {
      bullets->addBullet(temp2, temp, NULL, 1.0, 10);
-     printf("\nLook Pa! A Bullet!\n");
      i = 1;
   }
 	camera->update();
   turrets->update(dtime);
-  if(i) printf("\nIt isn't updating turrets\n");
-
   bullets->update(dtime, map);
-  if(i)  printf("\nIt isn't updating bullets\n");
   /**COLLISION CALLS HERE**/
   bullets->collideWith(player);
-  if(i) printf("\nIt isn't collideWith.\n");
   bullets->removeDead(camera->getPosition());
-  if(i) fprintf(stderr, "\nIt's removeDead");
 
 	turrets->collideAllWith(player);
 }
@@ -252,40 +244,48 @@ void Display()
 	float Delta = (float) (Time1 - Time0) / 1000.f;
 	Time0 = Time1;
 
-	update(Delta);
+  
+  if (player->health > 0 && curTime < 120000)
+  {
+	   update(Delta);
 
-	int dtime = (time(NULL) - *timeTracker) * 1000;
-	curTime += dtime;
-	numFrames++;
-  if (curTime / 1000 > lastSecond)
-	{
-		lastSecond++;
-	  FPS = numFrames;
-	  numFrames = 0;
-	}
-	time(timeTracker);
+     int dtime = (time(NULL) - *timeTracker) * 1000; 
+	   curTime += dtime;
+	   numFrames++;
+     if (curTime / 1000 > lastSecond)
+	   {
+		    lastSecond++;
+	      FPS = numFrames;
+	      numFrames = 0;
+	   }
+	   time(timeTracker);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	hud->drawText(FPS, curTime, player->health);
-  hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
+	   hud->drawText(FPS, curTime, player->health);
+     hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	   glMatrixMode(GL_MODELVIEW);
+	   glLoadIdentity();
 
-	camera->setLookAt();
+	   camera->setLookAt();
 
-	/*Enemy *temp = e;
-  while(temp != 0)
-	{
-		temp->draw();
-		temp = temp->next;
-	}*/
-	map->draw();
-  player->draw();
-  turrets->drawAll();
-  bullets->draw();
+	   map->draw();
+     player->draw();
+     turrets->drawAll();
+     bullets->draw();
 
+  }
+  else if (curTime >= 120000)
+  {
+	   hud->drawText(FPS, curTime, player->health);
+     hud->drawWin();
+  }
+  else
+  {
+	   hud->drawText(FPS, curTime, 0);
+     hud->drawLose();
+  }
 	glutSwapBuffers();
 	glutPostRedisplay();
 }
@@ -347,6 +347,8 @@ int main(int argc, char * argv[])
 	hud = new HUD();
   bullets = new Bullets();
 	initEnemies();
+
+  manager->sendPlayerPositionPulse();      
 
 	glutKeyboardFunc(keyCallback);
 	glutKeyboardUpFunc(keyUpCallback);

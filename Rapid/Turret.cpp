@@ -182,7 +182,6 @@ void Turret::collideWith(Player* p)
          float z = p->getTranslation()->Z + 3;
          if (z - p->getSize() < Translation.Z + getSize()  && z + p->getSize() > Translation.Z - getSize())
          {
-            printf("hit: player - %f, %f, %f  ;  turret - %f, %f, %f\n", p->getTranslation()->X, p->getTranslation()->Y, p->getTranslation()->Z, Translation.X, Translation.Y, Translation.Z);
             p->health -= 20;
             this->health = 0;
          }
