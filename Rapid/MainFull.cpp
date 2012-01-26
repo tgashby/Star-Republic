@@ -341,10 +341,10 @@ int main(int argc, char * argv[])
  	Initialize();
   float size = 1.0;
 
-	player = new Player(new SVector3(0,0,6), new SVector3(0,0,4), NULL, size);
-	camera = new Camera(6, 4, 3, player);
-  manager = new InputManager(player);
 	map = new Map();
+	player = new Player(new SVector3(0,0,6), new SVector3(0,0,4), NULL, size);
+	camera = new Camera(6, 4, 3, player,map);
+  manager = new InputManager(player);
   turrets = new Turrets(map, 20, player);
 	hud = new HUD();
   bullets = new Bullets();
