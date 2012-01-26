@@ -82,6 +82,53 @@ void HUD::drawText(int FPS, int curTime, int playerHealth)
 	glDisable(GL_LIGHT0);
 }
 
+void HUD::drawWin()
+{
+        glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+ 	gluLookAt(0.0, 0.0, 1.0, 
+            0.0, 0.0, 0.0, 
+            0.0, 1.0, 0.0);
+	GLfloat color[3] = {0.4, 1.0, 0.1};
+	
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color); 
+		
+ 	GLfloat lightDir[] = {0, 0, -1, 0.0};
+	GLfloat diffuseComp[] = {1.0, 1.0, 1.0, 1.0};
+
+	glEnable(GL_LIGHT0);
+ 	glLightfv(GL_LIGHT0, GL_POSITION, lightDir);
+ 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseComp);
+
+        char win[] = "Congratulations!";
+	renderBitmapString(-0.5, 0.7, -4.5, win);
+
+	glDisable(GL_LIGHT0);
+}
+void HUD::drawLose()
+{
+        glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+ 	gluLookAt(0.0, 0.0, 1.0, 
+            0.0, 0.0, 0.0, 
+            0.0, 1.0, 0.0);
+	GLfloat color[3] = {0.4, 1.0, 0.1};
+	
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color); 
+		
+ 	GLfloat lightDir[] = {0, 0, -1, 0.0};
+	GLfloat diffuseComp[] = {1.0, 1.0, 1.0, 1.0};
+
+	glEnable(GL_LIGHT0);
+ 	glLightfv(GL_LIGHT0, GL_POSITION, lightDir);
+ 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseComp);
+
+        char win[] = "Mission Failed!";
+	renderBitmapString(-0.5, 0.7, -4.5, win);
+
+	glDisable(GL_LIGHT0);
+}
+
 void HUD::renderGlutAimer(float px, float py, float dx, float dy)
 {
    glMatrixMode(GL_MODELVIEW);
