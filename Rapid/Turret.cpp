@@ -114,12 +114,18 @@ void Turret::update(float dt)
    d->Y = Translation.Y - aim->getPosition()->Y;
    d->Z = Translation.Z - aim->getPosition()->Z;
    
-   d->X /= d->length();
-   d->Y /= d->length();
-   d->Z /= d->length();
 
-   Rotation.X = (-atan(sqrt(d->X * d->X + d->Z * d->Z) / d->Y) * 180 / 3.1415926); 
-   Rotation.Y = (-atan(d->X / d->Z) * 180 / 3.1415926); 
+   //Inclienation?
+   if(aim->getPosition()->Y > 0){    
+      Rotation.X = (atan(sqrt(d->X * d->X + d->Z * d->Z) / d->Y) * 180 / 3.1415926); 
+   }
+   else {
+      Rotation.X = (-atan(sqrt(d->X * d->X + d->Z * d->Z) / d->Y) * 180 / 3.1415926); 
+   }
+      
+   //Rotation?
+   Rotation.Y = (atan(d->X / d->Z) * 180 / 3.1415926); 
+  
    //Rotation.Z = (cos(d->Z) * 180 / 3.1415926); 
 }
 void Turret::draw()
