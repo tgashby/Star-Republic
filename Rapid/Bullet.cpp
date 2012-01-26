@@ -27,9 +27,10 @@ Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage)
 	Translation.Y = pos->Y;
 	Translation.Z = pos->Z;
 
-	Scale.X = 1; 
-	Scale.Y = 1;
-	Scale.Z = 1;
+        float scale = 0.3;
+	Scale.X = scale; 
+	Scale.Y = scale;
+	Scale.Z = scale;
 
 	Rotation.X = 0;
 	Rotation.Y = 90;
@@ -89,11 +90,11 @@ void Bullet::draw()
 		CShaderContext ShaderContext(*shade);
 		ShaderContext.bindBuffer("aPosition", PositionBufferHandle, 4);
 		ShaderContext.bindBuffer("aColor", ColorBufferHandle, 3);
-    ShaderContext.bindBuffer("aNormal", NormalBufferHandle, 3);
+    		ShaderContext.bindBuffer("aNormal", NormalBufferHandle, 3);
 
 		glPushMatrix();
 
-		glTranslatef(Translation.X + 6, Translation.Y + 4, Translation.Z);
+		glTranslatef(-Translation.X + 6, Translation.Y + 4, Translation.Z);
 		glRotatef(Rotation.Z, 0, 0, 1);
 		glRotatef(Rotation.Y, 0, 1, 0);
 		glRotatef(Rotation.X, 1, 0, 0);

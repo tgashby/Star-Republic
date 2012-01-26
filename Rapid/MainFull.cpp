@@ -197,22 +197,19 @@ void initEnemies()
 void update(float dtime)
 {
 	player->update(dtime, map);
-        SVector3* temp = new SVector3();
-        temp->X = 0;
-        temp->Y = 0;
-        temp->Z = -8.0;
-        if (player->canFire()) {
-           bullets->addBullet(player->getPosition(), temp, NULL, 1.0, 10);
-           printf("\nLook Pa! A Bullet!\n");
-           player->setFiring(false);
-        }
+  SVector3* temp = new SVector3();
+  temp->X = 0;
+  temp->Y = 0;
+  temp->Z = -8.0;
+  if (player->canFire()) {
+     bullets->addBullet(player->getPosition(), temp, NULL, 1.0, 10);
+     printf("\nLook Pa! A Bullet!\n");
+  }
 	camera->update();
-        bullets->update(dtime, map);
-        
-        /*COLLISION CALLS HERE*/
-        bullets->collideWith((GameObject*)player);
-
-       // bullets->removeDead(camera->getPosition());
+  bullets->update(dtime, map);
+  /**COLLISION CALLS HERE**/
+  bullets->collideWith((GameObject*)player);
+  // bullets->removeDead(camera->getPosition());
 
 	/*if (shouldAddEnemy()) addEnemy();
 
@@ -259,7 +256,7 @@ void Display()
 	}*/
 	map->draw();
   player->draw();
-        bullets->draw();
+  bullets->draw();
 
 	glutSwapBuffers();
 	glutPostRedisplay();
@@ -279,11 +276,11 @@ void Reshape(int width, int height)
 }
 
 void keyCallback(unsigned char key, int x, int y) {
-        manager->keyCallBack(key, x, y);
+  manager->keyCallBack(key, x, y);
 }
 
 void keyUpCallback(unsigned char key, int x, int y) {
-        manager->keyUpCallBack(key, x, y);
+  manager->keyUpCallBack(key, x, y);
 }
 
 void mouseMotion(int x, int y)

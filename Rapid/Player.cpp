@@ -21,21 +21,21 @@ void waitForUser3()
 
 Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObject(pos, vel, mod, size) {
 	 
-  int health = 100;
-  int cooldown = 0;
-  bool firing = false;
+  health = 100;
+  cooldown = 0;
+  firing = false;
 
   Translation.X = pos->X;
-	Translation.Y = pos->Y;
-	Translation.Z = pos->Z;
+  Translation.Y = pos->Y;
+  Translation.Z = pos->Z;
 
-	Scale.X = 1; 
-	Scale.Y = 1;
-	Scale.Z = 1;
+  Scale.X = 1; 
+  Scale.Y = 1;
+  Scale.Z = 1;
 
-	Rotation.X = 0;
-	Rotation.Y = 90;
-	Rotation.Z = 0;
+  Rotation.X = 0;
+  Rotation.Y = 90;
+  Rotation.Z = 0;
 
   // First create a shader loader and check if our hardware supports shaders
 	CShaderLoader ShaderLoader;
@@ -90,14 +90,10 @@ void Player::setFiring(bool state)
    firing = state;
 }
 
-void Player::setCooldown()
-{
-   cooldown = 200;
-}
-
 bool Player::canFire()
 {
-   if (firing) {
+   if (firing && cooldown == 0) {
+      cooldown = 50;
       return true;
    }
    return false;
@@ -106,6 +102,15 @@ bool Player::canFire()
 SVector3* Player::getPosition()
 {
    return position;
+}
+
+void Player::speedUp()
+{
+   velocity->Z = 7;
+}
+void Player::slowDown()
+{
+   velocity->Z = 4;
 }
 
 
@@ -124,8 +129,8 @@ void Player::update(float dt, Map* bounds)
 	if (position->Y < bounds->ymin) position->Y = bounds->ymin;
 
 
-	Rotation.X = velocity->X * 5.0;
-	Rotation.Y = 90 + velocity->Y * 5.0;
+	Rotation.X = velocity->Y * 5.0;
+	Rotation.Y = 90 + velocity->X * 5.0;
 
 	Translation.X = -position->X;
 	Translation.Y = position->Y;
