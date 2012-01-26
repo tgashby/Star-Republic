@@ -2,12 +2,16 @@
 
 #include "GameObject.h"
 #include <math.h>
+#include "Bullet.h"
 #include "Util/SVector3.h"
+#include "Player.h"
 
 class Collision{
 public: 
 
-   static int collisionCheck(GameObject * first, GameObject * second);
+   Collision();
+   ~Collision();
+   void collisionCheck(Player * first, Bullet * second);
 };
 
 

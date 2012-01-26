@@ -1,5 +1,17 @@
-#pragma once
+#ifdef __APPLE__
+#include "GLUT/glut.h"
+#include <OPENGL/gl.h>
+#endif
+
+#ifdef __unix__
 #include <GL/glut.h>
+#endif
+
+#ifdef _WIN32
+#include <GL\glew.h>
+#include <GL\glut.h>
+#endif
+
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
@@ -33,6 +45,12 @@ Map::Map ()
         ymin = -1.9;
         ymax = 1.9;
 
+        
+	groundxmin = 1;
+        groundxmax = 11;
+        groundzmin = 45;
+        groundzmax = 505;
+
 
 	// First create a shader loader and check if our hardware supports shaders
 	CShaderLoader ShaderLoader;
@@ -54,6 +72,7 @@ Map::Map ()
 	Shader->loadAttribute("aNormal");
 
 	// Attempt to load mesh
+	//CMesh * Mesh = CMeshLoader::loadASCIIMesh("Models/canyon.obj");
 	CMesh * Mesh = CMeshLoader::loadASCIIMesh("Models/grid.m");
 	if (! Mesh)
 	{
@@ -77,8 +96,7 @@ Map::~Map(){
 
 
 void Map::draw()
-{
-	
+{	
 	{
 		// Shader context works 
 		// by cleaning up the shader settings once it
@@ -96,7 +114,7 @@ void Map::draw()
 		glRotatef(Rotation.X, 1, 0, 0);
 		glScalef(Scale.X, Scale.Y, Scale.Z);
 
-		glDrawArrays(GL_TRIANGLES, 0, 100);
+		glDrawArrays(GL_TRIANGLES, 0, 3 * TriangleCount);
 
 		glPopMatrix();
 	}

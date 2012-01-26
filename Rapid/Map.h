@@ -22,6 +22,7 @@ public:
 	int TriangleCount;
 
 	int xmin, xmax, ymin, ymax;
+	int groundxmin, groundxmax, groundzmin, groundzmax;
 
 	Map ();
 	~Map();

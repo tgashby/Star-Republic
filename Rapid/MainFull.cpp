@@ -9,6 +9,12 @@
 #include <GL/glut.h>
 #endif
 
+#ifdef _WIN32
+#include <GL\glew.h>
+#include <GL\glut.h>
+#endif
+
+
 #include <stdio.h>
 
 
@@ -22,9 +28,12 @@
 #include "InputManager.h"
 #include "Player.h"
 #include "Bullets.h"
-#include "Bullet.h"
+//#include "Bullet.h"
 #include "Collision.h"
 #include "GameObject.h"
+#include "Turrets.h"
+#include "Turret.h"
+#include "Util/Vector.hpp"
 
 #define LOOK_SPEED 0.1
 
@@ -55,6 +64,7 @@ Map *map;
 HUD* hud;
 InputManager* manager;
 Bullets* bullets;
+Turrets* turrets;
 
 
 /***************************
@@ -197,29 +207,49 @@ void initEnemies()
 void update(float dtime)
 {
 	player->update(dtime, map);
-        SVector3* temp = new SVector3();
-        temp->X = 0;
-        temp->Y = 0;
-        temp->Z = -8.0;
-        if (player->canFire()) {
-           bullets->addBullet(player->getPosition(), temp, NULL, 1.0, 10);
-           printf("\nLook Pa! A Bullet!\n");
-           player->setFiring(false);
-        }
-	camera->update();
-        bullets->update(dtime, map);
-        
-        /*COLLISION CALLS HERE*/
-        bullets->collideWith((GameObject*)player);
+  SVector3* temp = new SVector3();
 
-       // bullets->removeDead(camera->getPosition());
+  int i = 0;
+  temp->X = 0;
+  temp->Y = 0;
+  temp->Z = 5.0;
+  SVector3* temp2 = new SVector3();
+  temp2->X = -player->getPosition()->X;
+  temp2->Y = player->getPosition()->Y;
+  temp2->Z = player->getPosition()->Z;
+  vec3 aim = vec3(0 - player->getVelocity()->X / 3, 0 + player->getVelocity()->Y / 3, 5.0);
+  aim.Normalize();
+  temp->X = aim.x * 8.0;
+  temp->Y = aim.y * 8.0;
+  temp->Z = aim.z * 8.0;
+  //printf("\nThe aim is %f, %f, %f.\n", temp->X, temp->Y, temp->Z);
+  if (player->canFire()) {
+     bullets->addBullet(temp2, temp, NULL, 1.0, 10);
+     i = 1;
+  }
+  turrets->shootIfPossible();
+  Turret* current = turrets->first;
+  while (current != NULL) {
+     if (current->firing == true && current->cooldown == 0 && current->health > 0) {
+        current->cooldown = 50;
+        temp->X = -current->Translation.X;
+        temp->Y = current->Translation.Y;
+        temp->Z = current->Translation.Z;
+        //bullets->addBulletBad(temp, current->firingDirection, NULL, 1.0, 10);
+     }
+     current = current->next;
+  }
+  camera->update();
+  turrets->update(dtime);
+  bullets->update(dtime, map);
+  /**COLLISION CALLS HERE**/
+  bullets->collideWith(player);
+  bullets->collideWith(turrets);
+  bullets->removeDead(camera->getPosition());
 
-	/*if (shouldAddEnemy()) addEnemy();
-
-	detectEnemyEnemyCollisions(dtime);
-	detectPlayerEnemyCollisions();*/
+	turrets->collideAllWith(player);
 }
-
+   
 // Manages time independent movement and draws the VBO
 void Display()
 {
@@ -228,39 +258,52 @@ void Display()
 	float Delta = (float) (Time1 - Time0) / 1000.f;
 	Time0 = Time1;
 
-	update(Delta);
+  
+  if (player->health > 0 && curTime < 120000)
+  {
+	   update(Delta);
 
-	int dtime = (time(NULL) - *timeTracker) * 1000;
-	curTime += dtime;
-	numFrames++;
-  if (curTime / 1000 > lastSecond)
-	{
-		lastSecond++;
-	  FPS = numFrames;
-	  numFrames = 0;
-	}
-	time(timeTracker);
+     int dtime = (time(NULL) - *timeTracker) * 1000; 
+	   curTime += dtime;
+	   numFrames++;
+     if (curTime / 1000 > lastSecond)
+	   {
+		    lastSecond++;
+	      FPS = numFrames;
+	      numFrames = 0;
+	   }
+	   time(timeTracker);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	hud->drawText(FPS, curTime);
-  hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
+//	   hud->drawText(FPS, curTime, player->health, turrets->countAll());
+//     hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	   glMatrixMode(GL_MODELVIEW);
+	   glLoadIdentity();
 
-	camera->setLookAt();
+	   camera->setLookAt();
 
-	/*Enemy *temp = e;
-  while(temp != 0)
-	{
-		temp->draw();
-		temp = temp->next;
-	}*/
-	map->draw();
-  player->draw();
-        bullets->draw();
+	   map->draw();
+     player->draw();
+     turrets->drawAll();
+     bullets->draw();
+     
+     hud->drawText(FPS, curTime, player->health, turrets->countAll());
+     hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
 
+
+  }
+  else if (curTime >= 120000)
+  {
+	   hud->drawText(FPS, curTime, player->health, turrets->countAll());
+     hud->drawWin();
+  }
+  else
+  {
+	   hud->drawText(FPS, curTime, 0, turrets->countAll());
+     hud->drawLose();
+  }
 	glutSwapBuffers();
 	glutPostRedisplay();
 }
@@ -279,11 +322,11 @@ void Reshape(int width, int height)
 }
 
 void keyCallback(unsigned char key, int x, int y) {
-        manager->keyCallBack(key, x, y);
+  manager->keyCallBack(key, x, y);
 }
 
 void keyUpCallback(unsigned char key, int x, int y) {
-        manager->keyUpCallBack(key, x, y);
+  manager->keyUpCallBack(key, x, y);
 }
 
 void mouseMotion(int x, int y)
@@ -314,13 +357,16 @@ int main(int argc, char * argv[])
  	Initialize();
   float size = 1.0;
 
-	player = new Player(new SVector3(0,0,6), new SVector3(0,0,4), NULL, size);
-	camera = new Camera(6, 4, 3, player);
-  manager = new InputManager(player);
 	map = new Map();
+	player = new Player(new SVector3(0,0,6), new SVector3(0,0,4), NULL, size);
+	camera = new Camera(6, 4, 3, player,map);
+  manager = new InputManager(player);
+  turrets = new Turrets(map, 20, player);
 	hud = new HUD();
-        bullets = new Bullets();
+  bullets = new Bullets();
 	initEnemies();
+
+  manager->sendPlayerPositionPulse();      
 
 	glutKeyboardFunc(keyCallback);
 	glutKeyboardUpFunc(keyUpCallback);

@@ -4,106 +4,138 @@
 #include <fstream>
 #include <sstream>
 
+//#include "MeshParser.h"
+
 CMesh * const CMeshLoader::loadASCIIMesh(std::string const & fileName)
 {
-	std::ifstream File;
-	File.open(fileName.c_str());
+   CMesh *Mesh = new CMesh();
 
-	if (! File.is_open())
-	{
-		std::cerr << "Unable to open mesh file: " << fileName << std::endl;
-		return 0;
-	}
+   if(std::string::npos == fileName.find(".m")) {
+   MeshData *meshData = loadMesh(fileName, LOAD_NORMAL_FACE, 1.0);
+   
+   for (int i = 0; i < meshData->vertexCount; ++i) {
+      SVector3 Position;
+      Position.X = meshData->vertices[i*11];
+      Position.Y = meshData->vertices[i*11+1];
+      Position.Z = meshData->vertices[i*11+2];
+      
+      SVertex Vertex;
+      Vertex.Position = Position;
+      
+      Mesh->Vertices.push_back(Vertex);
+   }
+   
+   for (int i = 0; i < meshData->indexCount;) {
+      CMesh::STriangle Triangle;
+      Triangle.VertexIndex1 = meshData->indices[i++];
+      Triangle.VertexIndex2 = meshData->indices[i++];
+      Triangle.VertexIndex3 = meshData->indices[i++];
+      
+      Mesh->Triangles.push_back(Triangle);
+   }
+   
+   return Mesh;
+   }
+   else {
+   std::ifstream File;
+        File.open(fileName.c_str());
 
-	CMesh * Mesh = new CMesh();
+        if (! File.is_open())
+        {
+                std::cerr << "Unable to open mesh file: " << fileName << std::endl;
+                return 0;
+        }
 
-	while (File)
-	{
-		std::string ReadString;
-		std::getline(File, ReadString);
+        CMesh * Mesh = new CMesh();
 
-		std::stringstream Stream(ReadString);
+        while (File)
+        {
+                std::string ReadString;
+                std::getline(File, ReadString);
 
-		std::string Label;
-		Stream >> Label;
+                std::stringstream Stream(ReadString);
 
-		if (Label.find("#") != std::string::npos)
-		{
-			// Comment, skip
-			continue;
-		}
+                std::string Label;
+                Stream >> Label;
 
-		if ("Vertex" == Label)
-		{
-			int Index;
-			Stream >> Index; // We don't care, throw it away
+                if (Label.find("#") != std::string::npos)
+                {
+                        // Comment, skip
+                        continue;
+                }
 
-			SVector3 Position;
-			Stream >> Position.X;
-			Stream >> Position.Y;
-			Stream >> Position.Z;
+                if ("Vertex" == Label)
+                {
+                        int Index;
+                        Stream >> Index; // We don't care, throw it away
 
-			SVertex Vertex;
-			Vertex.Position = Position;
+                        SVector3 Position;
+                        Stream >> Position.X;
+                        Stream >> Position.Y;
+                        Stream >> Position.Z;
 
-			Mesh->Vertices.push_back(Vertex);
-		}
-		else if ("Face" == Label)
-		{
-			int Index;
-			Stream >> Index; // We don't care, throw it away
+                        SVertex Vertex;
+                        Vertex.Position = Position;
 
-			int Vertex1, Vertex2, Vertex3;
-			Stream >> Vertex1;
-			Stream >> Vertex2;
-			Stream >> Vertex3;
+                        Mesh->Vertices.push_back(Vertex);
+                }
+                else if ("Face" == Label)
+                {
+                        int Index;
+                        Stream >> Index; // We don't care, throw it away
 
-			CMesh::STriangle Triangle;
-			Triangle.VertexIndex1 = Vertex1 - 1;
-			Triangle.VertexIndex2 = Vertex2 - 1;
-			Triangle.VertexIndex3 = Vertex3 - 1;
+                        int Vertex1, Vertex2, Vertex3;
+                        Stream >> Vertex1;
+                        Stream >> Vertex2;
+                        Stream >> Vertex3;
 
-			size_t Location;
-			if ((Location = ReadString.find("{")) != std::string::npos) // there is a color
-			{
-				Location = ReadString.find("rgb=(");
-				Location += 5; // rgb=( is 5 characters
+                        CMesh::STriangle Triangle;
+                        Triangle.VertexIndex1 = Vertex1 - 1;
+                        Triangle.VertexIndex2 = Vertex2 - 1;
+                        Triangle.VertexIndex3 = Vertex3 - 1;
 
-				ReadString = ReadString.substr(Location);
-				std::stringstream Stream(ReadString);
-				float Color;
-				Stream >> Color;
-				Triangle.Color.Red = Color;
-				Stream >> Color;
-				Triangle.Color.Green = Color;
-				Stream >> Color;
-				Triangle.Color.Blue = Color;
-			}
+                        size_t Location;
+                        if ((Location = ReadString.find("{")) != std::string::npos) // there is a color
+                        {
+                                Location = ReadString.find("rgb=(");
+                                Location += 5; // rgb=( is 5 characters
 
-			Mesh->Triangles.push_back(Triangle);
-		}
-		else if ("" == Label)
-		{
-			// Just a new line, carry on...
-		}
-		else if ("Corner" == Label)
-		{
-			// We're not doing any normal calculations... (oops!)
-		}
-		else
-		{
-			std::cerr << "While parsing ASCII mesh: Expected 'Vertex' or 'Face' label, found '" << Label << "'." << std::endl;
-		}
-	}
+                                ReadString = ReadString.substr(Location);
+                                std::stringstream Stream(ReadString);
+                                float Color;
+                                Stream >> Color;
+                                Triangle.Color.Red = Color;
+                                Stream >> Color;
+                                Triangle.Color.Green = Color;
+                                Stream >> Color;
+                                Triangle.Color.Blue = Color;
+                        }
 
-	if (! Mesh->Triangles.size() || ! Mesh->Vertices.size())
-	{
-		delete Mesh;
-		return 0;
-	}
+                        Mesh->Triangles.push_back(Triangle);
+                }
+                else if ("" == Label)
+                {
+                        // Just a new line, carry on...
+                }
+                else if ("Corner" == Label)
+                {
+                        // We're not doing any normal calculations... (oops!)
+                }
+                else
+                {
+                        std::cerr << "While parsing ASCII mesh: Expected 'Vertex' or 'Face' label, found '" << Label << "'." << std::endl;
+                }
+        }
 
-	return Mesh;
-}
+        if (! Mesh->Triangles.size() || ! Mesh->Vertices.size())
+        {
+                delete Mesh;
+                return 0;
+        }
+
+        return Mesh;
+
+   }}
 
 void CMeshLoader::createVertexBufferObject(CMesh const & Mesh, int & TriangleCount, GLuint & PositionBufferHandle, GLuint & ColorBufferHandle, GLuint & NormalBufferHandle)
 {

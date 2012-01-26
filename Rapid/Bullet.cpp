@@ -1,3 +1,4 @@
+#include "Compromise2.h"
 #include <iostream>
 
 #ifdef __APPLE__
@@ -9,9 +10,13 @@
 #include <GL/glut.h>
 #endif
 
-#include <stdio.h>
+#ifdef _WIN32
+#include <GL\glew.h>
+#include <GL\glut.h>
+#endif
 
-#include "Bullet.h"
+
+#include <stdio.h>
 
 void waitForUser4() 
 {
@@ -19,17 +24,21 @@ void waitForUser4()
 	std::cin.get();
 }
 
-Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage) : GameObject(pos, vel, mod, size) {
+Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage, bool nice) : GameObject(pos, vel, mod) {
 
    this->damage = damage;
    this->size = size;
+   toDie = false;
+   ignore = false;
+   this->nice = nice;
    Translation.X = pos->X;
 	Translation.Y = pos->Y;
 	Translation.Z = pos->Z;
 
-	Scale.X = 1; 
-	Scale.Y = 1;
-	Scale.Z = 1;
+        float scale = 0.3;
+	Scale.X = scale; 
+	Scale.Y = scale;
+	Scale.Z = scale;
 
 	Rotation.X = 0;
 	Rotation.Y = 90;
@@ -55,7 +64,7 @@ Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage)
   shade->loadAttribute("aNormal");
 	
 	// Attempt to load mesh
-	mod = CMeshLoader::loadASCIIMesh("Models/bunny500.m");
+	mod = CMeshLoader::loadASCIIMesh("Models/bullet.obj");
 	if (! mod)
 	{
 		std::cerr << "Unable to load necessary mesh." << std::endl;
@@ -69,7 +78,7 @@ Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage)
 	// Now load our mesh into a VBO, retrieving the number of triangles and the handles to each VBO
 	CMeshLoader::createVertexBufferObject(* mod, TriangleCount, 
 		PositionBufferHandle, ColorBufferHandle, NormalBufferHandle);
-        printf("\nLook ma! It's a bullet!\n");
+        //printf("\nLook ma! It's a bullet!\n");
 }
 
 Bullet::~Bullet() {
@@ -80,20 +89,25 @@ SVector3* Bullet::getPosition()
    return position;
 }
 
+bool Bullet::getIgnore()
+{
+    return ignore;
+}
 
 void Bullet::draw()
 {
 	{
+                if (ignore == false) {
 		// Shader context works by cleaning up the shader settings once it
 		// goes out of scope
 		CShaderContext ShaderContext(*shade);
 		ShaderContext.bindBuffer("aPosition", PositionBufferHandle, 4);
 		ShaderContext.bindBuffer("aColor", ColorBufferHandle, 3);
-    ShaderContext.bindBuffer("aNormal", NormalBufferHandle, 3);
+    		ShaderContext.bindBuffer("aNormal", NormalBufferHandle, 3);
 
 		glPushMatrix();
 
-		glTranslatef(Translation.X + 6, Translation.Y + 4, Translation.Z);
+		glTranslatef(-Translation.X + 6, Translation.Y + 4, Translation.Z);
 		glRotatef(Rotation.Z, 0, 0, 1);
 		glRotatef(Rotation.Y, 0, 1, 0);
 		glRotatef(Rotation.X, 1, 0, 0);
@@ -102,6 +116,7 @@ void Bullet::draw()
 		glDrawArrays(GL_TRIANGLES, 0, TriangleCount*3);
 
 		glPopMatrix();
+                }
 	}
 }
 
@@ -110,22 +125,83 @@ void Bullet::collideWith(GameObject * collided)
    toDie = true;
 }
 
-int Bullet::gettoDie()
+void Bullet::nullify()
+{
+   ignore = true;
+}
+void Bullet::collisionCheck(Turret* object)
+{
+   if (ignore == false && nice == true) 
+   {
+     float temp = 2*(object->getSize() + this->size/2);
+     SVector3* b = new SVector3();
+     b = this->getPosition();
+     float aX = object->Translation.X + 1;
+     float aY = object->Translation.Y;
+     float aZ = object->Translation.Z - 1;
+     float bX = Translation.X;
+     float bY = Translation.Y;
+     float bZ = Translation.Z;
+     float distance = sqrt((aX - bX) * (aX - bX) + (aY - bY) * (aY - bY) + (aZ - bZ) * (aZ - bZ));
+     if (distance < temp) {
+       toDie = true;
+     }
+   }
+   else {
+        toDie = false;
+   }
+   //return false;
+}
+
+void Bullet::collisionCheck(Player* object)
+{
+   if (ignore == false && nice == false) {
+   float temp = object->size/2 + this->size/2;
+   SVector3* a = new SVector3();
+   a = object->getPosition();
+   SVector3* b = new SVector3();
+   b = this->getPosition();
+   float aX = a->X;
+   float aY = a->Y;
+   float aZ = a->Z;
+   float bX = b->X;
+   float bY = b->Y;
+   float bZ = b->Z;
+   //float x2 = x1->X;
+   //float x2 = second->getPosition()->X;
+   float distance = sqrt((aX - bX) * (aX - bX) + (aY - bY) * (aY - bY) + (aZ - bZ) * (aZ - bZ));
+   //float distance = 1;
+   if (distance < temp) {
+      //first->collideWith((GameObject*)second);
+      //this->collideWith((GameObject*)object);
+   //return true;
+   //toDie = true;
+   }
+   }
+   else {
+        toDie = false;
+   }
+   //return false;
+}
+
+
+bool Bullet::gettoDie()
 {
    return toDie;
 }
 
 void Bullet::update(float dt)
 {
-
-	position->X -= velocity->X * dt;
-	position->Y -= velocity->Y * dt;
-	position->Z += velocity->Z * dt;
+  if (ignore == false) {
+	  position->X -= velocity->X * dt;
+	  position->Y -= velocity->Y * dt;
+   	position->Z += velocity->Z * dt;
 	
-	Rotation.X = velocity->X * 5.0;
-	Rotation.Y = 90 + velocity->Y * 5.0;
+	  Rotation.X = velocity->X * 5.0;
+	  Rotation.Y = 90 + velocity->Y * 5.0;
 
-	Translation.X = -position->X;
-	Translation.Y = position->Y;
-	Translation.Z = position->Z;
+	  Translation.X = -position->X;
+	  Translation.Y = position->Y;
+	  Translation.Z = position->Z;
+  }
 }

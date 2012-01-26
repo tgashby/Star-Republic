@@ -28,11 +28,15 @@ void InputManager::keyCallBack(unsigned char key, int x, int y) {
 	   s = 1;
    if (key == 'a'){
 	   a = 1;
-           player->setFiring(true);
-           printf("\nA Button Was Pressed!\n");
    }
    if (key == 'd')
 	   d = 1;
+   if (key == 'z'){
+           player->setFiring(true);
+   }
+   if (key == ' '){
+           player->speedUp();
+   }
 }
 
 void InputManager::keyUpCallBack(unsigned char key, int x, int y) {
@@ -48,8 +52,20 @@ void InputManager::keyUpCallBack(unsigned char key, int x, int y) {
    }
    if (key == 'd')
 	   d = 0;
+   if (key == 'z'){
+           player->setFiring(false);
+   }
+   if (key == ' '){
+           player->slowDown();
+   }
 }
 
+void InputManager::sendPlayerPositionPulse()
+{
+   glutWarpPointer(500, 300);
+   player->setRefx(500);
+   player->setRefy(300);
+}
 void InputManager::mouseMotion(int x, int y) {
    dx = prevX - x;
    dy = prevY - y;

@@ -9,6 +9,12 @@
 #include <GL/glut.h>
 #endif
 
+#ifdef _WIN32
+#include <GL\glew.h>
+#include <GL\glut.h>
+#endif
+
+
 #include <stdio.h>
 
 #include "Player.h"
@@ -19,23 +25,24 @@ void waitForUser3()
 	std::cin.get();
 }
 
-Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObject(pos, vel, mod, size) {
+Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObject(pos, vel, mod) {
 	 
-  int health = 100;
-  int cooldown = 0;
-  bool firing = false;
+  health = 100;
+  cooldown = 0;
+  firing = false;
+  this->size = size;
 
   Translation.X = pos->X;
-	Translation.Y = pos->Y;
-	Translation.Z = pos->Z;
+  Translation.Y = pos->Y;
+  Translation.Z = pos->Z;
 
-	Scale.X = 1; 
-	Scale.Y = 1;
-	Scale.Z = 1;
+  Scale.X = 1; 
+  Scale.Y = 1;
+  Scale.Z = 1;
 
-	Rotation.X = 0;
-	Rotation.Y = 90;
-	Rotation.Z = 0;
+  Rotation.X = 90;
+  Rotation.Y = 0;
+  Rotation.Z = 0;
 
   // First create a shader loader and check if our hardware supports shaders
 	CShaderLoader ShaderLoader;
@@ -57,7 +64,8 @@ Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObjec
   shade->loadAttribute("aNormal");
 	
 	// Attempt to load mesh
-	mod = CMeshLoader::loadASCIIMesh("Models/cessna_color500.m");
+   mod = CMeshLoader::loadASCIIMesh("Models/spaceship.obj");
+	//mod = CMeshLoader::loadASCIIMesh("Models/cessna_color500.m");
 	if (! mod)
 	{
 		std::cerr << "Unable to load necessary mesh." << std::endl;
@@ -75,7 +83,7 @@ Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObjec
 
 Player::~Player()
 { }
-#pragma once
+
 void Player::setRefx(float rx)
 {
    refx = rx;
@@ -90,14 +98,10 @@ void Player::setFiring(bool state)
    firing = state;
 }
 
-void Player::setCooldown()
-{
-   cooldown = 200;
-}
-
 bool Player::canFire()
 {
-   if (firing) {
+   if (firing && cooldown == 0) {
+      cooldown = 50;
       return true;
    }
    return false;
@@ -106,13 +110,29 @@ bool Player::canFire()
 SVector3* Player::getPosition()
 {
    return position;
+}SVector3* Player::getVelocity()
+{
+   return velocity;
+}
+SVector3* Player::getTranslation()
+{
+   return &Translation;
+}
+
+void Player::speedUp()
+{
+   velocity->Z = 7;
+}
+void Player::slowDown()
+{
+   velocity->Z = 4;
 }
 
 
 void Player::update(float dt, Map* bounds)
 {
-        velocity->X = (position->X - refx);
-        velocity->Y = (position->Y - refy);
+  velocity->X = (position->X - refx);
+  velocity->Y = (position->Y - refy);
 
 	position->X -= velocity->X * dt;
 	position->Y -= velocity->Y * dt;
@@ -124,8 +144,8 @@ void Player::update(float dt, Map* bounds)
 	if (position->Y < bounds->ymin) position->Y = bounds->ymin;
 
 
-	Rotation.X = velocity->X * 5.0;
-	Rotation.Y = 90 + velocity->Y * 5.0;
+	Rotation.X = velocity->Y * 5.0;
+	Rotation.Y = 90 + velocity->X * 5.0;
 
 	Translation.X = -position->X;
 	Translation.Y = position->Y;
@@ -134,6 +154,10 @@ void Player::update(float dt, Map* bounds)
         if (cooldown > 0) {
            cooldown--;
         }
+}
+float Player::getSize()
+{
+   return 1;
 }
 void Player::draw()
 {
@@ -157,9 +181,19 @@ void Player::draw()
 		glPopMatrix();
 	}
 }
-void Player::collideWith(GameObject collided)
+void Player::collideWith(GameObject* collided)
 {
 
 }
+
+void Player::collideWithBullet(int damage)
+{
+   health = health - damage;
+   if (health < 0) {
+      health = 0;
+   }
+}
+
+
 
 

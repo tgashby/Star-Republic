@@ -1,7 +1,6 @@
 #include "Bullets.h"
-#include "Map.h"
-#include "GameObject.h"
-#include "Bullet.h"
+#include <stdio.h>
+#include <assert.h>
 
 Bullets::Bullets()
 {
@@ -15,18 +14,20 @@ void Bullets::update(float dt, Map* map)
 {
    for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++)
    {
+   //printf("\nHalfway through update.");
      if (i->gettoDie())
      {
-         list.erase(i);
+         i->nullify();
      }
    }
 
    for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
       i->update(dt);
-      if (i->getPosition()->X < map->xmin || i->getPosition()->X > map->xmax
+   //printf("\nNear end through update.");
+      /*if (i->getPosition()->X < map->xmin || i->getPosition()->X > map->xmax
          || i->getPosition()->Y < map->ymin || i->getPosition()->Y > map->ymax) {
          list.erase(i);
-      }
+      }*/
    }
 
 }
@@ -40,26 +41,67 @@ void Bullets::draw()
 
 void Bullets::addBullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage)
 {
-   list.push_back(Bullet(pos, vel, mod, size, damage));
+   list.push_back(Bullet(pos, vel, mod, size, damage, true));
 }
 
-void Bullets::collideWith(GameObject* object)
+void Bullets::addBulletBad(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage)
 {
- /*  for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
-      if (Collision::collisionCheck(object, (GameObject*)&i)) {
-         object->collideWith((GameObject*)&i);
-         i->~Bullet();
-         list.erase(i);
+   /*SVector3* thing = new SVector3();
+   thing->X = pos.X;
+   thing->Y = pos.Y;
+   thing->Z = pos.Z;*/
+   list.push_back(Bullet(pos, vel, mod, size, damage, false));
+}
+
+void Bullets::collideWith(Player* object)
+{
+   //fprintf(stderr, "\nCollidewithisbeingrun!");
+   Collision* collider = new Collision();
+   Bullet* temp = NULL;
+   for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
+      //fprintf(stderr, "\nCollisioncheck is being run!\n");
+      //Bullet* temp = &(*i);
+      i->collisionCheck(object);
+      if (i->gettoDie()) {
+      //fprintf(stderr, "\nCollisioncheck doesn't crash!\n");
+        object->collideWithBullet(10);
+         //list.erase(i);
       }
-   } */
+   }
+   delete(collider);
+}
+
+void Bullets::collideWith(Turrets* turrets)
+{
+   Turret* current = turrets->first;
+   while (current != NULL) {
+      for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
+         i->collisionCheck(current);
+         if (i->gettoDie() && i->getIgnore() != true) {
+            current->collideWithBullet(i->damage);
+            i->nullify();
+            break;
+         }
+      }
+      if (current->next == NULL) {
+         break;
+      }
+      current = current->next;
+   }
 }
 
 void Bullets::removeDead(SVector3 cameraPosition)
 {
    for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
-     if (i->gettoDie() || i->getPosition()->Z < cameraPosition.Z)
+     if (i->getIgnore() == false) {
+     //fprintf(stderr, "BRING OUT YER DEAD\n");
+     if (i->gettoDie())
      {
-         list.erase(i);
+         //fprintf(stderr, "HI DEAD\n");
+         //list.erase(i);
+         //i = list.begin();
+         i->nullify();
+     }
      }
    }
 }

@@ -18,7 +18,7 @@
 #endif
 
 #include "CMesh.h"
-
+#include "MeshParser.h"
 
 class CMeshLoader
 {
