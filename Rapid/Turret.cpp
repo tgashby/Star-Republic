@@ -182,7 +182,14 @@ void Turret::collideWith(Player* p)
       }
    }
 }
-void Turret::collideWith(Bullet b)
+void Turret::collideWith(Bullet* b)
 {
 
+}
+void Turret::collideWithBullet(int damage)
+{
+   this->health -= damage*10;
+   if (this-> health < 0) {
+      this->health = 0;
+   }
 }

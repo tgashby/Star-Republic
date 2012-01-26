@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 
 #ifdef __APPLE__
@@ -128,6 +129,36 @@ void Bullet::collideWith(GameObject * collided)
 void Bullet::nullify()
 {
    ignore = true;
+}
+void Bullet::collisionCheck(Turret* object)
+{
+   if (ignore == false) {
+   float temp = object->getSize()/2 + this->size/2;
+   //SVector3* a = new SVector3();
+   //a = object->Translation;
+   SVector3* b = new SVector3();
+   b = this->getPosition();
+   float aX = object->Translation.X;
+   float aY = object->Translation.Y;
+   float aZ = object->Translation.Z;
+   float bX = b->X;
+   float bY = b->Y;
+   float bZ = b->Z;
+   //float x2 = x1->X;
+   //float x2 = second->getPosition()->X;
+   float distance = sqrt((aX - bX) * (aX - bX) + (aY - bY) * (aY - bY) + (aZ - bZ) * (aZ - bZ));
+   //float distance = 1;
+   if (distance < temp) {
+      //first->collideWith((GameObject*)second);
+      //this->collideWith((GameObject*)object);
+   //return true;
+   toDie = true;
+   }
+   }
+   else {
+        toDie = false;
+   }
+   //return false;
 }
 
 void Bullet::collisionCheck(Player* object)

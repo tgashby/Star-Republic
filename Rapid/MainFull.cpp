@@ -32,6 +32,7 @@
 #include "Collision.h"
 #include "GameObject.h"
 #include "Turrets.h"
+#include "Turret.h"
 #include "Util/Vector.hpp"
 
 #define LOOK_SPEED 0.1

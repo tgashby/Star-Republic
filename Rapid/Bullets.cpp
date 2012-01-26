@@ -1,7 +1,4 @@
 #include "Bullets.h"
-#include "Map.h"
-#include "GameObject.h"
-#include "Bullet.h"
 #include <stdio.h>
 #include <assert.h>
 
@@ -67,6 +64,20 @@ void Bullets::collideWith(Player* object)
 
 void Bullets::collideWith(Turrets* turrets)
 {
+   Turret* current = turrets->first;
+   while (current != NULL) {
+      for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
+         i->collisionCheck(current);
+         if (i->gettoDie()) {
+            current->collideWithBullet(i->damage);
+            break;
+         }
+      }
+      if (current->next == NULL) {
+         break;
+      }
+      current = current->next;
+   }
 }
 
 void Bullets::removeDead(SVector3 cameraPosition)

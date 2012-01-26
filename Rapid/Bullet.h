@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include <typeinfo>
 #include "Player.h"
+#include "Turret.h"
 
 #ifndef BASICS
 #define BASICS
@@ -39,4 +40,5 @@ public:
    bool getIgnore();
    void nullify();
    void collisionCheck(Player* object);
+   void collisionCheck(Turret* object);
 };
