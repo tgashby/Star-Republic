@@ -64,6 +64,12 @@ void InputManager::keyUpCallBack(unsigned char key, int x, int y) {
    }
 }
 
+void InputManager::sendPlayerPositionPulse()
+{
+   glutWarpPointer(500, 300);
+   player->setRefx(500);
+   player->setRefy(300);
+}
 void InputManager::mouseMotion(int x, int y) {
    dx = prevX - x;
    dy = prevY - y;

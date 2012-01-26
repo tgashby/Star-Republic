@@ -110,6 +110,9 @@ bool Player::canFire()
 SVector3* Player::getPosition()
 {
    return position;
+}SVector3* Player::getVelocity()
+{
+   return velocity;
 }
 SVector3* Player::getTranslation()
 {

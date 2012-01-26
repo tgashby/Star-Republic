@@ -218,7 +218,7 @@ void update(float dtime)
   temp2->X = -player->getPosition()->X;
   temp2->Y = player->getPosition()->Y;
   temp2->Z = player->getPosition()->Z;
-  vec3 aim = vec3(manager->AbsX - temp2->X, -(manager->AbsY - temp2->Y), 5.0);
+  vec3 aim = vec3(0 - player->getVelocity()->X / 3, 0 + player->getVelocity()->Y / 3, 5.0);
   aim.Normalize();
   temp->X = aim.x * 8.0;
   temp->Y = aim.y * 8.0;
@@ -347,6 +347,8 @@ int main(int argc, char * argv[])
 	hud = new HUD();
   bullets = new Bullets();
 	initEnemies();
+
+  manager->sendPlayerPositionPulse();      
 
 	glutKeyboardFunc(keyCallback);
 	glutKeyboardUpFunc(keyUpCallback);

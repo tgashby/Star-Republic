@@ -11,6 +11,7 @@ Player* player;
 
 InputManager(Player* p);
 ~InputManager();
+void sendPlayerPositionPulse();
 void keyCallBack(unsigned char key, int x, int y);
 void keyUpCallBack(unsigned char key, int x, int y);
 void mouseMotion(int x, int y);
