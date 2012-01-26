@@ -4,7 +4,7 @@
 //#include "Interfaces.h"
 #include "Util/Vector.hpp"
 #include <vector>
-#include <string.h>
+#include <string>
 
 enum LOAD_NORMAL_TYPE {
    LOAD_NORMAL_VERTEX,
