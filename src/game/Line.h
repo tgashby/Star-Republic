@@ -19,10 +19,13 @@ public:
 	std::list<GameObject> enemies;
 	/** Global Coordinates **/
 	Vector3<float> start, end;
-	float StartPitch, StartYaw, EndPitch, EndYaw;
+	float m_startPitch; 
+   float m_startYaw;
+   float m_endPitch; 
+   float m_endYaw;
 
-	Line(float sx, float sy, float sz, float ex, float ey, float ez, float sp, float sy, float es, float ey);
-	~Line;
+   Line(float sx, float sy, float sz, float ex, float ey, float ez, float startPitch, float startYaw, float endPitch, float endYaw);
+   ~Line();
 
 	Vector3<float> translateToGlobal(float localX, float localY, float localZ);
 	Vector3<float> globalRotation(float localZ);

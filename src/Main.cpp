@@ -92,10 +92,11 @@ void makeContent()
 
 void draw()
 {
-   Ship.draw();
-   for (std::list<GameObject>::iterator i = Others.begin(); i != Others.end(); i++) {
+   //Ship.draw();
+   /*for (std::list<GameObject>::iterator i = Others.begin(); i != Others.end(); i++) {
       i->draw();
    }
+   */
 }
 
 void update()
@@ -106,11 +107,13 @@ void update()
    Time0 = Time1;
 
    Ship.tic(dt);
-   for (std::list<GameObject>::iterator i = Others.begin(); i != Others.end(); i++) {
-      i->tic(dt);
+   for (std::list<GameObject>::iterator i = Others.begin();
+         i != Others.end(); i++) {
+      i.tic(dt);
    }
 
-   for (std::list<GameObject>::iterator i = Others.begin(); i != Others.end(); i++) {
+   for (std::list<GameObject>::iterator i = Others.begin(); 
+        i != Others.end(); i++) {
       for (std::list<GameObject>::iterator j = i; j != Others.end(); j++) {
          Collision::collisionCheck(i, j);
       }

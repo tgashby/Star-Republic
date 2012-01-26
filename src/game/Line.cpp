@@ -1,15 +1,24 @@
 #include "Line.h"
 
 
-Line::Line(float sx, float sy, float sz, float ex, float ey, float ez, float sp, float sy, float es, float ey)
+/**
+ * @param sx Starting x coordinate 
+ * @param sy Starting y coordinate 
+ * @param sz Starting z coordinate 
+ * @param ex Ending x coordinate 
+ * @param ey Ending y coordinate 
+ * @param ez Ending z coordinate 
+ * @param ez Ending z coordinate 
+ */
+Line::Line(float sx, float sy, float sz, float ex, float ey, float ez, float startPitch, float startYaw, float endPitch, float endYaw)
 {
 	start = new Vector3<float>(sx, sy, sz);
 	end = new Vector3<float>(ex, ey, ez);
 
-	StartPitch = sp;
-	StartYaw = sy;
-	EndPitch = ep;
-	EndYaw = ey;
+	m_startPitch = sp;
+	m_startYaw = sy;
+	m_endPitch = ep;
+	m_endYaw = ey;
 
 	float distance = sqrt((sx - ex) * (sx - ex) + 
 		(sy - ey) * (sy -ey) + (sz - ez) * (sz - ez));
