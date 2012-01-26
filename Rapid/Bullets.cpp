@@ -41,7 +41,16 @@ void Bullets::draw()
 
 void Bullets::addBullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage)
 {
-   list.push_back(Bullet(pos, vel, mod, size, damage));
+   list.push_back(Bullet(pos, vel, mod, size, damage, true));
+}
+
+void Bullets::addBulletBad(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage)
+{
+   /*SVector3* thing = new SVector3();
+   thing->X = pos.X;
+   thing->Y = pos.Y;
+   thing->Z = pos.Z;*/
+   list.push_back(Bullet(pos, vel, mod, size, damage, false));
 }
 
 void Bullets::collideWith(Player* object)

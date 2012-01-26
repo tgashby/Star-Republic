@@ -21,6 +21,7 @@ public:
    int damage;
    bool toDie;
    bool ignore;
+   bool nice;
    float size;
 
    // Handles for VBOs
@@ -30,7 +31,7 @@ public:
    SVector3 Translation, Rotation, Scale;
    int TriangleCount;
    
-   Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage);
+   Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage, bool nice);
    ~Bullet();
    void update(float dt);
    void draw();

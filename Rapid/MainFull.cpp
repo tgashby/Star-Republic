@@ -32,7 +32,7 @@
 #include "Collision.h"
 #include "GameObject.h"
 #include "Turrets.h"
-//#include "Turret.h"
+#include "Turret.h"
 #include "Util/Vector.hpp"
 
 #define LOOK_SPEED 0.1
@@ -227,7 +227,19 @@ void update(float dtime)
      bullets->addBullet(temp2, temp, NULL, 1.0, 10);
      i = 1;
   }
-	camera->update();
+  turrets->shootIfPossible();
+  Turret* current = turrets->first;
+  while (current != NULL) {
+     if (current->firing == true && current->cooldown == 0 && current->health > 0) {
+        current->cooldown = 25;
+        temp->X = -current->Translation.X;
+        temp->Y = current->Translation.Y;
+        temp->Z = current->Translation.Z;
+        bullets->addBulletBad(temp, current->firingDirection, NULL, 1.0, 10);
+     }
+     current = current->next;
+  }
+  camera->update();
   turrets->update(dtime);
   bullets->update(dtime, map);
   /**COLLISION CALLS HERE**/

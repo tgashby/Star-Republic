@@ -23,6 +23,8 @@ public:
    int health, cooldown;
    CShader* shade;
    CMesh *mod;
+   SVector3* firingDirection, location;
+   bool firing;
 
    // Handles for VBOs
    GLuint PositionBufferHandle1, ColorBufferHandle1, NormalBufferHandle1;

@@ -24,12 +24,13 @@ void waitForUser4()
 	std::cin.get();
 }
 
-Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage) : GameObject(pos, vel, mod) {
+Bullet::Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage, bool nice) : GameObject(pos, vel, mod) {
 
    this->damage = damage;
    this->size = size;
    toDie = false;
    ignore = false;
+   this->nice = nice;
    Translation.X = pos->X;
 	Translation.Y = pos->Y;
 	Translation.Z = pos->Z;
@@ -130,7 +131,7 @@ void Bullet::nullify()
 }
 void Bullet::collisionCheck(Turret* object)
 {
-   if (ignore == false) {
+   if (ignore == false && nice == true) {
    float temp = 2*(object->getSize()/2 + this->size/2);
    //SVector3* a = new SVector3();
    //a = object->Translation;
@@ -164,7 +165,7 @@ void Bullet::collisionCheck(Turret* object)
 
 void Bullet::collisionCheck(Player* object)
 {
-   if (ignore == false) {
+   if (ignore == false && nice == false) {
    float temp = object->size/2 + this->size/2;
    SVector3* a = new SVector3();
    a = object->getPosition();

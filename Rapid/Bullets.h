@@ -27,6 +27,7 @@ public:
    void draw();
    void removeDead(SVector3 cameraPosition);
    void addBullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage);
+   void addBulletBad(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage);
    void collideWith(Player* object);
    void collideWith(Turrets* turrets);
 };

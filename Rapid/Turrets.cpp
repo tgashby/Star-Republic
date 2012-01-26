@@ -67,11 +67,16 @@ void Turrets::drawAll()
 void Turrets::shootIfPossible()
 {
    Turret* current = first;
-   while(current != 0)
+   while(current != NULL)
    {
       if (current->health > 0)
          current->tryToShoot();
+      if (current->next == NULL) {
+         break;
+      }
+      else {
       current = current->next;
+      }
    }
 }
 void Turrets::collideAllWith(Player* p)

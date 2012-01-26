@@ -1,6 +1,7 @@
 #include "Compromise.h"
 #include <iostream>
 #include <stdio.h>
+#include <math.h>
 
 #ifdef __APPLE__
 #include "GLUT/glut.h"
@@ -23,6 +24,7 @@ Turret::Turret(int xloc, int zloc, Player* toAimAt)
    Translation.X = xloc;
    Translation.Y = 0;
    Translation.Z = zloc;
+   firingDirection = new SVector3();
 
    aim = toAimAt;
    
@@ -30,6 +32,8 @@ Turret::Turret(int xloc, int zloc, Player* toAimAt)
    Rotation.Y = 0;
    Rotation.Z = 0;
    
+   firing = false;
+
    mod = NULL;
    
    // First create a shader loader and check if our hardware supports shaders
@@ -123,6 +127,9 @@ void Turret::update(float dt)
    Rotation.Y = (atan(d->X / d->Z) * 180 / 3.1415926); 
   
    //Rotation.Z = (cos(d->Z) * 180 / 3.1415926); 
+   if (cooldown > 0) {
+      cooldown--;
+   }
 }
 void Turret::draw()
 {
@@ -163,7 +170,29 @@ void Turret::draw()
 void Turret::tryToShoot()
 {
 
+   SVector3* a = new SVector3();
+   a = aim->getPosition();
+   float aX = a->X;
+   float aY = a->Y;
+   float aZ = a->Z;
+   float bX = -Translation.X;
+   float bY = Translation.Y;
+   float bZ = Translation.Z;
+   float distance = sqrt((aX - bX) * (aX - bX) + (aY - bY) * (aY - bY) + (aZ - bZ) * (aZ - bZ));
+   firingDirection->X = 5*((aX - bX)/distance);
+   firingDirection->Y = 5*((aY - bY)/distance);
+   firingDirection->Z = 5*((aZ - bZ)/distance);
+   if (distance <= 100 && bZ > aZ) {
+      firing = true;
+     /* firingDirection->X = 5*(cX/distance);
+      firingDirection->Y = 5*(cY/distance);
+      firingDirection->Z = 5*(cZ/distance);*/
+   }
+   else {
+      firing = false;
+   }
 }
+   
 float Turret::getSize()
 {
    return 1.5;
