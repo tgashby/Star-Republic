@@ -68,8 +68,9 @@ void Bullets::collideWith(Turrets* turrets)
    while (current != NULL) {
       for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
          i->collisionCheck(current);
-         if (i->gettoDie()) {
+         if (i->gettoDie() && i->getIgnore() != true) {
             current->collideWithBullet(i->damage);
+            i->nullify();
             break;
          }
       }

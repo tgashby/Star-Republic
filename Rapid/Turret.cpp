@@ -1,4 +1,6 @@
+#include "Compromise.h"
 #include <iostream>
+#include <stdio.h>
 
 #ifdef __APPLE__
 #include "GLUT/glut.h"
@@ -13,12 +15,6 @@
 #include <GL\glew.h>
 #include <GL\glut.h>
 #endif
-
-
-#include <stdio.h>
-
-#include "Turret.h"
-#include <stdio.h>
 
 
 Turret::Turret(int xloc, int zloc, Player* toAimAt)
@@ -184,18 +180,23 @@ void Turret::collideWith(Player* p)
          {
             p->health -= 20;
             this->health = 0;
+            fprintf(stderr, "\nI CRASHED INTO THE PLAYER!\n");
+            fprintf(stderr, "WE HIT AT %f, %f, %f!\n", Translation.X, Translation.Y, Translation.Z);
          }
       }
    }
 }
-void Turret::collideWith(Bullet* b)
+/*void Turret::collideWith(Bullet* b)
 {
 
-}
+}*/
 void Turret::collideWithBullet(int damage)
 {
-   this->health -= damage*10;
+   this->health = 0;
    if (this-> health < 0) {
       this->health = 0;
    }
+   //fprintf(stderr, "A BULLET SHOT ME!\n");
+   fprintf(stderr, "PLAYER WAS AT %f, %f, %f!\n", aim->getPosition()->X, aim->getPosition()->Y, aim->getPosition()->Z);
+   fprintf(stderr, "PLAYER TRANSLATION AT %f, %f, %f!\n", aim->getTranslation()->X, aim->getTranslation()->Y, aim->getTranslation()->Z);
 }

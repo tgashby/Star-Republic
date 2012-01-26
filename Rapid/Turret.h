@@ -11,7 +11,7 @@
 
 #endif
 
-#include "Bullet.h"
+//#include "Bullet.h"
 #include "Player.h"
 #include <math.h>
 
@@ -40,6 +40,6 @@ public:
    float getSize();
    void tryToShoot();
    void collideWith(Player* p);
-   void collideWith(Bullet* b);
+   //void collideWith(Bullet* b);
    void collideWithBullet(int damage);
 };
