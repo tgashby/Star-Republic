@@ -32,6 +32,12 @@ Map::Map ()
         ymin = -1.9;
         ymax = 1.9;
 
+        
+	groundxmin = 1;
+        groundxmax = 11;
+        groundzmin = 5;
+        groundzmax = 120;
+
 
 	// First create a shader loader and check if our hardware supports shaders
 	CShaderLoader ShaderLoader;

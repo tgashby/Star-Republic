@@ -25,6 +25,7 @@
 #include "Bullet.h"
 #include "Collision.h"
 #include "GameObject.h"
+#include "Turrets.h"
 
 #define LOOK_SPEED 0.1
 
@@ -55,6 +56,7 @@ Map *map;
 HUD* hud;
 InputManager* manager;
 Bullets* bullets;
+Turrets* turrets;
 
 
 /***************************
@@ -206,6 +208,8 @@ void update(float dtime)
      printf("\nLook Pa! A Bullet!\n");
   }
 	camera->update();
+  turrets->update(dtime);
+
   bullets->update(dtime, map);
   /**COLLISION CALLS HERE**/
   bullets->collideWith((GameObject*)player);
@@ -256,6 +260,7 @@ void Display()
 	}*/
 	map->draw();
   player->draw();
+  turrets->drawAll();
   bullets->draw();
 
 	glutSwapBuffers();
@@ -315,8 +320,9 @@ int main(int argc, char * argv[])
 	camera = new Camera(6, 4, 3, player);
   manager = new InputManager(player);
 	map = new Map();
+  turrets = new Turrets(map, 20, player);
 	hud = new HUD();
-        bullets = new Bullets();
+  bullets = new Bullets();
 	initEnemies();
 
 	glutKeyboardFunc(keyCallback);
