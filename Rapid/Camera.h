@@ -12,11 +12,13 @@ class Camera{
 public: 
 	SVector3 Position, Direction;
 	float velocity;	
-	Player* player;
 
-	Camera (int x, int y, int z, Player* player);
+	Camera (int x, int y, int z, Player* player, Map const *map );
 	~Camera();
 	void update();
 	void setLookAt();
-        SVector3 getPosition();
+   SVector3 getPosition();
+private:
+	Player* player;
+   Map const *m_map;
 };
