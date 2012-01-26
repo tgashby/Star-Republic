@@ -83,7 +83,7 @@ Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObjec
 
 Player::~Player()
 { }
-#pragma once
+
 void Player::setRefx(float rx)
 {
    refx = rx;

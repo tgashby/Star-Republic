@@ -226,20 +226,14 @@ void update(float dtime)
   //printf("\nThe aim is %f, %f, %f.\n", temp->X, temp->Y, temp->Z);
   if (player->canFire()) {
      bullets->addBullet(temp2, temp, NULL, 1.0, 10);
-     printf("\nLook Pa! A Bullet!\n");
      i = 1;
   }
 	camera->update();
   turrets->update(dtime);
-  if(i) printf("\nIt isn't updating turrets\n");
-
   bullets->update(dtime, map);
-  if(i)  printf("\nIt isn't updating bullets\n");
   /**COLLISION CALLS HERE**/
   bullets->collideWith(player);
-  if(i) printf("\nIt isn't collideWith.\n");
   bullets->removeDead(camera->getPosition());
-  if(i) fprintf(stderr, "\nIt's removeDead");
 
 	turrets->collideAllWith(player);
 }

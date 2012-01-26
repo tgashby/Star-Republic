@@ -33,11 +33,9 @@ void InputManager::keyCallBack(unsigned char key, int x, int y) {
 	   d = 1;
    if (key == 'z'){
            player->setFiring(true);
-           printf("\nZ Button Was Pressed!\n");
    }
    if (key == ' '){
            player->speedUp();
-           printf("\nSPACE Button Was Pressed!\n");
    }
 }
 
@@ -56,11 +54,9 @@ void InputManager::keyUpCallBack(unsigned char key, int x, int y) {
 	   d = 0;
    if (key == 'z'){
            player->setFiring(false);
-           printf("\nZ Button Was Released!\n");
    }
    if (key == ' '){
            player->slowDown();
-           printf("\nSPACE Button Was Released!\n");
    }
 }
 

@@ -9,14 +9,14 @@ Turrets::Turrets(Map* map, int numToSpawn, Player* toAimAt)
    int random2 = rand() % (map->groundzmax - map->groundzmin);
 
    first = new Turret(random1, random2, toAimAt);
-   printf("Created at %d x, %d z\n", random1, random2);
+   //printf("Created at %d x, %d z\n", random1, random2);
    
    Turret* current = first;
    while (i < numToSpawn)
    {
       random1 = rand() % (map->groundxmax - map->groundxmin);
       random2 = rand() % (map->groundzmax - map->groundzmin);
-      printf("Created at %d x, %d z\n", random1, random2);
+      //printf("Created at %d x, %d z\n", random1, random2);
 
       Turret* temp = new Turret(random1, random2, toAimAt);
       temp->next = 0;
