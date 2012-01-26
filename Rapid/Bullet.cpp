@@ -148,9 +148,9 @@ void Bullet::collisionCheck(Turret* object)
    float distance = sqrt((aX - bX) * (aX - bX) + (aY - bY) * (aY - bY) + (aZ - bZ) * (aZ - bZ));
    //float distance = 1;
    if (distance < temp) {
-   fprintf(stderr, "\nA BULLET HIT A TURRET!\n");
-   fprintf(stderr, "BULLET CLAIMS IT WAS AT %f, %f, %f!\n", bX, bY, bZ);
-   fprintf(stderr, "AND TURRET WAS AT %f, %f, %f!\n", aX, aY, aZ);
+   //fprintf(stderr, "\nA BULLET HIT A TURRET!\n");
+   //fprintf(stderr, "BULLET CLAIMS IT WAS AT %f, %f, %f!\n", bX, bY, bZ);
+   //fprintf(stderr, "AND TURRET WAS AT %f, %f, %f!\n", aX, aY, aZ);
       //first->collideWith((GameObject*)second);
       //this->collideWith((GameObject*)object);
    //return true;

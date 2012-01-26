@@ -209,8 +209,8 @@ void Turret::collideWith(Player* p)
          {
             p->health -= 20;
             this->health = 0;
-            fprintf(stderr, "\nI CRASHED INTO THE PLAYER!\n");
-            fprintf(stderr, "WE HIT AT %f, %f, %f!\n", Translation.X, Translation.Y, Translation.Z);
+           // fprintf(stderr, "\nI CRASHED INTO THE PLAYER!\n");
+           // fprintf(stderr, "WE HIT AT %f, %f, %f!\n", Translation.X, Translation.Y, Translation.Z);
          }
       }
    }
@@ -226,6 +226,6 @@ void Turret::collideWithBullet(int damage)
       this->health = 0;
    }
    //fprintf(stderr, "A BULLET SHOT ME!\n");
-   fprintf(stderr, "PLAYER WAS AT %f, %f, %f!\n", aim->getPosition()->X, aim->getPosition()->Y, aim->getPosition()->Z);
-   fprintf(stderr, "PLAYER TRANSLATION AT %f, %f, %f!\n", aim->getTranslation()->X, aim->getTranslation()->Y, aim->getTranslation()->Z);
+   //fprintf(stderr, "PLAYER WAS AT %f, %f, %f!\n", aim->getPosition()->X, aim->getPosition()->Y, aim->getPosition()->Z);
+ //  fprintf(stderr, "PLAYER TRANSLATION AT %f, %f, %f!\n", aim->getTranslation()->X, aim->getTranslation()->Y, aim->getTranslation()->Z);
 }
