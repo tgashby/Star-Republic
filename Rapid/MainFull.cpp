@@ -231,7 +231,7 @@ void update(float dtime)
   Turret* current = turrets->first;
   while (current != NULL) {
      if (current->firing == true && current->cooldown == 0 && current->health > 0) {
-        current->cooldown = 25;
+        current->cooldown = 50;
         temp->X = -current->Translation.X;
         temp->Y = current->Translation.Y;
         temp->Z = current->Translation.Z;

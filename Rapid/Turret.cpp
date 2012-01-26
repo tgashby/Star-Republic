@@ -110,13 +110,13 @@ Turret::~Turret()
 void Turret::update(float dt)
 {
    SVector3* d = new SVector3(0,0,0);
-   d->X = Translation.X - aim->getPosition()->X;
-   d->Y = Translation.Y - aim->getPosition()->Y;
-   d->Z = Translation.Z - aim->getPosition()->Z;
+   d->X = Translation.X - (aim->getTranslation()->X + 6);
+   d->Y = Translation.Y - (aim->getPosition()->Y + 3);
+   d->Z = Translation.Z - (aim->getTranslation()->Z + 3);
    
 
-   //Inclienation?
-   if(aim->getPosition()->Y > 0){    
+   //Inclination?
+   if((aim->getPosition()->Y + 3) > 0){    
       Rotation.X = (atan(sqrt(d->X * d->X + d->Z * d->Z) / d->Y) * 180 / 3.1415926); 
    }
    else {
@@ -124,9 +124,21 @@ void Turret::update(float dt)
    }
       
    //Rotation?
-   Rotation.Y = (atan(d->X / d->Z) * 180 / 3.1415926); 
-  
-   //Rotation.Z = (cos(d->Z) * 180 / 3.1415926); 
+   if (d->X < 0) 
+   {
+      if (d->Z < 0)
+         Rotation.Y = -(atan(d->X / d->Z) * 180 / 3.1415926);
+      else
+         Rotation.Y = (atan(d->X / d->Z) * 180 / 3.1415926); 
+   }
+   else
+   {
+      if (d->Z < 0)
+         Rotation.Y = -(atan(d->X / d->Z) * 180 / 3.1415926);
+      else
+         Rotation.Y = (atan(d->X / d->Z) * 180 / 3.1415926);  
+   }
+
    if (cooldown > 0) {
       cooldown--;
    }
@@ -169,12 +181,18 @@ void Turret::draw()
 }
 void Turret::tryToShoot()
 {
+   if (Translation.Z - (aim->getTranslation()->Z + 3) < 0)
+   { 
+      firing = false;
+      return;
+   }
+
 
    SVector3* a = new SVector3();
-   a = aim->getPosition();
-   float aX = a->X;
+   a = aim->getTranslation();
+   float aX = a->X + 6;
    float aY = a->Y;
-   float aZ = a->Z;
+   float aZ = a->Z + 3;
    float bX = -Translation.X;
    float bY = Translation.Y;
    float bZ = Translation.Z;
@@ -209,8 +227,6 @@ void Turret::collideWith(Player* p)
          {
             p->health -= 20;
             this->health = 0;
-           // fprintf(stderr, "\nI CRASHED INTO THE PLAYER!\n");
-           // fprintf(stderr, "WE HIT AT %f, %f, %f!\n", Translation.X, Translation.Y, Translation.Z);
          }
       }
    }
@@ -225,7 +241,4 @@ void Turret::collideWithBullet(int damage)
    if (this-> health < 0) {
       this->health = 0;
    }
-   //fprintf(stderr, "A BULLET SHOT ME!\n");
-   //fprintf(stderr, "PLAYER WAS AT %f, %f, %f!\n", aim->getPosition()->X, aim->getPosition()->Y, aim->getPosition()->Z);
- //  fprintf(stderr, "PLAYER TRANSLATION AT %f, %f, %f!\n", aim->getTranslation()->X, aim->getTranslation()->Y, aim->getTranslation()->Z);
 }
