@@ -54,6 +54,18 @@ void Turrets::update(float dt)
       current = current->next;
    }
 }
+int Turrets::countAll()
+{
+   int i = 0;
+   Turret* current = first;
+   while(current != 0)
+   {
+      if (current->health > 0) 
+         i++;
+      current = current->next;
+   }
+   return i;
+}
 void Turrets::drawAll()
 {
    Turret* current = first;

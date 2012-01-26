@@ -133,7 +133,7 @@ void Bullet::collisionCheck(Turret* object)
 {
    if (ignore == false && nice == true) 
    {
-     float temp = 2*(object->getSize()/2 + this->size/2);
+     float temp = 2*(object->getSize() + this->size/2);
      SVector3* b = new SVector3();
      b = this->getPosition();
      float aX = object->Translation.X + 1;

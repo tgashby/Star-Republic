@@ -235,7 +235,7 @@ void update(float dtime)
         temp->X = -current->Translation.X;
         temp->Y = current->Translation.Y;
         temp->Z = current->Translation.Z;
-        bullets->addBulletBad(temp, current->firingDirection, NULL, 1.0, 10);
+        //bullets->addBulletBad(temp, current->firingDirection, NULL, 1.0, 10);
      }
      current = current->next;
   }
@@ -276,7 +276,7 @@ void Display()
 
    	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	   hud->drawText(FPS, curTime, player->health);
+	   hud->drawText(FPS, curTime, player->health, turrets->countAll());
      hud->renderGlutAimer(player->getPosition()->X, player->getPosition()->Y, manager->AbsX, manager->AbsY);
 
 	   glMatrixMode(GL_MODELVIEW);
@@ -292,12 +292,12 @@ void Display()
   }
   else if (curTime >= 120000)
   {
-	   hud->drawText(FPS, curTime, player->health);
+	   hud->drawText(FPS, curTime, player->health, turrets->countAll());
      hud->drawWin();
   }
   else
   {
-	   hud->drawText(FPS, curTime, 0);
+	   hud->drawText(FPS, curTime, 0, turrets->countAll());
      hud->drawLose();
   }
 	glutSwapBuffers();

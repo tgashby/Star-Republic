@@ -38,7 +38,7 @@ void HUD::renderBitmapString (float x, float y, float z, char *string)
   }
 }
 
-void HUD::drawText(int FPS, int curTime, int playerHealth)
+void HUD::drawText(int FPS, int curTime, int playerHealth, int num)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -78,6 +78,13 @@ void HUD::drawText(int FPS, int curTime, int playerHealth)
         ph[4] = '%';
         ph[5] = '\0';
 	renderBitmapString(-0.23, 2.3, -4.5, ph);
+
+        char n[15] = "Enemies: ";
+	n[9] = num/100 % 10 + 48;
+	n[10] = num/10 % 10 + 48;
+	n[11] = num/1 % 10 + 48;
+        n[12] = '\0';
+	renderBitmapString(-0.48, 2.1, -4.5, n);
 
 	glDisable(GL_LIGHT0);
 }

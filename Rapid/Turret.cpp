@@ -191,7 +191,7 @@ void Turret::tryToShoot()
    SVector3* a = new SVector3();
    a = aim->getTranslation();
    float aX = a->X + 6;
-   float aY = a->Y;
+   float aY = a->Y + 4;
    float aZ = a->Z + 3;
    float bX = -Translation.X;
    float bY = Translation.Y;
@@ -200,15 +200,12 @@ void Turret::tryToShoot()
    firingDirection->X = 5*((aX - bX)/distance);
    firingDirection->Y = 5*((aY - bY)/distance);
    firingDirection->Z = 5*((aZ - bZ)/distance);
-   if (distance <= 100 && bZ > aZ) {
+   //if (distance <= 100 && bZ > aZ) {
       firing = true;
-     /* firingDirection->X = 5*(cX/distance);
-      firingDirection->Y = 5*(cY/distance);
-      firingDirection->Z = 5*(cZ/distance);*/
-   }
+   /*}
    else {
       firing = false;
-   }
+   }*/
 }
    
 float Turret::getSize()
