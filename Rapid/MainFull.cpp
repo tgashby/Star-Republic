@@ -193,12 +193,14 @@ void detectEnemyEnemyCollisions(float time)
 // OpenGL initialization
 void Initialize()
 {
+#ifdef _WIN32
    GLenum err = glewInit();
    if (GLEW_OK != err)
    {
       /* Problem: glewInit failed, something is seriously wrong. */
       fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
    }
+#endif
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
  	
