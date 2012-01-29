@@ -1,4 +1,4 @@
-#include "Compromise2.h"
+#include "Bullet.h"
 #include <iostream>
 
 #ifdef __APPLE__

@@ -12,6 +12,15 @@ build/
 *.swp
 # XCode project files
 *.xcodeproj/
+# VS Proj files
+*.vcxproj
+*.vcxproj*
+*Debug/
+*ipch/
+*.sdf
+*.suo
+*.opensdf
+*.sln
 #Scons temp files
 .sconsign.dblite
 #Other Temp

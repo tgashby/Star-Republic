@@ -12,10 +12,13 @@
 #ifdef _WIN32
 #include <GL\glew.h>
 #include <GL\glut.h>
+//#include <SDL.h>
+//#include <SDL_opengl.h>
 #endif
 
 
 #include <stdio.h>
+#include <time.h>
 
 
 // Utility classes for loading shaders/meshes
@@ -190,6 +193,13 @@ void detectEnemyEnemyCollisions(float time)
 // OpenGL initialization
 void Initialize()
 {
+   GLenum err = glewInit();
+   if (GLEW_OK != err)
+   {
+      /* Problem: glewInit failed, something is seriously wrong. */
+      fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+   }
+
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
  	
 	glEnable(GL_DEPTH_TEST);
