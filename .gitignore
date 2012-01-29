@@ -12,6 +12,8 @@ build/
 *.swp
 # XCode project files
 *.xcodeproj/
+*HelloSDL/
+*SDLMain.*
 # VS Proj files
 *.vcxproj
 *.vcxproj*
