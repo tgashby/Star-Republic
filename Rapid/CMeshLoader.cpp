@@ -212,7 +212,7 @@ void CMeshLoader::createVertexBufferObject(CMesh const & Mesh, int & TriangleCou
      }
 	}
 
-    TriangleCount = Mesh.Triangles.size();
+    TriangleCount = (int)Mesh.Triangles.size();
 
 	glBindBuffer(GL_ARRAY_BUFFER, PositionBufferHandle);
 	glBufferData(GL_ARRAY_BUFFER, VertexPositions.size()*sizeof(GLfloat), & VertexPositions.front(), GL_STATIC_DRAW);

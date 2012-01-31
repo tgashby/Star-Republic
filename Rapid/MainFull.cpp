@@ -275,7 +275,7 @@ void Display()
   {
 	   update(Delta);
 
-     int dtime = (time(NULL) - *timeTracker) * 1000; 
+     long dtime = (time(NULL) - *timeTracker) * 1000; 
 	   curTime += dtime;
 	   numFrames++;
      if (curTime / 1000 > lastSecond)

@@ -57,7 +57,7 @@ void Bullets::collideWith(Player* object)
 {
    //fprintf(stderr, "\nCollidewithisbeingrun!");
    Collision* collider = new Collision();
-   Bullet* temp = NULL;
+   //Bullet* temp = NULL;
    for (std::list<Bullet>::iterator i = list.begin(); i != list.end(); i++) {
       //fprintf(stderr, "\nCollisioncheck is being run!\n");
       //Bullet* temp = &(*i);

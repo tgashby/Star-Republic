@@ -15,7 +15,7 @@ bool const CShader::loadAttribute(std::string const & label)
 {
 	GLuint AttributeHandle = glGetAttribLocation(Handle, label.c_str());
 
-	if (AttributeHandle < 0)
+	if (AttributeHandle == GL_INVALID_OPERATION)
 	{
 		return false;
 	}
