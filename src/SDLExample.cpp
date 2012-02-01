@@ -52,10 +52,10 @@ int main(int argc, char** argv)
    
    while(running)
    {
-      SDL_PollEvent(&myEvent);
-      
-      if (myEvent.type == SDL_QUIT)
-         running = false;
+      while (SDL_PollEvent(&myEvent)) {
+         if (myEvent.type == SDL_QUIT || (myEvent.type == SDL_KEYUP && myEvent.key.keysym.sym == SDLK_ESCAPE))
+            running = false;
+      }
    }
    
    SDL_Quit();
