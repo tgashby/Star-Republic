@@ -38,7 +38,7 @@ void HUD::renderBitmapString (float x, float y, float z, char *string)
   }
 }
 
-void HUD::drawText(int FPS, int curTime)
+void HUD::drawText(int FPS, int curTime, int playerHealth, int num)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -55,6 +55,10 @@ void HUD::drawText(int FPS, int curTime)
 	glEnable(GL_LIGHT0);
  	glLightfv(GL_LIGHT0, GL_POSITION, lightDir);
  	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseComp);
+   
+   // Fixes?
+   glDisable(GL_DEPTH);
+   glDisable(GL_DEPTH_TEST);
 
 	char timer[14];
 	timer[0] = (((int)curTime)/100000) % 10 + 48;
@@ -69,8 +73,90 @@ void HUD::drawText(int FPS, int curTime)
 	fps[6] = FPS/10 % 10 + 48;
 	fps[7] = FPS/1 % 10 + 48;
 	renderBitmapString(-0.45, 2.5, -4.5, fps);
+        
+        char ph[9] = "FPS: ";
+	ph[0] = playerHealth/100 % 10 + 48;
+	ph[1] = playerHealth/10 % 10 + 48;
+	ph[2] = playerHealth/1 % 10 + 48;
+	ph[3] = ' ';
+        ph[4] = '%';
+        ph[5] = '\0';
+	renderBitmapString(-0.23, 2.3, -4.5, ph);
+
+        char n[15] = "Enemies: ";
+	n[9] = num/100 % 10 + 48;
+	n[10] = num/10 % 10 + 48;
+	n[11] = num/1 % 10 + 48;
+        n[12] = '\0';
+	renderBitmapString(-0.48, 2.1, -4.5, n);
 
 	glDisable(GL_LIGHT0);
+   
+   // Fixes?
+   glEnable(GL_DEPTH);
+   glEnable(GL_DEPTH_TEST);
+}
+
+void HUD::drawWin()
+{
+        glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+ 	gluLookAt(0.0, 0.0, 1.0, 
+            0.0, 0.0, 0.0, 
+            0.0, 1.0, 0.0);
+	GLfloat color[3] = {0.4, 1.0, 0.1};
+	
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color); 
+		
+ 	GLfloat lightDir[] = {0, 0, -1, 0.0};
+	GLfloat diffuseComp[] = {1.0, 1.0, 1.0, 1.0};
+
+	glEnable(GL_LIGHT0);
+ 	glLightfv(GL_LIGHT0, GL_POSITION, lightDir);
+ 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseComp);
+   
+   // Fixes?
+   glDisable(GL_DEPTH);
+   glDisable(GL_DEPTH_TEST);
+
+        char win[] = "Congratulations!";
+	renderBitmapString(-0.5, 0.7, -4.5, win);
+
+	glDisable(GL_LIGHT0);
+   
+   glEnable(GL_DEPTH);
+   glEnable(GL_DEPTH_TEST);
+}
+void HUD::drawLose()
+{
+        glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+ 	gluLookAt(0.0, 0.0, 1.0, 
+            0.0, 0.0, 0.0, 
+            0.0, 1.0, 0.0);
+	GLfloat color[3] = {0.4, 1.0, 0.1};
+	
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color); 
+		
+ 	GLfloat lightDir[] = {0, 0, -1, 0.0};
+	GLfloat diffuseComp[] = {1.0, 1.0, 1.0, 1.0};
+
+	glEnable(GL_LIGHT0);
+ 	glLightfv(GL_LIGHT0, GL_POSITION, lightDir);
+ 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseComp);
+   
+   // Fixes?
+   glDisable(GL_DEPTH);
+   glDisable(GL_DEPTH_TEST);
+
+        char win[] = "Mission Failed!";
+	renderBitmapString(-0.5, 0.7, -4.5, win);
+
+	glDisable(GL_LIGHT0);
+   
+   // Fixes?
+   glEnable(GL_DEPTH);
+   glEnable(GL_DEPTH_TEST);
 }
 
 void HUD::renderGlutAimer(float px, float py, float dx, float dy)

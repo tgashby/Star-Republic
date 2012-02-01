@@ -20,12 +20,11 @@
 #include "Enemy.h"
 #include "GameObject.h"
 
-GameObject::GameObject(SVector3* pos, SVector3* vel, CMesh * mod, float size)
+GameObject::GameObject(SVector3* pos, SVector3* vel, CMesh * mod)
 {
    position = pos;
    velocity = vel;
    model = mod;
-   this->size = size;
 }
 
 GameObject::~GameObject()
@@ -48,5 +47,5 @@ void GameObject::update(float dt)
 
 SVector3* GameObject::getPosition()
 {
-   return this->position;
+   return position;
 }

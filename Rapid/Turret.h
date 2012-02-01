@@ -10,7 +10,8 @@
 #include "CMeshLoader.h"
 
 #endif
-#include "Bullet.h"
+
+//#include "Bullet.h"
 #include "Player.h"
 #include <math.h>
 
@@ -21,9 +22,14 @@ public:
    Player* aim;
    int health, cooldown;
    CShader* shade;
+   CMesh *mod;
+   SVector3* firingDirection, location;
+   bool firing;
 
    // Handles for VBOs
-   GLuint PositionBufferHandle, ColorBufferHandle, NormalBufferHandle;
+   GLuint PositionBufferHandle1, ColorBufferHandle1, NormalBufferHandle1;
+   GLuint PositionBufferHandle2, ColorBufferHandle2, NormalBufferHandle2;
+   GLuint PositionBufferHandle3, ColorBufferHandle3, NormalBufferHandle3;
 
    // Information about mesh
    SVector3 Translation, Rotation, Scale;
@@ -33,7 +39,9 @@ public:
    ~Turret();
    void update(float dt);
    void draw();
+   float getSize();
    void tryToShoot();
-   void collideWith(Player p);
-   void collideWith(Bullet b);
+   void collideWith(Player* p);
+   //void collideWith(Bullet* b);
+   void collideWithBullet(int damage);
 };

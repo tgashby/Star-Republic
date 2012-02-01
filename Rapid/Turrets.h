@@ -26,6 +26,7 @@ public:
    void update(float dt);
    void drawAll();
    void shootIfPossible();
-   void collideAllWith(Player p);
+   int countAll();
+   void collideAllWith(Player* p);
    void collideAllWith(Bullet b);
 };

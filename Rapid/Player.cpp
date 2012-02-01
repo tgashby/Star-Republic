@@ -25,11 +25,12 @@ void waitForUser3()
 	std::cin.get();
 }
 
-Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObject(pos, vel, mod, size) {
+Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObject(pos, vel, mod) {
 	 
   health = 100;
   cooldown = 0;
   firing = false;
+  this->size = size;
 
   Translation.X = pos->X;
   Translation.Y = pos->Y;
@@ -82,7 +83,7 @@ Player::Player(SVector3* pos, SVector3* vel, CMesh* mod, float size) : GameObjec
 
 Player::~Player()
 { }
-#pragma once
+
 void Player::setRefx(float rx)
 {
    refx = rx;
@@ -109,6 +110,13 @@ bool Player::canFire()
 SVector3* Player::getPosition()
 {
    return position;
+}SVector3* Player::getVelocity()
+{
+   return velocity;
+}
+SVector3* Player::getTranslation()
+{
+   return &Translation;
 }
 
 void Player::speedUp()
@@ -123,8 +131,8 @@ void Player::slowDown()
 
 void Player::update(float dt, Map* bounds)
 {
-        velocity->X = (position->X - refx);
-        velocity->Y = (position->Y - refy);
+  velocity->X = (position->X - refx);
+  velocity->Y = (position->Y - refy);
 
 	position->X -= velocity->X * dt;
 	position->Y -= velocity->Y * dt;
@@ -146,6 +154,10 @@ void Player::update(float dt, Map* bounds)
         if (cooldown > 0) {
            cooldown--;
         }
+}
+float Player::getSize()
+{
+   return 1;
 }
 void Player::draw()
 {
@@ -169,9 +181,19 @@ void Player::draw()
 		glPopMatrix();
 	}
 }
-void Player::collideWith(GameObject collided)
+void Player::collideWith(GameObject* collided)
 {
 
 }
+
+void Player::collideWithBullet(int damage)
+{
+   health = health - damage;
+   if (health < 0) {
+      health = 0;
+   }
+}
+
+
 
 

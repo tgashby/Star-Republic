@@ -13,9 +13,8 @@ public:
    CMesh * model;
    SVector3* position;
    SVector3* velocity;
-   float size;
    
-   GameObject (SVector3* pos, SVector3* vel, CMesh * mod, float size);
+   GameObject (SVector3* pos, SVector3* vel, CMesh * mod);
    ~GameObject();
    void draw();
    void collideWith(GameObject* collided);

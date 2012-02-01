@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
 #include <typeinfo>
+#include "Player.h"
+#include "Turret.h"
 
 #ifndef BASICS
 #define BASICS
@@ -18,6 +20,9 @@ public:
    CShader* shade;
    int damage;
    bool toDie;
+   bool ignore;
+   bool nice;
+   float size;
 
    // Handles for VBOs
    GLuint PositionBufferHandle, ColorBufferHandle, NormalBufferHandle;
@@ -26,11 +31,15 @@ public:
    SVector3 Translation, Rotation, Scale;
    int TriangleCount;
    
-   Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage);
+   Bullet(SVector3* pos, SVector3* vel, CMesh* mod, float size, int damage, bool nice);
    ~Bullet();
    void update(float dt);
    void draw();
    void collideWith(GameObject* collided);
    SVector3* getPosition();
    bool gettoDie();
+   bool getIgnore();
+   void nullify();
+   void collisionCheck(Player* object);
+   void collisionCheck(Turret* object);
 };
