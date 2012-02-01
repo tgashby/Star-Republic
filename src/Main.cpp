@@ -1,8 +1,3 @@
-//
-//  main.cpp
-//
-//  Created by Taggart Ashby on 1/10/12.
-//
 
 /* SDL */
 #ifdef _WIN32
