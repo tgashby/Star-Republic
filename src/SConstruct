@@ -1,3 +1,4 @@
 import os
-generalEnv = Environment( CC = 'g++', CCFLAGS="-lGL -lSDL -lGLU -I./game -I./engine")
-generalEnv.Program("Main.cpp")
+generalEnv = Environment( CC = 'g++', CCFLAGS="-I./game -I./engine", 
+LIBS=["GL", "SDL"])
+generalEnv.Program(source= ["Main.cpp"] )

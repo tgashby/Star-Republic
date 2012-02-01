@@ -15,16 +15,12 @@
 
 #include <iostream>
 #include <list>
-#include "Line.h"
-#include "GameObject.h"
+//#include "GameObject.h"
 
 int Time0, Time1;
-Line CurrentPath;
-Player Ship;
-std::list<GameObject> Others;
+//std::list<GameObject> Others;
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv){
    SDL_Surface* screen;
    
    // Call SDL_INIT(SDL_EVERYTHING)
@@ -42,7 +38,7 @@ int main(int argc, char** argv)
    // Create the window
    screen = SDL_SetVideoMode(800, 600, 32, SDL_SWSURFACE | SDL_OPENGL);
    
-   SDL_WM_SetCaption("Test", NULL);
+   SDL_WM_SetCaption("Test!", NULL);
    
    // Boring OGL
    glPushMatrix();
@@ -51,8 +47,8 @@ int main(int argc, char** argv)
    glClear(GL_COLOR_BUFFER_BIT);
    
    glPopMatrix();
-   makeContent();
-   gameLoop();
+   //makeContent();
+   //gameLoop();
    
    // Swap buffers to display what you've drawn
    SDL_GL_SwapBuffers();
@@ -60,8 +56,7 @@ int main(int argc, char** argv)
    SDL_Event myEvent;
    bool running = true;
    
-   while(running)
-   {
+   while(running){
       SDL_PollEvent(&myEvent);
       
       if (myEvent.type == SDL_QUIT)
@@ -90,15 +85,8 @@ void makeContent()
    //Player = new GameObject(
 }
 
-void draw()
-{
-   //Ship.draw();
-   /*for (std::list<GameObject>::iterator i = Others.begin(); i != Others.end(); i++) {
-      i->draw();
-   }
-   */
-}
 
+/*
 void update()
 {
    int dt;
@@ -122,3 +110,4 @@ void update()
    
 }
 
+*/
