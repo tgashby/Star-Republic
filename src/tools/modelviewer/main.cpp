@@ -3,11 +3,15 @@
 #include "ApplicationEngine.h"
 #include "RenderingEngine.h"
 #include "ResourceManager.h"
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include "SDL/SDL.h"
+#include "SDL/SDL_opengl.h"
+
+#ifdef __UNIX__
 #include <GL/glext.h>
+#elsif __APPLE__
+#include <OpGL/glext.h>
+#endif
+
 #include <cassert>
 
 #define WIDTH 640
