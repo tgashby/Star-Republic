@@ -12,6 +12,9 @@ class World
 public:
 	World(const string fileName);
 	~World();
+	WorldPoint getCurrent();
+	void setChoice(int next);
+	WorldPoint getAt(int index);
 	
 private:
    WorldPoint parseLine(const string line);

@@ -7,16 +7,12 @@ World::World(const string fileName)
    string line;
    streampos linestart;
    ifstream infile(fileName.c_str());
-   
-  // vec3 *v;
-   //vec2 *t;;
+   currentPoint = 0;
 
    if(infile.is_open())
    {
-      while(!infile.eof())
-      {
-         linestart = infile.tellg();
-         getline(infile,line);
+     while(getline(infile, line))
+       {
          points.push_back(parseLine(line));
       }
    }
@@ -29,36 +25,49 @@ WorldPoint World::parseLine(const string line)
    Vector3<float> tempForward;
    Vector3<float> tempSide;
    
-   int tempInt, tempLeft, tempMid, tempRight;
-
-   sscanf(line.c_str(), "%d", &tempInt);
+   int tempInt, tempLeft, tempMid, tempRight, totalPaths;
    
-   sscanf(line.c_str(), "%f %f %f %f %f %f %f %f %f %f %f %f", 
-          &tempPosition.x, &tempPosition.y, &tempPosition.z, &tempUp.x, 
-          &tempUp.y, &tempUp.z, &tempForward.x, &tempForward.y, 
-          &tempForward.z, &tempSide.x, &tempSide.y, &tempSide.z);
+   totalPaths = sscanf(line.c_str(), 
+		       "%d %f %f %f %f %f %f %f %f %f %f %f %f %d %d %d", 
+		       &tempInt, &tempPosition.x, &tempPosition.y, 
+		       &tempPosition.z, &tempUp.x, &tempUp.y, &tempUp.z, 
+		       &tempForward.x, &tempForward.y, &tempForward.z, 
+		       &tempSide.x, &tempSide.y, &tempSide.z, &tempLeft,
+		       &tempMid, &tempRight) - 13;
    
    WorldPoint point (tempPosition, tempUp, tempForward, tempSide);
    
-   tempInt = sscanf(line.c_str(), "%d %d %d", &tempLeft, &tempMid, &tempRight);
-   
-   if (tempInt >= 1) {
+   if (totalPaths >= 1) {
       point.setLeftID(tempLeft);
    }
    
-   if (tempInt >= 2) {
+   if (totalPaths >= 2) {
       point.setMiddleID(tempMid);
    }
    
-   if (tempInt == 3) {
+   if (totalPaths == 3) {
       point.setRightID(tempRight);
    }
    
-   point.setNumberOfIDs(tempInt);
+   point.setNumberOfIDs(totalPaths);
    
    return point;
 }
 
+WorldPoint World::getCurrent() {
+  return points.at(currentPoint);
+}
+
+void World::setChoice(int next) {
+  currentPoint = next;
+}
+
 World::~World()
 {
+
+}
+
+WorldPoint World::getAt(int index) 
+{
+  return points.at(index);
 }

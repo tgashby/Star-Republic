@@ -15,6 +15,10 @@ void setLeftID(int id);
 void setMiddleID(int id);
 void setRightID(int id);
 void setNumberOfIDs(int number);
+ int getNumberOfIDs();
+ int getLeftID();
+ int getMiddleID();
+ int getRightID();
 
 private:
    Vector3<float> position;

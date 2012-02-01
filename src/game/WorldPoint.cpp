@@ -52,3 +52,23 @@ void WorldPoint::setNumberOfIDs(int number)
 {
    numberOfIDs = number;
 }
+
+int WorldPoint::getNumberOfIDs()
+{
+  return numberOfIDs;
+}
+
+int WorldPoint::getLeftID()
+{
+  return leftID;
+}
+
+int WorldPoint::getMiddleID()
+{
+  return middleID;
+}
+
+int WorldPoint::getRightID()
+{
+   return rightID;
+}
