@@ -13,6 +13,7 @@ build/
 # XCode project files
 *.xcodeproj/
 *HelloSDL/
+*StarRepub/*
 *SDLMain.*
 # VS Proj files
 *.vcxproj
