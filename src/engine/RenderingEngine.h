@@ -16,6 +16,7 @@
 #endif
 
 #include "Interfaces.h"
+#include <algorithm>
 
 #define VERTEX_STRIDE 11
 #define NORMAL_OFFSET 3

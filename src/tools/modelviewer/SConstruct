@@ -1,8 +1,9 @@
 import os, os.path, shutil
-env = Environment( CC = 'g++', CCFLAGS="-I./game -I./engine")
+env = Environment( CC = 'g++', CCFLAGS=" -I../../engine")
 if (env['PLATFORM'] == 'darwin'):
    env.Append(FRAMEWORKS= ['OpenGL','SDL'])
 else:
    env.Append(LIBS=["GL", "SDL"])    
 
-env.Program('modelviewer',Glob('*.cpp') )
+#SConscript('../../engine/SConstruct')
+env.Program('modelviewer', ["main.cpp"]+Glob('*.o')+Glob('../../engine/*.cpp'))

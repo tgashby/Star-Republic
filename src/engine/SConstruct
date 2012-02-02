@@ -1,0 +1,8 @@
+import os, os.path, shutil
+env = Environment( CC = 'g++', CCFLAGS="-I./game -I./engine")
+if (env['PLATFORM'] == 'darwin'):
+   env.Append(FRAMEWORKS= ['OpenGL','SDL'])
+else:
+   env.Append(LIBS=["GL", "SDL"])    
+
+env.Object(Glob('*.cpp') )
