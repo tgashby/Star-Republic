@@ -3,7 +3,7 @@
 
 NAME = modelviewer
 CFLAGS = $(shell sdl-config --cflags) -g -Wall  
-LDFLAGS = -lSDL -lGL -lGLU $(shell sdl-config --libs) 
+LDFLAGS = -lSDL -lGL -lGLU  
 CC = g++
 OBJS = ApplicationEngine.o Camera.o main.o \
 	Mesh.o Object3d.o  RenderingEngine.o ResourceManager.o \

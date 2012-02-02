@@ -1,21 +1,19 @@
-#pragma once
+#ifndef SimpleGame_Camera_h
+#define SimpleGame_Camera_h
 
-#include "ProjIncludes.h"
+#define FLOOR_OFFSET 4.5
 
-class Camera
-{
+#include "Interfaces.h"
+#include "Object3d.h"
+
+class Camera: public ICamera {
 public:
-	Camera();
-	~Camera();
-
-	void moveOver(GLfloat xVal, GLfloat yVal);
-	void setPosition(GLfloat xPos, GLfloat yPos);
-
-	GLfloat getX();
-	GLfloat	getY();
-
+   Camera(vec3 start);
+   ~Camera();
+   void rotLocal(float pitch, float yaw);
+   void moveInOut(float dist);
 private:
-	GLfloat xPos, yPos;
+   float m_pitch, m_yaw, m_dist;
 };
 
-
+#endif
