@@ -8,12 +8,11 @@
 	#include <SDL/SDL_opengl.h>
 #endif
 
-#include <iostream>
-#include <list>
-//#include "GameObject.h"
 
-int Time0, Time1;
-//std::list<GameObject> Others;
+#include "Interfaces.h"
+#include "game/ResourceManager.h"
+#include "game/GameEngine.h"
+#include "game/RenderingEngine.h"
 
 int main(int argc, char** argv){
    SDL_Surface* screen;
@@ -43,8 +42,13 @@ int main(int argc, char** argv){
    glClear(GL_COLOR_BUFFER_BIT);
    
    glPopMatrix();
-   //makeContent();
-   //gameLoop();
+   
+   // Setup the modules
+   Modules *modules = new Modules();
+   modules->resourceManager = new ResourceManager();
+   modules->renderingEngine = new RenderingEngine(modules);
+   modules->gameEngine = new GameEngine(modules);
+   
    
    // Swap buffers to display what you've drawn
    SDL_GL_SwapBuffers();
@@ -57,53 +61,11 @@ int main(int argc, char** argv){
       
       if (myEvent.type == SDL_QUIT)
          running = false;
+      
+      modules->gameEngine->render();
+      SDL_GL_SwapBuffers();
    }
    
    SDL_Quit();
    return 0;
 }
-
-void gameLoop()
-{
-   while(true) {
-      //update();
-      //draw();
-   }
-}
-
-void makeContent()
-{
-   //player = new Player(blah, blah, blah);
-   //world = new World();
-   //set camera
-   //fill the enemy list
-   //set the current terrain and line
-   //Player = new GameObject(
-}
-
-
-/*
-void update()
-{
-   int dt;
-   Time1 = SDL_GetTicks();
-   dt = Time1 - Time0;
-   Time0 = Time1;
-
-   Ship.tic(dt);
-   for (std::list<GameObject>::iterator i = Others.begin();
-         i != Others.end(); i++) {
-      i.tic(dt);
-   }
-
-   for (std::list<GameObject>::iterator i = Others.begin(); 
-        i != Others.end(); i++) {
-      for (std::list<GameObject>::iterator j = i; j != Others.end(); j++) {
-         Collision::collisionCheck(i, j);
-      }
-   }
-
-   
-}
-
-*/

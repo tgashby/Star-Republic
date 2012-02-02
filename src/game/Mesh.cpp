@@ -1,9 +1,12 @@
 #include "Mesh.h"
 
-Mesh::Mesh(string meshName, string textureName, Modules modules) {
-   m_meshName = meshName;
-   m_textureName = textureName;
+Mesh::Mesh(string meshName, string textureName, Modules *modules) {
    m_meshRef = MeshRef();
+   m_meshRef.name = meshName;
+   
+   m_textureRef = TextureRef();
+   m_textureRef.name = textureName;
+   
    m_modelMatrix = mat4::Identity();
    m_color = vec4(0.8, 0.8, 0.8, 1.0);
 }
@@ -12,19 +15,27 @@ Mesh::~Mesh() {
    
 }
 
-MeshRef* Mesh::getMeshRef() {
-   return NULL;
+MeshRef Mesh::getMeshRef() {
+   return m_meshRef;
 }
 
-TextureRef* Mesh::getTextureRef() {
-   return NULL;
+void Mesh::setMeshRef(MeshRef meshRef) {
+   m_meshRef = meshRef;
 }
 
-void Mesh::setModelMatrix(mat4 modelMtx) {
+TextureRef Mesh::getTextureRef() {
+   return m_textureRef;
+}
+
+void Mesh::setTextureRef(TextureRef textureRef) {
+   m_textureRef = textureRef;
+}
+
+void Mesh::setModelMtx(mat4 modelMtx) {
    m_modelMatrix = modelMtx;
 }
 
-mat4 Mesh::getModelMatrix() {
+mat4 Mesh::getModelMtx() {
    return m_modelMatrix;
 }
 
@@ -33,21 +44,23 @@ vec4 Mesh::getColor() {
 }
 
 MeshBounds Mesh::getMeshBounds() {
-   return MeshBounds();
+   return m_meshRef.bounds;
 }
 
 string Mesh::getMeshName() {
-   return m_meshName;
+   return m_meshRef.name;
 }
 
 string Mesh::getTextureName() {
-   return m_textureName;
+   return m_textureRef.name;
 }
 
 MeshData* Mesh::getMeshData() {
-   return NULL;
+   return m_modules->resourceManager->readMeshData(m_meshRef.name,
+                                                   LOAD_NORMAL_VERTEX,
+                                                   DEFAULT_SCALE);
 }
 
 TextureData* Mesh::getTextureData() {
-   return NULL;
+   return m_modules->resourceManager->loadBMPImage(m_textureRef.name);
 }

@@ -458,6 +458,31 @@ struct Matrix4 {
         m.w.x = 0; m.w.y = 0; m.w.z = 0; m.w.w = 1;
         return m;
     }
+   
+   static Matrix4<T> LookAt(Matrix4<T> m1, vec3 eye, vec3 center, vec3 up)
+   {
+      vec3 fwd = center - eye;
+      fwd.Normalize();
+      
+      vec3 side = fwd.Cross(up);
+      side.Normalize();
+      
+      up = side.Cross(fwd);
+      up.Normalize();
+      
+      Matrix4<T> m2;
+      m2.x.x = side.x; m2.x.y = up.x; m2.x.z = -fwd.x; m2.x.w = 0;
+      m2.y.x = side.y; m2.y.y = up.y; m2.y.z = -fwd.y; m2.y.w = 0;
+      m2.z.x = side.z; m2.z.y = up.z; m2.z.z = -fwd.z; m2.z.w = 0;
+      m2.w.x = 0; m2.w.y = 0; m2.w.z = 0; m2.w.w = 1;
+      
+      Matrix4<T> result = m2 * m1;
+      result = Translate(-eye.x, -eye.y, -eye.z) * result;
+      //Matrix4<T> result = m1 * m2;
+      //result = result * Translate(-eye.x, -eye.y, -eye.z);
+      return result;
+   }
+   
     vec4 x;
     vec4 y;
     vec4 z;

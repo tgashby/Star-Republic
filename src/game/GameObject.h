@@ -19,7 +19,7 @@ class GameObject : IObject3d {
                  BoundingStructure boundingStructure
                  );
       ~GameObject();
-      void tic(int dt);
+      void tic(int td);
       bool setVelocity(const Vector3<float> velocity);
       bool setAngularVelocity(const Angle angularVelocity); 
       //virtual void doCollision(GameObject & other) = 0;

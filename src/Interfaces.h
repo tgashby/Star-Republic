@@ -27,6 +27,11 @@ enum LOAD_NORMAL_TYPE {
    LOAD_NORMAL_FACE,
 };
 
+struct MeshBounds {
+   vec3 mean;
+   vec3 min;
+   vec3 max;
+};
 
 // Used by the RenderingEngine to keep track of mesh VBOs.
 struct MeshRef {
@@ -36,6 +41,7 @@ struct MeshRef {
       indexBuffer = 0;
       indexCount = 0;
       count = 0;
+      bounds = MeshBounds();
    }
    MeshRef(string n, unsigned int vb, unsigned int ib, int idxCount) {
       name = n;
@@ -50,6 +56,7 @@ struct MeshRef {
       indexBuffer = other.indexBuffer;
       indexCount = other.indexCount;
       count = other.count;
+      bounds = other.bounds;
    }
    // Used to find duplicate VBOs.
    int operator==(const MeshRef &rhs) {
@@ -61,6 +68,7 @@ struct MeshRef {
    unsigned int indexBuffer;
    int indexCount;
    int count;
+   MeshBounds bounds;
 };
 
 
@@ -70,7 +78,7 @@ struct MeshData {
    float* vertices;
    int indexCount;
    unsigned short* indices;
-   vec3 mean, min, max;
+   MeshBounds bounds;
 };
 
 // Used by the RenderingEngine to keep track of mesh VBOs.
@@ -105,19 +113,14 @@ struct TextureData {
    ivec2 size;
 };
 
-struct MeshBounds {
-   vec3 mean;
-   vec3 min;
-   vec3 max;
-};
-
-
 // An abstract class for the 
 struct IMesh {
-   virtual MeshRef* getMeshRef() = 0;
-   virtual TextureRef* getTextureRef() = 0;
-   virtual void setModelMatrix(mat4 modelMtx) = 0;
-   virtual mat4 getModelMatrix() = 0;
+   virtual MeshRef getMeshRef() = 0;
+   virtual void setMeshRef(MeshRef meshRef) = 0;
+   virtual TextureRef getTextureRef() = 0;
+   virtual void setTextureRef(TextureRef textureRef) = 0;
+   virtual void setModelMtx(mat4 modelMtx) = 0;
+   virtual mat4 getModelMtx() = 0;
    virtual vec4 getColor() = 0;
    virtual MeshBounds getMeshBounds() = 0;
    
@@ -128,13 +131,12 @@ struct IMesh {
    
    virtual MeshData* getMeshData() = 0;
    virtual TextureData* getTextureData() = 0;
-   virtual ~IMesh() {}
 };
 
 
-// Accessed by the RenderingEngine for a combined perspective and view matrix.
+// Accessed by the RenderingEngine for a combined projection and view matrix.
 struct ICamera {
-   virtual mat4 getPerspective() = 0;
+   virtual mat4 getProjectionViewMtx() = 0;
 };
 
 
@@ -146,6 +148,7 @@ struct IObject3d {
 
 // The main class that runs the game.
 struct IGameEngine {
+   virtual void tic(unsigned int td) = 0;
    virtual void render() = 0;
 };
 
@@ -162,9 +165,9 @@ struct IRenderingEngine {
 // Any resurces from the file system should be accessed
 // through this class.
 struct IResourceManager {
+   virtual MeshData* readMeshData(string fileName, LOAD_NORMAL_TYPE normalType, float scale) = 0;
    virtual TextureData* loadBMPImage(string fileName) = 0;
    //virtual ImageData* loadPngImage(string fileName) = 0;
-   virtual void unLoadImage() = 0;
 };
 
 

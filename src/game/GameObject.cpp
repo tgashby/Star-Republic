@@ -51,9 +51,9 @@ GameObject::~GameObject() {
  * heading.
  * @param int dt - The amount of time it took to draw the previous frame.
 */
-void GameObject::tic(int dt){
-   m_location = m_location + m_velocity*dt;
-   m_direction = m_direction + m_angularVelocity*dt;
+void GameObject::tic(int td){
+   m_location = m_location + m_velocity*td;
+   m_direction = m_direction + m_angularVelocity*td;
 }
 
 /**
