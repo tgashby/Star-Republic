@@ -1,17 +1,24 @@
-#ifndef LIST
-#define LIST
-#include <list>
-#endif
+#pragma once
+#include <iostream>
+#include <string>
+#include "WorldPoint.h"
+#include <vector>
 
-#include "Line.h"
+using namespace std;
 
+//Point in space vector for forward (Z),  up(Y), and side(X). Instead of Meshes, use object3ds
 class World
 {
 public:
-	std::list<Line> lines;
-	
-
-	World();
+	World(const string fileName);
 	~World();
-	Line* getInitialLine();
-}
+	WorldPoint getCurrent();
+	void setChoice(int next);
+	WorldPoint getAt(int index);
+	
+private:
+   WorldPoint parseLine(const string line);
+   
+   vector<WorldPoint> points;
+   int currentPoint;
+};
