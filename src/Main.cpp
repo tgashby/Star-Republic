@@ -33,7 +33,7 @@ int main(int argc, char** argv){
    // Create the window
    screen = SDL_SetVideoMode(800, 600, 32, SDL_SWSURFACE | SDL_OPENGL);
    
-   SDL_WM_SetCaption("Test!", NULL);
+   SDL_WM_SetCaption("Star Republic", NULL);
    
    // Boring OGL
    glPushMatrix();

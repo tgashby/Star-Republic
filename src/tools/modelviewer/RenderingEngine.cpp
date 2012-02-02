@@ -176,13 +176,10 @@ GLuint RenderingEngine::buildProgram(const char* vertexShaderSource,
 
 
 void RenderingEngine::loadMesh(IMesh *newMesh) {
-   //if (newMesh->meshRef.name != "") {
-      //return;
-   //}
    
-   list<MeshRef>::iterator meshRef = findMeshRef(newMesh->meshRef);
-   //list<MeshRef>::iterator meshRef = m_meshList.begin();
-   //find(meshRef, m_meshList.end(), newMesh->meshRef);
+   MeshRef newMeshRef = MeshRef();
+   newMeshRef.name = newMesh->getMeshName();
+   list<MeshRef>::iterator meshRef = find(m_meshList.begin(), m_meshList.end(), newMeshRef);
    if (meshRef != m_meshList.end()) {
       newMesh->meshRef = *meshRef;
       meshRef->count += 1;
@@ -213,7 +210,10 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
                    meshData->indices, GL_STATIC_DRAW);
       
       // Setup a new mesh reference for the render engine
-      MeshRef newMeshRef(newMesh->getMeshName(), vertexBuffer, indexBuffer, meshData->indexCount);
+      newMeshRef.name = newMesh->getMeshName();
+      newMeshRef.vertexBuffer = vertexBuffer;
+      newMeshRef.indexBuffer = indexBuffer;
+      newMeshRef.indexCount = meshData->indexCount;
       newMesh->meshRef = newMeshRef;
       m_meshList.push_back(newMeshRef);
       
@@ -223,9 +223,9 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
       delete meshData;
    }
    
-   list<TextureRef>::iterator textureRef = findTextureRef(newMesh->textureRef);
-   //list<TextureRef>::iterator textureRef = m_textureList.begin();
-   //std::find(textureRef, m_textureList.end(), newMesh->textureRef);
+   TextureRef newTextrueRef = TextureRef();
+   newTextrueRef.name = newMesh->getTextureName();
+   list<TextureRef>::iterator textureRef = std::find(m_textureList.begin(), m_textureList.end(), newTextrueRef);
    if (textureRef != m_textureList.end()) {
       newMesh->textureRef = *textureRef;
       textureRef->count += 1;
@@ -251,7 +251,8 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
       glGenerateMipmapEXT(GL_TEXTURE_2D);
       
       // Setup a new texture reference
-      TextureRef newTextrueRef(newMesh->getTextureName(), textureBuffer);
+      newTextrueRef.name = newMesh->getTextureName();
+      newTextrueRef.textureBuffer = textureBuffer;
       newMesh->textureRef = newTextrueRef;
       m_textureList.push_back(newTextrueRef);
    }
@@ -259,9 +260,9 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
 }
 
 void RenderingEngine::unLoadMesh(IMesh* rmvMesh) {
-   list<MeshRef>::iterator meshRef = findMeshRef(rmvMesh->meshRef);
-   //list<MeshRef>::iterator meshRef = m_meshList.begin();
-   //std::find(meshRef, m_meshList.end(), rmvMesh->meshRef);
+   MeshRef findMeshRef = MeshRef();
+   findMeshRef.name = rmvMesh->getMeshName();
+   list<MeshRef>::iterator meshRef = find(m_meshList.begin(), m_meshList.end(), findMeshRef);
    if (meshRef != m_meshList.end()) {
       meshRef->count -= 1;
       if (meshRef->count < 1) {
@@ -273,9 +274,9 @@ void RenderingEngine::unLoadMesh(IMesh* rmvMesh) {
    }
    rmvMesh->meshRef = MeshRef();
    
-   list<TextureRef>::iterator textureRef = findTextureRef(rmvMesh->textureRef);
-   //list<TextureRef>::iterator textureRef = m_textureList.begin();
-   //std::find(textureRef, m_textureList.end(), rmvMesh->textureRef);
+   TextureRef findTextrueRef = TextureRef();
+   findTextrueRef.name = rmvMesh->getTextureName();
+   list<TextureRef>::iterator textureRef = std::find(m_textureList.begin(), m_textureList.end(), findTextrueRef);
    if (textureRef != m_textureList.end()) {
       textureRef->count -= 1;
       if (textureRef->count < 1) {
