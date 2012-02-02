@@ -7,29 +7,30 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include "Drawable.h"
+#include "Interfaces.h"
 #include "Angle.h"
 #include "BoundingStructure.h"
-#include "Vector.hpp"
 
-class GameObject : Drawable {
+class GameObject : IObject3d {
    public:
-      GameObject(Vector3<float> startPoint, 
-                 Vector3<float> startVelocity,
+      GameObject(vec3 startPoint, 
+                 vec3 startVelocity,
                  Angle startHeading, 
                  BoundingStructure boundingStructure
                  );
+      ~GameObject();
       void tic(int dt);
       bool setVelocity(const Vector3<float> velocity);
       bool setAngularVelocity(const Angle angularVelocity); 
-      virtual void doCollision(GameObject & other) = 0;
-      virtual Model getModel() = 0;
+      //virtual void doCollision(GameObject & other) = 0;
+      list<IMesh *>* getMeshes();
       const BoundingStructure getBoundingStructure();
-      const Vector3<float> getLocation(); 
+      const vec3 getLocation(); 
    private:
+      list<IMesh *> m_meshList;
       BoundingStructure m_boundingStructure;
-      Vector3<float> m_location;
-      Vector3<float> m_velocity; 
+      vec3 m_location;
+      vec3 m_velocity; 
       Angle m_direction;
       Angle m_angularVelocity;
 };

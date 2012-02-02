@@ -1,4 +1,9 @@
 #include "GameObject.h"
+#include "Mesh.h"
+
+#define DEFAULT_MESH "spaceship.obj"
+#define DEFAULT_TEXTURE "blank.bmp"
+
 
 /**
  * GameObject base class definition. All movable in-game objects are derived
@@ -22,6 +27,22 @@ GameObject::GameObject(Coordinate startPoint,
    m_direction = startHeading;
    m_velocity = startVelocity;
    m_boundingStructure = boundingStructure;
+   
+   
+   
+   // Just to put a space ship on the screen for now.
+   // Derived classes should provoide their own meshes.
+   m_meshList = list<IMesh *>(0);
+   Mesh *mesh = new Mesh(DEFAULT_MESH, DEFAULT_TEXTURE);
+   m_meshList.push_back(mesh);
+}
+
+
+GameObject::~GameObject() {
+   list<IMesh *>::iterator mesh;
+   for (mesh = m_meshList.begin(); mesh != m_meshList.end(); ++mesh) {
+      delete *mesh;
+   }
 }
 
 
@@ -60,6 +81,14 @@ bool GameObject::setAngularVelocity(const Angle angularVelocity){
 }
 
 /**
+ * getMeshes - gets a pointer to a stl list of IMeshs.
+ */
+
+list<IMesh *>* GameObjcet::getMeshes() {
+   return m_meshList;
+}
+
+/**
  * getLocation gets the object's current location
  * @return the object's current location
  */
@@ -74,7 +103,4 @@ const Coordinate getLocation(){
 const BoundingStructure getBoundingStructure(){
    return m_boundingStructure;
 }
-
-
-
 
