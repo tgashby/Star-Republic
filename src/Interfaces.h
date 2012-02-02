@@ -1,5 +1,10 @@
-#ifndef SimpleGame_Interfaces_h
-#define SimpleGame_Interfaces_h
+#ifndef StarRepub_Interfaces_h
+#define StarRepub_Interfaces_h
+
+/*
+ this file should contain includes, namespaces, structs, and abstract classes
+ shared by all objects in the program
+ */
 
 #include "Vector.hpp"
 #include "Matrix.hpp"
@@ -8,7 +13,6 @@
 #include <list>
 #include <string>
 #include <iostream>
-#include <fstream>
 
 using namespace std;
 using std::vector;
@@ -17,14 +21,15 @@ using std::find;
 using std::string;
 
 
+// Used by the ResourceManager to determine how to load meshes.
 enum LOAD_NORMAL_TYPE {
    LOAD_NORMAL_VERTEX,
    LOAD_NORMAL_FACE,
 };
 
-// RenderingEngine uses this for keeping track of VBOs
-class MeshRef {
-public:
+
+// Used by the RenderingEngine to keep track of mesh VBOs.
+struct MeshRef {
    MeshRef() {
       name = "";
       vertexBuffer = 0;
@@ -46,6 +51,7 @@ public:
       indexCount = other.indexCount;
       count = other.count;
    }
+   // Used to find duplicate VBOs.
    int operator==(const MeshRef &rhs) {
       if (name == rhs.name) return 1;
       return 0;
@@ -57,7 +63,8 @@ public:
    int count;
 };
 
-// Data for creating VBOs
+
+// Holds data for creating Mesh VBOs
 struct MeshData {
    int vertexCount;
    float* vertices;
@@ -66,7 +73,8 @@ struct MeshData {
    vec3 mean, min, max;
 };
 
-class TextureRef {
+// Used by the RenderingEngine to keep track of mesh VBOs.
+struct TextureRef {
 public:
    TextureRef() {
       name = "";
@@ -91,65 +99,81 @@ public:
    int count;
 };
 
-struct ImageData {
+// holds date for textures
+struct TextureData {
    void* pixels;
    ivec2 size;
 };
 
-// Stores information for a single mesh.
+struct MeshBounds {
+   vec3 mean;
+   vec3 min;
+   vec3 max;
+};
+
+
+// An abstract class for the 
 struct IMesh {
-   MeshRef meshRef;   // References used by render engine
-   TextureRef textureRef;
-   mat4 meshMtx;        // Matrix used by render engine
-   vec3 mean, min, max; // Bounding box.
-   vec4 color;
-   float size;        // the size to load the mesh as.
-   LOAD_NORMAL_TYPE normalType;
+   virtual MeshRef* getMeshRef() = 0;
+   virtual TextureRef* getTextureRef() = 0;
+   virtual void setModelMatrix(mat4 modelMtx) = 0;
+   virtual mat4 getModelMatrix() = 0;
+   virtual vec4 getColor() = 0;
+   virtual MeshBounds getMeshBounds() = 0;
    
    // File name and Mesh type
    // Name used as a key by Rendering Engine for finding duplicate meshes.
    virtual string getMeshName() = 0;
    virtual string getTextureName() = 0;
    
-   // Used for procedural meshes. Meshes on file should be 
    virtual MeshData* getMeshData() = 0;
-   virtual ImageData* getImageData() = 0;
+   virtual TextureData* getTextureData() = 0;
    virtual ~IMesh() {}
 };
 
+
+// Accessed by the RenderingEngine for a combined perspective and view matrix.
 struct ICamera {
-   vec3 fwd;
-   vec3 eye;
-   vec3 ref;
-   vec3 up;
+   virtual mat4 getPerspective() = 0;
 };
 
+
+// Each object needs to provide the RenderingEngine a list of meshes.
 struct IObject3d {
    virtual list<IMesh *>* getMeshes() = 0;
 };
 
-// Acts as an interface to SDL for the game.
-struct IApplicationEngine {
+
+// The main class that runs the game.
+struct IGameEngine {
    virtual void render() = 0;
-   virtual ~IApplicationEngine() {}
 };
 
-// All OpenGL calls should be implemented here.
+
+// All OpenGL calls should be implemented in the RenderingEngine.
 struct IRenderingEngine {
    virtual void render(list<IObject3d *> &objects) = 0;
    virtual void setCamera(ICamera *camera) = 0;
    virtual void addObject3d(IObject3d *obj) = 0;
    virtual void removeObject3d(IObject3d *obj) = 0;
-   virtual ~IRenderingEngine() {}
 };
+
 
 // Any resurces from the file system should be accessed
 // through this class.
 struct IResourceManager {
-   virtual ~IResourceManager() {}
-   virtual ImageData* loadBMPImage(string fileName) = 0;
+   virtual TextureData* loadBMPImage(string fileName) = 0;
    //virtual ImageData* loadPngImage(string fileName) = 0;
    virtual void unLoadImage() = 0;
+};
+
+
+// This should be created in Main.cpp to be passed as a reference to any
+// object needing to accesss these instances.
+struct Modules {
+   IGameEngine *gameEngine;
+   IRenderingEngine *renderingEngine;
+   IResourceManager *resourceManager;
 };
 
 #endif
