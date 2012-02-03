@@ -9,8 +9,8 @@ void testLoop1()
   for (int i = 1; i < 30; i++) {
     current = world1.getCurrent();
     assert(current.getNumberOfIDs() == 1);
-    assert(current.getLeftID() == i % 5);
-    world1.setChoice(current.getLeftID());
+    assert(current.getFirstID() == i % 5);
+    world1.setChoice(current.getFirstID());
   }
 }
 
@@ -27,9 +27,9 @@ void testPath1()
     {
       current = world2.getCurrent();
       if (currentIndex == 4) {
-	assert(current.getLeftID() == 5);
-	assert(current.getMiddleID() == 7);
-	assert(current.getRightID() == 10);
+	assert(current.getFirstID() == 5);
+	assert(current.getSecondID() == 7);
+	assert(current.getThirdID() == 10);
 
 	if (!checkLeft) {
 	  checkLeft = true;
@@ -52,23 +52,23 @@ void testPath1()
 	}
       }
       else if (currentIndex == 6) {
-	assert(current.getLeftID() == 0);
+	assert(current.getFirstID() == 0);
 	currentIndex = 0;
 	world2.setChoice(currentIndex);
       }
       else if (currentIndex == 9) {
-	assert(current.getLeftID() == 0);
+	assert(current.getFirstID() == 0);
 	currentIndex = 0;
 	world2.setChoice(currentIndex);
       }
       else if (currentIndex == 12) {
-	assert(current.getLeftID() == 0);
+	assert(current.getFirstID() == 0);
 	currentIndex = 0;
 	world2.setChoice(currentIndex);
       }
       else {
 	currentIndex++;
-	assert(current.getLeftID() == currentIndex);
+	assert(current.getFirstID() == currentIndex);
 	world2.setChoice(currentIndex);
       }
       

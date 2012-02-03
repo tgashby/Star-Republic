@@ -38,15 +38,15 @@ WorldPoint World::parseLine(const string line)
    WorldPoint point (tempPosition, tempUp, tempForward, tempSide);
    
    if (totalPaths >= 1) {
-      point.setLeftID(tempLeft);
+      point.setFirstID(tempLeft);
    }
    
    if (totalPaths >= 2) {
-      point.setMiddleID(tempMid);
+      point.setSecondID(tempMid);
    }
    
    if (totalPaths == 3) {
-      point.setRightID(tempRight);
+      point.setThirdID(tempRight);
    }
    
    point.setNumberOfIDs(totalPaths);

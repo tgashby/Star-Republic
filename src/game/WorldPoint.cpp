@@ -33,19 +33,19 @@ void WorldPoint::setForward(float x, float y, float z)
    forward.z = z;
 }
 
-void WorldPoint::setLeftID(int ID)
+void WorldPoint::setFirstID(int ID)
 {
-   leftID = ID;
+   firstID = ID;
 }
 
-void WorldPoint::setMiddleID(int ID)
+void WorldPoint::setSecondID(int ID)
 {
-   middleID = ID;
+   secondID = ID;
 }
 
-void WorldPoint::setRightID(int ID)
+void WorldPoint::setThirdID(int ID)
 {
-   rightID = ID;
+   thirdID = ID;
 }
 
 void WorldPoint::setNumberOfIDs(int number)
@@ -58,17 +58,17 @@ int WorldPoint::getNumberOfIDs()
   return numberOfIDs;
 }
 
-int WorldPoint::getLeftID()
+int WorldPoint::getFirstID()
 {
-  return leftID;
+  return firstID;
 }
 
-int WorldPoint::getMiddleID()
+int WorldPoint::getSecondID()
 {
-  return middleID;
+  return secondID;
 }
 
-int WorldPoint::getRightID()
+int WorldPoint::getThirdID()
 {
-   return rightID;
+   return thirdID;
 }
