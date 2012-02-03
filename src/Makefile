@@ -4,5 +4,9 @@ all:
 run:
 	./starrepublic
 
-it so:
+it:
 	./starrepublic
+
+so: 
+	echo w00t!
+

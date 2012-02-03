@@ -1,5 +1,7 @@
 #include "GameEngine.h"
 #include "Object3d.h"
+#include "Player.h"
+
 
 GameEngine::GameEngine(Modules *modules) {
    m_modules = modules;
@@ -7,12 +9,8 @@ GameEngine::GameEngine(Modules *modules) {
    
    m_camera = new Camera(vec3(0, 0, 0));
    modules->renderingEngine->setCamera(m_camera);
-   
-   // just push a single object to the list and add to the RenderingEngine
-   Object3d *newObject = new Object3d("models/spaceship.obj", "textures/test3.bmp", modules);
-   modules->renderingEngine->addObject3d(newObject);
-   m_objects.push_back(newObject);
-   
+
+   InitData();
 }
 
 
@@ -25,6 +23,13 @@ GameEngine::~GameEngine() {
    //delete m_camera;
 }
 
+void GameEngine::InitData()
+{
+   // just push a single object to the list and add to the RenderingEngine
+   Object3d *newObject = new Player("models/spaceship.obj", "textures/test3.bmp", m_modules);
+   m_modules->renderingEngine->addObject3d(newObject);
+   m_objects.push_back(newObject);
+}
 
 void GameEngine::tic(unsigned int td) {
    // Update the state of the game.

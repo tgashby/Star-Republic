@@ -14,6 +14,7 @@ private:
    list<IObject3d *> m_objects;
    Camera *m_camera;
    Modules *m_modules;
+   void InitData();
 };
 
 #endif
