@@ -3,3 +3,6 @@ all:
 
 run:
 	./starrepublic
+
+it so:
+	./starrepublic
