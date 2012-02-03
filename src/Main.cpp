@@ -10,9 +10,9 @@
 
 
 #include "Interfaces.h"
-#include "game/ResourceManager.h"
-#include "game/GameEngine.h"
-#include "game/RenderingEngine.h"
+#include "ResourceManager.h"
+#include "GameEngine.h"
+#include "RenderingEngine.h"
 
 int main(int argc, char** argv){
    SDL_Surface* screen;

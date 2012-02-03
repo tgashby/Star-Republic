@@ -6,9 +6,9 @@
  shared by all objects in the program
  */
 
-#include "Vector.hpp"
-#include "Matrix.hpp"
-#include "Quaternion.hpp"
+#include "Vector.h"
+#include "Matrix.h"
+#include "Quaternion.h"
 #include <vector>
 #include <list>
 #include <string>
@@ -122,6 +122,9 @@ struct IMesh {
    virtual void setModelMtx(mat4 modelMtx) = 0;
    virtual mat4 getModelMtx() = 0;
    virtual vec4 getColor() = 0;
+   virtual void setColor(vec4 color) = 0;
+   virtual bool isVisible() = 0;
+   virtual void setVisible(bool visible) = 0;
    virtual MeshBounds getMeshBounds() = 0;
    
    // File name and Mesh type
