@@ -15,10 +15,14 @@ public:
 	WorldPoint getCurrent();
 	void setChoice(int next);
 	WorldPoint getAt(int index);
+	void update(Vector3<float> playerPos);
+	WorldPoint getPrevious();
 	
 private:
    WorldPoint parseLine(const string line);
    
    vector<WorldPoint> points;
    int currentPoint;
+   //TODO
+   int previousPoint;
 };

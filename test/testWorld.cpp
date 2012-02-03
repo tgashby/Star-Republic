@@ -6,7 +6,7 @@ void testLoop1()
 
   WorldPoint current = world1.getCurrent();
   
-  for (int i = 1; i < 30; i++) {
+  for (int i = 2; i < 30; i++) {
     current = world1.getCurrent();
     assert(current.getNumberOfIDs() == 1);
     assert(current.getFirstID() == i % 5);
