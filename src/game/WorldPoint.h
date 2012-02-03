@@ -19,6 +19,10 @@ void setNumberOfIDs(int number);
  int getFirstID();
  int getSecondID();
  int getThirdID();
+ Vector3<float> getPosition();
+ Vector3<float> getUp();
+ Vector3<float> getForward();
+ Vector3<float> getSide();
 
 private:
    Vector3<float> position;

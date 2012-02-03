@@ -72,3 +72,23 @@ int WorldPoint::getThirdID()
 {
    return thirdID;
 }
+
+Vector3<float> WorldPoint::getPosition() 
+{
+  return position;
+}
+
+Vector3<float> WorldPoint::getUp() 
+{
+  return up;
+}
+
+Vector3<float> WorldPoint::getForward()
+{
+  return forward;
+}
+
+Vector3<float> WorldPoint::getSide()
+{
+  return side;
+}
