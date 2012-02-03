@@ -1,10 +1,10 @@
 #ifndef StarRepub_Player_h
 #define StarRepub_Player_h
 
-#include "Interfaces.h"
-#include "Camera.h"
-#include "Object3d.h"
-#include "Mesh.h"
+#include "../engine/Interfaces.h"
+#include "../engine/Camera.h"
+#include "../engine/Object3d.h"
+#include "../engine/Mesh.h"
 
 class Player : public Object3d {
 public:

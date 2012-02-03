@@ -1,8 +1,8 @@
 #ifndef StarRepub_GameEngine_h
 #define StarRepub_GameEngine_h
 
-#include "Interfaces.h"
-#include "Camera.h"
+#include "../engine/Interfaces.h"
+#include "../engine/Camera.h"
 
 #ifdef __APPLE__
 #include <SDL/SDL.h>

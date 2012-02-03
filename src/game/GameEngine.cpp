@@ -1,5 +1,5 @@
 #include "GameEngine.h"
-#include "Object3d.h"
+#include "../engine/Object3d.h"
 #include "Player.h"
 
 

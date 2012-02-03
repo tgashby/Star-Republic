@@ -9,10 +9,10 @@
 #endif
 
 
-#include "Interfaces.h"
-#include "ResourceManager.h"
+#include "../engine/Interfaces.h"
+#include "../engine/ResourceManager.h"
 #include "GameEngine.h"
-#include "RenderingEngine.h"
+#include "../engine/RenderingEngine.h"
 
 bool handleEvents(float dt, SDL_Event& evt);
 bool handleKeyUp(SDLKey key);
