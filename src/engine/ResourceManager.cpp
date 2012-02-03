@@ -22,6 +22,11 @@ ResourceManager::ResourceManager() {
    chdir(path);
    std::cout << "Current Path: " << path << std::endl;
 #endif
+   
+#ifdef __unix__
+   chdir("../../assets/");
+#endif
+   
    m_image = NULL;
 }
 
