@@ -9,7 +9,7 @@ GameEngine::GameEngine(Modules *modules) {
    modules->renderingEngine->setCamera(m_camera);
    
    // just push a single object to the list and add to the RenderingEngine
-   Object3d *newObject = new Object3d("models/turret.obj", "textures/test3.bmp", modules);
+   Object3d *newObject = new Object3d("models/spaceship.obj", "textures/test3.bmp", modules);
    modules->renderingEngine->addObject3d(newObject);
    m_objects.push_back(newObject);
    
