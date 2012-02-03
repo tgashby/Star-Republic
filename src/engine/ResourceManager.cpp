@@ -24,7 +24,7 @@ ResourceManager::ResourceManager() {
 #endif
    
 #ifdef __unix__
-   chdir("../../assets/");
+   chdir("../assets/");
 #endif
    
    m_image = NULL;
@@ -95,6 +95,7 @@ MeshData* loadMesh(const string fileName, LOAD_NORMAL_TYPE type, float scale) {
    string line;
    streampos linestart;
    ifstream infile(fileName.c_str());
+
    vec3 *v;
    vec2 *t;
    if (infile.is_open())  
