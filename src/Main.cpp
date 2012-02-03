@@ -14,7 +14,12 @@
 #include "GameEngine.h"
 #include "RenderingEngine.h"
 
-int main(int argc, char** argv){
+bool handleEvents(float dt, SDL_Event& evt);
+bool handleKeyUp(SDLKey key);
+void handleMouseMotion(Uint16 x, Uint16 y);
+
+int main(int argc, char** argv)
+{
    SDL_Surface* screen;
    
    // Call SDL_INIT(SDL_EVERYTHING)
@@ -49,23 +54,24 @@ int main(int argc, char** argv){
    modules->renderingEngine = new RenderingEngine(modules);
    modules->gameEngine = new GameEngine(modules);
    
-   
    // Swap buffers to display what you've drawn
    SDL_GL_SwapBuffers();
    
-   SDL_Event myEvent;
    bool running = true;
    
-   while(running){
-      SDL_PollEvent(&myEvent);
-      
-      if (myEvent.type == SDL_QUIT)
-         running = false;
+   while(running)
+   {
+      // Handle Events (keyboard, mouse, etc)
+      running = modules->gameEngine->handleEvents();
       
       modules->gameEngine->render();
       SDL_GL_SwapBuffers();
    }
    
    SDL_Quit();
+   
+   delete modules;
+   
    return 0;
 }
+

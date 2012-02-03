@@ -34,3 +34,61 @@ void GameEngine::tic(unsigned int td) {
 void GameEngine::render() {
    m_modules->renderingEngine->render(m_objects);
 }
+
+
+// Take care of mouse and keyboard events
+bool GameEngine::handleEvents()
+{
+   bool running = true;
+   
+   SDL_Event evt;
+   uint64_t old = SDL_GetTicks();
+   
+   
+   while (SDL_PollEvent(&evt))
+   {
+      uint64_t now = SDL_GetTicks();
+      float dt = (now - old) / 1000.0f;
+      
+      old = now;
+      
+      if (evt.type == SDL_QUIT)
+         running = false;
+      
+      // Keyboard events
+      if (evt.type == SDL_KEYUP)
+      {
+         running = handleKeyUp(evt.key.keysym.sym);
+      }
+      
+      // Mouse Events
+      if (evt.type == SDL_MOUSEMOTION) 
+      {
+         handleMouseMotion(evt.motion.x, evt.motion.y);
+      }
+      
+      //   if (evt.type == SDL_MOUSEBUTTONUP)
+      //   {
+      //      mouse_click(evt.button.button);
+      //   }
+   }
+      
+   return running;
+}
+
+bool GameEngine::handleKeyUp(SDLKey key)
+{
+   bool running = true;
+   
+   if (key == SDLK_ESCAPE) 
+   {
+      running = false;
+   }
+   
+   return running;
+}
+
+void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
+{
+   // Rotate player?
+}

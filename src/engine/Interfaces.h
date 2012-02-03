@@ -1,6 +1,8 @@
 #ifndef StarRepub_Interfaces_h
 #define StarRepub_Interfaces_h
 
+
+
 /*
  this file should contain includes, namespaces, structs, and abstract classes
  shared by all objects in the program
@@ -13,6 +15,21 @@
 #include <list>
 #include <string>
 #include <iostream>
+
+#ifdef __APPLE__
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
+#endif
+
+#ifdef __unix__
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
+#endif
+
+#ifdef _WIN32
+#include <SDL.h>
+#include <SDL_opengl.h>
+#endif
 
 using namespace std;
 using std::vector;
@@ -153,6 +170,9 @@ struct IObject3d {
 struct IGameEngine {
    virtual void tic(unsigned int td) = 0;
    virtual void render() = 0;
+   virtual bool handleEvents() = 0;
+   virtual bool handleKeyUp(SDLKey key) = 0;
+   virtual void handleMouseMotion(Uint16 x, Uint16 y) = 0;
 };
 
 
@@ -180,6 +200,13 @@ struct Modules {
    IGameEngine *gameEngine;
    IRenderingEngine *renderingEngine;
    IResourceManager *resourceManager;
+   
+   ~Modules()
+   {
+      delete gameEngine;
+      delete renderingEngine;
+      delete resourceManager;
+   }
 };
 
 #endif
