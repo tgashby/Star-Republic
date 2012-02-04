@@ -32,6 +32,7 @@ ResourceManager::ResourceManager() {
 
 
 MeshData* ResourceManager::readMeshData(string fileName, LOAD_NORMAL_TYPE normalType, float scale) {
+    cout << "loading mesh: " << fileName << "\n";
    return loadMesh(fileName, normalType, scale);
 }
 
