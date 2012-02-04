@@ -9,7 +9,7 @@ Mesh::Mesh(string meshName, string textureName, Modules *modules) {
    m_textureRef.name = textureName;
    
    m_modelMatrix = mat4::Identity();
-   m_color = vec4(0.8, 0.8, 0.8, 1.0);
+   m_color = vec4(0.8f, 0.8f, 0.8f, 1.0f);
    m_visible = true;
 }
 

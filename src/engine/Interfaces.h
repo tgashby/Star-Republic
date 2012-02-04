@@ -1,7 +1,7 @@
 #ifndef StarRepub_Interfaces_h
 #define StarRepub_Interfaces_h
 
-
+#include "SDL_include.h"
 
 /*
  this file should contain includes, namespaces, structs, and abstract classes
@@ -16,26 +16,7 @@
 #include <string>
 #include <iostream>
 
-#ifdef __APPLE__
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#endif
-
-#ifdef __unix__
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#endif
-
-#ifdef _WIN32
-#include <SDL.h>
-#include <SDL_opengl.h>
-#endif
-
 using namespace std;
-using std::vector;
-using std::list;
-using std::find;
-using std::string;
 
 
 // Used by the ResourceManager to determine how to load meshes.
@@ -168,7 +149,7 @@ struct IObject3d {
 
 // The main class that runs the game.
 struct IGameEngine {
-   virtual void tic(unsigned int td) = 0;
+   virtual void tic(uint64_t td) = 0;
    virtual void render() = 0;
    virtual bool handleEvents() = 0;
    virtual bool handleKeyUp(SDLKey key) = 0;

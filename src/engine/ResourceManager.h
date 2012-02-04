@@ -2,8 +2,7 @@
 #define StarRepub_ResourceManager_h
 
 #include "Interfaces.h"
-#include <SDL/SDL.h>
-//#include <SDL_image/SDL_image.h>
+#include "SDL_include.h"
 
 class ResourceManager : public IResourceManager {
 public:

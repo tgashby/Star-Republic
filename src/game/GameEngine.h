@@ -4,20 +4,8 @@
 #include "../engine/Interfaces.h"
 #include "../engine/Camera.h"
 
-#ifdef __APPLE__
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#endif
+#include "../engine/SDL_include.h"
 
-#ifdef __unix__
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#endif
-
-#ifdef _WIN32
-#include <SDL.h>
-#include <SDL_opengl.h>
-#endif
 #define VELOCITY_CONSTANT 2
 #include "World.h"
 #include "WorldPoint.h"
@@ -28,7 +16,7 @@ class GameEngine : public IGameEngine {
 public:
    GameEngine(Modules *modules);
    ~GameEngine();
-   void tic(unsigned int td);
+   void tic(uint64_t td);
    void render();
    
    bool handleEvents();

@@ -33,7 +33,7 @@ WorldPoint World::parseLine(const string line)
    
    int tempInt, tempLeft, tempMid, tempRight, totalPaths;
    
-   totalPaths = sscanf(line.c_str(), 
+   totalPaths = sscanf_s(line.c_str(), 
 		       "%d %f %f %f %f %f %f %f %f %f %f %f %f %d %d %d", 
 		       &tempInt, &tempPosition.x, &tempPosition.y, 
 		       &tempPosition.z, &tempUp.x, &tempUp.y, &tempUp.z, 
@@ -117,7 +117,7 @@ WorldPoint World::update(Vector3<float> playerPos)
     }
     normal = vect1.Cross(vect2);
     D_val = (current.getPosition().x * normal.x + current.getPosition().y 
-	     * normal.y * current.getPosition().z * normal.z) * -1.0;
+	     * normal.y * current.getPosition().z * normal.z) * -1.0f;
     
     playerDistFromPlane = current.getPosition().x * playerPos.x + 
       current.getPosition().y * playerPos.y + current.getPosition().z 

@@ -36,7 +36,7 @@ void GameEngine::InitData()
 
 }
 
-void GameEngine::tic(unsigned int td) {
+void GameEngine::tic(uint64_t td) {
    // Update functions go here
    m_player->tic(td);
    m_world->update(m_player->getPosition());

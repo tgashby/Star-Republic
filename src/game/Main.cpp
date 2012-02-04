@@ -1,13 +1,5 @@
-
 /* SDL */
-#ifdef _WIN32
-	#include <SDL.h>
-	#include <SDL_opengl.h>
-#else
-	#include <SDL/SDL.h>
-	#include <SDL/SDL_opengl.h>
-#endif
-
+#include "../engine/SDL_include.h"
 
 #include "../engine/Interfaces.h"
 #include "../engine/ResourceManager.h"
