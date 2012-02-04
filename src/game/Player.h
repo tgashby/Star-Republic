@@ -17,11 +17,13 @@ public:
    void setAcceleration(Vector3<float> acc);
    void setBearing(Vector3<float> current);
    Vector3<float> getPosition();
+   Vector3<float> getFoward();
 private:
    int health;
    Mesh *m_mesh;
    Vector3<float> position;
    Vector3<float> velocity;
+   Vector3<float> forward;
    Vector3<float> acceleration;
 };
 

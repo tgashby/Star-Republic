@@ -34,6 +34,7 @@ void Player::tic(unsigned int time)
    cerr << "WE BE AT " << position.x << " " << position.y << " " << position.z << " CAP'N!\n";
    cerr << "OUR SPEED: X IS: " << velocity.x << ", Y IS: " << velocity.y << ", Z IS: " << velocity.z << "\n";
 }
+
 void Player::setPosition(Vector3<float> pos)
 {
    position.x = pos.x;
@@ -41,27 +42,38 @@ void Player::setPosition(Vector3<float> pos)
    position.z = pos.z;
    cerr << "WE BE AT " << position.x << " " << position.y << " " << position.z << " CAP'N!\n";
 }
+
 void Player::setVelocity(Vector3<float> vel)
 {
    velocity.x = vel.x;
    velocity.y = vel.y;
    velocity.z = vel.z;
 }
+
 void Player::setAcceleration(Vector3<float> acc)
 {
    acceleration.x = acc.x;
    acceleration.y = acc.y;
    acceleration.z = acc.z;
 }
+
 void Player::setBearing(Vector3<float> current)
 {
    cerr << "OUR HEADING: X IS: " << current.x << ", Y IS: " << current.y << ", Z IS: " << current.z << "\n";
+
    velocity.x = current.x - position.x;
    velocity.y = current.y - position.y;
    velocity.z = current.z - position.z;
+
    velocity = velocity.Normalized();
+
+   forward.x = velocity.x;
+   forward.y = velocity.y;
+   forward.z = velocity.z;
+
    velocity = velocity * VELOCITY;
 }
+
 Vector3<float> Player::getPosition()
 {
    return position;
