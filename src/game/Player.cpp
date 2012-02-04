@@ -1,6 +1,7 @@
 #include "Player.h"
 
 Player::Player(string fileName, string textureName, Modules *modules) 
+//   : Object3d(fileName, textureName, modules), velocity(0,0,0), position(0,0,0), acceleration(0,0,0), health(100)
    : Object3d(), velocity(0,0,0), position(0,0,0), acceleration(0,0,0), health(100)
 {
    m_mesh = new Mesh(fileName, textureName, modules);
@@ -24,12 +25,21 @@ void Player::tic(unsigned int time)
    position.x += velocity.x * time;
    position.y += velocity.y * time;
    position.z += velocity.z * time;
+   
+   //MAYBE NOT THE BEST WAY TO DO IT
+   mat4 modelMtx = m_mesh->getModelMtx();
+   modelMtx = mat4::Translate(velocity.x * time, velocity.y * time, velocity.z * time) * modelMtx;
+   m_mesh->setModelMtx(modelMtx);
+
+   cerr << "WE BE AT " << position.x << " " << position.y << " " << position.z << " CAP'N!\n";
+   cerr << "OUR SPEED: X IS: " << velocity.x << ", Y IS: " << velocity.y << ", Z IS: " << velocity.z << "\n";
 }
 void Player::setPosition(Vector3<float> pos)
 {
    position.x = pos.x;
    position.y = pos.y;
    position.z = pos.z;
+   cerr << "WE BE AT " << position.x << " " << position.y << " " << position.z << " CAP'N!\n";
 }
 void Player::setVelocity(Vector3<float> vel)
 {
@@ -45,10 +55,11 @@ void Player::setAcceleration(Vector3<float> acc)
 }
 void Player::setBearing(Vector3<float> current)
 {
+   cerr << "OUR HEADING: X IS: " << current.x << ", Y IS: " << current.y << ", Z IS: " << current.z << "\n";
    velocity.x = current.x - position.x;
    velocity.y = current.y - position.y;
    velocity.z = current.z - position.z;
-   velocity->normalized();
+   velocity = velocity.Normalized();
    velocity = velocity * VELOCITY;
 }
 Vector3<float> Player::getPosition()

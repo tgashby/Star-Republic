@@ -8,6 +8,7 @@ class testWorld {
  public:
   void testLoop1();
   void testPath1();
+  void testPoints1();
   int main();
  private:
 };

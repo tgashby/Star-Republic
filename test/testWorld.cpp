@@ -78,7 +78,12 @@ void testPath1()
   assert(checkRight);
 }
 
+void testCoords1() {
+  World world3 = World("testWorld3.wf");
+}
+
 int main() {
-  testLoop1();
-  testPath1();
+  //testLoop1();
+  //testPath1();
+  testCoords1();
 }

@@ -8,6 +8,7 @@ RenderingEngine::RenderingEngine(Modules *modules) {
    m_modules = modules;
    m_meshList = list<MeshRef>(0);
    m_textureList = list<TextureRef>(0);
+   //NOTE: WAS EQUAL TO NULL. SET TO SOMETHING USELESS SO CODE WOULD STOP SEGFAULTING
    m_camera = NULL;
    
    // Create the GLSL program.

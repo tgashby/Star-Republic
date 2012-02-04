@@ -20,6 +20,8 @@ World::World(const string fileName)
          points.push_back(parseLine(line));
       }
    }
+   else
+   { cerr << "Problem is in World: the infile was never opened. \n"; }
 }
 
 WorldPoint World::parseLine(const string line)
@@ -38,6 +40,8 @@ WorldPoint World::parseLine(const string line)
 		       &tempForward.x, &tempForward.y, &tempForward.z, 
 		       &tempSide.x, &tempSide.y, &tempSide.z, &tempLeft,
 		       &tempMid, &tempRight) - 13;
+
+   cerr << "X IS: " << tempPosition.x << ", Y IS: " << tempPosition.y << ", Z IS: " << tempPosition.z << "\n";
    
    WorldPoint point (tempPosition, tempUp, tempForward, tempSide);
    
@@ -61,8 +65,14 @@ WorldPoint World::parseLine(const string line)
 WorldPoint World::getCurrent() {
   return points.at(currentPoint);
 }
+WorldPoint* World::getCurrentPointer() {
+   return &points.at(currentPoint);
+}
 WorldPoint World::getPrevious() {
   return points.at(previousPoint);
+}
+WorldPoint* World::getPreviousPointer() {
+  return &points.at(previousPoint);
 }
 
 void World::setChoice(int next) {
@@ -80,7 +90,7 @@ WorldPoint World::getAt(int index)
   return points.at(index);
 }
 
-void World::update(Vector3<float> playerPos)
+WorldPoint World::update(Vector3<float> playerPos)
 {
   float D_val;
   WorldPoint current = getCurrent();
@@ -100,10 +110,10 @@ void World::update(Vector3<float> playerPos)
   float distance = sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
   WorldPoint firstChoice = getAt(current.getFirstID());
 
-  if (distance > RANGE_CHECK) {
+  if (distance < RANGE_CHECK) {
     if (current.getNumberOfIDs() == 1) {
       setChoice(current.getFirstID());
-      return;
+      return getCurrent();
     }
     normal = vect1.Cross(vect2);
     D_val = (current.getPosition().x * normal.x + current.getPosition().y 
@@ -116,7 +126,7 @@ void World::update(Vector3<float> playerPos)
     if (abs(playerDistFromPlane) < MID_BUFFER_WIDTH && 
 	current.getNumberOfIDs() == 3) {
       setChoice(current.getSecondID());
-      return;
+      return getCurrent();
     }
     
     firstDistFromPlane = current.getPosition().x * firstChoice.getPosition().x 
@@ -126,21 +136,14 @@ void World::update(Vector3<float> playerPos)
     if (playerDistFromPlane / abs(playerDistFromPlane) == 
 	firstDistFromPlane / abs(firstDistFromPlane)) {
       setChoice(current.getFirstID());
-      return;
+      return getCurrent();
     }
     else {
       setChoice(current.getThirdID());
-      return;
+      return getCurrent();
     }
-    /*if (distanceFromPlane <= 0) {
-      setChoice(current.getFirstID());
-      return;
-    }
-    else {
-      setChoice(current.getThirdID());
-      return;
-      }*/
 
     
   }
+     return getCurrent();
 }

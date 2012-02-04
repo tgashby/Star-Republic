@@ -58,14 +58,18 @@ int main(int argc, char** argv)
    SDL_GL_SwapBuffers();
    
    bool running = true;
-   
+   uint64_t now, then1, then2;
+   then1 = SDL_GetTicks();
    while(running)
    {
       // Handle Events (keyboard, mouse, etc)
       running = modules->gameEngine->handleEvents();
-      
+      then2 = SDL_GetTicks();
+      now = then2 - then1;
+      modules->gameEngine->tic(now);
       modules->gameEngine->render();
       SDL_GL_SwapBuffers();
+      then1 = then2;
    }
    
    SDL_Quit();
