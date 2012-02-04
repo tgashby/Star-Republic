@@ -24,7 +24,7 @@ ResourceManager::ResourceManager() {
 #endif
    
 #ifdef __unix__
-   chdir("../assets/");
+   chdir("../../assets");
 #endif
    
    m_image = NULL;
@@ -37,6 +37,7 @@ MeshData* ResourceManager::readMeshData(string fileName, LOAD_NORMAL_TYPE normal
 }
 
 TextureData* ResourceManager::loadBMPImage(string fileName) {
+   cout << "Load Texture: " << fileName << "\n";
    if (m_image != NULL)
       delete m_image; 
    

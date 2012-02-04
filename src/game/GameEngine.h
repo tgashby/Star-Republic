@@ -18,6 +18,11 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #endif
+#define VELOCITY_CONSTANT 2
+#include "World.h"
+#include "WorldPoint.h"
+#include "Player.h"
+#include <assert.h>
 
 class GameEngine : public IGameEngine {
 public:
@@ -32,8 +37,13 @@ public:
    
 private:
    list<IObject3d *> m_objects;
+   Player *m_player;
    Camera *m_camera;
    Modules *m_modules;
+   World *m_world;
+   WorldPoint *m_currentPoint;
+   WorldPoint *m_previousPoint;
+   Vector3<float> currentDirection;
    void InitData();
 };
 

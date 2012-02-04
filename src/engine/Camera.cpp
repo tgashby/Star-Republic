@@ -27,6 +27,14 @@ mat4 Camera::getProjectionViewMtx() {
    return projectionMatrix;
 }
 
+//Chad and Nick's handiwork. Code is extremely volatile: do not uncomment unless you are prepared!
+//Current camera will only handle following it directly
+/*void Camera::update(vec3 playerPos, vec3 playerForw) {
+   m_ref = playerPos;
+   m_pos = playerPos - CAMERA_DIST_FROM_PLAYER * playerForw;
+   //m_up = 
+}*/
+
 void Camera::moveInOut(float dist) {
    m_dist += dist * 2;
    if (m_dist < 1.0) {
