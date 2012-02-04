@@ -11,4 +11,4 @@ else:
    env.Append(LIBS=["RepublicEngine"]+env['LIBS'])
 
 SConscript('../engine/SConstruct')
-env.Program('starrepublic', ["Main.cpp"])
+env.Program('starrepublic', Glob("*.cpp"))
