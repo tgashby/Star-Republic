@@ -229,7 +229,7 @@ MeshData* loadMesh(const string fileName, LOAD_NORMAL_TYPE type, float scale) {
 float parseFloat(const std::string line) {
    
    float f;
-   if (sscanf_s(line.c_str(), "%g", &f) != 1) {
+   if (sscanf(line.c_str(), "%g", &f) != 1) {
       printf("error reading float\n");
    }
    return f;
@@ -237,7 +237,7 @@ float parseFloat(const std::string line) {
 
 vec3* parseVertex(const string line) {
    float x, y, z;
-   if (sscanf_s(line.c_str(), "v %g %g %g", &x, &y, &z) != 3) {
+   if (sscanf(line.c_str(), "v %g %g %g", &x, &y, &z) != 3) {
       cout << "error reading vertex\n";
    }
    return new vec3(x, y, z);
@@ -245,7 +245,7 @@ vec3* parseVertex(const string line) {
 
 vec3* parseNormal(const string line) {
    float x, y, z;
-   if (sscanf_s(line.c_str(), "vn %g %g %g", &x, &y, &z) != 3) {
+   if (sscanf(line.c_str(), "vn %g %g %g", &x, &y, &z) != 3) {
       cout << "error reading normal\n";
    }
    return new vec3(x, y, z);
@@ -253,7 +253,7 @@ vec3* parseNormal(const string line) {
 
 vec3* parseTangent(const string line) {
    float x, y, z;
-   if (sscanf_s(line.c_str(), "vnt %g %g %g", &x, &y, &z) != 3) {
+   if (sscanf(line.c_str(), "vnt %g %g %g", &x, &y, &z) != 3) {
       cout << "error reading tanget\n";
    }
    return new vec3(x, y, z);
@@ -261,7 +261,7 @@ vec3* parseTangent(const string line) {
 
 vec2* parseTexture(const string line) {
    float u, v;
-   if (sscanf_s(line.c_str(), "vt %g %g", &u, &v) != 2) {
+   if (sscanf(line.c_str(), "vt %g %g", &u, &v) != 2) {
       cout << "error reading texture coordinates\n";
    }
    return new vec2(u, v);
