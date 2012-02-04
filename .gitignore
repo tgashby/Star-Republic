@@ -10,6 +10,8 @@ build/
 # IDE and editor temporary files
 # Vim swapfiles
 *.swp
+#Emacs swapfile?
+*.swo
 # XCode project files
 *.xcodeproj/
 *HelloSDL/

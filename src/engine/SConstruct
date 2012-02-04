@@ -5,5 +5,4 @@ if (env['PLATFORM'] == 'darwin'):
 else:
    env.Append(LIBS=["GL", "SDL"])    
 
-env.Object(Glob('*.cpp') )
-env.Library('RepublicEngine',Glob('*.o') )
+env.Library('RepublicEngine',Glob('*.cpp') )
