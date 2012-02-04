@@ -415,9 +415,24 @@ struct Matrix4 {
         m.z.z = c + (1 - c) * axis.z * axis.z;
         return m;
     }
-    static Matrix4<T> Frustum(T left, T right, T bottom, T top, T _near, T _far)
+    static Matrix4<T> Rotate(vec3 dir, vec3 up)
     {
-        T a = (2 * _near) / (right - left);
+       vec3 d = dir.Normalized();
+       vec3 s = dir.Cross(up);
+       s.Normalize();
+       vec3 u = s.Cross(d);
+       
+       Matrix4<T> m;
+       m.x.x = s.x; m.x.y = u.x; m.x.z = d.x; m.x.w = 0;
+       m.y.x = s.y; m.y.y = u.y; m.y.z = d.y; m.y.w = 0;
+       m.z.x = s.z; m.z.y = u.z; m.z.z = d.z; m.z.w = 0;
+       m.w.x = 0; m.w.y = 0; m.w.z = 0; m.w.w = 1;
+       
+       return m;
+    }
+    static Matrix4<T> Frustum(T left, T right, T bottom, T top, T near, T far)
+    {
+    	T a = (2 * _near) / (right - left);
         T b = (2 * _near) / (top - bottom);
         T c = (right + left) / (right - left);
         T d = (top + bottom) / (top - bottom);
