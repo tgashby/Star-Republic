@@ -45,11 +45,11 @@ class vertex:
         self.v = 0
         self.faces = []
     def writeVertex(self, out):
-        out.write('v %f %f %f\n' % (self.x , self.y, self.z))
+        out.write('v %f %f %f\n' % (self.x , self.z, self.y))
     def writeNormal(self, out):
-        out.write('vn %f %f %f\n' % (self.normx, self.normy, self.normz))
+        out.write('vn %f %f %f\n' % (self.normx, self.normz, self.normy))
     def writeTangent(self, out):
-        out.write('vnt %f %f %f\n' % (self.tangentx, self.tangenty, self.tangentz))
+        out.write('vnt %f %f %f\n' % (self.tangentx, self.tangentz, self.tangenty))
     def writeTexture(self, out):
         out.write('vt %f %f\n' % (self.u, self.v))
     def settoface(self, f):
