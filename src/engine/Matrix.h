@@ -430,7 +430,7 @@ struct Matrix4 {
        
        return m;
     }
-    static Matrix4<T> Frustum(T left, T right, T bottom, T top, T near, T far)
+    static Matrix4<T> Frustum(T left, T right, T bottom, T top, T _near, T _far)
     {
     	T a = (2 * _near) / (right - left);
         T b = (2 * _near) / (top - bottom);
