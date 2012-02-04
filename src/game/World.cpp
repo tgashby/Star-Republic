@@ -88,7 +88,8 @@ void World::update(Vector3<float> playerPos)
   float diffX = playerPos.x - current.getPosition().x;
   float diffY = playerPos.y - current.getPosition().y;
   float diffZ = playerPos.z - current.getPosition().z;
-  float distanceFromPlane = 0;
+  float playerDistFromPlane = 0;
+  float firstDistFromPlane = 0;
   Vector3<float> vect1 (current.getPosition().x - previous.getPosition().x,
 			current.getPosition().y - previous.getPosition().y,
 			current.getPosition().z - previous.getPosition().z);
@@ -97,6 +98,8 @@ void World::update(Vector3<float> playerPos)
 			current.getPosition().z + current.getUp().z);
   Vector3<float> normal;
   float distance = sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
+  WorldPoint firstChoice = getAt(current.getFirstID());
+
   if (distance > RANGE_CHECK) {
     if (current.getNumberOfIDs() == 1) {
       setChoice(current.getFirstID());
@@ -106,17 +109,22 @@ void World::update(Vector3<float> playerPos)
     D_val = (current.getPosition().x * normal.x + current.getPosition().y 
 	     * normal.y * current.getPosition().z * normal.z) * -1.0;
     
-    distanceFromPlane = current.getPosition().x * playerPos.x + 
+    playerDistFromPlane = current.getPosition().x * playerPos.x + 
       current.getPosition().y * playerPos.y + current.getPosition().z 
       * playerPos.z + D_val;
     
-    if (abs(distanceFromPlane) < MID_BUFFER_WIDTH && 
+    if (abs(playerDistFromPlane) < MID_BUFFER_WIDTH && 
 	current.getNumberOfIDs() == 3) {
       setChoice(current.getSecondID());
       return;
     }
     
-    if (distanceFromPlane <= 0) {
+    firstDistFromPlane = current.getPosition().x * firstChoice.getPosition().x 
+      + current.getPosition().y * firstChoice.getPosition().y + 
+      current.getPosition().z * firstChoice.getPosition().z + D_val;
+
+    if (playerDistFromPlane / abs(playerDistFromPlane) == 
+	firstDistFromPlane / abs(firstDistFromPlane)) {
       setChoice(current.getFirstID());
       return;
     }
@@ -124,5 +132,15 @@ void World::update(Vector3<float> playerPos)
       setChoice(current.getThirdID());
       return;
     }
+    /*if (distanceFromPlane <= 0) {
+      setChoice(current.getFirstID());
+      return;
+    }
+    else {
+      setChoice(current.getThirdID());
+      return;
+      }*/
+
+    
   }
 }
