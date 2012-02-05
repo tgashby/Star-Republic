@@ -1,14 +1,4 @@
-import os, os.path, shutil
-env = Environment( CC = 'g++', CPPPATH='../engine', LIBPATH='../engine' )
-if (env['PLATFORM'] == 'darwin'):
-   env.Append(FRAMEWORKS= ['OpenGL','SDL'])
-else:
-   env.Append(LIBS=["GL", "SDL"])
+Import('env')
 
-if (env['PLATFORM'] == 'darwin'):
-   env.Append(LIBS=["RepublicEngine"]+env['FRAMEWORKS'])
-else:
-   env.Append(LIBS=["RepublicEngine"]+env['LIBS'])
-
-SConscript('../engine/SConstruct')
-env.Program('starrepublic', Glob("*.cpp"))
+env.Object(Glob('*.cpp'),LIBS=['RepublicEngine'] )
+env.Library('RepublicGame',Glob('*.cpp'),LIBS=['RepublicEngine'] )
