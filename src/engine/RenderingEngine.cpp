@@ -186,7 +186,7 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
       ++meshRef;
 
    if (meshRef != m_meshList.end()) {
-      newMeshRef = *meshRef;
+      newMesh->setMeshRef(*meshRef);
       meshRef->count += 1;
    }
    else {
