@@ -17,7 +17,7 @@ Player::~Player()
 {
 
 }
-void Player::tic(unsigned int time)
+void Player::tic(uint64_t time)
 {
    velocity.x += acceleration.x * time;
    velocity.y += acceleration.y * time;

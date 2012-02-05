@@ -11,6 +11,15 @@ RenderingEngine::RenderingEngine(Modules *modules) {
    //NOTE: WAS EQUAL TO NULL. SET TO SOMETHING USELESS SO CODE WOULD STOP SEGFAULTING
    m_camera = NULL;
    
+#ifdef _WIN32
+   GLenum err = glewInit();
+   if (GLEW_OK != err)
+   {
+      /* Problem: glewInit failed, something is seriously wrong. */
+      fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+   }
+#endif
+
    // Create the GLSL program.
    GLuint program = buildProgram(SimpleVertexShader, SimpleFragmentShader);
    glUseProgram(program);

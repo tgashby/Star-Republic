@@ -117,7 +117,7 @@ WorldPoint World::update(Vector3<float> playerPos)
     }
     normal = vect1.Cross(vect2);
     D_val = (current.getPosition().x * normal.x + current.getPosition().y 
-	     * normal.y * current.getPosition().z * normal.z) * -1.0;
+	     * normal.y * current.getPosition().z * normal.z) * -1.0f;
     
     playerDistFromPlane = current.getPosition().x * playerPos.x + 
       current.getPosition().y * playerPos.y + current.getPosition().z 

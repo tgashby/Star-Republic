@@ -430,14 +430,14 @@ struct Matrix4 {
        
        return m;
     }
-    static Matrix4<T> Frustum(T left, T right, T bottom, T top, T near, T far)
+    static Matrix4<T> Frustum(T left, T right, T bottom, T top, T _near, T _far)
     {
-        T a = 2 * near / (right - left);
-        T b = 2 * near / (top - bottom);
+    	T a = (2 * _near) / (right - left);
+        T b = (2 * _near) / (top - bottom);
         T c = (right + left) / (right - left);
         T d = (top + bottom) / (top - bottom);
-        T e = - (far + near) / (far - near);
-        T f = -2 * far * near / (far - near);
+        T e = -(_far + _near) / (_far - _near);
+        T f = (-2 * _far * _near) / (_far - _near);
         Matrix4 m;
         m.x.x = a; m.x.y = 0; m.x.z = 0; m.x.w = 0;
         m.y.x = 0; m.y.y = b; m.y.z = 0; m.y.w = 0;
@@ -460,7 +460,7 @@ struct Matrix4 {
         m.w.x = c; m.w.y = d; m.w.z = e; m.w.w = 0;
         return m;
     }
-    static Matrix4<T> Parallel(T left, T right, T bottom, T top, T near, T far)
+    static Matrix4<T> Parallel(T left, T right, T bottom, T top, T near, T _far)
     {
         T a = 2 / (right - left);
         T b = 2 / (top - bottom);

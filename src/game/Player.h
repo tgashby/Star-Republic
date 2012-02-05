@@ -5,13 +5,13 @@
 #include "../engine/Camera.h"
 #include "../engine/Object3d.h"
 #include "../engine/Mesh.h"
-#define VELOCITY 0.002
+#define VELOCITY 0.002f
 
 class Player : public Object3d {
 public:
    Player(string fileName, string textureName, Modules *modules);
    ~Player();
-   void tic(unsigned int time);
+   void tic(uint64_t time);
    void setVelocity(Vector3<float> vel);
    void setPosition(Vector3<float> pos);
    void setAcceleration(Vector3<float> acc);

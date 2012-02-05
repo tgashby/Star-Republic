@@ -25,7 +25,7 @@ void GameEngine::InitData()
    // just push a single object to the list and add to the RenderingEngine
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", m_modules);
    m_camera = new Camera(vec3(0, 0, 0));
-   m_world = new World("../test/testWorld3.wf");
+   m_world = new World("maps/testWorld3.wf");
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
    m_player->setPosition(m_previousPoint->getPosition());
@@ -36,7 +36,7 @@ void GameEngine::InitData()
 
 }
 
-void GameEngine::tic(unsigned int td) {
+void GameEngine::tic(uint64_t td) {
    // Update functions go here
    m_player->tic(td);
    m_world->update(m_player->getPosition());

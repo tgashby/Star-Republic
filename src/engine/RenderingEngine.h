@@ -2,18 +2,8 @@
 #define StarRepub_RenderingEngine_h
 
 #define GL_GLEXT_PROTOTYPES
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
 
-#ifdef __APPLE__
-#include <OPENGL/gl.h>
-#include <OPENGL/glu.h>
-#endif
-#ifdef __unix__
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
-#endif
+#include "../engine/SDL_include.h"
 
 #include "Interfaces.h"
 //NOTE: THIS WAS INCLUDED AS PART OF AVOIDING A SEGFAULT
