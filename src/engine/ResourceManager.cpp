@@ -24,7 +24,7 @@ ResourceManager::ResourceManager() {
 #endif
    
 #ifdef __unix__
-   chdir("../../assets");
+   chdir("../assets");
 #endif
    
    m_image = NULL;
