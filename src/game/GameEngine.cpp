@@ -31,6 +31,8 @@ void GameEngine::InitData()
    m_player->setProgress(m_previousPoint->getPosition());
    m_player->setPosition(m_previousPoint->getPosition());
    m_player->setUp(m_previousPoint->getUp());
+   m_player->setHeads(m_currentPoint->getPosition(), m_currentPoint->getUp(),
+		      m_previousPoint->getPosition(), m_previousPoint->getUp());
    m_modules->renderingEngine->setCamera(m_camera);
 
    m_modules->renderingEngine->addObject3d(m_player);
@@ -43,7 +45,7 @@ void GameEngine::tic(uint64_t td) {
    m_player->tic(td);
    m_world->update(m_player->getProgress());
    m_currentPoint = m_world->getCurrentPointer();
-   m_player->setBearing(m_currentPoint->getPosition());
+   m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
 }
 
 
