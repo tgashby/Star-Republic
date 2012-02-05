@@ -1,8 +1,9 @@
 #include "Player.h"
 
 Player::Player(string fileName, string textureName, Modules *modules) 
-//   : Object3d(fileName, textureName, modules), velocity(0,0,0), position(0,0,0), acceleration(0,0,0), health(100)
-   : Object3d(), velocity(0,0,0), position(0,0,0), acceleration(0,0,0), health(100)
+   : Object3d(), progressVelocity(0,0,0), progress(0,0,0), acceleration(0,0,0), health(100), 
+     position(0,0,0), up(0,1,0), side(1,0,0), shipVelocity(0,0,0), lastScreenX(0),
+     lastScreenY(0)
 {
    m_mesh = new Mesh(fileName, textureName, modules);
    m_meshList.push_back(m_mesh);
@@ -17,38 +18,49 @@ Player::~Player()
 {
 
 }
+
+//All Vectors are updated in here
 void Player::tic(uint64_t time)
 {
-   velocity.x += acceleration.x * time;
-   velocity.y += acceleration.y * time;
-   velocity.z += acceleration.z * time;
+   progressVelocity.x += acceleration.x * time;
+   progressVelocity.y += acceleration.y * time;
+   progressVelocity.z += acceleration.z * time;
 
-   position.x += velocity.x * time;
-   position.y += velocity.y * time;
-   position.z += velocity.z * time;
+   shipVelocity = (((side * lastScreenX)) - (position - progress)) * 0.0005 + (((up * lastScreenY)) - (position - progress)) * 0.0005 + progressVelocity;
+
+   progress.x += progressVelocity.x * time;
+   progress.y += progressVelocity.y * time;
+   progress.z += progressVelocity.z * time;
+
+   //shipVelocity = (up * lastScreenY) + (side * lastScreenX) + progressVelocity;
+   position = position + (shipVelocity * time);
    
    //MAYBE NOT THE BEST WAY TO DO IT
    mat4 modelMtx = m_mesh->getModelMtx();
-   modelMtx = mat4::Translate(velocity.x * time, velocity.y * time, velocity.z * time) * modelMtx;
+   modelMtx = mat4::Translate(shipVelocity.x * time, shipVelocity.y * time,
+      shipVelocity.z * time) * modelMtx;
    m_mesh->setModelMtx(modelMtx);
+}
 
-   cerr << "WE BE AT " << position.x << " " << position.y << " " << position.z << " CAP'N!\n";
-   cerr << "OUR SPEED: X IS: " << velocity.x << ", Y IS: " << velocity.y << ", Z IS: " << velocity.z << "\n";
+void Player::setProgress(Vector3<float> pos)
+{
+   progress.x = pos.x;
+   progress.y = pos.y;
+   progress.z = pos.z;
+   cerr << "WE BE AT " << progress.x << " " << progress.y << " " << progress.z << " CAP'N!\n";
 }
 
 void Player::setPosition(Vector3<float> pos)
 {
-   position.x = pos.x;
-   position.y = pos.y;
-   position.z = pos.z;
-   cerr << "WE BE AT " << position.x << " " << position.y << " " << position.z << " CAP'N!\n";
+   position = pos;
+   m_mesh->setModelMtx(mat4::Translate(pos.x, pos.y, pos.z));
 }
 
-void Player::setVelocity(Vector3<float> vel)
+void Player::setProgressVelocity(Vector3<float> vel)
 {
-   velocity.x = vel.x;
-   velocity.y = vel.y;
-   velocity.z = vel.z;
+   progressVelocity.x = vel.x;
+   progressVelocity.y = vel.y;
+   progressVelocity.z = vel.z;
 }
 
 void Player::setAcceleration(Vector3<float> acc)
@@ -60,22 +72,51 @@ void Player::setAcceleration(Vector3<float> acc)
 
 void Player::setBearing(Vector3<float> current)
 {
-   cerr << "OUR HEADING: X IS: " << current.x << ", Y IS: " << current.y << ", Z IS: " << current.z << "\n";
+   //cerr << "OUR HEADING: X IS: " << current.x << ", Y IS: " << current.y << ", Z IS: " << current.z << "\n";
 
-   velocity.x = current.x - position.x;
-   velocity.y = current.y - position.y;
-   velocity.z = current.z - position.z;
+   progressVelocity.x = current.x - progress.x;
+   progressVelocity.y = current.y - progress.y;
+   progressVelocity.z = current.z - progress.z;
 
-   velocity = velocity.Normalized();
+   progressVelocity = progressVelocity.Normalized();
 
-   forward.x = velocity.x;
-   forward.y = velocity.y;
-   forward.z = velocity.z;
+   progressVelocity = progressVelocity * VELOCITY;
+}
 
-   velocity = velocity * VELOCITY;
+Vector3<float> Player::updateVelocity(float diffX, float diffY)
+{
+   //ASSUMES X AND Y PASSED IN ARE DIFFERENCES IN SDL SCREEN COORDS
+   lastScreenX = diffX;
+   lastScreenY = diffY;
+}
+
+Vector3<float> Player::getUp()
+{
+   return up;
+}
+
+Vector3<float> Player::getForward()
+{
+   return forward;
+}
+
+Vector3<float> Player::getProgress()
+{
+   return progress;
 }
 
 Vector3<float> Player::getPosition()
 {
    return position;
+}
+
+void Player::setUp(Vector3<float> upVal)
+{
+   up = upVal;
+}
+
+void Player::calculateSide()
+{
+   side = up.Cross(progressVelocity);
+   side = side.Normalized();
 }

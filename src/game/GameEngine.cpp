@@ -25,10 +25,12 @@ void GameEngine::InitData()
    // just push a single object to the list and add to the RenderingEngine
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", m_modules);
    m_camera = new Camera(vec3(0, 0, 0));
-   m_world = new World("maps/testWorld3.wf");
+   m_world = new World("maps/testWorld4.wf");
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
+   m_player->setProgress(m_previousPoint->getPosition());
    m_player->setPosition(m_previousPoint->getPosition());
+   m_player->setUp(m_previousPoint->getUp());
    m_modules->renderingEngine->setCamera(m_camera);
 
    m_modules->renderingEngine->addObject3d(m_player);
@@ -39,7 +41,7 @@ void GameEngine::InitData()
 void GameEngine::tic(uint64_t td) {
    // Update functions go here
    m_player->tic(td);
-   m_world->update(m_player->getPosition());
+   m_world->update(m_player->getProgress());
    m_currentPoint = m_world->getCurrentPointer();
    m_player->setBearing(m_currentPoint->getPosition());
 }
@@ -105,4 +107,6 @@ bool GameEngine::handleKeyUp(SDLKey key)
 void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
 {
    // Rotate player?
+   // X seems to be reading in backwards...?
+   m_player->updateVelocity((x-400), (300-y));
 }
