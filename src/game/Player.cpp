@@ -14,6 +14,7 @@ Player::Player(string fileName, string textureName, Modules *modules)
 
    m_mesh->setModelMtx(modelMtx);
 }
+
 Player::~Player()
 {
 
@@ -22,35 +23,46 @@ Player::~Player()
 //All Vectors are updated in here
 void Player::tic(uint64_t time)
 {
-	mat4 tempMatrix;
-	float diffAngle;
-   vec3 tempUp;
+  mat4 tempMatrix;
+  float diffAngle;
+  vec3 tempUp;
 
    progressVelocity.x += acceleration.x * time;
    progressVelocity.y += acceleration.y * time;
    progressVelocity.z += acceleration.z * time;
 
-	currentAngle = currentAngle * (previousHeadPos - progress).Length() / (currentHeadPos - previousHeadPos).Length();
-	//cout << "Angle is : " << currentAngle << "\n";
-	//assert(false);
-	diffAngle = currentAngle - prevAngle;
-
+   currentAngle = currentAngle * (previousHeadPos - progress).Length() / (currentHeadPos - previousHeadPos).Length();
+   //cout << "Angle is : " << currentAngle << "\n";
+   //assert(false);
+   diffAngle = currentAngle - prevAngle;
+   
    shipVelocity = (((side * lastScreenX)) - (position - progress)) * 0.0005 + (((up * lastScreenY)) - (position - progress)) * 0.0005 + progressVelocity;
 
-	//cout << "Ship velocity : " << shipVelocity.Normalized().x << ", " << shipVelocity.Normalized().y << ", " << shipVelocity.Normalized().z << "\n";
-	if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
-	tempMatrix = mat4::Rotate(diffAngle, (currentHeadPos - progress).Normalized());	
-   tempUp.x = (up.x * tempMatrix.x.x) + (up.y * tempMatrix.y.x) 
-      + (up.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
-   tempUp.y = (up.x * tempMatrix.x.y) + (up.y * tempMatrix.y.y) 
-      + (up.z * tempMatrix.z.y) + (1 * tempMatrix.w.y);
-   tempUp.z = (up.x * tempMatrix.x.z) + (up.y * tempMatrix.y.z) 
-      + (up.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
-   up = tempUp.Normalized();
-	calculateSide();
-	}
+   //cout << "Ship velocity : " << shipVelocity.Normalized().x << ", " << shipVelocity.Normalized().y << ", " << shipVelocity.Normalized().z << "\n";
+   if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
+     tempMatrix = mat4::Rotate(diffAngle, (currentHeadPos - progress).Normalized());	
 
-	cout << "Up Vector : " << up.x << " " << up.y << " " << up.z << "\n";
+     tempUp.x = (up.x * tempMatrix.x.x) + (up.y * tempMatrix.y.x) 
+       + (up.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
+     tempUp.y = (up.x * tempMatrix.x.y) + (up.y * tempMatrix.y.y) 
+       + (up.z * tempMatrix.z.y) + (1 * tempMatrix.w.y);
+     tempUp.z = (up.x * tempMatrix.x.z) + (up.y * tempMatrix.y.z) 
+       + (up.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
+
+     up = tempUp.Normalized();
+     calculateSide();
+
+     tempUp.x = (position.x * tempMatrix.x.x) + (position.y * tempMatrix.y.x) 
+       + (position.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
+     tempUp.y = (position.x * tempMatrix.x.y) + (position.y * tempMatrix.y.y) 
+       + (position.z * tempMatrix.z.y) + (1 * tempMatrix.w.y);
+     tempUp.z = (position.x * tempMatrix.x.z) + (position.y * tempMatrix.y.z) 
+       + (position.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
+
+     position = tempUp;
+   } 
+
+     //	cout << "Up Vector : " << up.x << " " << up.y << " " << up.z << "\n";
 
    progress.x += progressVelocity.x * time;
    progress.y += progressVelocity.y * time;
@@ -61,13 +73,16 @@ void Player::tic(uint64_t time)
 	//cout << "position is: " << position.x << " " << position.y << " " << position.z << "\n";
    
    //MAYBE NOT THE BEST WAY TO DO IT
-   mat4 modelMtx = m_mesh->getModelMtx();
-	//mat4 modelMtx = mat4::Identity();
+   /*mat4 modelMtx = m_mesh->getModelMtx();
    modelMtx = modelMtx * mat4::Translate(shipVelocity.x * time, shipVelocity.y * time,
-      shipVelocity.z * time);
-	if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
-		modelMtx = modelMtx * mat4::Rotate(diffAngle, (currentHeadPos - progress).Normalized()); //* modelMtx;
-	}
+					 shipVelocity.z * time);
+   if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
+     modelMtx = modelMtx * mat4::Rotate(diffAngle, (currentHeadPos - progress).Normalized()); //* modelMtx;
+     }*/
+
+   //MIGHT NEED TO BE CHANGED TO ACCOUNT FOR FORWARD AS OPPOSED TO CURRENT HEADING
+   mat4 modelMtx = mat4::Rotate(currentHeadPos - progress, up);
+   modelMtx = modelMtx * mat4::Translate(position.x, position.y, position.z);
    m_mesh->setModelMtx(modelMtx);
 }
 
