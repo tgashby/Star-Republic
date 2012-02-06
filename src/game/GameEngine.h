@@ -9,8 +9,10 @@
 #define VELOCITY_CONSTANT 2
 #include "World.h"
 #include "WorldPoint.h"
+#include "Turret.h"
 #include "Player.h"
 #include <assert.h>
+
 
 class GameEngine : public IGameEngine {
 public:
@@ -29,6 +31,7 @@ private:
    Camera *m_camera;
    Modules *m_modules;
    World *m_world;
+   Turret *m_turret;
    WorldPoint *m_currentPoint;
    WorldPoint *m_previousPoint;
    Vector3<float> currentDirection;
