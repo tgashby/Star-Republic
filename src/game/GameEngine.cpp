@@ -26,6 +26,14 @@ void GameEngine::InitData()
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", m_modules);
    m_camera = new Camera(vec3(0, 0, 0));
    m_world = new World("maps/testWorld4.wf");
+   m_turret = new Turret("models/cube.obj",
+                         "textures/test3.bmp",
+                         "models/cube.obj",
+                         "textures/test3.bmp",
+                         "models/spaceship.obj",
+                         "textures/test3.bmp",
+                         m_modules);
+
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
    m_player->setProgress(m_previousPoint->getPosition());
@@ -36,16 +44,20 @@ void GameEngine::InitData()
    m_modules->renderingEngine->setCamera(m_camera);
 
    m_modules->renderingEngine->addObject3d(m_player);
+   m_modules->renderingEngine->addObject3d(m_turret);
    m_objects.push_back(m_player);
+   m_objects.push_back(m_turret);
+   m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
 
 }
 
 void GameEngine::tic(uint64_t td) {
    // Update functions go here
-   m_player->tic(td);
    m_world->update(m_player->getProgress());
    m_currentPoint = m_world->getCurrentPointer();
    m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   m_player->tic(td);
+   m_camera->update(m_player->getProgress(), m_player->getForward(), m_player->getUp());
 }
 
 
@@ -110,5 +122,5 @@ void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
 {
    // Rotate player?
    // X seems to be reading in backwards...?
-   m_player->updateVelocity((x-400), (300-y));
+   m_player->updateVelocity((x - 400), (300-y));
 }

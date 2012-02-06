@@ -2,7 +2,10 @@
 #define StarRepub_Camera_h
 
 #include "Interfaces.h"
-#define CAMERA_DIST_FROM_PLAYER 2.5
+#define CAMERA_DIST_FROM_PLAYER 100
+
+#include <assert.h>
+#include <iostream>
 
 class Camera: public ICamera {
 public:
@@ -11,7 +14,7 @@ public:
    mat4 getProjectionViewMtx();
    void rotLocal(float pitch, float yaw);
    void moveInOut(float dist);
-   //void update(vec3 playerPos, vec3 playerForw);
+   void update(vec3 playerPos, vec3 playerForw, vec3 playerUp);
 private:
    vec3 m_eye;
    vec3 m_ref;

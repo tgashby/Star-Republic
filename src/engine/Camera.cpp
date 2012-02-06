@@ -29,11 +29,15 @@ mat4 Camera::getProjectionViewMtx() {
 
 //Chad and Nick's handiwork. Code is extremely volatile: do not uncomment unless you are prepared!
 //Current camera will only handle following it directly
-/*void Camera::update(vec3 playerPos, vec3 playerForw) {
+void Camera::update(vec3 playerPos, vec3 playerForw, vec3 playerUp) {
    m_ref = playerPos;
-   m_pos = playerPos - CAMERA_DIST_FROM_PLAYER * playerForw;
-   //m_up = 
-}*/
+   assert(playerForw.x == playerForw.x);
+   assert(playerForw.y == playerForw.y);
+   assert(playerForw.z == playerForw.z);
+   m_eye = playerPos - (playerForw * CAMERA_DIST_FROM_PLAYER);
+   m_up = playerUp;
+   cerr << "The UP is X: " << m_up.x << ", Y: " << m_up.y << ", Z: " << m_up.z << "\n";
+}
 
 void Camera::moveInOut(float dist) {
    m_dist += dist * 2;
