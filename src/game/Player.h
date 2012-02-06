@@ -6,6 +6,7 @@
 #include "../engine/Object3d.h"
 #include "../engine/Mesh.h"
 #include <assert.h>
+#include <cmath>
 #define VELOCITY 0.02f
 
 class Player : public Object3d {
