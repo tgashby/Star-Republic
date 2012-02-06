@@ -16,7 +16,6 @@ build/
 *.xcodeproj/
 *HelloSDL/
 *StarRepub/*
-*SDLMain.*
 # VS Proj files
 *.vcxproj
 *.vcxproj*

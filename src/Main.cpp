@@ -1,10 +1,10 @@
 /* SDL */
-#include "../engine/SDL_include.h"
+#include "engine/SDL_include.h"
 
-#include "../engine/Interfaces.h"
-#include "../engine/ResourceManager.h"
-#include "GameEngine.h"
-#include "../engine/RenderingEngine.h"
+#include "engine/Interfaces.h"
+#include "engine/ResourceManager.h"
+#include "game/GameEngine.h"
+#include "engine/RenderingEngine.h"
 
 bool handleEvents(float dt, SDL_Event& evt);
 bool handleKeyUp(SDLKey key);
