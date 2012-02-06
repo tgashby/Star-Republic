@@ -93,9 +93,11 @@ void Player::tic(uint64_t time)
    //MIGHT NEED TO BE CHANGED TO ACCOUNT FOR FORWARD AS OPPOSED TO CURRENT HEADING
    cerr << "Position is: " << position.x << ", " << position.y << ", " << position.z << "\n";
 //if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
+  // mat4 modelMtx = mat4::Rotate(180, vec3(0, 1, 0)) * mat4::Rotate(currentHeadPos - progress, up);
    mat4 modelMtx = mat4::Rotate(currentHeadPos - progress, up);
    modelMtx = modelMtx * mat4::Translate(position.x, position.y, position.z);
    m_mesh->setModelMtx(modelMtx);
+   cerr << "The UP is X: " << up.x << ", Y: " << up.y << ", Z: " << up.z << "\n";
 //}
 }
 
@@ -110,7 +112,7 @@ void Player::setProgress(Vector3<float> pos)
 void Player::setPosition(Vector3<float> pos)
 {
    position = pos;
-   m_mesh->setModelMtx(mat4::Translate(pos.x, pos.y, pos.z));
+  // m_mesh->setModelMtx(mat4::Translate(pos.x, pos.y, pos.z));
 }
 
 void Player::setProgressVelocity(Vector3<float> vel)
@@ -166,9 +168,17 @@ Vector3<float> Player::getUp()
    return up;
 }
 
+Vector3<float> Player::getProgressVelocity()
+{
+   assert(progressVelocity.x == progressVelocity.x);
+   assert(progressVelocity.y == progressVelocity.y);
+   assert(progressVelocity.z == progressVelocity.z);
+   return progressVelocity;
+}
+
 Vector3<float> Player::getForward()
 {
-   return forward;
+   return (progress - currentHeadPos).Normalized();
 }
 
 Vector3<float> Player::getProgress()

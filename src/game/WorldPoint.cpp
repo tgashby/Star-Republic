@@ -3,9 +3,9 @@
 WorldPoint::WorldPoint(Vector3<float> position, Vector3<float> up, Vector3<float> forward, Vector3<float> side)
 {
    this->position = position;
-   this->up = up;
-   this->forward = forward;
-   this->side = side;
+   this->up = up.Normalized();
+   this->forward = forward.Normalized();
+   this->side = side.Normalized();
 }
 
 WorldPoint::~WorldPoint()

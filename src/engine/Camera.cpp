@@ -29,11 +29,15 @@ mat4 Camera::getProjectionViewMtx() {
 
 //Chad and Nick's handiwork. Code is extremely volatile: do not uncomment unless you are prepared!
 //Current camera will only handle following it directly
-/*void Camera::update(vec3 playerPos, vec3 playerForw) {
+void Camera::update(vec3 playerPos, vec3 playerForw, vec3 playerUp) {
    m_ref = playerPos;
-   m_pos = playerPos - CAMERA_DIST_FROM_PLAYER * playerForw;
-   //m_up = 
-}*/
+   assert(playerForw.x == playerForw.x);
+   assert(playerForw.y == playerForw.y);
+   assert(playerForw.z == playerForw.z);
+   m_eye = playerPos - (playerForw * CAMERA_DIST_FROM_PLAYER);
+   m_up = playerUp;
+   cerr << "The UP is X: " << m_up.x << ", Y: " << m_up.y << ", Z: " << m_up.z << "\n";
+}
 
 void Camera::moveInOut(float dist) {
    m_dist += dist * 2;
@@ -44,7 +48,7 @@ void Camera::moveInOut(float dist) {
 }
 
 void Camera::rotLocal(float pitch, float yaw) {
-   m_pitch += pitch;
+   /*m_pitch += pitch;
    m_yaw += yaw;
    
    if (m_pitch > 80)
@@ -61,5 +65,5 @@ void Camera::rotLocal(float pitch, float yaw) {
    rot = rot * mat4::Rotate(m_yaw, vec3(0,1,0));
    vec4 d = rot.TranslatePoint(vec4(0, 0, m_dist, 0));
    m_fwd = vec3(d.x, d.y, d.z);
-   m_eye = m_ref + m_fwd;
+   m_eye = m_ref + m_fwd;*/
 }

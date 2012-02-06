@@ -24,6 +24,7 @@ public:
    Vector3<float> getForward();
    Vector3<float> getUp();
    Vector3<float> getProgress();
+   Vector3<float> getProgressVelocity();
    Vector3<float> updateVelocity(float diffX, float diffY);
    void setHeads(Vector3<float> currHeadPos, Vector3<float> currHeadUp, Vector3<float> prevHeadPos,
    Vector3<float> prevHeadUp);
