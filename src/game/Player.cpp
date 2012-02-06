@@ -31,15 +31,19 @@ void Player::tic(uint64_t time)
    progressVelocity.y += acceleration.y * time;
    progressVelocity.z += acceleration.z * time;
 
+   cout << "Angle is first: " << currentAngle << "\n";
    currentAngle = currentAngle * (previousHeadPos - progress).Length() / (currentHeadPos - previousHeadPos).Length();
-   //cout << "Angle is : " << currentAngle << "\n";
-   //assert(false);
-   diffAngle = currentAngle - prevAngle;
-   
-   shipVelocity = (((side * lastScreenX)) - (position - progress)) * 0.0005 + (((up * lastScreenY)) - (position - progress)) * 0.0005 + progressVelocity;
 
-   //cout << "Ship velocity : " << shipVelocity.Normalized().x << ", " << shipVelocity.Normalized().y << ", " << shipVelocity.Normalized().z << "\n";
-   if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
+
+   cout << "Angle is then: " << currentAngle << "\n";
+   assert(currentAngle == currentAngle);
+   diffAngle = currentAngle - prevAngle;
+   cout << "Ship velocity is X: " << shipVelocity.x << " Y: " << shipVelocity.y << " Z: " << shipVelocity.z << "\n";
+   shipVelocity = (((side * lastScreenX)) - (position - progress)) * 0.0005 + (((up * lastScreenY)) - (position - progress)) * 0.0005 + progressVelocity;
+   assert(up.x == up.x);
+   assert(side.x == side.x);
+
+//if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
      tempMatrix = mat4::Rotate(diffAngle, (currentHeadPos - progress).Normalized());	
 
      tempUp.x = (up.x * tempMatrix.x.x) + (up.y * tempMatrix.y.x) 
@@ -60,7 +64,13 @@ void Player::tic(uint64_t time)
        + (position.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
 
      position = tempUp;
-   } 
+ //  }
+
+   cout << "Ship velocity : " << shipVelocity.x << ", " << shipVelocity.y << ", " << shipVelocity.z << "\n";
+   assert(shipVelocity.x == shipVelocity.x);
+   assert(shipVelocity.y == shipVelocity.y);
+   assert(shipVelocity.z == shipVelocity.z);
+    
 
      //	cout << "Up Vector : " << up.x << " " << up.y << " " << up.z << "\n";
 
@@ -78,12 +88,15 @@ void Player::tic(uint64_t time)
 					 shipVelocity.z * time);
    if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
      modelMtx = modelMtx * mat4::Rotate(diffAngle, (currentHeadPos - progress).Normalized()); //* modelMtx;
-     }*/
+     }*/ 
 
    //MIGHT NEED TO BE CHANGED TO ACCOUNT FOR FORWARD AS OPPOSED TO CURRENT HEADING
+   cerr << "Position is: " << position.x << ", " << position.y << ", " << position.z << "\n";
+//if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
    mat4 modelMtx = mat4::Rotate(currentHeadPos - progress, up);
    modelMtx = modelMtx * mat4::Translate(position.x, position.y, position.z);
    m_mesh->setModelMtx(modelMtx);
+//}
 }
 
 void Player::setProgress(Vector3<float> pos)
@@ -175,8 +188,7 @@ void Player::setUp(Vector3<float> upVal)
 
 void Player::calculateSide()
 {
-   side = up.Cross(progressVelocity);
-   side = side.Normalized();
+   side = up.Cross(currentHeadPos - previousHeadPos).Normalized();
 }
 
 void Player::setHeads(Vector3<float> currHeadPos, Vector3<float> currHeadUp, Vector3<float> prevHeadPos,
@@ -186,5 +198,7 @@ void Player::setHeads(Vector3<float> currHeadPos, Vector3<float> currHeadUp, Vec
 	previousHeadPos = prevHeadPos;
 	currentHeadUp = currHeadUp;
 	currentHeadPos = currHeadPos;
+	calculateSide();
+        cerr << "Value of CHP: " << currentHeadPos.x << currentHeadPos.y << currentHeadPos.z << ", Value of PHP: " << previousHeadPos.x << previousHeadPos.y << previousHeadPos.z << "\n";
 }
 
