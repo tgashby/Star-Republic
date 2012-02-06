@@ -39,7 +39,7 @@ void Player::tic(uint64_t time)
 
 	//cout << "Ship velocity : " << shipVelocity.Normalized().x << ", " << shipVelocity.Normalized().y << ", " << shipVelocity.Normalized().z << "\n";
 	if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
-	tempMatrix = mat4::Rotate(diffAngle, shipVelocity.Normalized());	
+	tempMatrix = mat4::Rotate(diffAngle, (currentHeadPos - progress).Normalized());	
    tempUp.x = (up.x * tempMatrix.x.x) + (up.y * tempMatrix.y.x) 
       + (up.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
    tempUp.y = (up.x * tempMatrix.x.y) + (up.y * tempMatrix.y.y) 
@@ -66,7 +66,7 @@ void Player::tic(uint64_t time)
    modelMtx = modelMtx * mat4::Translate(shipVelocity.x * time, shipVelocity.y * time,
       shipVelocity.z * time);
 	if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
-		modelMtx = modelMtx * mat4::Rotate(diffAngle, shipVelocity.Normalized()); //* modelMtx;
+		modelMtx = modelMtx * mat4::Rotate(diffAngle, (currentHeadPos - progress).Normalized()); //* modelMtx;
 	}
    m_mesh->setModelMtx(modelMtx);
 }
