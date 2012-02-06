@@ -9,23 +9,7 @@
 #define DEFAULT_SCALE 2
 
 ResourceManager::ResourceManager() {
-   //This ugly code sets the working directory to the app bundle in OSX.
-#ifdef __APPLE__
-   CFBundleRef mainBundle = CFBundleGetMainBundle();
-   CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
-   char path[PATH_MAX];
-   if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
-   {
-      // error!
-   }
-   CFRelease(resourcesURL);
-   chdir(path);
-   std::cout << "Current Path: " << path << std::endl;
-#endif
-   
-#ifdef __unix__
    chdir("../assets");
-#endif
    
    m_image = NULL;
 }
