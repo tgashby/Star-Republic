@@ -48,7 +48,7 @@ void Camera::moveInOut(float dist) {
 }
 
 void Camera::rotLocal(float pitch, float yaw) {
-   /*m_pitch += pitch;
+   m_pitch += pitch;
    m_yaw += yaw;
    
    if (m_pitch > 80)
@@ -65,5 +65,5 @@ void Camera::rotLocal(float pitch, float yaw) {
    rot = rot * mat4::Rotate(m_yaw, vec3(0,1,0));
    vec4 d = rot.TranslatePoint(vec4(0, 0, m_dist, 0));
    m_fwd = vec3(d.x, d.y, d.z);
-   m_eye = m_ref + m_fwd;*/
+   m_eye = m_ref + m_fwd;
 }

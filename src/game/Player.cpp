@@ -10,7 +10,6 @@ Player::Player(string fileName, string textureName, Modules *modules)
 
    mat4 modelMtx = mat4::Translate(0, 0, -100);
    modelMtx = mat4::Rotate(vec3(0, 0, 1), vec3(0, 1, 0)) * modelMtx;
-   //modelMtx = mat4::Rotate(180, vec3(0, 1, 0)) * modelMtx;
 
    m_mesh->setModelMtx(modelMtx);
 }
@@ -39,13 +38,12 @@ void Player::tic(uint64_t time)
    assert(currentAngle == currentAngle);
    diffAngle = currentAngle - prevAngle;
    cout << "Ship velocity is X: " << shipVelocity.x << " Y: " << shipVelocity.y << " Z: " << shipVelocity.z << "\n";
-   shipVelocity = (((side * lastScreenX)) - (position - progress)) * 0.0005 + (((up * lastScreenY)) - (position - progress)) * 0.0005 + progressVelocity;
-   assert(up.x == up.x);
-   assert(side.x == side.x);
 
-//if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
+     //Gets the matrix that you need to use to make the position rotate around at this angle
+     // LOOK AT THIS
      tempMatrix = mat4::Rotate(diffAngle, (currentHeadPos - progress).Normalized());	
 
+     //Matrix multiplication to come up with the rotated up.
      tempUp.x = (up.x * tempMatrix.x.x) + (up.y * tempMatrix.y.x) 
        + (up.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
      tempUp.y = (up.x * tempMatrix.x.y) + (up.y * tempMatrix.y.y) 
@@ -53,9 +51,11 @@ void Player::tic(uint64_t time)
      tempUp.z = (up.x * tempMatrix.x.z) + (up.y * tempMatrix.y.z) 
        + (up.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
 
+     //Up value set to the vector that was calculated above.
      up = tempUp.Normalized();
      calculateSide();
 
+     //TempUp is actually TempPosition here.
      tempUp.x = (position.x * tempMatrix.x.x) + (position.y * tempMatrix.y.x) 
        + (position.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
      tempUp.y = (position.x * tempMatrix.x.y) + (position.y * tempMatrix.y.y) 
@@ -64,7 +64,10 @@ void Player::tic(uint64_t time)
        + (position.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
 
      position = tempUp;
- //  }
+
+   shipVelocity = (((side * lastScreenX)) - (position - progress)) * 0.0005 + (((up * lastScreenY)) - (position - progress)) * 0.0005 + progressVelocity;
+   assert(up.x == up.x);
+   assert(side.x == side.x);
 
    cout << "Ship velocity : " << shipVelocity.x << ", " << shipVelocity.y << ", " << shipVelocity.z << "\n";
    assert(shipVelocity.x == shipVelocity.x);
@@ -72,33 +75,20 @@ void Player::tic(uint64_t time)
    assert(shipVelocity.z == shipVelocity.z);
     
 
-     //	cout << "Up Vector : " << up.x << " " << up.y << " " << up.z << "\n";
 
    progress.x += progressVelocity.x * time;
    progress.y += progressVelocity.y * time;
    progress.z += progressVelocity.z * time;
 
-   //shipVelocity = (up * lastScreenY) + (side * lastScreenX) + progressVelocity;
    position = position + (shipVelocity * time);
-	//cout << "position is: " << position.x << " " << position.y << " " << position.z << "\n";
-   
-   //MAYBE NOT THE BEST WAY TO DO IT
-   /*mat4 modelMtx = m_mesh->getModelMtx();
-   modelMtx = modelMtx * mat4::Translate(shipVelocity.x * time, shipVelocity.y * time,
-					 shipVelocity.z * time);
-   if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
-     modelMtx = modelMtx * mat4::Rotate(diffAngle, (currentHeadPos - progress).Normalized()); //* modelMtx;
-     }*/ 
 
    //MIGHT NEED TO BE CHANGED TO ACCOUNT FOR FORWARD AS OPPOSED TO CURRENT HEADING
    cerr << "Position is: " << position.x << ", " << position.y << ", " << position.z << "\n";
-//if (shipVelocity.x != 0 || shipVelocity.y != 0 || shipVelocity.z != 0) {
-  // mat4 modelMtx = mat4::Rotate(180, vec3(0, 1, 0)) * mat4::Rotate(currentHeadPos - progress, up);
    mat4 modelMtx = mat4::Rotate(currentHeadPos - progress, up);
    modelMtx = modelMtx * mat4::Translate(position.x, position.y, position.z);
    m_mesh->setModelMtx(modelMtx);
    cerr << "The UP is X: " << up.x << ", Y: " << up.y << ", Z: " << up.z << "\n";
-//}
+
 }
 
 void Player::setProgress(Vector3<float> pos)
