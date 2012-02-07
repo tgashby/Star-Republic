@@ -123,5 +123,6 @@ void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
 {
    // Rotate player?
    // X seems to be reading in backwards...?
-   m_player->setVelocity(vec3((400 - x), (300 - y), m_player->getPosition().z));
+   m_player->updateVelocity(400-x, 300-y);
+   //setVelocity(vec3((400 - x), (300 - y), m_player->getPosition().z));
 }

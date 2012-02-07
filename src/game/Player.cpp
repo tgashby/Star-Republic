@@ -96,21 +96,15 @@ void Player::tic(uint64_t time)
       acosTest.y = getForward().y;
       acosTest.z = getForward().x;
       cerr << "THE TEST GIVES: " << acos(vec3(0,0,-1).Dot(acosTest)) << "\n";
-      if (acos(vec3(0,0,-1).Dot(acosTest)) < acos(vec3(0,0,-1).Dot(getForward()))) {
-         forwardRotateAngle = 360.0f - forwardRotateAngle;
+      if (180.0f / 3.14159265f * acos(vec3(0,0,-1).Dot(side)) < 90)
+      {
+         forwardRotateAngle += 180;
       }
-    //}
-   /*if ((getForward().y < 0)) {
-      forwardRotateAngle = 180.0f + forwardRotateAngle;
-   }*/
    //MIGHT NEED TO BE CHANGED TO ACCOUNT FOR FORWARD AS OPPOSED TO CURRENT HEADING
    cerr << "Position is: " << m_position.x << ", " << m_position.y << ", " << m_position.z << "\n";
-  // if ((getForward().x >= 0 && getForward().y >= 0 && getForward().z >= 0) ||
-  //    (getForward().x 
    cerr << "Forward! X is: " << getForward().x << ", Y is: " << getForward().y << ", Z is: " << getForward().z << "\n";
-   //modelMtx = mat4::Rotate(m_progress - currentHeadPos, up);
-   modelMtx = mat4::Rotate(upRotateAngle, vec3(0,0,-1));
-   modelMtx = modelMtx * mat4::Rotate(forwardRotateAngle, vec3(0,1,0));
+
+   modelMtx = mat4::Magic(-getForward(), getUp(), side);
    modelMtx = modelMtx * mat4::Translate(m_position.x, m_position.y, m_position.z);
    m_mesh->setModelMtx(modelMtx);
    cerr << "The UP is X: " << m_up.x << ", Y: " << m_up.y << ", Z: " << m_up.z << "\n";
