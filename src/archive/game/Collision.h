@@ -17,7 +17,7 @@ class Collision {
    * @param objs The list of objects to be checked for collisions
    * @param size The size of the list of objects
    */
-  static void checkCollisions(GameObject[] objs, int size);
+  static void checkCollisions(std::vector<Collidable> objs, int size);
 
  private:
   /** Checks whether two objects collide

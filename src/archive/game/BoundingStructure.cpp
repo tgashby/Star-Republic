@@ -17,8 +17,8 @@ int BoundingStructure::getSize() {
 }
 
 bool BoundingStructure::checkCollisions(BoundingStructure &otherStruct, 
-				       Coordinate &objLoc, 
-				       Coordinate &otherLoc) {
+				       vec3 &objLoc, 
+				       vec3 &otherLoc) {
   BoundingObject *obj;
   BoundingObject *other;
   

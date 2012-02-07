@@ -1,8 +1,7 @@
 
 #include "Collision.h"
 
-static void checkCollisions(GameObject[] objs, int size) 
-{
+static void checkCollisions(GameObject[] objs, int size) {
   for (int indexI = 0; indexI < size - 1; indexI++) 
     {
       for (int indexJ = indexI; indexJ < size; indexJ++)

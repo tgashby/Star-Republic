@@ -66,7 +66,6 @@ void Flyer::setHeads(Vector3<float> currHeadPos, Vector3<float> currHeadUp,
       m_previousHeadPos = prevHeadPos;
       m_currentHeadUp = currHeadUp;
       m_currentHeadPos = currHeadPos;
-      cerr << "Value of CHP: " << m_currentHeadPos.x << m_currentHeadPos.y << m_currentHeadPos.z << ", Value of PHP: " << m_previousHeadPos.x << m_previousHeadPos.y << m_previousHeadPos.z << "\n";
 }
 
 Vector3<float> Flyer::getProgress()
