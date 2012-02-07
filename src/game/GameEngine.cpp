@@ -66,7 +66,7 @@ void GameEngine::tic(uint64_t td) {
    for (int i = 0; i < m_bulletList.size(); i++) {
       m_bulletList[i]->tic(td);
    }
-   m_camera->update(m_player->getProgress(), 
+   m_camera->update(((m_player->getPosition() - m_player->getProgress()) / 2) + m_player->getProgress(), 
 		    m_player->getForward(), 
 		    m_player->getUp());
 }
