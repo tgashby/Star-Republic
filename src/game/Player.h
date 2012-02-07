@@ -24,6 +24,7 @@ public:
    Vector3<float> getPosition();
    Vector3<float> getForward();
    Vector3<float> getUp();
+   Vector3<float> getSide();
    Vector3<float> getProgress();
    Vector3<float> getProgressVelocity();
    Vector3<float> updateVelocity(float diffX, float diffY);

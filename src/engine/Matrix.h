@@ -415,6 +415,7 @@ struct Matrix4 {
         m.z.z = c + (1 - c) * axis.z * axis.z;
         return m;
     }
+    //HEY! Don't use this; it's not as magical as magic! :D
     static Matrix4<T> Rotate(vec3 dir, vec3 up)
     {
        vec3 d = dir.Normalized();
@@ -427,6 +428,54 @@ struct Matrix4 {
        m.y.x = s.y; m.y.y = u.y; m.y.z = d.y; m.y.w = 0;
        m.z.x = s.z; m.z.y = u.z; m.z.z = d.z; m.z.w = 0;
        m.w.x = 0; m.w.y = 0; m.w.z = 0; m.w.w = 1;
+       
+       return m;
+    }
+    static Matrix4<T> Magic(vec3 fwd, vec3 up, vec3 side)
+    {
+       vec3 f = fwd.Normalized();
+       vec3 u = up.Normalized();
+       vec3 s = side.Normalized();
+       
+       Matrix4<T> m;
+       m.x.x = s.x; 
+       m.x.y = s.y; 
+       m.x.z = s.z; 
+       m.x.w = 0;
+       m.y.x = u.x; 
+       m.y.y = u.y; 
+       m.y.z = u.z; 
+       m.y.w = 0;
+       m.z.x = f.x; 
+       m.z.y = f.y; 
+       m.z.z = f.z; 
+       m.z.w = 0;
+       m.w.x = 0; 
+       m.w.y = 0; 
+       m.w.z = 0; 
+       m.w.w = 1;
+       
+       return m;
+    }
+    // slightly untested...
+    static Matrix4<T> Rotate (vec3 rot)
+    { 
+       Matrix4<T> m;
+       vec3 r = rot.Normalized();
+
+       m.x.x = cos(r.x) * cos(r.y);
+       m.x.y = cos(r.x) * sin(r.y) * sin(r.z) - sin(r.x) * cos(r.z);
+       m.x.z = cos(r.x) * sin(r.y) * sin(r.z) + sin(r.x) * sin(r.z);  
+       m.x.w = 0;
+       m.y.x = sin(r.x) * cos(r.y);
+       m.y.y = sin(r.x) * sin(r.y) * sin(r.z) + cos(r.x) * cos(r.z);  
+       m.y.z = sin(r.x) * sin(r.y) * cos(r.z) - cos(r.x) * sin(r.z);
+       m.y.w = 0;
+       m.z.x = -sin(r.y);
+       m.z.y = cos(r.y) * sin(r.z);
+       m.z.z = cos(r.y) * cos(r.z);  
+       m.z.w = 0;
+       m.w.x = 0;    m.w.y = 0;    m.w.z = 0;    m.w.w = 1;      
        
        return m;
     }
