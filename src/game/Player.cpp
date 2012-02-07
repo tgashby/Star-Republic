@@ -62,8 +62,7 @@ void Player::tic(uint64_t time)
    m_progress += m_progressVelocity * time;
    m_position = m_position + (m_velocity * time);
 
-   modelMtx = mat4::Magic(-getForward(), getUp(), side);
-   modelMtx = modelMtx * mat4::Translate(m_position.x, m_position.y, m_position.z);
+   modelMtx = mat4::Magic(-getForward(), getUp(), getPosition());
    m_mesh->setModelMtx(modelMtx);
 }
 

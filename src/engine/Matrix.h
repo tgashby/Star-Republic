@@ -431,32 +431,24 @@ struct Matrix4 {
        
        return m;
     }
-    static Matrix4<T> Magic(vec3 fwd, vec3 up, vec3 side)
+
+  static Matrix4<T> Magic(vec3 fwd, vec3 up, vec3 pos)
     {
        vec3 f = fwd.Normalized();
        vec3 u = up.Normalized();
-       vec3 s = side.Normalized();
+       vec3 s = fwd.Cross(up).Normalized();
        
        Matrix4<T> m;
-       m.x.x = s.x; 
-       m.x.y = s.y; 
-       m.x.z = s.z; 
-       m.x.w = 0;
-       m.y.x = u.x; 
-       m.y.y = u.y; 
-       m.y.z = u.z; 
-       m.y.w = 0;
-       m.z.x = f.x; 
-       m.z.y = f.y; 
-       m.z.z = f.z; 
-       m.z.w = 0;
-       m.w.x = 0; 
-       m.w.y = 0; 
-       m.w.z = 0; 
-       m.w.w = 1;
+       m.x.x = s.x; m.x.y = s.y; m.x.z = s.z; m.x.w = 0;
+       m.y.x = u.x; m.y.y = u.y; m.y.z = u.z; m.y.w = 0;
+       m.z.x = f.x; m.z.y = f.y; m.z.z = f.z; m.z.w = 0;
+       m.w.x = 0; m.w.y = 0; m.w.z = 0; m.w.w = 1;
+
+       m = m * Translate(pos.x, pos.y, pos.z);
        
        return m;
-    }
+       }
+
     // slightly untested...
     static Matrix4<T> Rotate (vec3 rot)
     { 

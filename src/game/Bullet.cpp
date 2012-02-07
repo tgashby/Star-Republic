@@ -8,13 +8,11 @@ Bullet::Bullet(string fileName, string textureName, Modules *modules,
   m_position = pos;
   m_forward = forw.Normalized();
   m_up = up.Normalized();
-  calculateSide();
 
   m_mesh = new Mesh(fileName, textureName, modules);
   m_meshList.push_back(m_mesh);
   
-  mat4 modelMtx = mat4::Magic(m_forward, m_up, m_side) * 
-    mat4::Translate(pos.x, pos.y, pos.z);
+  mat4 modelMtx = mat4::Magic(m_forward, m_up, m_position);
   m_mesh->setModelMtx(modelMtx);
   
 }
@@ -29,11 +27,9 @@ void Bullet::tic(uint64_t time)
   mat4 modelMtx;
   //Add position to global velocity
   m_position = m_position + (m_forward * time * BULLET_VELOCITY);
-  calculateSide();
 
-  modelMtx = mat4::Magic(m_forward, m_up, m_side) * 
-    mat4::Translate(m_position.x, m_position.y, m_position.z);
-  m_mesh->setModelMtx(modelMtx);
+  //modelMtx = mat4::Magic(m_forward, m_up, m_position);
+  //m_mesh->setModelMtx(modelMtx);
 }
 
 Vector3<float> Bullet::getPosition() {
@@ -46,9 +42,4 @@ Vector3<float> Bullet::getForward() {
 
 Vector3<float> Bullet::getUp() {
   return m_up;
-}
-
-void Bullet::calculateSide()
-{
-   m_side = m_up.Cross(m_forward).Normalized();
 }
