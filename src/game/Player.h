@@ -48,8 +48,8 @@ private:
 //	Vector3<float> previousHeadUp; Flyer
    float lastScreenX;
    float lastScreenY;
-	float prevAngle;
-	float currentAngle;
+   float prevAngle;
+   float currentAngle;
 	
 };
 

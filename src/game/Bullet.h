@@ -15,9 +15,13 @@ class Bullet : public Object3d {
   void tic(uint64_t time);
   Vector3<float> getPosition();
   Vector3<float> getForward();
+  Vector3<float> getUp();
+  void calculateSide();
 
  private:
-  Vector3<float> position;
-  Vector3<float> forward;
-  Vector3<float> up;
+  Mesh* m_mesh;
+  Vector3<float> m_position;
+  Vector3<float> m_forward;
+  Vector3<float> m_up;
+  Vector3<float> m_side;
 };
