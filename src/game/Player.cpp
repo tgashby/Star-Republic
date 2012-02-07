@@ -91,7 +91,12 @@ void Player::updateVelocity(float diffX, float diffY)
    lastScreenY = diffY;
 }
 
-void Player::calculateSide()
+Vector3<float> Player::getSide()
 {
+   side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
+   return side;
+}
+
+void Player::calculateSide() {
    side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
 }

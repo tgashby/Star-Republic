@@ -24,6 +24,7 @@ public:
    void setBearing(Vector3<float> headPos, Vector3<float> headUp); //Flyer
 //   void setProgress(Vector3<float> pos); Flyer
 //   void setUp(Vector3<float> upVal); GOBJ
+   Vector3<float> getSide();
    void calculateSide();
 //   Vector3<float> getPosition(); GOBJ
 //   Vector3<float> getForward(); GOBJ/Flyer
