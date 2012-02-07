@@ -9,7 +9,7 @@
 class Bullet : public Object3d {
  public:
   Bullet(string fileName, string textureName, Modules *modules, 
-		 Vector3<float> pos, Vector3<float> forw); 
+	 Vector3<float> pos, Vector3<float> forw, Vector3<float> up); 
   ~Bullet();
 
   void tic(uint64_t time);
@@ -19,4 +19,5 @@ class Bullet : public Object3d {
  private:
   Vector3<float> position;
   Vector3<float> forward;
+  Vector3<float> up;
 };

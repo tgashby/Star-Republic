@@ -28,7 +28,7 @@ void Player::tic(uint64_t time)
   vec3 tempUp, acosTest;
   mat4 modelMtx;
 
-   m_progressVelocity += m_acceleration * time
+  m_progressVelocity += m_acceleration * time;
    currentAngle = currentAngle * (m_previousHeadPos - m_progress).Length() / 
      (m_currentHeadPos - m_previousHeadPos).Length();
    diffAngle = currentAngle - prevAngle;
