@@ -12,6 +12,7 @@
 #include "Turret.h"
 #include "Player.h"
 #include <assert.h>
+#include "Bullet.h"
 
 
 class GameEngine : public IGameEngine {
@@ -36,6 +37,7 @@ private:
    WorldPoint *m_previousPoint;
    Vector3<float> currentDirection;
    void InitData();
+   std::vector<Bullet *> m_bulletList;
 };
 
 #endif

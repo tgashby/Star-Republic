@@ -1,3 +1,11 @@
+//
+//  Bullet.cpp
+//  StarRepub
+//
+//  Created by Chad Brantley on 2/7/12.
+//  Copyright 2012 476 Proj. All rights reserved.
+//
+
 #include "Bullet.h"
 
 Bullet::Bullet(string fileName, string textureName, Modules *modules, 
@@ -28,8 +36,8 @@ void Bullet::tic(uint64_t time)
   //Add position to global velocity
   m_position = m_position + (m_forward * time * BULLET_VELOCITY);
 
-  //modelMtx = mat4::Magic(m_forward, m_up, m_position);
-  //m_mesh->setModelMtx(modelMtx);
+  modelMtx = mat4::Magic(m_forward, m_up, m_position);
+  m_mesh->setModelMtx(modelMtx);
 }
 
 Vector3<float> Bullet::getPosition() {

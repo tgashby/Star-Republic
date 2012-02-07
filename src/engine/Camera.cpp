@@ -36,7 +36,6 @@ void Camera::update(vec3 playerPos, vec3 playerForw, vec3 playerUp) {
    assert(playerForw.z == playerForw.z);
    m_eye = playerPos - (playerForw * CAMERA_DIST_FROM_PLAYER);
    m_up = playerUp;
-   cerr << "The UP is X: " << m_up.x << ", Y: " << m_up.y << ", Z: " << m_up.z << "\n";
 }
 
 void Camera::moveInOut(float dist) {

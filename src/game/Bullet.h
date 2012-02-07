@@ -1,5 +1,13 @@
+//
+//  Bullet.h
+//  StarRepub
+//
+//  Created by Chad Brantley on 2/7/12.
+//  Copyright 2012 476 Proj. All rights reserved.
+//
+
 #pragma once
-#define BULLET_VELOCITY 10
+#define BULLET_VELOCITY 0.15f
 
 #include "../engine/Interfaces.h"
 #include "../engine/Camera.h"

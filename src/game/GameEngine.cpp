@@ -3,6 +3,7 @@
 #include "Player.h"
 
 
+
 GameEngine::GameEngine(Modules *modules) {
    m_modules = modules;
    m_objects = list<IObject3d *>(0);
@@ -23,7 +24,9 @@ GameEngine::~GameEngine() {
 void GameEngine::InitData()
 {
    // just push a single object to the list and add to the RenderingEngine
-   m_player = new Player("models/spaceship.obj", "textures/test3.bmp", m_modules);
+   m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
+			 m_modules);
+
    m_camera = new Camera(vec3(0, 0, 0));
    m_world = new World("maps/testWorld4.wf");
    m_turret = new Turret("models/cube.obj",
@@ -54,11 +57,18 @@ void GameEngine::InitData()
 
 void GameEngine::tic(uint64_t td) {
    // Update functions go here
+   Bullet* b;
    m_world->update(m_player->getProgress());
    m_currentPoint = m_world->getCurrentPointer();
    m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_player->tic(td);
-   m_camera->update(m_player->getProgress(), m_player->getForward(), m_player->getUp());
+   
+   for (int i = 0; i < m_bulletList.size(); i++) {
+      m_bulletList[i]->tic(td);
+   }
+   m_camera->update(m_player->getProgress(), 
+		    m_player->getForward(), 
+		    m_player->getUp());
 }
 
 
@@ -114,6 +124,18 @@ bool GameEngine::handleKeyUp(SDLKey key)
    if (key == SDLK_ESCAPE) 
    {
       running = false;
+   }
+
+   if (key == SDLK_z)
+   {
+      Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
+			     m_modules, m_player->getPosition(),
+			     m_player->getForward(), m_player->getUp());
+      
+      cout << "Making bullet\n";
+      m_modules->renderingEngine->addObject3d(bullet);
+      m_objects.push_back(bullet);
+      m_bulletList.push_back(bullet);
    }
    
    return running;

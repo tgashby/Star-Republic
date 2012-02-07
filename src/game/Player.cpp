@@ -9,8 +9,8 @@ Player::Player(string fileName, string textureName, Modules *modules)
    m_mesh = new Mesh(fileName, textureName, modules);
    m_meshList.push_back(m_mesh);
 
-   mat4 modelMtx = mat4::Rotate(vec3(0, 0, 1), vec3(0, 1, 0)) * mat4::Translate(0, 0, -100);
-
+   mat4 modelMtx = mat4::Scale(MODEL_SCALE) * 
+      mat4::Magic(-getForward(), getUp(), getPosition());
    m_mesh->setModelMtx(modelMtx);
 }
 
@@ -57,12 +57,14 @@ void Player::tic(uint64_t time)
      + (m_position.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
    
    m_position = tempUp;
-   m_velocity = (((side * lastScreenX)) - (m_position - m_progress)) * 0.0005 + 
-     (((m_up * lastScreenY)) - (m_position - m_progress)) * 0.0005 + m_progressVelocity;
+   m_velocity = (((side * lastScreenX)) - (m_position - m_progress)) * X_SCALAR
+      + (((m_up * lastScreenY)) - (m_position - m_progress)) * Y_SCALAR 
+      + m_progressVelocity;
    m_progress += m_progressVelocity * time;
    m_position = m_position + (m_velocity * time);
 
-   modelMtx = mat4::Magic(-getForward(), getUp(), getPosition());
+   modelMtx = mat4::Scale(MODEL_SCALE) * 
+      mat4::Magic(-getForward(), getUp(), getPosition());
    m_mesh->setModelMtx(modelMtx);
 }
 
@@ -93,5 +95,3 @@ void Player::calculateSide()
 {
    side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
 }
-
-
