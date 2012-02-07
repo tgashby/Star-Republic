@@ -1,9 +1,10 @@
 #include "Player.h"
 
 Player::Player(string fileName, string textureName, Modules *modules) 
-   : Object3d(), progressVelocity(0,0,0), progress(0,0,0), acceleration(0,0,0), health(100), 
-     position(0,0,0), up(0,1,0), side(1,0,0), shipVelocity(0,0,0), lastScreenX(0),
-     lastScreenY(0), currentAngle(0), prevAngle(0)
+   :  Object3d(), Flyer(),
+      health(100), side(1,0,0), 
+      lastScreenX(0), lastScreenY(0), 
+      currentAngle(0), prevAngle(0)
 {
    m_mesh = new Mesh(fileName, textureName, modules);
    m_meshList.push_back(m_mesh);
@@ -16,8 +17,8 @@ Player::Player(string fileName, string textureName, Modules *modules)
 
 Player::~Player()
 {
-
 }
+
 
 //All Vectors are updated in here
 void Player::tic(uint64_t time)
@@ -27,65 +28,63 @@ void Player::tic(uint64_t time)
   vec3 tempUp, acosTest;
   mat4 modelMtx;
 
-   progressVelocity.x += acceleration.x * time;
-   progressVelocity.y += acceleration.y * time;
-   progressVelocity.z += acceleration.z * time;
+   m_progressVelocity.x += m_acceleration.x * time;
+   m_progressVelocity.y += m_acceleration.y * time;
+   m_progressVelocity.z += m_acceleration.z * time;
 
    cout << "Angle is first: " << currentAngle << "\n";
-   currentAngle = currentAngle * (previousHeadPos - progress).Length() / (currentHeadPos - previousHeadPos).Length();
+   currentAngle = currentAngle * (m_previousHeadPos - m_progress).Length() / (m_currentHeadPos - m_previousHeadPos).Length();
 
 
    cout << "Angle is then: " << currentAngle << "\n";
    assert(currentAngle == currentAngle);
    diffAngle = currentAngle - prevAngle;
-   cout << "Ship velocity is X: " << shipVelocity.x << " Y: " << shipVelocity.y << " Z: " << shipVelocity.z << "\n";
+   cout << "Ship velocity is X: " << m_velocity.x << " Y: " << m_velocity.y << " Z: " << m_velocity.z << "\n";
 
      //Gets the matrix that you need to use to make the position rotate around at this angle
      // LOOK AT THIS
-     tempMatrix = mat4::Rotate(diffAngle, (currentHeadPos - progress).Normalized());	
+     tempMatrix = mat4::Rotate(diffAngle, (m_currentHeadPos - m_progress).Normalized());	
 
      //Matrix multiplication to come up with the rotated up.
-     tempUp.x = (up.x * tempMatrix.x.x) + (up.y * tempMatrix.y.x) 
-       + (up.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
-     tempUp.y = (up.x * tempMatrix.x.y) + (up.y * tempMatrix.y.y) 
-       + (up.z * tempMatrix.z.y) + (1 * tempMatrix.w.y);
-     tempUp.z = (up.x * tempMatrix.x.z) + (up.y * tempMatrix.y.z) 
-       + (up.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
+     tempUp.x = (m_up.x * tempMatrix.x.x) + (m_up.y * tempMatrix.y.x) 
+       + (m_up.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
+     tempUp.y = (m_up.x * tempMatrix.x.y) + (m_up.y * tempMatrix.y.y) 
+       + (m_up.z * tempMatrix.z.y) + (1 * tempMatrix.w.y);
+     tempUp.z = (m_up.x * tempMatrix.x.z) + (m_up.y * tempMatrix.y.z) 
+       + (m_up.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
 
      //Up value set to the vector that was calculated above.
-     up = tempUp.Normalized();
+     m_up = tempUp.Normalized();
      calculateSide();
 
-     //TempUp is actually TempPosition here.
-     tempUp.x = (position.x * tempMatrix.x.x) + (position.y * tempMatrix.y.x) 
-       + (position.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
-     tempUp.y = (position.x * tempMatrix.x.y) + (position.y * tempMatrix.y.y) 
-       + (position.z * tempMatrix.z.y) + (1 * tempMatrix.w.y);
-     tempUp.z = (position.x * tempMatrix.x.z) + (position.y * tempMatrix.y.z) 
-       + (position.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
+     //TempUp is actually Tempposition here.
+     tempUp.x = (m_position.x * tempMatrix.x.x) + (m_position.y * tempMatrix.y.x) 
+       + (m_position.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
+     tempUp.y = (m_position.x * tempMatrix.x.y) + (m_position.y * tempMatrix.y.y) 
+       + (m_position.z * tempMatrix.z.y) + (1 * tempMatrix.w.y);
+     tempUp.z = (m_position.x * tempMatrix.x.z) + (m_position.y * tempMatrix.y.z) 
+       + (m_position.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
 
-     position = tempUp;
+     m_position = tempUp;
 
-   shipVelocity = (((side * lastScreenX)) - (position - progress)) * 0.0005 + (((up * lastScreenY)) - (position - progress)) * 0.0005 + progressVelocity;
-   assert(up.x == up.x);
+   m_velocity = (((side * lastScreenX)) - (m_position - m_progress)) * 0.0005 + (((m_up * lastScreenY)) - (m_position - m_progress)) * 0.0005 + m_progressVelocity;
+   assert(m_up.x == m_up.x);
    assert(side.x == side.x);
 
-   cout << "Ship velocity : " << shipVelocity.x << ", " << shipVelocity.y << ", " << shipVelocity.z << "\n";
-   assert(shipVelocity.x == shipVelocity.x);
-   assert(shipVelocity.y == shipVelocity.y);
-   assert(shipVelocity.z == shipVelocity.z);
-    
+   cout << "Ship velocity : " << m_velocity.x << ", " << m_velocity.y << ", " << m_velocity.z << "\n";
+   assert(m_velocity.x == m_velocity.x);
+   assert(m_velocity.y == m_velocity.y);
+   assert(m_velocity.z == m_velocity.z);
+   
+   m_progress.x += m_progressVelocity.x * time;
+   m_progress.y += m_progressVelocity.y * time;
+   m_progress.z += m_progressVelocity.z * time;
 
+   m_position = m_position + (m_velocity * time);
 
-   progress.x += progressVelocity.x * time;
-   progress.y += progressVelocity.y * time;
-   progress.z += progressVelocity.z * time;
-
-   position = position + (shipVelocity * time);
-
-   upRotateAngle = 180.0f / 3.14159265f * acos(vec3(0,1,0).Dot(up));
+   upRotateAngle = 180.0f / 3.14159265f * acos(vec3(0,1,0).Dot(m_up));
    forwardRotateAngle = 180.0f / 3.14159265f * acos(vec3(0,0,-1).Dot(getForward()));
-   testAngle = 180.0f / 3.14159265f * acos(up.Dot(getForward()));
+   testAngle = 180.0f / 3.14159265f * acos(m_up.Dot(getForward()));
 
    cerr << "ANGLE FOR COMPARISON IS: " << testAngle << "\n";
    cerr << "upRotateAngle is: " << upRotateAngle << "\n";
@@ -105,127 +104,56 @@ void Player::tic(uint64_t time)
       forwardRotateAngle = 180.0f + forwardRotateAngle;
    }*/
    //MIGHT NEED TO BE CHANGED TO ACCOUNT FOR FORWARD AS OPPOSED TO CURRENT HEADING
-   cerr << "Position is: " << position.x << ", " << position.y << ", " << position.z << "\n";
+   cerr << "Position is: " << m_position.x << ", " << m_position.y << ", " << m_position.z << "\n";
   // if ((getForward().x >= 0 && getForward().y >= 0 && getForward().z >= 0) ||
   //    (getForward().x 
    cerr << "Forward! X is: " << getForward().x << ", Y is: " << getForward().y << ", Z is: " << getForward().z << "\n";
-   //modelMtx = mat4::Rotate(progress - currentHeadPos, up);
+   //modelMtx = mat4::Rotate(m_progress - currentHeadPos, up);
    modelMtx = mat4::Rotate(upRotateAngle, vec3(0,0,-1));
    modelMtx = modelMtx * mat4::Rotate(forwardRotateAngle, vec3(0,1,0));
-   modelMtx = modelMtx * mat4::Translate(position.x, position.y, position.z);
+   modelMtx = modelMtx * mat4::Translate(m_position.x, m_position.y, m_position.z);
    m_mesh->setModelMtx(modelMtx);
-   cerr << "The UP is X: " << up.x << ", Y: " << up.y << ", Z: " << up.z << "\n";
+   cerr << "The UP is X: " << m_up.x << ", Y: " << m_up.y << ", Z: " << m_up.z << "\n";
 
-}
-
-void Player::setProgress(Vector3<float> pos)
-{
-   progress.x = pos.x;
-   progress.y = pos.y;
-   progress.z = pos.z;
-   //cerr << "WE BE AT " << progress.x << " " << progress.y << " " << progress.z << " CAP'N!\n";
-}
-
-void Player::setPosition(Vector3<float> pos)
-{
-   position = pos;
-  // m_mesh->setModelMtx(mat4::Translate(pos.x, pos.y, pos.z));
-}
-
-void Player::setProgressVelocity(Vector3<float> vel)
-{
-   progressVelocity.x = vel.x;
-   progressVelocity.y = vel.y;
-   progressVelocity.z = vel.z;
-}
-
-void Player::setAcceleration(Vector3<float> acc)
-{
-   acceleration.x = acc.x;
-   acceleration.y = acc.y;
-   acceleration.z = acc.z;
 }
 
 void Player::setBearing(Vector3<float> headPosition, Vector3<float> headUp)
 {
 	prevAngle = currentAngle;
-   if (headPosition.x != currentHeadPos.x || headPosition.y != currentHeadPos.y 
-    || headPosition.z != currentHeadPos.z) {
-      previousHeadPos = currentHeadPos;
-      currentHeadPos = headPosition;
-      previousHeadUp = currentHeadUp;
+   if (headPosition.x != m_currentHeadPos.x || headPosition.y != m_currentHeadPos.y 
+    || headPosition.z != m_currentHeadPos.z) {
+      m_previousHeadPos = m_currentHeadPos;
+      m_currentHeadPos = headPosition;
+      m_previousHeadUp = m_currentHeadUp;
    }
-	currentHeadUp = headUp.Normalized();
+	m_currentHeadUp = headUp.Normalized();
 
-   progressVelocity.x = headPosition.x - progress.x;
-   progressVelocity.y = headPosition.y - progress.y;
-   progressVelocity.z = headPosition.z - progress.z;
+   m_progressVelocity.x = headPosition.x - m_progress.x;
+   m_progressVelocity.y = headPosition.y - m_progress.y;
+   m_progressVelocity.z = headPosition.z - m_progress.z;
 
-   progressVelocity = progressVelocity.Normalized();
+   m_progressVelocity = m_progressVelocity.Normalized();
 
-   progressVelocity = progressVelocity * VELOCITY;
+   m_progressVelocity = m_progressVelocity * VELOCITY;
 
 	//cout << "Up Vector : " << up.x << " " << up.y << " " << up.z << "\n";
 
-	//cout << previousHeadUp.x << " " << previousHeadUp.y << " " << previousHeadUp.z << "\n";
+	//cout << m_previousHeadUp.x << " " << m_previousHeadUp.y << " " << m_previousHeadUp.z << "\n";
 	//assert(false);
-	currentAngle = 180.0f / 3.14159265f * acos(previousHeadUp.Normalized().Dot(headUp.Normalized()));
+	currentAngle = 180.0f / 3.14159265f * acos(m_previousHeadUp.Normalized().Dot(headUp.Normalized()));
 	//cout << "Angle is : " << angle << "\n";
 }
 
-Vector3<float> Player::updateVelocity(float diffX, float diffY)
+void Player::updateVelocity(float diffX, float diffY)
 {
    //ASSUMES X AND Y PASSED IN ARE DIFFERENCES IN SDL SCREEN COORDS
    lastScreenX = diffX;
    lastScreenY = diffY;
 }
 
-Vector3<float> Player::getUp()
-{
-   return up;
-}
-
-Vector3<float> Player::getProgressVelocity()
-{
-   assert(progressVelocity.x == progressVelocity.x);
-   assert(progressVelocity.y == progressVelocity.y);
-   assert(progressVelocity.z == progressVelocity.z);
-   return progressVelocity;
-}
-
-Vector3<float> Player::getForward()
-{
-   return (currentHeadPos - progress).Normalized();
-}
-
-Vector3<float> Player::getProgress()
-{
-   return progress;
-}
-
-Vector3<float> Player::getPosition()
-{
-   return position;
-}
-
-void Player::setUp(Vector3<float> upVal)
-{
-   up = upVal;
-}
-
 void Player::calculateSide()
 {
-   side = up.Cross(currentHeadPos - previousHeadPos).Normalized();
+   side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
 }
 
-void Player::setHeads(Vector3<float> currHeadPos, Vector3<float> currHeadUp, Vector3<float> prevHeadPos,
-   Vector3<float> prevHeadUp) {
-	up = prevHeadUp;
-   previousHeadUp = prevHeadUp;
-	previousHeadPos = prevHeadPos;
-	currentHeadUp = currHeadUp;
-	currentHeadPos = currHeadPos;
-	calculateSide();
-        cerr << "Value of CHP: " << currentHeadPos.x << currentHeadPos.y << currentHeadPos.z << ", Value of PHP: " << previousHeadPos.x << previousHeadPos.y << previousHeadPos.z << "\n";
-}
 

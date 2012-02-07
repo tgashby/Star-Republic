@@ -41,6 +41,7 @@ void GameEngine::InitData()
    m_player->setUp(m_previousPoint->getUp());
    m_player->setHeads(m_currentPoint->getPosition(), m_currentPoint->getUp(),
 		      m_previousPoint->getPosition(), m_previousPoint->getUp());
+   m_player->calculateSide();
    m_modules->renderingEngine->setCamera(m_camera);
 
    m_modules->renderingEngine->addObject3d(m_player);
@@ -122,5 +123,5 @@ void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
 {
    // Rotate player?
    // X seems to be reading in backwards...?
-   m_player->updateVelocity((400 - x), (300-y));
+   m_player->setVelocity(vec3((400 - x), (300 - y), m_player->getPosition().z));
 }
