@@ -66,7 +66,7 @@ class Path:
          out.write('%f %f %f ' % (up.x, up.z, -up.y))
          side = Vector((1.0, 0.0, 0.0))
          side = side * obj.matrix_world
-         out.write('%f %f %f ' % (side.x, side.z, -side.y))
+         out.write('%f %f %f ' % (side.x, side.z, side.y))
          index += 1
          out.write('%d\n' % (index))
       return index
