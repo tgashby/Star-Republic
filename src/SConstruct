@@ -11,9 +11,9 @@ else:
    env.Append(LIBS=["GL", "SDL", "SDL_mixer"])
 
 if (env['PLATFORM'] == 'darwin'):
-   env.Append(LIBS=["RepublicEngine","RepublicGame"])
+   env.Append(LIBS=["RepublicEngine"])
 else:
-   env.Append(LIBS=["RepublicEngine","RepublicGame"]+env['LIBS'])
+   env.Append(LIBS=["RepublicEngine"]+env['LIBS'])
 
 #Prawk! Stupid hack, part 1: In an ideal world, I would build a library out of
 # game using it's Sconscript file
