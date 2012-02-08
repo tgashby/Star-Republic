@@ -1,20 +1,25 @@
 import os, os.path, shutil
 
-includes = ['./engine','./game']
-env = Environment( CC = 'g++', CPPPATH=includes, LIBPATH=includes )
+includes = ['engine','game']
+include_dirs = [os.path.abspath(f) for f in includes]
+env = Environment( CC = 'g++', CPPPATH=include_dirs, LIBPATH=include_dirs )
 mainfiles = ['Main.cpp']
 if (env['PLATFORM'] == 'darwin'):
-   env.Append(FRAMEWORKS= ['OpenGL','SDL', 'Cocoa'])
+   env.Append(FRAMEWORKS= ['OpenGL','SDL', 'Cocoa', 'SDL_mixer'])
    mainfiles+=['SDLMain.m']
 else:
-   env.Append(LIBS=["GL", "SDL"])
+   env.Append(LIBS=["GL", "SDL", "SDL_mixer"])
 
 if (env['PLATFORM'] == 'darwin'):
-   env.Append(LIBS=["RepublicEngine","RepublicGame"])
+   env.Append(LIBS=["RepublicEngine"])
 else:
-   env.Append(LIBS=["RepublicEngine","RepublicGame"]+env['LIBS'])
+   env.Append(LIBS=["RepublicEngine"]+env['LIBS'])
 
-for subdir in ['engine','game','tools']:
-   env.SConscript('%s/SConstruct' % subdir, {'env':env})
+#Prawk! Stupid hack, part 1: In an ideal world, I would build a library out of
+# game using it's Sconscript file
+for subdir in ['engine','tools']:
+   env.SConscript('%s/SConscript' % subdir, {'env':env})
 
+#Prawk! Stupid hack, part 2: In an ideal world, I would build a library out of
+# game using it's Sconscript file
 env.Program('starrepublic', mainfiles+Glob("./game/*.cpp"))

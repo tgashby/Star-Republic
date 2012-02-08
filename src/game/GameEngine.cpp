@@ -1,5 +1,5 @@
 #include "GameEngine.h"
-#include "../engine/Object3d.h"
+#include "Object3d.h"
 #include "Player.h"
 
 
@@ -26,16 +26,20 @@ void GameEngine::InitData()
    // just push a single object to the list and add to the RenderingEngine
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
 			 m_modules);
+   m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
+			 m_modules, m_player);
 
    m_camera = new Camera(vec3(0, 0, 0));
    m_world = new World("maps/testWorld4.wf");
-   m_turret = new Turret("models/cube.obj",
+   m_turret = new Turret(*m_player, "models/turrethead.obj",
                          "textures/test3.bmp",
-                         "models/cube.obj",
+                         "models/turretmiddle.obj",
                          "textures/test3.bmp",
-                         "models/spaceship.obj",
+                         "models/turretbase.obj",
                          "textures/test3.bmp",
                          m_modules);
+   
+   m_turret->setPosition(vec3(0,0,10));
 
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
@@ -48,11 +52,18 @@ void GameEngine::InitData()
    m_modules->renderingEngine->setCamera(m_camera);
 
    m_modules->renderingEngine->addObject3d(m_player);
+   m_modules->renderingEngine->addObject3d(m_reticle);
    m_modules->renderingEngine->addObject3d(m_turret);
    m_objects.push_back(m_player);
+   m_objects.push_back(m_reticle);
    m_objects.push_back(m_turret);
    m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-
+   
+   initSound();
+   m_bulletSound = loadSound("sound/arwingShot.ogg");
+   m_music = loadMusic("sound/venom.mp3");
+   
+   m_music->play(1);
 }
 
 void GameEngine::tic(uint64_t td) {
@@ -62,6 +73,7 @@ void GameEngine::tic(uint64_t td) {
    m_currentPoint = m_world->getCurrentPointer();
    m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_player->tic(td);
+   m_reticle->tic(td);
    
    for (int i = 0; i < m_bulletList.size(); i++) {
       m_bulletList[i]->tic(td);
@@ -131,7 +143,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
 				  m_modules, m_player->getPosition() 
 				  + (m_player->getSide() * 8),
-			     m_player->getForward(), m_player->getUp());
+			     -m_player->getAimForward(), m_player->getAimUp());
       
       m_modules->renderingEngine->addObject3d(bullet);
       m_objects.push_back(bullet);
@@ -140,11 +152,13 @@ bool GameEngine::handleKeyUp(SDLKey key)
       bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
 			  m_modules, m_player->getPosition() 
 			  - (m_player->getSide() * 8),
-			  m_player->getForward(), m_player->getUp());
+			  -m_player->getAimForward(), m_player->getAimUp());
 
       m_modules->renderingEngine->addObject3d(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
+      
+      m_bulletSound->play(0);
    }
    
    return running;
