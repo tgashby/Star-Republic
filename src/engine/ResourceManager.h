@@ -2,6 +2,7 @@
 #define StarRepub_ResourceManager_h
 
 #include "Interfaces.h"
+#include "Sound.h"
 #include "SDL_include.h"
 
 class ResourceManager : public IResourceManager {
@@ -47,5 +48,9 @@ vec3* parseTangent(string line);
 vec2* parseTexture(string line);
 Face* parseFace(string line);
 void combineVertex(float *vertices, vec3 *vertex, vec3 *normal, vec3 *tangent, vec2 *texture);
+
+void initSound();
+Sound* loadSound(string fileName);
+Sound* loadMusic(string fileName);
 
 #endif

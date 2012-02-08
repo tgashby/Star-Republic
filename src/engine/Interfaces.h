@@ -146,6 +146,19 @@ struct IObject3d {
    virtual list<IMesh *>* getMeshes() = 0;
 };
 
+// Sound
+const int INVALID_CHANNEL = -2;
+class ISound 
+{
+public:
+   virtual void play(int loops) = 0;
+   virtual void pause() = 0;
+   virtual void resume() = 0;
+protected:
+   int channel;
+   Mix_Chunk* chunk;
+   Mix_Music* music;
+};
 
 // The main class that runs the game.
 struct IGameEngine {

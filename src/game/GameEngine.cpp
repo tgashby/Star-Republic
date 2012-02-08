@@ -1,5 +1,5 @@
 #include "GameEngine.h"
-#include "../engine/Object3d.h"
+#include "Object3d.h"
 #include "Player.h"
 
 
@@ -31,13 +31,15 @@ void GameEngine::InitData()
 
    m_camera = new Camera(vec3(0, 0, 0));
    m_world = new World("maps/testWorld4.wf");
-   m_turret = new Turret("models/cube.obj",
+   m_turret = new Turret(*m_player, "models/turrethead.obj",
                          "textures/test3.bmp",
-                         "models/cube.obj",
+                         "models/turretmiddle.obj",
                          "textures/test3.bmp",
-                         "models/spaceship.obj",
+                         "models/turretbase.obj",
                          "textures/test3.bmp",
                          m_modules);
+   
+   m_turret->setPosition(vec3(0,0,10));
 
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
@@ -56,7 +58,12 @@ void GameEngine::InitData()
    m_objects.push_back(m_reticle);
    m_objects.push_back(m_turret);
    m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-
+   
+   initSound();
+   m_bulletSound = loadSound("sound/arwingShot.ogg");
+   m_music = loadMusic("sound/venom.mp3");
+   
+   m_music->play(1);
 }
 
 void GameEngine::tic(uint64_t td) {
@@ -150,6 +157,8 @@ bool GameEngine::handleKeyUp(SDLKey key)
       m_modules->renderingEngine->addObject3d(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
+      
+      m_bulletSound->play(0);
    }
    
    return running;

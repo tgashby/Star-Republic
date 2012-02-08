@@ -9,14 +9,19 @@
 #ifndef StarRepub_Turret_h
 #define StarRepub_Turret_h
 
-#include "../engine/Interfaces.h"
-#include "../engine/Object3d.h"
-#include "../engine/Mesh.h"
+#include "Interfaces.h"
+#include "Object3d.h"
+#include "Player.h"
+#include "Enemy.h"
+#include "Mesh.h"
 
-class Turret : public Object3d {
+class Turret : public Object3d, public Enemy {
 public:
-   Turret(string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules);
+   Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules);
    ~Turret();
+   
+   void tic(uint64_t time);
+   
 private:
    int health;
    Mesh *m_headMesh;

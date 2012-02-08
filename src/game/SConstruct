@@ -1,4 +1,0 @@
-Import('env')
-
-env.Object(Glob('*.cpp'),LIBS=['RepublicEngine'] )
-env.Library('RepublicGame',Glob('*.cpp'),LIBS=['RepublicEngine'] )
