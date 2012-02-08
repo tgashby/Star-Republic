@@ -328,15 +328,17 @@ void combineVertex(float *vertices, vec3 *vertex, vec3 *normal, vec3 *tangent, v
 void initSound()
 {
    // load support for the OGG and MOD sample/music formats
-   int flags=MIX_INIT_OGG|MIX_INIT_MP3|MIX_INIT_MOD|MIX_INIT_FLAC;
+   //int flags=MIX_INIT_OGG|MIX_INIT_MP3|MIX_INIT_MOD|MIX_INIT_FLAC;
    
-   int initted=Mix_Init(flags);
+   //int initted=Mix_Init(flags);
    
+   /*
    if((initted&flags) != flags) {
       printf("Mix_Init: Failed to init required mp3 support!\n");
       printf("Mix_Init: %s\n", Mix_GetError());
       // handle error
    }
+   */
    
    // open 22.05KHz, signed 16bit, system byte order,
    //      stereo audio, using 1024 byte chunks
