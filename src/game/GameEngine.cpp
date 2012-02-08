@@ -32,7 +32,7 @@ void GameEngine::InitData()
    m_enemyShip = new EnemyShip("models/spaceship.obj", "textures/test3.bmp", m_modules);
 
    m_camera = new Camera(vec3(0, 0, 0));
-   m_world = new World("maps/testWorld4.wf");
+   m_world = new World("maps/world.wf");
    m_turret = new Turret(*m_player, "models/turrethead.obj",
                          "textures/test3.bmp",
                          "models/turretmiddle.obj",
@@ -40,8 +40,7 @@ void GameEngine::InitData()
                          "models/turretbase.obj",
                          "textures/test3.bmp",
                          m_modules);
-   
-   m_turret->setPosition(vec3(0,0,-100));
+   m_turret->setPosition(vec3(-144,-1168,5063));
 
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
@@ -69,6 +68,12 @@ void GameEngine::InitData()
    m_objects.push_back(m_reticle);
    m_objects.push_back(m_turret);
    m_objects.push_back(m_enemyShip);
+   
+   // add one canyon mesh for now.
+   Object3d *canyon = new Object3d("models/canyon.obj", "textures/test3.bmp", m_modules);
+   m_modules->renderingEngine->addObject3d(canyon);
+   m_objects.push_back(canyon);
+   
    
    m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
