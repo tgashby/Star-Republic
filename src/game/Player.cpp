@@ -23,6 +23,12 @@ Player::~Player()
 
 }
 
+void Player::setFuturePosition(Vector3<float> pos)
+{
+   //futurePosition = pos + (
+
+}
+
 
 //All Vectors are updated in here
 void Player::tic(uint64_t time)

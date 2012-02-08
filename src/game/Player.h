@@ -24,6 +24,7 @@ public:
    void setBearing(Vector3<float> headPos, Vector3<float> headUp); //Flyer
 //   void setProgress(Vector3<float> pos); Flyer
 //   void setUp(Vector3<float> upVal); GOBJ
+   void setFutureProgress(Vector3<float> pos);
    Vector3<float> getSide();
    void calculateSide();
 //   Vector3<float> getPosition(); GOBJ
@@ -34,6 +35,7 @@ public:
    void updateVelocity(float diffX, float diffY); //GOBJ
    Vector3<float> getAimForward();
    Vector3<float> getAimUp();
+   void setFuturePosition(Vector3<float> pos);
 //   void setHeads(Vector3<float> currHeadPos, Vector3<float> currHeadUp,
 //                 Vector3<float> prevHeadPos, Vector3<float> prevHeadUp); Flyer
    
@@ -55,11 +57,11 @@ private:
 //	Vector3<float> previousHeadPos; Flyer
 //	Vector3<float> currentHeadUp; Flyer
 //	Vector3<float> previousHeadUp; Flyer
+   Vector3<float> futureProgress;
    float lastScreenX;
    float lastScreenY;
    float prevAngle;
    float currentAngle;
-	
 };
 
 #endif
