@@ -28,12 +28,12 @@ void GameEngine::InitData()
 			 m_modules);
 
    m_camera = new Camera(vec3(0, 0, 0));
-   m_world = new World("maps/testWorld4.wf");
+   m_world = new World("maps/world.wf");
    m_turret = new Turret("models/cube.obj",
                          "textures/test3.bmp",
                          "models/cube.obj",
                          "textures/test3.bmp",
-                         "models/spaceship.obj",
+                         "models/canyon.obj",
                          "textures/test3.bmp",
                          m_modules);
 

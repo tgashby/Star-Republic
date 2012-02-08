@@ -32,11 +32,16 @@ public:
 //   Vector3<float> getProgress(); Flyer
 //   Vector3<float> getProgressVelocity(); Flyer
    void updateVelocity(float diffX, float diffY); //GOBJ
+   Vector3<float> getAimForward();
+   Vector3<float> getAimUp();
 //   void setHeads(Vector3<float> currHeadPos, Vector3<float> currHeadUp,
 //                 Vector3<float> prevHeadPos, Vector3<float> prevHeadUp); Flyer
    
 private:
    int health;
+   // for aim and rotation, consider the player on a plane normal to the forward
+   float vx, vy; 
+   int prevX, prevY; // for keeping track of the mouse, also for aim
    Mesh *m_mesh;
    //Vector3<float> position; GOBJ
    //Vector3<float> progressVelocity; Flyer

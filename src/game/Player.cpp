@@ -9,6 +9,10 @@ Player::Player(string fileName, string textureName, Modules *modules)
    m_mesh = new Mesh(fileName, textureName, modules);
    m_meshList.push_back(m_mesh);
 
+   // these are relative to the 'forward' vector
+   vx = 0;
+   vy = 0;
+
    mat4 modelMtx = mat4::Scale(MODEL_SCALE) * 
       mat4::Magic(-getForward(), getUp(), getPosition());
    m_mesh->setModelMtx(modelMtx);
@@ -64,8 +68,9 @@ void Player::tic(uint64_t time)
    m_position = m_position + (m_velocity * time);
 
    modelMtx = mat4::Scale(MODEL_SCALE) * 
-      mat4::Magic(-getForward(), getUp(), getPosition());
+      mat4::Magic(getAimForward(), getAimUp(), getPosition());
    m_mesh->setModelMtx(modelMtx);
+
 }
 
 void Player::setBearing(Vector3<float> headPosition, Vector3<float> headUp)
@@ -87,8 +92,21 @@ void Player::setBearing(Vector3<float> headPosition, Vector3<float> headUp)
 
 void Player::updateVelocity(float diffX, float diffY)
 {
+   vx = -diffX / 400;
+   vy = -diffY / 400;
+
    lastScreenX = diffX;
    lastScreenY = diffY;
+}
+
+Vector3<float> Player::getAimForward()
+{
+   return (-getForward() * (1 - vx) * (1 - vy) 
+      + getSide() * vx + getUp() * vy).Normalized();
+}
+Vector3<float> Player::getAimUp()
+{
+   return (getUp() * (1 - vy) + getForward() * vy).Normalized();
 }
 
 Vector3<float> Player::getSide()
