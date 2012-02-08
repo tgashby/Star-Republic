@@ -39,6 +39,7 @@ private:
    Vector3<float> currentDirection;
    void InitData();
    std::vector<Bullet *> m_bulletList;
+   std::vector<Turret *> m_turrets;
    
    Sound* m_bulletSound;
    Sound* m_music;

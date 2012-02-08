@@ -29,13 +29,15 @@ void GameEngine::InitData()
 
    m_camera = new Camera(vec3(0, 0, 0));
    m_world = new World("maps/testWorld4.wf");
-   m_turret = new Turret("models/cube.obj",
+   m_turret = new Turret(*m_player, "models/turrethead.obj",
                          "textures/test3.bmp",
-                         "models/cube.obj",
+                         "models/turretmiddle.obj",
                          "textures/test3.bmp",
-                         "models/spaceship.obj",
+                         "models/turretbase.obj",
                          "textures/test3.bmp",
                          m_modules);
+   
+   m_turret->setPosition(vec3(0,0,10));
 
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
