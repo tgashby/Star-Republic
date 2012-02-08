@@ -13,6 +13,7 @@
 #include "Object3d.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Bullet.h"
 #include "Mesh.h"
 
 class Turret : public Object3d, public Enemy {
@@ -22,11 +23,17 @@ public:
    
    void tic(uint64_t time);
    
+   Vector3<float> getHeadPosition();
+   
 private:
    int health;
    Mesh *m_headMesh;
    Mesh *m_midMesh;
    Mesh *m_footMesh;
+   
+   vec3 headPosition;
+   
+//   std::list<Bullet*> m_bullets;
 };
 
 #endif

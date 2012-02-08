@@ -15,6 +15,7 @@
 #include "Reticle.h"
 #include <assert.h>
 #include "Bullet.h"
+#include "EnemyShip.h"
 
 
 class GameEngine : public IGameEngine {
@@ -41,7 +42,8 @@ private:
    Vector3<float> currentDirection;
    void InitData();
    std::vector<Bullet *> m_bulletList;
-   std::vector<Turret *> m_turrets;
+   
+   EnemyShip* m_enemyShip;
    
    Sound* m_bulletSound;
    Sound* m_music;
