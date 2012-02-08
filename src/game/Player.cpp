@@ -1,5 +1,10 @@
 #include "Player.h"
 
+#define VCHANGE 0.8
+#define VINTENS 0.5
+#define SCREENX 400
+#define SCREENY 300
+
 Player::Player(string fileName, string textureName, Modules *modules) 
    :  Object3d(), Flyer(),
       health(100), side(1,0,0), 
@@ -10,6 +15,10 @@ Player::Player(string fileName, string textureName, Modules *modules)
    m_meshList.push_back(m_mesh);
 
    // these are relative to the 'forward' vector
+   x = SCREENX;
+   y = SCREENY;
+   //SDL_ShowCursor( SDL_DISABLE );
+   SDL_WarpMouse( x, y ); 
    vx = 0;
    vy = 0;
 
@@ -71,6 +80,9 @@ void Player::tic(uint64_t time)
       mat4::Magic(getAimForward(), getAimUp(), getPosition());
    m_mesh->setModelMtx(modelMtx);
 
+   x += vx * time;
+   y += vy * time;
+   updateVelocity(lastScreenX, lastScreenY);
 }
 
 void Player::setBearing(Vector3<float> headPosition, Vector3<float> headUp)
@@ -92,8 +104,8 @@ void Player::setBearing(Vector3<float> headPosition, Vector3<float> headUp)
 
 void Player::updateVelocity(float diffX, float diffY)
 {
-   vx = -diffX / 400;
-   vy = -diffY / 400;
+   vx = -(diffX + x - SCREENX) / SCREENX;
+   vy = -(diffY + y - SCREENY) / SCREENY;
 
    lastScreenX = diffX;
    lastScreenY = diffY;
@@ -101,12 +113,31 @@ void Player::updateVelocity(float diffX, float diffY)
 
 Vector3<float> Player::getAimForward()
 {
-   return (-getForward() * (1 - vx) * (1 - vy) 
-      + getSide() * vx + getUp() * vy).Normalized();
+   if (vx > VCHANGE)
+      vx = VCHANGE;
+   if (vy > VCHANGE)
+      vy = VCHANGE;
+   if (vx < -VCHANGE)
+      vx = -VCHANGE;
+   if (vy < -VCHANGE)
+      vy = -VCHANGE;
+   float tvx = vx * VINTENS;
+   float tvy = vy * VINTENS;
+   return (-getForward() * (1 - abs(tvx)) * (1 - abs(tvy)) 
+      + getSide() * tvx + getUp() * tvy).Normalized();
 }
 Vector3<float> Player::getAimUp()
 {
-   return (getUp() * (1 - vy) + getForward() * vy).Normalized();
+   if (vx > VCHANGE)
+      vx = VCHANGE;
+   if (vy > VCHANGE)
+      vy = VCHANGE;
+   if (vx < -VCHANGE)
+      vx = -VCHANGE;
+   if (vy < -VCHANGE)
+      vy = -VCHANGE;
+   float tvy = vy * VINTENS;
+   return (getUp() * (1 - abs(tvy)) + getForward() * tvy).Normalized();
 }
 
 Vector3<float> Player::getSide()

@@ -41,7 +41,7 @@ private:
    int health;
    // for aim and rotation, consider the player on a plane normal to the forward
    float vx, vy; 
-   int prevX, prevY; // for keeping track of the mouse, also for aim
+   float x, y;
    Mesh *m_mesh;
    //Vector3<float> position; GOBJ
    //Vector3<float> progressVelocity; Flyer
