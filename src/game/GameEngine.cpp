@@ -1,5 +1,5 @@
 #include "GameEngine.h"
-#include "../engine/Object3d.h"
+#include "Object3d.h"
 #include "Player.h"
 
 
@@ -52,7 +52,12 @@ void GameEngine::InitData()
    m_objects.push_back(m_player);
    m_objects.push_back(m_turret);
    m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-
+   
+   initSound();
+   m_bulletSound = loadSound("sound/arwingShot.ogg");
+   m_music = loadMusic("sound/venom.mp3");
+   
+   m_music->play(1);
 }
 
 void GameEngine::tic(uint64_t td) {
@@ -145,6 +150,8 @@ bool GameEngine::handleKeyUp(SDLKey key)
       m_modules->renderingEngine->addObject3d(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
+      
+      m_bulletSound->play(0);
    }
    
    return running;

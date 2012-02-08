@@ -1,10 +1,11 @@
 #ifndef StarRepub_GameEngine_h
 #define StarRepub_GameEngine_h
 
-#include "../engine/Interfaces.h"
-#include "../engine/Camera.h"
+#include "Interfaces.h"
+#include "Camera.h"
+#include "ResourceManager.h"
 
-#include "../engine/SDL_include.h"
+#include "SDL_include.h"
 
 #define VELOCITY_CONSTANT 2
 #include "World.h"
@@ -38,6 +39,9 @@ private:
    Vector3<float> currentDirection;
    void InitData();
    std::vector<Bullet *> m_bulletList;
+   
+   Sound* m_bulletSound;
+   Sound* m_music;
 };
 
 #endif

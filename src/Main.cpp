@@ -31,15 +31,6 @@ int main(int argc, char** argv)
    
    SDL_WM_SetCaption("Star Republic", NULL);
    
-   // Boring OGL
-   glPushMatrix();
-   
-   //glClearColor(0.3f, 0.6f, 0.9f, 1.0f);
-   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-   glClear(GL_COLOR_BUFFER_BIT);
-   
-   glPopMatrix();
-   
    // Setup the modules
    Modules *modules = new Modules();
    modules->resourceManager = new ResourceManager();
