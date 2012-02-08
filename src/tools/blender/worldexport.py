@@ -57,7 +57,7 @@ class Path:
    def writePoints(self, index, out):
       for obj in self.objs:
          out.write('%d ' % (index))
-         out.write('%f %f %f ' % (obj.location.x, obj.location.z, obj.location.y))
+         out.write('%f %f %f ' % (100 * obj.location.x, 100 * obj.location.z, 100 * obj.location.y))
          fwd = Vector((0.0, 1.0, 0.0))
          fwd = fwd * obj.matrix_world
          out.write('%f %f %f ' % (fwd.x, fwd.z, -fwd.y))
