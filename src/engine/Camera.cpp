@@ -19,7 +19,7 @@ Camera::~Camera() {
 mat4 Camera::getProjectionViewMtx() {
    // Set the projection matrix
    float h = 4.0f * 640 / 480;
-   mat4 projectionMatrix = mat4::Frustum(-h / 2, h / 2, -2, 2, 4, 200);
+   mat4 projectionMatrix = mat4::Frustum(-h / 2, h / 2, -2, 2, 4, 2000);
    
    // apply the view
    projectionMatrix = mat4::LookAt(projectionMatrix, m_eye, m_ref, m_up);

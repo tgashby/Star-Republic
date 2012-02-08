@@ -1,5 +1,5 @@
-#ifndef StarRepub_Player_h
-#define StarRepub_Player_h
+#ifndef StarRepub_EnemyShip_h
+#define StarRepub_EnemyShip_h
 
 #include "Interfaces.h"
 #include "Camera.h"
@@ -8,15 +8,16 @@
 #include "Mesh.h"
 #include <assert.h>
 #include <cmath>
-#define VELOCITY 0.02f
-#define X_SCALAR 0.0005f
-#define Y_SCALAR 0.0005f
-#define MODEL_SCALE 0.8f
 
-class Player : public Object3d, public Flyer {
+const float velocity = 0.02;
+const float xScalar = 0.0005; 
+const float yScalar = 0.0005; 
+const float modelScale = 0.8;
+
+class EnemyShip : public Object3d, public Flyer {
 public:
-   Player(string fileName, string textureName, Modules *modules);
-   ~Player();
+   EnemyShip(string fileName, string textureName, Modules *modules);
+   ~EnemyShip();
    void tic(uint64_t time); //GOBJ/Flyer
 //   void setProgressVelocity(Vector3<float> vel); Flyer
 //   void setPosition(Vector3<float> pos); GOBJ
@@ -24,7 +25,6 @@ public:
    void setBearing(Vector3<float> headPos, Vector3<float> headUp); //Flyer
 //   void setProgress(Vector3<float> pos); Flyer
 //   void setUp(Vector3<float> upVal); GOBJ
-   void setFutureProgress(Vector3<float> pos);
    Vector3<float> getSide();
    void calculateSide();
 //   Vector3<float> getPosition(); GOBJ
@@ -35,7 +35,6 @@ public:
    void updateVelocity(float diffX, float diffY); //GOBJ
    Vector3<float> getAimForward();
    Vector3<float> getAimUp();
-   void setFuturePosition(Vector3<float> pos);
 //   void setHeads(Vector3<float> currHeadPos, Vector3<float> currHeadUp,
 //                 Vector3<float> prevHeadPos, Vector3<float> prevHeadUp); Flyer
    
@@ -43,7 +42,7 @@ private:
    int health;
    // for aim and rotation, consider the player on a plane normal to the forward
    float vx, vy; 
-   float x, y;
+   int prevX, prevY; // for keeping track of the mouse, also for aim
    Mesh *m_mesh;
    //Vector3<float> position; GOBJ
    //Vector3<float> progressVelocity; Flyer
@@ -57,11 +56,11 @@ private:
 //	Vector3<float> previousHeadPos; Flyer
 //	Vector3<float> currentHeadUp; Flyer
 //	Vector3<float> previousHeadUp; Flyer
-   Vector3<float> futureProgress;
    float lastScreenX;
    float lastScreenY;
    float prevAngle;
    float currentAngle;
+	
 };
 
 #endif
