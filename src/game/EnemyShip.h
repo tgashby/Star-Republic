@@ -9,10 +9,10 @@
 #include <assert.h>
 #include <cmath>
 
-const float velocity = 0.02;
-const float xScalar = 0.0005; 
-const float yScalar = 0.0005; 
-const float modelScale = 0.8;
+const float vELOCITY = 0.02f;
+const float x_SCALAR = 0.0005f; 
+const float y_SCALAR = 0.0005f; 
+const float mODEL_SCALE = 0.8f;
 
 class EnemyShip : public Object3d, public Flyer {
 public:
@@ -42,6 +42,7 @@ private:
    int health;
    // for aim and rotation, consider the player on a plane normal to the forward
    float vx, vy; 
+   float x, y;
    int prevX, prevY; // for keeping track of the mouse, also for aim
    Mesh *m_mesh;
    //Vector3<float> position; GOBJ

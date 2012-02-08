@@ -1,18 +1,21 @@
 #ifndef StarRepub_GameEngine_h
 #define StarRepub_GameEngine_h
 
-#include "../engine/Interfaces.h"
-#include "../engine/Camera.h"
+#include "Interfaces.h"
+#include "Camera.h"
+#include "ResourceManager.h"
 
-#include "../engine/SDL_include.h"
+#include "SDL_include.h"
 
 #define VELOCITY_CONSTANT 2
 #include "World.h"
 #include "WorldPoint.h"
 #include "Turret.h"
 #include "Player.h"
+#include "Reticle.h"
 #include <assert.h>
 #include "Bullet.h"
+#include "EnemyShip.h"
 
 
 class GameEngine : public IGameEngine {
@@ -29,6 +32,7 @@ public:
 private:
    list<IObject3d *> m_objects;
    Player *m_player;
+   Reticle *m_reticle;
    Camera *m_camera;
    Modules *m_modules;
    World *m_world;
@@ -38,6 +42,11 @@ private:
    Vector3<float> currentDirection;
    void InitData();
    std::vector<Bullet *> m_bulletList;
+   
+   EnemyShip* m_enemyShip;
+   
+   Sound* m_bulletSound;
+   Sound* m_music;
 };
 
 #endif

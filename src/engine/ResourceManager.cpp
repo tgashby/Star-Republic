@@ -12,6 +12,19 @@ ResourceManager::ResourceManager() {
    chdir("../assets");
    
    m_image = NULL;
+   
+//#ifdef __APPLE__
+//   CFBundleRef mainBundle = CFBundleGetMainBundle();
+//   CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+//   char path[PATH_MAX];
+//   if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
+//   {
+//      // error!
+//   }
+//   CFRelease(resourcesURL);
+//   chdir(path);
+//   std::cout << "Current Path: " << path << std::endl;
+//#endif
 }
 
 
@@ -67,7 +80,8 @@ ResourceManager::~ResourceManager() {
 
 
 
-MeshData* loadMesh(const string fileName, LOAD_NORMAL_TYPE type, float scale) {
+MeshData* loadMesh(const string fileName, LOAD_NORMAL_TYPE type, float scale)
+{
    vector<vec3 *> vertices(0);
    vector<vec3 *> normals(0);
    vector<vec3 *> tangents(0);
@@ -309,4 +323,77 @@ void combineVertex(float *vertices, vec3 *vertex, vec3 *normal, vec3 *tangent, v
    vertices[8] = tangent->z;
    vertices[9] = texture->x;
    vertices[10] = texture->y;
+}
+
+void initSound()
+{
+   // load support for the OGG and MOD sample/music formats
+   //int flags=MIX_INIT_OGG|MIX_INIT_MP3|MIX_INIT_MOD|MIX_INIT_FLAC;
+   
+   //int initted=Mix_Init(flags);
+   
+   /*
+   if((initted&flags) != flags) {
+      printf("Mix_Init: Failed to init required mp3 support!\n");
+      printf("Mix_Init: %s\n", Mix_GetError());
+      // handle error
+   }
+   */
+   
+   // open 22.05KHz, signed 16bit, system byte order,
+   //      stereo audio, using 1024 byte chunks
+   if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 1024)==-1)
+   {
+      printf("Mix_OpenAudio: %s\n", Mix_GetError());
+   }
+}
+
+Sound* loadSound(string fileName)
+{
+   Sound* sound = new Sound();
+   
+   string::size_type extBegin = fileName.find(".") + 1;
+   string extension(fileName, extBegin, fileName.size() - extBegin);
+   
+   if ((SDL_strcasecmp(extension.c_str(), "wav") == 0) ||
+       (SDL_strcasecmp(extension.c_str(), "aiff") == 0) ||
+       (SDL_strcasecmp(extension.c_str(), "aif") == 0) ||
+       (SDL_strcasecmp(extension.c_str(), "aifc") == 0) ||
+       (SDL_strcasecmp(extension.c_str(), "ogg") == 0) ||
+       (SDL_strcasecmp(extension.c_str(), "voc") == 0))
+   {
+      sound->setChunk(Mix_LoadWAV(fileName.c_str()));
+   }
+   else
+   {
+      printf("Bad file format: %s\n", extension.c_str());
+   }
+   
+   return sound;
+}
+
+Sound* loadMusic(string fileName)
+{
+   Sound* sound = new Sound();
+   
+   string::size_type extBegin = fileName.find(".") + 1;
+   string extension(fileName, extBegin, fileName.size() - extBegin);
+   
+   // WAVE, MOD, MIDI, OGG, MP3, FLAC,
+   
+   if ((SDL_strcasecmp(extension.c_str(), "wav") == 0) ||
+       (SDL_strcasecmp(extension.c_str(), "mod") == 0) ||
+       (SDL_strcasecmp(extension.c_str(), "midi") == 0) ||
+       (SDL_strcasecmp(extension.c_str(), "ogg") == 0) ||
+       (SDL_strcasecmp(extension.c_str(), "mp3") == 0) ||
+       (SDL_strcasecmp(extension.c_str(), "flac") == 0))
+   {
+      sound->setMusic(Mix_LoadMUS(fileName.c_str()));
+   }
+   else
+   {
+      printf("Bad file format: %s\n", extension.c_str());
+   }
+   
+   return sound;
 }

@@ -8,27 +8,61 @@
 
 #include "Turret.h"
 
-Turret::Turret(string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules) 
-: Object3d(), health(100)
+Turret::Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules) 
+: Object3d(), Enemy(player), health(100)
 {
-   m_headMesh = new Mesh(headName, headTexture, modules);
-   m_meshList.push_back(m_headMesh);
+   m_footMesh = new Mesh(footName, footTexture, modules);
+   m_meshList.push_back(m_footMesh);
+   mat4 modelMtx = mat4::Translate(0, 0, 0);
+   m_footMesh->setModelMtx(modelMtx);
+   
    
    m_midMesh = new Mesh(midName, midTexture, modules);
    m_meshList.push_back(m_midMesh);
-   
-   m_footMesh = new Mesh(footName, footTexture, modules);
-   m_meshList.push_back(m_footMesh);
-   
-   mat4 modelMtx = mat4::Translate(0, 0, 0);
-   //modelMtx = mat4::Rotate(90, vec3(0, 1, 0)) * modelMtx;
-   
-   m_headMesh->setModelMtx(modelMtx);
+   modelMtx *= mat4::Translate(0, 1, 0);
    m_midMesh->setModelMtx(modelMtx);
-   m_footMesh->setModelMtx(modelMtx);
+   
+   m_headMesh = new Mesh(headName, headTexture, modules);
+   m_meshList.push_back(m_headMesh);
+   modelMtx *= mat4::Translate(0, 13, 0);
+   m_headMesh->setModelMtx(modelMtx);
 }
 
 Turret::~Turret()
 {
+//   for (std::list<Bullet*>::iterator i = m_bullets.begin(); i != m_bullets.end(); i++) {
+//      Bullet* temp = *i;
+//      
+//      delete temp;
+//   }
+}
+
+
+void Turret::tic(uint64_t time)
+{
+   // Rotate head toward player
+   // aim
+   // fire
+   mat4 modelMtx = mat4::Translate(m_position.x, m_position.y, m_position.z);
+   m_footMesh->setModelMtx(modelMtx);
    
+   modelMtx *= mat4::Translate(0, 1, 0);
+   m_midMesh->setModelMtx(modelMtx);
+   
+   modelMtx *= mat4::Translate(0, 13, 0);
+   m_headMesh->setModelMtx(modelMtx);
+   
+   vec3 dirToPlayer = (m_playerRef.getPosition() - m_position).Normalized();
+   
+   modelMtx = mat4::Magic(-dirToPlayer, m_up, m_position);
+   m_midMesh->setModelMtx(modelMtx);
+   
+   modelMtx *= mat4::Translate(0, 13, 0);
+   
+   m_headMesh->setModelMtx(modelMtx);
+}
+
+Vector3<float> Turret::getHeadPosition()
+{
+   return m_position;
 }
