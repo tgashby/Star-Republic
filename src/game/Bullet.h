@@ -7,13 +7,13 @@
 //
 
 #pragma once
-#define BULLET_VELOCITY 0.15f
 
 #include "../engine/Interfaces.h"
 #include "../engine/Camera.h"
 #include "../engine/Object3d.h"
 #include "../engine/Mesh.h"
 
+const float bulletVelocity = 1.15;
 class Bullet : public Object3d {
  public:
   Bullet(string fileName, string textureName, Modules *modules, 
@@ -25,9 +25,12 @@ class Bullet : public Object3d {
   Vector3<float> getForward();
   Vector3<float> getUp();
   void calculateSide();
+   bool isAlive();
 
  private:
   Mesh* m_mesh;
+  uint64_t m_lifetime; 
+  
   Vector3<float> m_position;
   Vector3<float> m_forward;
   Vector3<float> m_up;

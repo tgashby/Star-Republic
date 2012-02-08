@@ -170,7 +170,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
 				  m_modules, m_player->getPosition() 
 				  + (m_player->getSide() * 8),
-			     m_player->getForward(), m_player->getUp());
+			     -m_player->getAimForward(), m_player->getAimUp());
       
       m_modules->renderingEngine->addObject3d(bullet);
       m_objects.push_back(bullet);
@@ -179,7 +179,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
 			  m_modules, m_player->getPosition() 
 			  - (m_player->getSide() * 8),
-			  m_player->getForward(), m_player->getUp());
+			  -m_player->getAimForward(), m_player->getAimUp());
 
       m_modules->renderingEngine->addObject3d(bullet);
       m_objects.push_back(bullet);
