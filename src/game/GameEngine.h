@@ -11,6 +11,7 @@
 #include "WorldPoint.h"
 #include "Turret.h"
 #include "Player.h"
+#include "Reticle.h"
 #include <assert.h>
 #include "Bullet.h"
 
@@ -29,6 +30,7 @@ public:
 private:
    list<IObject3d *> m_objects;
    Player *m_player;
+   Reticle *m_reticle;
    Camera *m_camera;
    Modules *m_modules;
    World *m_world;

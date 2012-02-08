@@ -26,6 +26,8 @@ void GameEngine::InitData()
    // just push a single object to the list and add to the RenderingEngine
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
 			 m_modules);
+   m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
+			 m_modules, m_player);
 
    m_camera = new Camera(vec3(0, 0, 0));
    m_world = new World("maps/testWorld4.wf");
@@ -48,8 +50,10 @@ void GameEngine::InitData()
    m_modules->renderingEngine->setCamera(m_camera);
 
    m_modules->renderingEngine->addObject3d(m_player);
+   m_modules->renderingEngine->addObject3d(m_reticle);
    m_modules->renderingEngine->addObject3d(m_turret);
    m_objects.push_back(m_player);
+   m_objects.push_back(m_reticle);
    m_objects.push_back(m_turret);
    m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
 
@@ -62,6 +66,7 @@ void GameEngine::tic(uint64_t td) {
    m_currentPoint = m_world->getCurrentPointer();
    m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_player->tic(td);
+   m_reticle->tic(td);
    
    for (int i = 0; i < m_bulletList.size(); i++) {
       m_bulletList[i]->tic(td);
