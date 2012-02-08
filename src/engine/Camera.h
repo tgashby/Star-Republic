@@ -2,7 +2,7 @@
 #define StarRepub_Camera_h
 
 #include "Interfaces.h"
-#define CAMERA_DIST_FROM_PLAYER 100
+#define CAMERA_DIST_FROM_PLAYER 160
 
 #include <assert.h>
 #include <iostream>
