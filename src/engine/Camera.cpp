@@ -1,19 +1,31 @@
 #include "Camera.h"
 
-#define DEF_DISTANCE 40
+Camera::Camera(WorldPoint* head, WorldPoint* tail)
+  : m_eye(0,0,0), m_ref(0,0,1), m_up(0,1,0), m_side (1, 0, 0) {
+  m_tail = tail;
+  m_head = head;
+  
+  m_up = m_tail->getUp();
+  
 
-Camera::Camera(vec3 start) {
-   m_dist = DEF_DISTANCE;
-   m_fwd = vec3(0, 0, m_dist);
-   m_eye = start + m_fwd;
-   m_ref = start;
-   m_up = vec3(0, 1, 0);
-   m_pitch = 0;
-   m_yaw = 0;
+  m_eye = tail->getPosition();
+  m_ref = m_eye + ((head->getPosition() - tail->getPosition()).Normalized() * CAMERA_LOOK_AHEAD_DISTANCE);
+  m_forw = (m_head->getPosition() - m_tail->getPosition()).Normalized();
+  calculateSide();
+
+  m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
+
+  m_turning = false;
+
 }
 
 Camera::~Camera() {
-   
+
+}
+
+vec3 Camera::getPosition()
+{
+  return m_eye;
 }
 
 mat4 Camera::getProjectionViewMtx() {
@@ -23,46 +35,74 @@ mat4 Camera::getProjectionViewMtx() {
    
    // apply the view
    projectionMatrix = mat4::LookAt(projectionMatrix, m_eye, m_ref, m_up);
-   
+   cout << "Camera eye is " << m_eye.x << " " << m_eye.y << " " << m_eye.z << "\n";
    return projectionMatrix;
 }
 
-//Chad and Nick's handiwork. Code is extremely volatile: do not uncomment unless you are prepared!
-//Current camera will only handle following it directly
-void Camera::update(vec3 playerPos, vec3 playerForw, vec3 playerUp) {
-   m_ref = playerPos;
-   assert(playerForw.x == playerForw.x);
-   assert(playerForw.y == playerForw.y);
-   assert(playerForw.z == playerForw.z);
-   m_eye = playerPos - (playerForw * CAMERA_DIST_FROM_PLAYER);
-   m_up = playerUp;
+void Camera::checkPath(WorldPoint* head) {
+  if (head != m_head) {
+    m_tail = m_head;
+    m_head = head;
+
+    m_up = m_tail->getUp();
+    calculateSide();
+
+    m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
+    
+    m_turning = true;
+  }
 }
 
-void Camera::moveInOut(float dist) {
-   m_dist += dist * 2;
-   if (m_dist < 1.0) {
-      m_dist = 1;
-   }
-   rotLocal(0, 0);
+void Camera::calculateSide() {
+  m_side = m_up.Cross(m_ref - m_eye).Normalized();
 }
 
-void Camera::rotLocal(float pitch, float yaw) {
-   m_pitch += pitch;
-   m_yaw += yaw;
-   
-   if (m_pitch > 80)
-      m_pitch = 80;
-   else if (m_pitch < -80)
-      m_pitch = -80;
-   
-   if (m_yaw >= 360)
-      m_yaw -= 360;
-   else if (m_yaw < 0)
-      m_yaw += 360;
-   
-   mat4 rot = mat4::Rotate(-m_pitch, vec3(1,0,0));
-   rot = rot * mat4::Rotate(m_yaw, vec3(0,1,0));
-   vec4 d = rot.TranslatePoint(vec4(0, 0, m_dist, 0));
-   m_fwd = vec3(d.x, d.y, d.z);
-   m_eye = m_ref + m_fwd;
+void Camera::tic(uint64_t time) {
+  vec3 temp1, temp2;
+  vec3 tempVec;
+  mat4 tempMatrix;
+
+  float rotAngle = m_pathAngle * (m_head->getPosition() - m_eye).Length() / 
+    ((m_head->getPosition() - m_tail->getPosition()).Length() - CAMERA_LOOK_AHEAD_DISTANCE);
+
+  if (m_turning && .5 > angleBetween(m_head->getPosition() - m_tail->getPosition(), 
+				     m_ref - m_eye)) {
+    m_turning = false;
+    m_eye = m_ref - ((m_head->getPosition() - m_tail->getPosition()).Normalized() 
+		     * CAMERA_LOOK_AHEAD_DISTANCE);
+    m_up = m_tail->getUp();
+  }
+  
+  if (!m_turning) {
+  temp1 = m_up * (m_head->getPosition() - m_ref).Length() / 
+     (m_head->getPosition() - m_tail->getPosition()).Length();
+  temp2 = m_up * (m_ref - m_tail->getPosition()).Length() / 
+     (m_head->getPosition() - m_tail->getPosition()).Length();
+  m_up = (temp1 + temp2).Normalized();
+    //ADD forward between them
+  } 
+
+  m_ref += (((m_head->getPosition() - m_ref).Normalized()) * 
+	    (time * CAMERA_REF_VELOCITY));
+  
+  calculateSide();
+  tempVec = (m_ref - m_eye).Normalized();
+  m_eye = m_ref - (tempVec * CAMERA_LOOK_AHEAD_DISTANCE);
+}
+
+float Camera::angleBetween(vec3 one, vec3 two) {
+  return 180.0f / 3.14159265f *
+    acos(one.Normalized().Dot(two.Normalized()));
+}
+
+vec3 Camera::getRef() {
+   return m_ref;
+}
+
+vec3 Camera::getForward() {
+   return (getRef() - getPosition()).Normalized();
+}
+
+vec3 Camera::getUp() {
+  return m_up;
 }

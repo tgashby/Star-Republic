@@ -26,16 +26,21 @@ GameEngine::~GameEngine() {
 
 void GameEngine::InitData()
 {
-   // just push a single object to the list and add to the RenderingEngine
+   
+      cerr << "MY LITTLE SEGFAULT!\n";
+   cerr << "MY LITTLE SEGFAULT!\n";
+   m_world = new World("maps/world.wf", m_modules);
+   cerr << "I USED TO WONDER WHAT POINTERS COULD BE!\n";
+   WorldPoint* debugtemp = m_world->getCurrentPointer();
+   cerr << debugtemp->getPosition().x << " " << debugtemp->getPosition().y << " " << debugtemp->getPosition().z << "\n";
+   m_camera = new Camera(m_world->getCurrentPointer(), m_world->getPreviousPointer());
+   cerr << "Not the camera\n";
+// just push a single object to the list and add to the RenderingEngine
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
-			 m_modules);
+			 m_modules, m_camera->getPosition(), m_camera->getForward(), m_camera->getUp());
+   m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", m_modules, *m_player);
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
-   
-   m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", m_modules, *m_player);
-
-   m_camera = new Camera(vec3(0, 0, 0));
-   m_world = new World("maps/world.wf", m_modules);
    m_turret = new Turret(*m_player, "models/turrethead.obj",
                          "textures/test3.bmp",
                          "models/turretmiddle.obj",
@@ -43,6 +48,7 @@ void GameEngine::InitData()
                          "models/turretbase.obj",
                          "textures/test3.bmp",
                          m_modules);
+cerr << "BAHHH! I'm awful\n";
    
    explosion = new Explodeable(m_player->getPosition(), m_modules);
    
@@ -87,7 +93,7 @@ void GameEngine::InitData()
    m_objects.push_back(canyon);
    
    
-   m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   //m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    
    initSound();
@@ -108,15 +114,23 @@ void GameEngine::InitData()
 
 void GameEngine::tic(uint64_t td) {
    // Update functions go here
-   m_world->update(m_player->getProgress());
+   cerr << "THIS IS STARTING TO TIC ME OFF!\n";
+  m_world->update(m_camera->getRef());
+   cerr << "I BE A WORLDLY MATEY!\n";
    m_currentPoint = m_world->getCurrentPointer();
-   m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-   m_player->tic(td);
+   //m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   //m_player->tic(td);
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->tic(td);
    
-   m_reticle->tic(td);
+   cerr << "YAR! TIC ENEMIES OFF!\n";
    m_turret->tic(td);
+
+   m_camera->checkPath(m_world->getCurrentPointer());
+   m_camera->tic(td);
+
+   m_player->tic(td, m_camera->getPosition(), m_camera->getUp(), m_camera->getForward());
+   m_reticle->tic(td);
    
    explosion->setPosition(m_player->getPosition());
    explosion->tic(td);
@@ -170,6 +184,7 @@ void GameEngine::tic(uint64_t td) {
    
    //Use Iterators!
    //for (int i = 0; i < m_bulletList.size(); i++) {
+   assert(false);
    for(std::vector<Bullet *>::iterator bulletIterator = m_bulletList.begin();
        bulletIterator != m_bulletList.end();
        bulletIterator++){ 
@@ -183,9 +198,7 @@ void GameEngine::tic(uint64_t td) {
    }
    runCollisions();
    
-   m_camera->update(((m_player->getPosition() - m_player->getProgress()) / 2) + m_player->getProgress(), 
-		    m_player->getForward(), 
-		    m_player->getUp());
+
 }
 
 
