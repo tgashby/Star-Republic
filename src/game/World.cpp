@@ -125,8 +125,6 @@ WorldPoint World::update(Vector3<float> playerPos)
 			current.getPosition().z + current.getUp().z);
   Vector3<float> normal;
   float distance = sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
-  fprintf(stderr, "%d\n", points.size());
-
   WorldPoint firstChoice = getAt(current.getFirstID());
 
   if (distance < RANGE_CHECK) {
