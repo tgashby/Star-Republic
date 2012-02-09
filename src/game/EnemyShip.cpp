@@ -5,8 +5,8 @@
 #define SCREENX 400
 #define SCREENY 300
 
-EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules) 
-   :  Object3d(), Flyer(),
+EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Player& player) 
+   :  Object3d(), Flyer(), Enemy(player),
       health(100), side(1,0,0), 
       lastScreenX(0), lastScreenY(0), 
       currentAngle(0), prevAngle(0)

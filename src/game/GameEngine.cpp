@@ -2,7 +2,7 @@
 #include "Object3d.h"
 #include "Player.h"
 
-
+#define VELOCITY_CONSTANT 2
 
 GameEngine::GameEngine(Modules *modules) {
    m_modules = modules;
@@ -29,7 +29,7 @@ void GameEngine::InitData()
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
    
-   m_enemyShip = new EnemyShip("models/spaceship.obj", "textures/test3.bmp", m_modules);
+   m_enemyShip = new EnemyShip("models/spaceship.obj", "textures/test3.bmp", m_modules, *m_player);
 
    m_camera = new Camera(vec3(0, 0, 0));
    m_world = new World("maps/world.wf");

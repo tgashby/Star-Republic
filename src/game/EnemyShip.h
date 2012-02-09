@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Object3d.h"
 #include "Flyer.h"
+#include "Enemy.h"
 #include "Mesh.h"
 #include <assert.h>
 #include <cmath>
@@ -14,9 +15,9 @@ const float x_SCALAR = 0.0005f;
 const float y_SCALAR = 0.0005f; 
 const float mODEL_SCALE = 0.8f;
 
-class EnemyShip : public Object3d, public Flyer {
+class EnemyShip : public Object3d, public Flyer, public Enemy {
 public:
-   EnemyShip(string fileName, string textureName, Modules *modules);
+   EnemyShip(string fileName, string textureName, Modules *modules, Player& player);
    ~EnemyShip();
    void tic(uint64_t time); //GOBJ/Flyer
 //   void setProgressVelocity(Vector3<float> vel); Flyer
