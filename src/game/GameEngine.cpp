@@ -2,8 +2,6 @@
 #include "Object3d.h"
 #include "Player.h"
 
-
-
 GameEngine::GameEngine(Modules *modules) {
    m_modules = modules;
    m_objects = list<IObject3d *>(0);
@@ -23,16 +21,19 @@ GameEngine::~GameEngine() {
 
 void GameEngine::InitData()
 {
-   // just push a single object to the list and add to the RenderingEngine
-   m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
-			 m_modules);
-   m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
-			 m_modules, m_player);
+   
    
    m_enemyShip = new EnemyShip("models/spaceship.obj", "textures/test3.bmp", m_modules);
 
-   m_camera = new Camera(vec3(0, 0, 0));
    m_world = new World("maps/world.wf");
+
+   m_camera = new Camera(m_world->getCurrentPointer(), m_world->getPreviousPointer());
+// just push a single object to the list and add to the RenderingEngine
+   m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
+			 m_modules, m_camera->getPosition(), m_camera->getForward(), m_camera->getUp());
+   m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
+			 m_modules, m_player);
+
    m_turret = new Turret(*m_player, "models/turrethead.obj",
                          "textures/test3.bmp",
                          "models/turretmiddle.obj",
@@ -75,7 +76,7 @@ void GameEngine::InitData()
    m_objects.push_back(canyon);
    
    
-   m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   //m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    
    initSound();
@@ -96,15 +97,20 @@ void GameEngine::InitData()
 
 void GameEngine::tic(uint64_t td) {
    // Update functions go here
-   m_world->update(m_player->getProgress());
+  m_world->update(m_camera->getRef());
    m_currentPoint = m_world->getCurrentPointer();
-   m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-   m_player->tic(td);
+   //m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   //m_player->tic(td);
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->tic(td);
    
-   m_reticle->tic(td);
+   
    m_turret->tic(td);
+   m_camera->checkPath(m_world->getCurrentPointer());
+   m_camera->tic(td);
+
+   m_player->tic(td, m_camera->getPosition(), m_camera->getUp(), m_camera->getForward());
+   m_reticle->tic(td);
 
    vec3 dirToPlayer = (m_turret->getPosition() - m_player->getPosition()).Normalized();
    
@@ -119,10 +125,6 @@ void GameEngine::tic(uint64_t td) {
    for (int i = 0; i < m_bulletList.size(); i++) {
       m_bulletList[i]->tic(td);
    }
-   
-   m_camera->update(m_player->getPosition(), 
-		    m_player->getForward(), 
-		    m_player->getUp());
 }
 
 

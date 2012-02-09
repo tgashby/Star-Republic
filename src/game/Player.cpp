@@ -5,18 +5,24 @@
 #define SCREENX 400
 #define SCREENY 300
 
-Player::Player(string fileName, string textureName, Modules *modules) 
+Player::Player(string fileName, string textureName, Modules *modules, 
+	Vector3<float> cam_pos, Vector3<float> cam_up, Vector3<float> cam_forw) 
    :  Object3d(), Flyer(),
       health(100), side(1,0,0), 
-      lastScreenX(0), lastScreenY(0), 
-      currentAngle(0), prevAngle(0)
+      lastScreenX(0), lastScreenY(0)
 {
+   m_forward = cam_forw;
+   m_up = cam_up;
+   m_position = cam_up;
+   calculateSide();
+
    m_mesh = new Mesh(fileName, textureName, modules);
    m_meshList.push_back(m_mesh);
 
    // these are relative to the 'forward' vector
    x = SCREENX;
    y = SCREENY;
+
    //SDL_ShowCursor( SDL_DISABLE );
    SDL_WarpMouse( x, y ); 
    vx = 0;
@@ -32,81 +38,38 @@ Player::~Player()
 
 }
 
-void Player::setFuturePosition(Vector3<float> pos)
-{
-   //futurePosition = pos + (
-
-}
-
 
 //All Vectors are updated in here
-void Player::tic(uint64_t time)
+void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_up, Vector3<float> cam_forward)
 {
-  mat4 tempMatrix;
-  float diffAngle;
-  vec3 tempUp, acosTest;
   mat4 modelMtx;
+  Vector3<float> tempPos;
 
-  m_progressVelocity += m_acceleration * time;
-   currentAngle = currentAngle * (m_previousHeadPos - m_progress).Length() / 
-     (m_currentHeadPos - m_previousHeadPos).Length();
-   diffAngle = currentAngle - prevAngle;
+ //m_forward = cam_forward;	
+ //m_up = cam_up;
+ m_forward = cam_forward.Normalized();
+ side = cam_forward.Cross(cam_up);
+ side.Normalize();
+ m_up = side.Cross(m_forward);
+ //m_position = cam_position + (cam_forward * PLAYER_DISTANCE_FROM_CAMERA);
+ tempPos = cam_position + (cam_forward * PLAYER_DISTANCE_FROM_CAMERA); 
+ calculateSide();
+ m_sideVelocity = (((side * lastScreenX)) - (m_position - tempPos)) * X_SCALAR;
+ m_upVelocity = (((m_up * lastScreenY)) - (m_position - tempPos)) * Y_SCALAR;
+ m_offsetPosition += (m_sideVelocity * time) + (m_upVelocity * time);
+ m_position = m_offsetPosition + tempPos;
 
-   //Gets the matrix that you need to use to make the position rotate around at this angle
-   tempMatrix = mat4::Rotate(diffAngle, (m_currentHeadPos - m_progress).Normalized());	
-
-   //Matrix multiplication to come up with the rotated up.
-   tempUp.x = (m_up.x * tempMatrix.x.x) + (m_up.y * tempMatrix.y.x) 
-     + (m_up.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
-   tempUp.y = (m_up.x * tempMatrix.x.y) + (m_up.y * tempMatrix.y.y) 
-     + (m_up.z * tempMatrix.z.y) + (1 * tempMatrix.w.y);
-   tempUp.z = (m_up.x * tempMatrix.x.z) + (m_up.y * tempMatrix.y.z) 
-     + (m_up.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
-
-   //Up value set to the vector that was calculated above.
-   m_up = tempUp.Normalized();
-   calculateSide();
-   
-   //TempUp is actually Tempposition here.
-   tempUp.x = (m_position.x * tempMatrix.x.x) + (m_position.y * tempMatrix.y.x) 
-     + (m_position.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
-   tempUp.y = (m_position.x * tempMatrix.x.y) + (m_position.y * tempMatrix.y.y) 
-     + (m_position.z * tempMatrix.z.y) + (1 * tempMatrix.w.y);
-   tempUp.z = (m_position.x * tempMatrix.x.z) + (m_position.y * tempMatrix.y.z) 
-     + (m_position.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
-   
-   m_position = tempUp;
-   m_velocity = (((side * lastScreenX)) - (m_position - m_progress)) * X_SCALAR
-      + (((m_up * lastScreenY)) - (m_position - m_progress)) * Y_SCALAR 
-      + m_progressVelocity;
-   m_progress += m_progressVelocity * time;
-   m_position = m_position + (m_velocity * time);
-
-   modelMtx = mat4::Scale(MODEL_SCALE) * 
-      mat4::Magic(getAimForward(), getAimUp(), getPosition());
+ modelMtx = mat4::Scale(MODEL_SCALE) * 
+      mat4::Magic(-(((m_sideVelocity + m_upVelocity + m_forward)/3).Normalized()), m_up, m_position);
    m_mesh->setModelMtx(modelMtx);
 
    x += vx * time;
    y += vy * time;
    updateVelocity(lastScreenX, lastScreenY);
+   cerr << "Ship is " << m_position.x << " " << m_position.y << " " << m_position.z << "\n";
+   cerr << "Cam Forward is " << cam_forward.x << " " << cam_forward.y << " " << cam_forward.z << "\n";
 }
 
-void Player::setBearing(Vector3<float> headPosition, Vector3<float> headUp)
-{
-  if (headPosition.x != m_currentHeadPos.x || headPosition.y != m_currentHeadPos.y 
-      || headPosition.z != m_currentHeadPos.z) {
-    m_previousHeadPos = m_currentHeadPos;
-    m_currentHeadPos = headPosition;
-    m_previousHeadUp = m_currentHeadUp;
-  }
-  
-  m_currentHeadUp = headUp.Normalized();
-  
-  m_progressVelocity = (headPosition - m_progress).Normalized() * VELOCITY;
-  
-  prevAngle = currentAngle;
-  currentAngle = 180.0f / 3.14159265f * acos(m_previousHeadUp.Normalized().Dot(headUp.Normalized()));
-}
 
 void Player::updateVelocity(float diffX, float diffY)
 {

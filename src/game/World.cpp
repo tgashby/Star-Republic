@@ -1,7 +1,7 @@
 #include "World.h"
 #include <iostream>
 #include <fstream>
-#define RANGE_CHECK 4
+#define RANGE_CHECK 50
 #define MID_BUFFER_WIDTH 2
 #include <cmath>
 
