@@ -27,9 +27,14 @@ int main(int argc, char** argv)
    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
    
    // Create the window
-   screen = SDL_SetVideoMode(800, 600, 32, SDL_SWSURFACE | SDL_OPENGL);
+   screen = SDL_SetVideoMode(800, 600, 32, SDL_SWSURFACE | SDL_OPENGL); // | SDL_FULLSCREEN);
    
    SDL_WM_SetCaption("Star Republic", NULL);
+   //SDL_WM_ToggleFullScreen(screen);
+   SDL_WarpMouse(400, 300);
+   SDL_WM_GrabInput(SDL_GRAB_ON);
+   SDL_ShowCursor(SDL_FALSE);
+   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
    
    // Setup the modules
    Modules *modules = new Modules();

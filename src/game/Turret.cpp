@@ -26,6 +26,9 @@ Turret::Turret(Player& player, string headName, string headTexture, string midNa
    m_meshList.push_back(m_headMesh);
    modelMtx *= mat4::Translate(0, 13, 0);
    m_headMesh->setModelMtx(modelMtx);
+   
+   firing = false;
+   firingTimer = 0;
 }
 
 Turret::~Turret()
@@ -60,9 +63,26 @@ void Turret::tic(uint64_t time)
    modelMtx *= mat4::Translate(0, 13, 0);
    
    m_headMesh->setModelMtx(modelMtx);
+   
+   firingTimer += time;
+   
+   if (firingTimer > 500)
+   {
+      firing = true;
+      firingTimer = 0;
+   }
+   else 
+   {
+      firing = false;
+   }
 }
 
 Vector3<float> Turret::getHeadPosition()
 {
    return m_position;
+}
+
+bool Turret::shouldFire()
+{
+   return firing;
 }
