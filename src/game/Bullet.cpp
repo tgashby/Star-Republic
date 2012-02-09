@@ -8,19 +8,22 @@
 
 #include "Bullet.h"
 
-//tine to live in milliseconds
-const uint64_t timeToLive=9000;
 
 Bullet::Bullet(string fileName, string textureName, Modules *modules, 
-	       Vector3<float> pos, Vector3<float> forw, Vector3<float> up) 
+	       Vector3<float> pos, Vector3<float> forw, Vector3<float> up, 
+          const uint64_t timeToLive,
+          const float speed) 
   : Object3d(), m_position(0,0,0), m_forward(0,0,1), 
-    m_up(0, 1, 0), m_side(1, 0, 0)
+    m_up(0, 1, 0), m_side(1, 0, 0),
+   GameObject(pos,forw.Normalized() * speed,forw.Normalized(),vec3(0,0,0),
+                          m_up, defaultBulletRadius, 1) 
 {
    m_position = pos;
    m_forward = forw.Normalized();
    m_up = up.Normalized();
-   
+   m_speed=speed; 
 
+   
 
    //We should have a better way of doing this. We don't need to load the
    //bullet mesh for every bullet. And, there are going to be a lot of a bullets
@@ -31,7 +34,7 @@ Bullet::Bullet(string fileName, string textureName, Modules *modules,
    m_mesh->setModelMtx(modelMtx);
    
    m_lifetime = 0;
-
+   m_alive = true;
 }
 
 Bullet::~Bullet() 
@@ -43,17 +46,20 @@ void Bullet::tic(uint64_t time)
 {  
    mat4 modelMtx;
    //Add position to global velocity
-   m_position = m_position + (m_forward * time * bulletVelocity);
+   m_position = m_position + (m_forward * time * m_speed);
 
    modelMtx = mat4::Magic(m_forward, m_up, m_position);
    m_mesh->setModelMtx(modelMtx);
    
    m_lifetime += time;
+   if(m_lifetime > m_timeToLive){
+      m_alive = false;
+   } 
 
 }
 
 bool Bullet::isAlive(){
-   return m_lifetime < timeToLive;
+   return m_alive;
 }
 
 
@@ -67,4 +73,9 @@ Vector3<float> Bullet::getForward() {
 
 Vector3<float> Bullet::getUp() {
   return m_up;
+}
+
+void Bullet::doCollision(GameObject & other) {
+   //The Bullet dies!
+   m_alive = false;
 }

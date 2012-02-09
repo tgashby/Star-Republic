@@ -16,8 +16,8 @@ float BoundingSphere::getRadius() {
    return m_radius;
 }
 
-bool BoundingSphere::collidesWith(BoundingSphere* other, vec3 thisPos, 
-				  vec3 otherPos) {
+const bool BoundingSphere::collidesWith (const BoundingSphere* other,const vec3 thisPos, 
+				  const vec3 otherPos) const{
    float otherRadius;
    
    if(m_radius + otherRadius > (thisPos - otherPos).Length()) {

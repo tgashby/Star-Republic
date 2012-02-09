@@ -9,13 +9,12 @@
 #include "Turret.h"
 
 Turret::Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules) 
-: Object3d(), Enemy(player), health(100)
+: Object3d(), Enemy(player)
 {
    m_footMesh = new Mesh(footName, footTexture, modules);
    m_meshList.push_back(m_footMesh);
    mat4 modelMtx = mat4::Translate(0, 0, 0);
    m_footMesh->setModelMtx(modelMtx);
-   
    
    m_midMesh = new Mesh(midName, midTexture, modules);
    m_meshList.push_back(m_midMesh);
@@ -26,15 +25,15 @@ Turret::Turret(Player& player, string headName, string headTexture, string midNa
    m_meshList.push_back(m_headMesh);
    modelMtx *= mat4::Translate(0, 13, 0);
    m_headMesh->setModelMtx(modelMtx);
+   
+   firing = false;
+   alive = true;
+   firingTimer = 0;
 }
 
 Turret::~Turret()
 {
-//   for (std::list<Bullet*>::iterator i = m_bullets.begin(); i != m_bullets.end(); i++) {
-//      Bullet* temp = *i;
-//      
-//      delete temp;
-//   }
+   
 }
 
 
@@ -53,16 +52,82 @@ void Turret::tic(uint64_t time)
    m_headMesh->setModelMtx(modelMtx);
    
    vec3 dirToPlayer = (m_playerRef.getPosition() - m_position).Normalized();
+   vec3 intermed = dirToPlayer.Cross(m_up);
+   vec3 dirToPlayerFlat = intermed.Cross(m_up);
    
-   modelMtx = mat4::Magic(-dirToPlayer, m_up, m_position);
+   modelMtx = mat4::Magic(-dirToPlayerFlat, m_up, m_position);
    m_midMesh->setModelMtx(modelMtx);
    
+   modelMtx = mat4::Magic(-dirToPlayer, m_up, m_position);
    modelMtx *= mat4::Translate(0, 13, 0);
-   
    m_headMesh->setModelMtx(modelMtx);
+   
+   firingTimer += time;
+   
+   if (firingTimer > 400)
+   {
+      firing = true;
+      firingTimer = 0;
+   }
+   else 
+   {
+      firing = false;
+   }
 }
 
 Vector3<float> Turret::getHeadPosition()
 {
-   return m_position;
+   vec3 toRet = m_position + (m_up.Normalized() * 13);
+   
+   return toRet;
+}
+
+void Turret::doCollision(GameObject & other){
+   //Do collision stuff here!
+   
+//   if (typeid(other) == typeid(Bullet)) 
+//   {
+//      collideWith(((Bullet&)other));
+//   }
+//   
+//   if (typeid(other) == typeid(Player)) 
+//   {
+//      collideWith(((Player&)other));
+//   }
+//   
+//   if (typeid(other) == typeid(Enemy)) 
+//   {
+//      collideWith(((Enemy&)other));
+//   }
+   m_health -= 25;
+   
+   if (m_health <= 0) 
+   {
+      alive = false;
+   }
+}
+
+bool Turret::isAlive()
+{
+   return alive;
+}
+
+bool Turret::shouldFire()
+{
+   return firing;
+}
+
+void Turret::collideWith(Bullet& bullet)
+{
+
+}
+
+void Turret::collideWith(Player& player)
+{
+   
+}
+
+void Turret::collideWith(Enemy& enemy)
+{
+   
 }

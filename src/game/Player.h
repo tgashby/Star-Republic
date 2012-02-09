@@ -34,12 +34,14 @@ public:
 //   Vector3<float> getUp(); GOBJ
 //   Vector3<float> getProgress(); Flyer
 //   Vector3<float> getProgressVelocity(); Flyer
+   void doCollision(GameObject & other);
    void updateVelocity(float diffX, float diffY); //GOBJ
    Vector3<float> getAimForward();
    Vector3<float> getAimUp();
 //   void setFuturePosition(Vector3<float> pos);
 //   void setHeads(Vector3<float> currHeadPos, Vector3<float> currHeadUp,
 //                 Vector3<float> prevHeadPos, Vector3<float> prevHeadUp); Flyer
+
    
 private:
    int health;

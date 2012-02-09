@@ -118,3 +118,8 @@ Vector3<float> Player::getSide()
 void Player::calculateSide() {
    side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
 }
+
+void Player::doCollision(GameObject & other){
+   cerr << "I'm hit!\n";
+   //DO Collision stuff
+}

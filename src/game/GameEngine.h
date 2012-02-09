@@ -6,8 +6,6 @@
 #include "ResourceManager.h"
 
 #include "SDL_include.h"
-
-#define VELOCITY_CONSTANT 2
 #include "World.h"
 #include "WorldPoint.h"
 #include "Turret.h"
@@ -16,6 +14,8 @@
 #include <assert.h>
 #include "Bullet.h"
 #include "EnemyShip.h"
+#include "Explodeable.h"
+#include <algorithm>
 
 
 class GameEngine : public IGameEngine {
@@ -30,7 +30,9 @@ public:
    void handleMouseMotion(Uint16 x, Uint16 y);
    
 private:
+   void runCollisions();
    list<IObject3d *> m_objects;
+   list<GameObject *> m_gameObjects;
    Player *m_player;
    Reticle *m_reticle;
    Camera *m_camera;
@@ -47,6 +49,8 @@ private:
    
    Sound* m_bulletSound;
    Sound* m_music;
+   
+   Explodeable* explosion;
 };
 
 #endif

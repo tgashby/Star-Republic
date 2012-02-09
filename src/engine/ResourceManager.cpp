@@ -265,7 +265,6 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             world->path.push_back(up);
             world->links.push_back(link);
          }
-         /*
          else if (!(start = line.find("u "))) {
             vec3 loc, fwd, up;
             int reads;
@@ -278,13 +277,10 @@ WorldData* ResourceManager::readWorldData(string fileName) {
                cerr << "error reading unit\n";
                continue;
             }
-            cout << line.find("turret") << "\n";
-            if (line.find("turret") != SIZE_T_MAX) {
-               world->turrets.push_back(loc);
-               world->turrets.push_back(fwd);
-               world->turrets.push_back(up);
-            }
-         }
+            world->turrets.push_back(loc);
+            world->turrets.push_back(fwd);
+            world->turrets.push_back(up);
+         }/*
          else if (!(start = line.find("m "))) {
             vec3 loc, fwd, up;
             int reads;

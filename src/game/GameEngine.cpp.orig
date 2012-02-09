@@ -7,7 +7,6 @@
 GameEngine::GameEngine(Modules *modules) {
    m_modules = modules;
    m_objects = list<IObject3d *>(0);
-   m_gameObjects = list<GameObject *>(0);
 
    InitData();
 }
@@ -19,28 +18,21 @@ GameEngine::~GameEngine() {
       delete *object;
    }
    m_objects.clear();
-   m_gameObjects.clear();
-
    //delete m_camera;
 }
 
 void GameEngine::InitData()
 {
-   
-      cerr << "MY LITTLE SEGFAULT!\n";
-   cerr << "MY LITTLE SEGFAULT!\n";
-   m_world = new World("maps/world.wf", m_modules);
-   cerr << "I USED TO WONDER WHAT POINTERS COULD BE!\n";
-   WorldPoint* debugtemp = m_world->getCurrentPointer();
-   cerr << debugtemp->getPosition().x << " " << debugtemp->getPosition().y << " " << debugtemp->getPosition().z << "\n";
-   m_camera = new Camera(m_world->getCurrentPointer(), m_world->getPreviousPointer());
-   cerr << "Not the camera\n";
-// just push a single object to the list and add to the RenderingEngine
+   // just push a single object to the list and add to the RenderingEngine
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
-			 m_modules, m_camera->getPosition(), m_camera->getForward(), m_camera->getUp());
-   m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", m_modules, *m_player);
+			 m_modules);
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
+   
+   m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", m_modules, *m_player);
+
+   m_camera = new Camera(vec3(0, 0, 0));
+   m_world = new World("maps/world.wf");
    m_turret = new Turret(*m_player, "models/turrethead.obj",
                          "textures/test3.bmp",
                          "models/turretmiddle.obj",
@@ -48,9 +40,6 @@ void GameEngine::InitData()
                          "models/turretbase.obj",
                          "textures/test3.bmp",
                          m_modules);
-cerr << "BAHHH! I'm awful\n";
-   
-   explosion = new Explodeable(m_player->getPosition(), m_modules);
    
    m_turret->setPosition(vec3(-144,-1168,4563));
    m_turret->setForward(-m_player->getForward());
@@ -76,16 +65,11 @@ cerr << "BAHHH! I'm awful\n";
    m_modules->renderingEngine->addObject3d(m_reticle);
    m_modules->renderingEngine->addObject3d(m_turret);
    m_modules->renderingEngine->addObject3d(m_enemyShip);
-   m_modules->renderingEngine->addObject3d(explosion);
    
-   m_gameObjects.push_back(m_player);
    m_objects.push_back(m_player);
    m_objects.push_back(m_reticle);
    m_objects.push_back(m_turret);
-   m_gameObjects.push_back(m_turret);
    m_objects.push_back(m_enemyShip);
-   m_gameObjects.push_back(m_enemyShip);
-   m_objects.push_back(explosion);
    
    // add one canyon mesh for now.
    Object3d *canyon = new Object3d("models/canyon.obj", "textures/test3.bmp", m_modules);
@@ -93,7 +77,7 @@ cerr << "BAHHH! I'm awful\n";
    m_objects.push_back(canyon);
    
    
-   //m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    
    initSound();
@@ -114,26 +98,15 @@ cerr << "BAHHH! I'm awful\n";
 
 void GameEngine::tic(uint64_t td) {
    // Update functions go here
-   cerr << "THIS IS STARTING TO TIC ME OFF!\n";
-  m_world->update(m_camera->getRef());
-   cerr << "I BE A WORLDLY MATEY!\n";
+   m_world->update(m_player->getProgress());
    m_currentPoint = m_world->getCurrentPointer();
-   //m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-   //m_player->tic(td);
+   m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   m_player->tic(td);
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->tic(td);
    
-   cerr << "YAR! TIC ENEMIES OFF!\n";
-   m_turret->tic(td);
-
-   m_camera->checkPath(m_world->getCurrentPointer());
-   m_camera->tic(td);
-
-   m_player->tic(td, m_camera->getPosition(), m_camera->getUp(), m_camera->getForward());
    m_reticle->tic(td);
-   
-   explosion->setPosition(m_player->getPosition());
-   explosion->tic(td);
+   m_turret->tic(td);
 
    vec3 dirToPlayer = m_turret->getPosition() - m_player->getPosition();//(m_player->getPosition() + (m_player->getForward().Normalized() * VELOCITY_CONSTANT));
    
@@ -145,44 +118,21 @@ void GameEngine::tic(uint64_t td) {
       Bullet* bullet = 
          new Bullet("models/cube.obj", "textures/test4.bmp", 
                     m_modules, m_turret->getHeadPosition(), 
-                    -dirToPlayerNorm, 
+                    -dirToPlayerNorm , 
                     dirToPlayerNorm.Cross(m_turret->getPosition()));
-         
-      m_modules->renderingEngine->addObject3d(bullet);
-      m_gameObjects.push_back(bullet);
-      m_objects.push_back(bullet);
-      m_bulletList.push_back(bullet);
-   }
-
-   vec3 dirEnemyToPlayer = m_enemyShip->getPosition() - m_player->getPosition();
-   if (dirEnemyToPlayer.Length() < 400 && m_enemyShip->shouldFire()) 
-   {
-      vec3 dirToPlayerNorm = dirToPlayer.Normalized();
-      
-      Bullet* bullet = 
-         new Bullet("models/cube.obj", "textures/test4.bmp", 
-                    m_modules, m_enemyShip->getLeftCannonPos(), 
-                    m_enemyShip->getAimForward(), 
-                    dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()));
-         
-      m_modules->renderingEngine->addObject3d(bullet);
-      m_objects.push_back(bullet);
-      m_bulletList.push_back(bullet);
-
-      bullet = 
-         new Bullet("models/cube.obj", "textures/test4.bmp", 
-                    m_modules, m_enemyShip->getRightCannonPos(), 
-                    m_enemyShip->getAimForward(), 
-                    dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()));
          
       m_modules->renderingEngine->addObject3d(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
    }
    
+<<<<<<< HEAD
+   for (int i = 0; i < m_bulletList.size(); i++) 
+   {
+      m_bulletList[i]->tic(td);
+=======
    //Use Iterators!
    //for (int i = 0; i < m_bulletList.size(); i++) {
-   assert(false);
    for(std::vector<Bullet *>::iterator bulletIterator = m_bulletList.begin();
        bulletIterator != m_bulletList.end();
        bulletIterator++){ 
@@ -193,16 +143,17 @@ void GameEngine::tic(uint64_t td) {
          //m_bulletList.erase(bulletIterator);
       }
          
+>>>>>>> 09cecc1cf21c32f0f502ff698a6e0083cbfb966b
    }
-   runCollisions();
    
-
+   m_camera->update(((m_player->getPosition() - m_player->getProgress()) / 2) + m_player->getProgress(), 
+		    m_player->getForward(), 
+		    m_player->getUp());
 }
 
 
 void GameEngine::render() {
    m_modules->renderingEngine->render(m_objects);
-
 }
 
 
@@ -262,7 +213,6 @@ bool GameEngine::handleKeyUp(SDLKey key)
 			     -m_player->getAimForward(), m_player->getAimUp());
       
       m_modules->renderingEngine->addObject3d(bullet);
-      m_gameObjects.push_back(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
 
@@ -272,7 +222,6 @@ bool GameEngine::handleKeyUp(SDLKey key)
 			  -m_player->getAimForward(), m_player->getAimUp());
 
       m_modules->renderingEngine->addObject3d(bullet);
-      m_gameObjects.push_back(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
       
@@ -288,28 +237,4 @@ void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
    // X seems to be reading in backwards...?
    m_player->updateVelocity(400-x, 300-y);
    //setVelocity(vec3((400 - x), (300 - y), m_player->getPosition().z));
-}
-
-/**
- * This runs the collision functions on all objects upon which collide with the
- * given object. 
- */ 
-void GameEngine::runCollisions()
-{
-   for(std::list<GameObject *>::iterator gameObjectIterator=m_gameObjects.begin();
-   gameObjectIterator != m_gameObjects.end();
-   gameObjectIterator++){ 
-      for(std::list<GameObject *>::iterator otherGameObjectIterator
-               =m_gameObjects.begin();
-         otherGameObjectIterator != m_gameObjects.end();
-         otherGameObjectIterator++){ 
-            if(gameObjectIterator !=otherGameObjectIterator){
-               if((*gameObjectIterator)->collidesWith(*(*otherGameObjectIterator))){
-                  (*gameObjectIterator)->doCollision(*(*otherGameObjectIterator));
-               //I'm not sure if this is a good idea
-               }
-            }
-         }
-   }
-     
 }
