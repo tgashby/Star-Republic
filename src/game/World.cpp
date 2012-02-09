@@ -1,7 +1,7 @@
 #include "World.h"
 #include <iostream>
 #include <fstream>
-#define RANGE_CHECK 4
+#define RANGE_CHECK 50
 #define MID_BUFFER_WIDTH 2
 #include <cmath>
 
@@ -24,6 +24,23 @@ World::World(const string fileName)
    { cerr << "Problem is in World: the infile was never opened. \n"; }
 }
 
+World::World(const string fileName, Modules* m_modules)
+{
+  WorldData *worldData = m_modules->resourceManager->
+    readWorldData("maps/world2.wf");
+  cerr << "Links number: " << worldData->links.size() << "\n";
+cerr << "Links number: " << worldData->path.size() << "\n";
+  
+  for (int i = 0; i < worldData->links.size(); i++) {
+    cerr << "i is " << i << "\n";
+    points.push_back(WorldPoint(worldData->path[i*3], worldData->path[i*3 + 1],
+				worldData->path[i*3 + 2], worldData->links[i]));
+  }
+  currentPoint = 1;
+  previousPoint = 0;
+  cerr << points.size();
+}
+
 WorldPoint World::parseLine(const string line)
 {
    Vector3<float> tempPosition;
@@ -36,8 +53,8 @@ WorldPoint World::parseLine(const string line)
    totalPaths = sscanf(line.c_str(), 
 		       "%d %f %f %f %f %f %f %f %f %f %f %f %f %d %d %d", 
 		       &tempInt, &tempPosition.x, &tempPosition.y, 
-		       &tempPosition.z, &tempUp.x, &tempUp.y, &tempUp.z, 
-		       &tempForward.x, &tempForward.y, &tempForward.z, 
+		       &tempPosition.z, &tempForward.x, &tempForward.y, &tempForward.z, 
+		       &tempUp.x, &tempUp.y, &tempUp.z, 
 		       &tempSide.x, &tempSide.y, &tempSide.z, &tempLeft,
 		       &tempMid, &tempRight) - 13;
 
@@ -108,6 +125,8 @@ WorldPoint World::update(Vector3<float> playerPos)
 			current.getPosition().z + current.getUp().z);
   Vector3<float> normal;
   float distance = sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
+  fprintf(stderr, "%d\n", points.size());
+
   WorldPoint firstChoice = getAt(current.getFirstID());
 
   if (distance < RANGE_CHECK) {
@@ -142,8 +161,7 @@ WorldPoint World::update(Vector3<float> playerPos)
       setChoice(current.getThirdID());
       return getCurrent();
     }
-
-    
   }
-     return getCurrent();
+  return getCurrent();
 }
+

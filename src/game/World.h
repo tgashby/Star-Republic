@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include "WorldPoint.h"
+#include "Interfaces.h"
 #include <vector>
 
 using namespace std;
@@ -11,6 +12,7 @@ class World
 {
 public:
 	World(const string fileName);
+	World(const string fileName, Modules* m_modules);
 	~World();
 	WorldPoint getCurrent();
 	void setChoice(int next);

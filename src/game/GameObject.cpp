@@ -60,6 +60,11 @@ void GameObject::tic(uint64_t td)
    
 }
 
+void GameObject::setBounds(float f)
+{
+   m_boundingSphere = new BoundingSphere(f); 
+}
+
 /**
  * setVelocity - sets the speed and direction of a GameObject. 
  * @param velocity - the new velocity

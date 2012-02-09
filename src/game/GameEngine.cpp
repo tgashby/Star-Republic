@@ -35,7 +35,7 @@ void GameEngine::InitData()
    m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", m_modules, *m_player);
 
    m_camera = new Camera(vec3(0, 0, 0));
-   m_world = new World("maps/world.wf");
+   m_world = new World("maps/world.wf", m_modules);
    m_turret = new Turret(*m_player, "models/turrethead.obj",
                          "textures/test3.bmp",
                          "models/turretmiddle.obj",
@@ -152,6 +152,7 @@ void GameEngine::tic(uint64_t td) {
                     dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()));
          
       m_modules->renderingEngine->addObject3d(bullet);
+      m_gameObjects.push_back(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
 
@@ -162,6 +163,7 @@ void GameEngine::tic(uint64_t td) {
                     dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()));
          
       m_modules->renderingEngine->addObject3d(bullet);
+      m_gameObjects.push_back(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
    }
@@ -292,6 +294,7 @@ void GameEngine::runCollisions()
          otherGameObjectIterator++){ 
             if(gameObjectIterator !=otherGameObjectIterator){
                if((*gameObjectIterator)->collidesWith(*(*otherGameObjectIterator))){
+                  //cerr << "A collision has happeneded\n";
                   (*gameObjectIterator)->doCollision(*(*otherGameObjectIterator));
                //I'm not sure if this is a good idea
                }
