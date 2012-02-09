@@ -264,7 +264,8 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             
             world->path.push_back(loc);
             world->path.push_back(fwd);
-            world->path.push_back(up);
+            world->path.push_back(vec3(0, 1, 0));
+            //world->path.push_back(up);
             world->links.push_back(link);
          }
          else if (!(start = line.find("u "))) {

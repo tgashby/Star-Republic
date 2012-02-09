@@ -26,16 +26,11 @@ GameEngine::~GameEngine() {
 
 void GameEngine::InitData()
 {
-   
-      cerr << "MY LITTLE SEGFAULT!\n";
-   cerr << "MY LITTLE SEGFAULT!\n";
    m_world = new World("maps/world.wf", m_modules);
    cerr << "I USED TO WONDER WHAT POINTERS COULD BE!\n";
    WorldPoint* debugtemp = m_world->getCurrentPointer();
    cerr << debugtemp->getPosition().x << " " << debugtemp->getPosition().y << " " << debugtemp->getPosition().z << "\n";
    m_camera = new Camera(m_world->getCurrentPointer(), m_world->getPreviousPointer());
-   cerr << "Not the camera\n";
-// just push a single object to the list and add to the RenderingEngine
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
 			 m_modules, m_camera->getPosition(), m_camera->getForward(), m_camera->getUp());
    m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", m_modules, *m_player);
@@ -48,7 +43,6 @@ void GameEngine::InitData()
                          "models/turretbase.obj",
                          "textures/test3.bmp",
                          m_modules);
-cerr << "BAHHH! I'm awful\n";
    
    explosion = new Explodeable(m_player->getPosition(), m_modules);
    
