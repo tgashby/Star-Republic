@@ -26,11 +26,15 @@ enum ExplosionState
 
 class Explodeable : public Object3d {
 public:
-   Explodeable(string headName, vec3 position, Modules* modules);
+   Explodeable(vec3 position, Modules* modules);
    
    void explode();
    
    void tic(uint64_t dt);
+   
+   void setPosition(Vector3<float> position);
+   
+   Vector3<float> getPosition() { return m_position; }
    
 private:
    Mesh* m_mesh;

@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <iostream>
 
 const float Pi = 4 * std::atan(1.0f);
 const float TwoPi = 2 * Pi;
@@ -169,6 +170,11 @@ struct Vector3 {
     T x;
     T y;
     T z;
+   
+   void print()
+   {
+      std::cout << "(" << x << ", " << y << ", " << z << ")\n";
+   }
 };
 
 template <typename T>

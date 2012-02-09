@@ -35,7 +35,6 @@ Bullet::Bullet(string fileName, string textureName, Modules *modules,
    
    m_lifetime = 0;
    m_alive = true;
-
 }
 
 Bullet::~Bullet() 

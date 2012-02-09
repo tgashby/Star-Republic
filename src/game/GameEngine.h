@@ -14,6 +14,7 @@
 #include <assert.h>
 #include "Bullet.h"
 #include "EnemyShip.h"
+#include "Explodeable.h"
 #include <algorithm>
 
 
@@ -48,6 +49,8 @@ private:
    
    Sound* m_bulletSound;
    Sound* m_music;
+   
+   Explodeable* explosion;
 };
 
 #endif

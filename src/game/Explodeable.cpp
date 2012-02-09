@@ -10,35 +10,37 @@
 
 #include "Explodeable.h"
 
-Explodeable::Explodeable(string meshName, vec3 position, Modules* modules)
+Explodeable::Explodeable(vec3 position, Modules* modules)
 : Object3d()
 {
-   m_mesh = new Mesh("sphere.obj", "fire.bmp", modules);
+   m_mesh = new Mesh("models/cube.obj", "textures/test4.bmp", modules);
    m_meshList.push_back(m_mesh);
    
    m_position = position;
    m_mesh->setModelMtx(mat4::Translate(m_position.x, m_position.y, m_position.z));
+   
+   state = START;
 }
 
 void Explodeable::explode()
 {
-   mat4 newModelMtx = m_mesh->getModelMtx();
+   mat4 newModelMtx = mat4::Translate(m_position.x, m_position.y, m_position.z);
    
    switch (state) 
    {
       case START:
          // small
-         newModelMtx *= mat4::Scale(0.3f);
+         newModelMtx *= mat4::Scale(25.3f);
          break;
          
       case MIDDLE:
          // Big
-         newModelMtx *= mat4::Scale(2.0f);
+         newModelMtx *= mat4::Scale(200.0f);
          break;
          
       case END:
          //small
-         newModelMtx *= mat4::Scale(0.3f);
+         newModelMtx *= mat4::Scale(25.3f);
          break;
          
       case DONE:
@@ -62,7 +64,7 @@ void Explodeable::tic(uint64_t dt)
    {
       state = MIDDLE;
    }
-   else if (stateTimer >= 2000)
+   else if (stateTimer >= 2000 && stateTimer < 3000)
    {
       state = END;
    }
@@ -70,4 +72,11 @@ void Explodeable::tic(uint64_t dt)
    {
       state = DONE;
    }
+   
+   explode();
+}
+
+void Explodeable::setPosition(Vector3<float> position)
+{
+   m_position = position;
 }
