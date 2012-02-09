@@ -93,3 +93,25 @@ bool Turret::shouldFire()
 {
    return firing;
 }
+
+void Turret::collideWith(Bullet& bullet)
+{
+   health -= 25;
+   
+   // bullet.removeMe()
+   
+   if (health <= 0) 
+   {
+      // alive = false;
+   }
+}
+
+void Turret::collideWith(Player& player)
+{
+   
+}
+
+void Turret::collideWith(Enemy& enemy)
+{
+   
+}
