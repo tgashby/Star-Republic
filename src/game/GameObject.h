@@ -30,6 +30,7 @@ public:
    void setPosition(Vector3<float> pos);
    void setAcceleration(Vector3<float> acc);
    void setForward(Vector3<float> forward);
+   void setBounds(float f);
    
    // Getters
    const vec3 getLocation() const;
@@ -53,7 +54,7 @@ protected:
    vec3 m_up;
    
 private:
-   static const float defaultBoundingRadius = 4;
+   static const float defaultBoundingRadius = 50;
    const BoundingSphere * m_boundingSphere; 
    // BoundingHeirarchy bounds;
 };
