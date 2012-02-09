@@ -126,16 +126,13 @@ cerr << "BAHHH! I'm awful\n";
 
 void GameEngine::tic(uint64_t td) {
    // Update functions go here
-   cerr << "THIS IS STARTING TO TIC ME OFF!\n";
   m_world->update(m_camera->getRef());
-   cerr << "I BE A WORLDLY MATEY!\n";
    m_currentPoint = m_world->getCurrentPointer();
    //m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    //m_player->tic(td);
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->tic(td);
    
-   cerr << "YAR! TIC ENEMIES OFF!\n";
    m_turret->tic(td);
 
    m_camera->checkPath(m_world->getCurrentPointer());
@@ -202,7 +199,6 @@ void GameEngine::tic(uint64_t td) {
       (*bulletIterator)->tic(td);
       //Cull the bullet!
       if(!(*bulletIterator)->isAlive()){
-         //cerr << "Culling Bullet!\n";
          //m_bulletList.erase(bulletIterator);
       }
          
@@ -284,12 +280,16 @@ bool GameEngine::handleKeyUp(SDLKey key)
 			  - (m_player->getSide() * 8),
 			  -m_player->getAimForward(), m_player->getAimUp());
 
+      
+
       m_modules->renderingEngine->addObject3d(bullet);
       m_gameObjects.push_back(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
       
-      m_bulletSound->play(0);
+     
+
+      //m_bulletSound->play(0);
    }
    
    return running;

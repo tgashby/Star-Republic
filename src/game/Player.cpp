@@ -28,7 +28,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    vx = 0;
    vy = 0;
 
-   mat4 modelMtx = mat4::Scale(MODEL_SCALE) * 
+   mat4 modelMtx = mat4::Scale(MODEL_SCALE) * mat4::Rotate(180, vec3(0,1,0)) *
       mat4::Magic(-getForward(), getUp(), getPosition());
    m_mesh->setModelMtx(modelMtx);
 }
@@ -59,15 +59,13 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
  m_offsetPosition += (m_sideVelocity * time) + (m_upVelocity * time);
  m_position = m_offsetPosition + tempPos;
 
- modelMtx = mat4::Scale(MODEL_SCALE) * 
-      mat4::Magic(-(((m_sideVelocity + m_upVelocity + m_forward)/3).Normalized()), m_up, m_position);
+ modelMtx = mat4::Scale(MODEL_SCALE) * mat4::Rotate(180, vec3(0,1,0)) *
+      mat4::Magic(-getAimForward(), getAimUp(), m_position);
    m_mesh->setModelMtx(modelMtx);
 
    x += vx * time;
    y += vy * time;
    updateVelocity(lastScreenX, lastScreenY);
-   cerr << "Ship is " << m_position.x << " " << m_position.y << " " << m_position.z << "\n";
-   cerr << "Cam Forward is " << cam_forward.x << " " << cam_forward.y << " " << cam_forward.z << "\n";
 }
 
 
