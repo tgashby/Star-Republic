@@ -111,6 +111,17 @@ struct TextureData {
    ivec2 size;
 };
 
+// holds world data for loading a map.
+// locations in the world are described by a sequence of three vectors.
+// 0: point in the world
+// 1: fowrward vector
+// 2: up vector
+struct WorldData {
+   vector<vec3> path; // locations for a path.
+   vector<ivec4> links; // should be a 1/3rd the size of path.
+   vector<vec3> turrets; // locations of turrets.
+};
+
 // An abstract class for the 
 struct IMesh {
    virtual MeshRef getMeshRef() = 0;
@@ -182,9 +193,10 @@ struct IRenderingEngine {
 // Any resurces from the file system should be accessed
 // through this class.
 struct IResourceManager {
-   virtual MeshData* readMeshData(string fileName, LOAD_NORMAL_TYPE normalType, float scale) = 0;
-   virtual TextureData* loadBMPImage(string fileName) = 0;
-   //virtual ImageData* loadPngImage(string fileName) = 0;
+   virtual MeshData *readMeshData(string fileName, LOAD_NORMAL_TYPE normalType, float scale) = 0;
+   virtual TextureData *loadBMPImage(string fileName) = 0;
+   //virtual ImageData *loadPngImage(string fileName) = 0;
+   virtual WorldData *readWorldData(string fileName) = 0;
 };
 
 

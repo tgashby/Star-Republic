@@ -224,6 +224,93 @@ MeshData* loadMesh(const string fileName, LOAD_NORMAL_TYPE type, float scale)
    return meshData;
 }
 
+WorldData* ResourceManager::readWorldData(string fileName) {
+   WorldData *world = new WorldData();
+   
+   string line;
+   streampos linestart;
+   ifstream infile(fileName.c_str());
+   
+   if(infile.is_open())
+   {
+      while(getline(infile, line))
+      {
+         size_t start;
+         
+         if (!(start = line.find("p "))) {
+            vec3 loc, fwd, up;
+            ivec4 link;
+            int totalLinks;
+            
+            totalLinks = sscanf(line.c_str(), 
+                                "p %d %f %f %f %f %f %f %f %f %f %d %d %d", 
+                                &link.x, &loc.x, &loc.y, &loc.z, 
+                                &up.x, &up.y, &up.z, 
+                                &fwd.x, &fwd.y, &fwd.z, 
+                                &link.y, &link.z, &link.w) - 10;
+            
+            if (totalLinks == 1)
+               link.y = link.z = link.w = -1;
+            else if (totalLinks == 2)
+               link.z = link.w = -1;
+            else if (totalLinks == 1)
+               link.w = -1;
+            else {
+               cerr << "error reading point on path\n";
+               continue;
+            }
+            
+            world->path.push_back(loc);
+            world->path.push_back(fwd);
+            world->path.push_back(up);
+            world->links.push_back(link);
+         }
+         else if (!(start = line.find("u "))) {
+            vec3 loc, fwd, up;
+            int reads;
+            reads = sscanf(line.c_str(), 
+                                "u %f %f %f %f %f %f %f %f %f", 
+                                &loc.x, &loc.y, &loc.z, 
+                                &up.x, &up.y, &up.z, 
+                                &fwd.x, &fwd.y, &fwd.z);
+            if (reads != 9) {
+               cerr << "error reading unit\n";
+               continue;
+            }
+            cout << line.find("turret") << "\n";
+            if (line.find("turret") != SIZE_T_MAX) {
+               world->turrets.push_back(loc);
+               world->turrets.push_back(fwd);
+               world->turrets.push_back(up);
+            }
+         }
+         else if (!(start = line.find("m "))) {
+            vec3 loc, fwd, up;
+            int reads;
+            reads = sscanf(line.c_str(), 
+                           "u %f %f %f %f %f %f %f %f %f", 
+                           &loc.x, &loc.y, &loc.z, 
+                           &up.x, &up.y, &up.z, 
+                           &fwd.x, &fwd.y, &fwd.z);
+            if (reads != 9) {
+               cerr << "error reading unit\n";
+               continue;
+            }
+            cout << line.find("turret") << "\n";
+            if (line.find("turret") != SIZE_T_MAX) {
+               world->turrets.push_back(loc);
+               world->turrets.push_back(fwd);
+               world->turrets.push_back(up);
+            }
+         }
+      }
+   }
+   else
+   { cerr << "Problem is in World: the infile was never opened. \n"; }
+   
+   return world;
+}
+
 float parseFloat(const std::string line) {
    
    float f;
