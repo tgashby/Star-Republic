@@ -24,6 +24,20 @@ World::World(const string fileName)
    { cerr << "Problem is in World: the infile was never opened. \n"; }
 }
 
+World::World(const string fileName, Modules* m_modules)
+{
+  WorldPoint* currentPoint;
+
+  WorldData *worldData = m_modules->resourceManager->
+    readWorldData("maps/world2.wf");
+  for (int i = 0; i < worldData->path.size(); i++) { 
+    points.push_back(WorldPoint(worldData->path[i*3], worldData->path[i*3 + 1],
+				worldData->path[i*3 + 2], worldData->links[i]));
+  }
+  
+  delete worldData;
+}
+
 WorldPoint World::parseLine(const string line)
 {
    Vector3<float> tempPosition;
@@ -147,3 +161,4 @@ WorldPoint World::update(Vector3<float> playerPos)
   }
      return getCurrent();
 }
+
