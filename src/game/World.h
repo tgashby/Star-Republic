@@ -22,6 +22,8 @@ public:
         WorldPoint* getPreviousPointer();
         WorldPoint* getCurrentPointer();
 	
+   WorldData* worldData;
+   
 private:
    WorldPoint parseLine(const string line);
    

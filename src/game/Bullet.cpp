@@ -10,20 +10,19 @@
 
 
 Bullet::Bullet(string fileName, string textureName, Modules *modules, 
-	       Vector3<float> pos, Vector3<float> forw, Vector3<float> up, 
-          const uint64_t timeToLive,
-          const float speed) 
+	       Vector3<float> pos, Vector3<float> forw, Vector3<float> up, GameObject& parent,
+          const uint64_t timeToLive, 
+               const float speed) 
   : Object3d(), m_position(0,0,0), m_forward(0,0,1), 
     m_up(0, 1, 0), m_side(1, 0, 0),
    GameObject(pos,forw.Normalized() * speed,forw.Normalized(),vec3(0,0,0),
-                          m_up, defaultBulletRadius, 1) 
+              m_up, defaultBulletRadius, 1), m_parent(parent)
 {
    m_position = pos;
    m_forward = forw.Normalized();
    m_up = up.Normalized();
    m_speed=speed; 
 
-   
 
    //We should have a better way of doing this. We don't need to load the
    //bullet mesh for every bullet. And, there are going to be a lot of a bullets

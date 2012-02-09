@@ -25,8 +25,9 @@ public:
 
    Bullet(string fileName, string textureName, Modules *modules, 
     Vector3<float> pos, Vector3<float> forw, Vector3<float> up,
-    const uint64_t timeToLive=Bullet::defaultTimeToLive,
-    const float speed=Bullet::defaultSpeed ); 
+          GameObject& parent,
+    const uint64_t timeToLive = Bullet::defaultTimeToLive, 
+          const float speed = Bullet::defaultSpeed); 
    ~Bullet();
 
    void tic(uint64_t time);
@@ -36,6 +37,8 @@ public:
    void calculateSide();
    bool isAlive();
    void doCollision(GameObject & other);
+   
+   GameObject& getParent() { return m_parent; }
 
  private:
 
@@ -50,4 +53,6 @@ public:
    Vector3<float> m_forward;
    Vector3<float> m_up;
    Vector3<float> m_side;
+   
+   GameObject& m_parent;
 };

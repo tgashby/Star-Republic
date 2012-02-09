@@ -116,6 +116,6 @@ void Player::calculateSide() {
 }
 
 void Player::doCollision(GameObject & other){
-   //cerr << "I'm hit!\n";
+   cerr << "I'm hit!\n";
    //DO Collision stuff
 }

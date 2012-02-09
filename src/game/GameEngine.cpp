@@ -28,6 +28,7 @@ void GameEngine::InitData()
 {
    m_world = new World("maps/world.wf", m_modules);
    cerr << "I USED TO WONDER WHAT POINTERS COULD BE!\n";
+   
    WorldPoint* debugtemp = m_world->getCurrentPointer();
    cerr << debugtemp->getPosition().x << " " << debugtemp->getPosition().y << " " << debugtemp->getPosition().z << "\n";
    m_camera = new Camera(m_world->getCurrentPointer(), m_world->getPreviousPointer());
@@ -36,19 +37,16 @@ void GameEngine::InitData()
    m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", m_modules, *m_player);
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
-   m_turret = new Turret(*m_player, "models/turrethead.obj",
-                         "textures/test3.bmp",
-                         "models/turretmiddle.obj",
-                         "textures/test3.bmp",
-                         "models/turretbase.obj",
-                         "textures/test3.bmp",
-                         m_modules);
+   // add one canyon mesh for now.
+   Object3d *canyon = new Object3d("models/canyon.obj", "textures/test3.bmp", m_modules);
    
    explosion = new Explodeable(m_player->getPosition(), m_modules);
-   
-   m_turret->setPosition(vec3(-144,-1168,4563));
-   m_turret->setForward(-m_player->getForward());
 
+   m_turretLocs = m_modules->resourceManager->
+   readWorldData("maps/turrets.wf");
+
+   createTurrets();
+   
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
    
@@ -68,23 +66,34 @@ void GameEngine::InitData()
 
    m_modules->renderingEngine->addObject3d(m_player);
    m_modules->renderingEngine->addObject3d(m_reticle);
-   m_modules->renderingEngine->addObject3d(m_turret);
    m_modules->renderingEngine->addObject3d(m_enemyShip);
    m_modules->renderingEngine->addObject3d(explosion);
+   m_modules->renderingEngine->addObject3d(canyon);
    
-   m_gameObjects.push_back(m_player);
+   for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); i != m_turrets.end(); i++) 
+   {
+      m_modules->renderingEngine->addObject3d(*i);
+   }
+   
    m_objects.push_back(m_player);
    m_objects.push_back(m_reticle);
-   m_objects.push_back(m_turret);
-   m_gameObjects.push_back(m_turret);
    m_objects.push_back(m_enemyShip);
-   m_gameObjects.push_back(m_enemyShip);
    m_objects.push_back(explosion);
-   
-   // add one canyon mesh for now.
-   Object3d *canyon = new Object3d("models/canyon.obj", "textures/test3.bmp", m_modules);
-   m_modules->renderingEngine->addObject3d(canyon);
    m_objects.push_back(canyon);
+   
+   for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); i != m_turrets.end(); i++) 
+   {
+      m_objects.push_back(*i);
+   }
+   
+   m_gameObjects.push_back(m_enemyShip);
+   m_gameObjects.push_back(m_player);
+   
+   for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); i != m_turrets.end(); i++) 
+   {
+      m_gameObjects.push_back(*i);
+   }
+
    /*canyon = new Object3d("models/course1b.obj", "textures/test3.bmp", m_modules);
    m_modules->renderingEngine->addObject3d(canyon);
    m_objects.push_back(canyon);
@@ -126,8 +135,6 @@ void GameEngine::tic(uint64_t td) {
    //m_player->tic(td);
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->tic(td);
-   
-   m_turret->tic(td);
 
    m_camera->checkPath(m_world->getCurrentPointer());
    m_camera->tic(td);
@@ -138,35 +145,40 @@ void GameEngine::tic(uint64_t td) {
    explosion->setPosition(m_player->getPosition());
    explosion->tic(td);
 
-   vec3 dirToPlayer = m_turret->getPosition() - m_player->getPosition();//(m_player->getPosition() + (m_player->getForward().Normalized() * VELOCITY_CONSTANT));
-   
-   // Turret not currently firing, but I think it's because the player starts too close to the turret
-   if (m_turret->getForward().Dot(m_player->getForward()) < 0 && dirToPlayer.Length() < 500 && m_turret->shouldFire()) 
+   for (std::vector<Turret*>::iterator i = m_turrets.begin(); i != m_turrets.end(); i++) 
    {
-      vec3 dirToPlayerNorm = dirToPlayer.Normalized();
+      (*i)->tic(td);
       
-      Bullet* bullet = 
-         new Bullet("models/cube.obj", "textures/test4.bmp", 
-                    m_modules, m_turret->getHeadPosition(), 
-                    -dirToPlayerNorm, 
-                    dirToPlayerNorm.Cross(m_turret->getPosition()));
+      vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
+      
+      // Turret not currently firing, but I think it's because the player starts too close to the turret
+      if (dirToPlayer.Length() < 400 && (*i)->shouldFire()) 
+      {
+         vec3 dirToPlayerNorm = dirToPlayer.Normalized();
          
-      m_modules->renderingEngine->addObject3d(bullet);
-      m_gameObjects.push_back(bullet);
-      m_objects.push_back(bullet);
-      m_bulletList.push_back(bullet);
+         Bullet* bullet = 
+            new Bullet("models/cube.obj", "textures/test4.bmp", 
+                       m_modules, (*i)->getHeadPosition(), 
+                       -dirToPlayerNorm, 
+                       dirToPlayerNorm.Cross((*i)->getPosition()), *(*i));
+            
+         m_modules->renderingEngine->addObject3d(bullet);
+         m_gameObjects.push_back(bullet);
+         m_objects.push_back(bullet);
+         m_bulletList.push_back(bullet);
+      }
    }
 
    vec3 dirEnemyToPlayer = m_enemyShip->getPosition() - m_player->getPosition();
    if (dirEnemyToPlayer.Length() < 400 && m_enemyShip->shouldFire()) 
    {
-      vec3 dirToPlayerNorm = dirToPlayer.Normalized();
+      vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
       
       Bullet* bullet = 
          new Bullet("models/cube.obj", "textures/test4.bmp", 
                     m_modules, m_enemyShip->getLeftCannonPos(), 
                     m_enemyShip->getAimForward(), 
-                    dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()));
+                    dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()), *m_enemyShip);
          
       m_modules->renderingEngine->addObject3d(bullet);
       m_gameObjects.push_back(bullet);
@@ -177,7 +189,7 @@ void GameEngine::tic(uint64_t td) {
          new Bullet("models/cube.obj", "textures/test4.bmp", 
                     m_modules, m_enemyShip->getRightCannonPos(), 
                     m_enemyShip->getAimForward(), 
-                    dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()));
+                    dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()), *m_enemyShip);
          
       m_modules->renderingEngine->addObject3d(bullet);
       m_gameObjects.push_back(bullet);
@@ -262,7 +274,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
 				  m_modules, m_player->getPosition() 
 				  + (m_player->getSide() * 8),
-			     m_player->getAimForward(), m_player->getAimUp());
+			     m_player->getAimForward(), m_player->getAimUp(), *m_player);
       
       m_modules->renderingEngine->addObject3d(bullet);
       m_gameObjects.push_back(bullet);
@@ -272,7 +284,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
 			  m_modules, m_player->getPosition() 
 			  - (m_player->getSide() * 8),
-			  m_player->getAimForward(), m_player->getAimUp());
+			  m_player->getAimForward(), m_player->getAimUp(), *m_player);
 
       
 
@@ -303,21 +315,41 @@ void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
  */ 
 void GameEngine::runCollisions()
 {
-   for(std::list<GameObject *>::iterator gameObjectIterator=m_gameObjects.begin();
-   gameObjectIterator != m_gameObjects.end();
-   gameObjectIterator++){ 
-      for(std::list<GameObject *>::iterator otherGameObjectIterator
-               =m_gameObjects.begin();
-         otherGameObjectIterator != m_gameObjects.end();
-         otherGameObjectIterator++){ 
-            if(gameObjectIterator !=otherGameObjectIterator){
-               if((*gameObjectIterator)->collidesWith(*(*otherGameObjectIterator))){
-                  //cerr << "A collision has happeneded\n";
-                  (*gameObjectIterator)->doCollision(*(*otherGameObjectIterator));
-               //I'm not sure if this is a good idea
-               }
-            }
-         }
+   for(std::list<GameObject *>::size_type toCheckIndex = 0;
+   toCheckIndex < m_gameObjects.size();
+   toCheckIndex++)
+   { 
+      
+      for(std::list<GameObject *>::size_type against = 0;
+          against < m_gameObjects.size();
+          against++)
+      { 
+//         
+//            if(gameObjectIterator != otherGameObjectIterator)
+//            {
+//               if((*gameObjectIterator)->collidesWith(*(*otherGameObjectIterator)))
+//               {
+//                  //cerr << "A collision has happeneded\n";
+//                  (*gameObjectIterator)->doCollision(*(*otherGameObjectIterator));
+//               //I'm not sure if this is a good idea
+//               }
+//            }
+      }
    }
      
+}
+
+void GameEngine::createTurrets()
+{
+   for (std::vector< Vector3<float> >::iterator i = m_turretLocs->turrets.begin(); i != m_turretLocs->turrets.end(); i += 3)
+   {
+      // Loc, forward, up
+      Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", "textures/test3.bmp", "models/turretmiddle.obj", "textures/test3.bmp", "models/turretbase.obj", "textures/test3.bmp", m_modules);
+      
+      newTurret->setPosition(*i);
+      newTurret->setForward(*(i+1));
+      newTurret->setUp(*(i+2));
+      
+      m_turrets.push_back(newTurret);
+   }
 }

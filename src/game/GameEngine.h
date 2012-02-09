@@ -31,6 +31,8 @@ public:
    
 private:
    void runCollisions();
+   void createTurrets();
+   
    list<IObject3d *> m_objects;
    list<GameObject *> m_gameObjects;
    Player *m_player;
@@ -38,12 +40,13 @@ private:
    Camera *m_camera;
    Modules *m_modules;
    World *m_world;
-   Turret *m_turret;
+   WorldData *m_turretLocs;
    WorldPoint *m_currentPoint;
    WorldPoint *m_previousPoint;
    Vector3<float> currentDirection;
    void InitData();
    std::vector<Bullet *> m_bulletList;
+   std::vector<Turret *> m_turrets;
    
    EnemyShip* m_enemyShip;
    
