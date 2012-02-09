@@ -235,7 +235,7 @@ WorldData* ResourceManager::readWorldData(string fileName) {
    {
       while(getline(infile, line))
       {
-         size_t start;
+         long start;
          
          if (!(start = line.find("p "))) {
             vec3 loc, fwd, up;
@@ -265,6 +265,7 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             world->path.push_back(up);
             world->links.push_back(link);
          }
+         /*
          else if (!(start = line.find("u "))) {
             vec3 loc, fwd, up;
             int reads;
@@ -283,7 +284,7 @@ WorldData* ResourceManager::readWorldData(string fileName) {
                world->turrets.push_back(fwd);
                world->turrets.push_back(up);
             }
-         }
+         }*/
          else if (!(start = line.find("m "))) {
             vec3 loc, fwd, up;
             int reads;
