@@ -14,6 +14,7 @@
 #include <assert.h>
 #include "Bullet.h"
 #include "EnemyShip.h"
+#include <algorithm>
 
 
 class GameEngine : public IGameEngine {
@@ -28,7 +29,9 @@ public:
    void handleMouseMotion(Uint16 x, Uint16 y);
    
 private:
+   void runCollisions();
    list<IObject3d *> m_objects;
+   list<GameObject *> m_gameObjects;
    Player *m_player;
    Reticle *m_reticle;
    Camera *m_camera;
