@@ -25,6 +25,7 @@ public:
    void tic(uint64_t time); //GOBJ/Flyer
    void setBearing(Vector3<float> headPos, Vector3<float> headUp); //Flyer
    Vector3<float> getSide();
+   Vector3<float> getScaredSide();
    void calculateSide();
    void updateVelocity(float diffX, float diffY); //GOBJ
    Vector3<float> getAimForward();
@@ -37,6 +38,8 @@ private:
    Vector3<float> dpos;
    float prevAngle;
    float currentAngle;
+   bool dodging;
+   int dodgedir;
 	
 };
 
