@@ -26,18 +26,11 @@ World::World(const string fileName)
 
 World::World(const string fileName, Modules* m_modules)
 {
-<<<<<<< HEAD
-  WorldData *worldData = m_modules->resourceManager->
-    readWorldData("maps/world2.wf");
-  cerr << "Links number: " << worldData->links.size() << "\n";
-cerr << "Links number: " << worldData->path.size() << "\n";
-=======
-   currentPoint = 1;
-   previousPoint = 0;
+  currentPoint = 1;
+  previousPoint = 0;
 
   WorldData *worldData = m_modules->resourceManager->
-    readWorldData("maps/world2.wf");
->>>>>>> 4d836e177927a2c329635d82939a408b9e6be1a9
+  readWorldData("maps/world2.wf");
   
   for (int i = 0; i < worldData->links.size(); i++) {
     cerr << "i is " << i << "\n";

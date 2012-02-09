@@ -91,6 +91,18 @@ cerr << "BAHHH! I'm awful\n";
    Object3d *canyon = new Object3d("models/canyon.obj", "textures/test3.bmp", m_modules);
    m_modules->renderingEngine->addObject3d(canyon);
    m_objects.push_back(canyon);
+   /*canyon = new Object3d("models/course1b.obj", "textures/test3.bmp", m_modules);
+   m_modules->renderingEngine->addObject3d(canyon);
+   m_objects.push_back(canyon);
+   canyon = new Object3d("models/course1c.obj", "textures/test3.bmp", m_modules);
+   m_modules->renderingEngine->addObject3d(canyon);
+   m_objects.push_back(canyon);
+   canyon = new Object3d("models/course1d.obj", "textures/test3.bmp", m_modules);
+   m_modules->renderingEngine->addObject3d(canyon);
+   m_objects.push_back(canyon);
+   canyon = new Object3d("models/course1e.obj", "textures/test3.bmp", m_modules);
+   m_modules->renderingEngine->addObject3d(canyon);
+   m_objects.push_back(canyon);*/
    
    
    //m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
@@ -184,7 +196,6 @@ void GameEngine::tic(uint64_t td) {
    
    //Use Iterators!
    //for (int i = 0; i < m_bulletList.size(); i++) {
-   assert(false);
    for(std::vector<Bullet *>::iterator bulletIterator = m_bulletList.begin();
        bulletIterator != m_bulletList.end();
        bulletIterator++){ 
