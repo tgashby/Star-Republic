@@ -8,6 +8,19 @@ WorldPoint::WorldPoint(Vector3<float> position, Vector3<float> up, Vector3<float
    this->side = side.Normalized();
 }
 
+WorldPoint::WorldPoint(vec3 position, vec3 forward, vec3 up, ivect4 links) {
+  this->position = position;
+  this->up = up.Normalized();
+  this->forward = forward.Normalized();
+  setFirstID(links[1]);
+  if (links.size() > 2) {
+    setSecondID(links[2]);
+  }
+  if (links.size() > 3) {
+    setThirdID(links[3]);
+  }
+}
+
 WorldPoint::~WorldPoint()
 {
 }
