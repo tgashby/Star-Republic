@@ -16,21 +16,27 @@ Turret::Turret(Player& player, string headName, string headTexture, string midNa
    mat4 modelMtx = mat4::Translate(0, 0, 0);
    m_footMesh->setModelMtx(modelMtx);
    
-   
    m_midMesh = new Mesh(midName, midTexture, modules);
    m_meshList.push_back(m_midMesh);
-   modelMtx = mat4::Translate(0, 1, 0);
+   modelMtx *= mat4::Translate(0, 1, 0);
    m_midMesh->setModelMtx(modelMtx);
    
    m_headMesh = new Mesh(headName, headTexture, modules);
    m_meshList.push_back(m_headMesh);
-   modelMtx = mat4::Translate(0, 13, 0);
+   modelMtx *= mat4::Translate(0, 13, 0);
    m_headMesh->setModelMtx(modelMtx);
+   
+   firing = false;
+   firingTimer = 0;
 }
 
 Turret::~Turret()
 {
-   
+//   for (std::list<Bullet*>::iterator i = m_bullets.begin(); i != m_bullets.end(); i++) {
+//      Bullet* temp = *i;
+//      
+//      delete temp;
+//   }
 }
 
 
@@ -39,42 +45,51 @@ void Turret::tic(uint64_t time)
    // Rotate head toward player
    // aim
    // fire
+   mat4 modelMtx = mat4::Translate(m_position.x, m_position.y, m_position.z);
+   m_footMesh->setModelMtx(modelMtx);
    
-   vec3 d(0,0,0);
-   d.x = m_position.x - (m_playerRef.getPosition().x + 6);
-   d.y = m_position.y - (m_playerRef.getPosition().y + 3);
-   d.z = m_position.z - (m_playerRef.getPosition().z + 3);
+   modelMtx *= mat4::Translate(0, 1, 0);
+   m_midMesh->setModelMtx(modelMtx);
    
-   vec3 Rotation(0,0,0);
+   modelMtx *= mat4::Translate(0, 13, 0);
+   m_headMesh->setModelMtx(modelMtx);
    
-   //Inclination?
-   if((m_playerRef.getPosition().y + 3) > 0){    
-      Rotation.x = (atan(sqrt(d.x * d.x + d.z * d.z) / d.y) * 180 / 3.1415926); 
-   }
-   else {
-      Rotation.x = (-atan(sqrt(d.x * d.x + d.z * d.z) / d.y) * 180 / 3.1415926); 
-   }
+   vec3 dirToPlayer = (m_playerRef.getPosition() - m_position).Normalized();
+   vec3 intermed = dirToPlayer.Cross(m_up);
+   vec3 dirToPlayerFlat = intermed.Cross(m_up);
    
-   //Rotation?
-   if (d.x < 0) 
+   modelMtx = mat4::Magic(-dirToPlayerFlat, m_up, m_position);
+   m_midMesh->setModelMtx(modelMtx);
+   
+   modelMtx = mat4::Magic(-dirToPlayer, m_up, m_position);
+   modelMtx *= mat4::Translate(0, 13, 0);
+   m_headMesh->setModelMtx(modelMtx);
+   
+   firingTimer += time;
+   
+   if (firingTimer > 500)
    {
-         if (d.z < 0)
-         Rotation.y = -(atan(d.x / d.z) * 180 / 3.1415926);
-      else
-         Rotation.y = (atan(d.x / d.z) * 180 / 3.1415926); 
+      firing = true;
+      firingTimer = 0;
    }
-   else
+   else 
    {
-      if (d.z < 0)
-         Rotation.y = -(atan(d.x / d.z) * 180 / 3.1415926);
-      else
-         Rotation.y = (atan(d.x / d.z) * 180 / 3.1415926);  
+      firing = false;
    }
-   
-   m_headMesh->setModelMtx(mat4::Rotate(Rotation));
+}
 
+Vector3<float> Turret::getHeadPosition()
+{
+   vec3 toRet = m_position + (m_up.Normalized() * 13);
+   
+   return toRet;
 }
 
 void Turret::doCollision(GameObject & other){
    //Do collision stuff here!
 } 
+
+bool Turret::shouldFire()
+{
+   return firing;
+}

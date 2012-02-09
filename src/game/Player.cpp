@@ -37,7 +37,7 @@ Player::~Player()
 void Player::tic(uint64_t time)
 {
   mat4 tempMatrix;
-  float diffAngle, upRotateAngle, forwardRotateAngle, testAngle;
+  float diffAngle;
   vec3 tempUp, acosTest;
   mat4 modelMtx;
 

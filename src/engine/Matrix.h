@@ -435,8 +435,9 @@ struct Matrix4 {
   static Matrix4<T> Magic(vec3 fwd, vec3 up, vec3 pos)
     {
        vec3 f = fwd.Normalized();
-       vec3 u = up.Normalized();
-       vec3 s = fwd.Cross(up).Normalized();
+       vec3 s = fwd.Cross(up);
+       s.Normalize();
+       vec3 u = s.Cross(f);
        
        Matrix4<T> m;
        m.x.x = s.x; m.x.y = s.y; m.x.z = s.z; m.x.w = 0;

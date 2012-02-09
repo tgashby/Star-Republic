@@ -2,7 +2,7 @@
 #include "Object3d.h"
 #include "Player.h"
 
-
+#define VELOCITY_CONSTANT 2
 
 GameEngine::GameEngine(Modules *modules) {
    m_modules = modules;
@@ -28,9 +28,11 @@ void GameEngine::InitData()
 			 m_modules);
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
+   
+   m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", m_modules, *m_player);
 
    m_camera = new Camera(vec3(0, 0, 0));
-   m_world = new World("maps/testWorld4.wf");
+   m_world = new World("maps/world.wf");
    m_turret = new Turret(*m_player, "models/turrethead.obj",
                          "textures/test3.bmp",
                          "models/turretmiddle.obj",
@@ -38,42 +40,88 @@ void GameEngine::InitData()
                          "models/turretbase.obj",
                          "textures/test3.bmp",
                          m_modules);
-   
-   m_turret->setPosition(vec3(0,0,10));
+   m_turret->setPosition(vec3(-144,-1168,5063));
 
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
+   
    m_player->setProgress(m_previousPoint->getPosition());
    m_player->setPosition(m_previousPoint->getPosition());
    m_player->setUp(m_previousPoint->getUp());
-   m_player->setHeads(m_currentPoint->getPosition(), m_currentPoint->getUp(),
-		      m_previousPoint->getPosition(), m_previousPoint->getUp());
+   m_player->setHeads(m_currentPoint->getPosition(), m_currentPoint->getUp(), m_previousPoint->getPosition(), m_previousPoint->getUp());
    m_player->calculateSide();
+   
+   m_enemyShip->setProgress(m_previousPoint->getPosition());
+   m_enemyShip->setPosition(m_previousPoint->getPosition());
+   m_enemyShip->setUp(m_previousPoint->getUp());
+   m_enemyShip->setHeads(m_currentPoint->getPosition(), m_currentPoint->getUp(), m_previousPoint->getPosition(), m_previousPoint->getUp());
+   m_enemyShip->calculateSide();
+   
    m_modules->renderingEngine->setCamera(m_camera);
 
    m_modules->renderingEngine->addObject3d(m_player);
    m_modules->renderingEngine->addObject3d(m_reticle);
    m_modules->renderingEngine->addObject3d(m_turret);
+   m_modules->renderingEngine->addObject3d(m_enemyShip);
+   
    m_objects.push_back(m_player);
    m_objects.push_back(m_reticle);
    m_objects.push_back(m_turret);
+   m_objects.push_back(m_enemyShip);
+   
+   // add one canyon mesh for now.
+   Object3d *canyon = new Object3d("models/canyon.obj", "textures/test3.bmp", m_modules);
+   m_modules->renderingEngine->addObject3d(canyon);
+   m_objects.push_back(canyon);
+   
+   
    m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    
    initSound();
    m_bulletSound = loadSound("sound/arwingShot.ogg");
    m_music = loadMusic("sound/venom.mp3");
    
    m_music->play(1);
+   
+   // test loading a world
+   /*
+   WorldData *worldData = m_modules->resourceManager->readWorldData("maps/world2.wf");
+   cout << "loaded " << worldData->path.size() << " path elements\n";
+   cout << "loaded " << worldData->links.size() << " link elements\n";
+   cout << "loaded " << worldData->turrets.size() << " turret elements\n";
+   cout << "(" << worldData->path[0].x << ", " << worldData->path[0].y << ")\n"; 
+   delete worldData;*/
 }
 
 void GameEngine::tic(uint64_t td) {
    // Update functions go here
-   Bullet* b;
    m_world->update(m_player->getProgress());
    m_currentPoint = m_world->getCurrentPointer();
    m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_player->tic(td);
+   m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   m_enemyShip->tic(td);
+   
    m_reticle->tic(td);
+   m_turret->tic(td);
+
+   vec3 dirToPlayer = m_turret->getPosition() - m_player->getPosition();
+   
+   if (dirToPlayer.Length() < 500 && m_turret->shouldFire()) 
+   {
+      vec3 dirToPlayerNorm = dirToPlayer.Normalized();
+      
+      Bullet* bullet = 
+         new Bullet("models/cube.obj", "textures/test4.bmp", 
+                    m_modules, m_turret->getHeadPosition(), 
+                    -dirToPlayerNorm, 
+                    dirToPlayerNorm.Cross(m_turret->getPosition()));
+         
+      m_modules->renderingEngine->addObject3d(bullet);
+      m_objects.push_back(bullet);
+      m_bulletList.push_back(bullet);
+   }
    
    //Use Iterators!
    //for (int i = 0; i < m_bulletList.size(); i++) {
@@ -89,6 +137,7 @@ void GameEngine::tic(uint64_t td) {
       }
          
    }
+   
    m_camera->update(((m_player->getPosition() - m_player->getProgress()) / 2) + m_player->getProgress(), 
 		    m_player->getForward(), 
 		    m_player->getUp());
@@ -112,7 +161,6 @@ bool GameEngine::handleEvents()
    while (SDL_PollEvent(&evt))
    {
       uint64_t now = SDL_GetTicks();
-      float dt = (now - old) / 1000.0f;
       
       old = now;
       

@@ -8,7 +8,7 @@
 #include "Mesh.h"
 #include <assert.h>
 #include <cmath>
-#define VELOCITY 0.02f
+#define VELOCITY 0.08f
 #define X_SCALAR 0.0005f
 #define Y_SCALAR 0.0005f
 #define MODEL_SCALE 0.8f

@@ -12,10 +12,12 @@
 #include "Interfaces.h"
 #include "Object3d.h"
 #include "Player.h"
+#include "GameObject.h"
 #include "Enemy.h"
+#include "Bullet.h"
 #include "Mesh.h"
 
-class Turret : public Object3d, public Enemy {
+class Turret : public Object3d, public Enemy, public GameObject {
 public:
    Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules);
    ~Turret();
@@ -23,11 +25,20 @@ public:
    void tic(uint64_t time);
    void doCollision(GameObject & other);
    
+   Vector3<float> getHeadPosition();
+   
+   bool shouldFire();
+   
 private:
    int health;
    Mesh *m_headMesh;
    Mesh *m_midMesh;
    Mesh *m_footMesh;
+   
+   bool firing;
+   uint64_t firingTimer;
+   
+//   std::list<Bullet*> m_bullets;
 };
 
 #endif
