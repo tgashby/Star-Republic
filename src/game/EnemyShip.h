@@ -40,7 +40,6 @@ private:
    float currentAngle;
    bool dodging;
    int dodgedir;
-	
 };
 
 #endif
