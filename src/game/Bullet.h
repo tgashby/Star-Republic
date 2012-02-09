@@ -19,9 +19,9 @@ public:
    //tine to live in milliseconds
    static const uint64_t defaultTimeToLive=9000;
    //Default bullet speed
-   static const float defaultSpeed=1;
+   static const float defaultSpeed=0.4f;
    //Default collision radius
-   static const float defaultBulletRadius = 1;
+   static const float defaultBulletRadius = 0.5f;
 
    Bullet(string fileName, string textureName, Modules *modules, 
     Vector3<float> pos, Vector3<float> forw, Vector3<float> up,
@@ -35,7 +35,6 @@ public:
    Vector3<float> getForward();
    Vector3<float> getUp();
    void calculateSide();
-   bool isAlive();
    void doCollision(GameObject & other);
    
    GameObject& getParent() { return m_parent; }
@@ -44,15 +43,8 @@ public:
 
    Mesh* m_mesh;
    uint64_t m_lifetime; 
-   uint64_t m_timeToLive; 
-   bool m_alive;
+   uint64_t m_timeToLive;
    float m_speed;
-   
-
-   Vector3<float> m_position;
-   Vector3<float> m_forward;
-   Vector3<float> m_up;
-   Vector3<float> m_side;
    
    GameObject& m_parent;
 };

@@ -30,6 +30,8 @@ GameObject::GameObject(vec3 startPos, vec3 startVelocity,
    m_up = upVec;
    m_boundingSphere = new BoundingSphere(collideRadius); 
    m_health = health;
+   
+   m_alive = true;
 }
 
 GameObject::GameObject()
@@ -41,6 +43,8 @@ GameObject::GameObject()
    m_up = vec3(0,1,0);
    m_boundingSphere = new BoundingSphere(defaultBoundingRadius);
    m_health = 100;
+   
+   m_alive = true;
 }
 
 
@@ -124,4 +128,9 @@ const BoundingSphere * GameObject::getBoundingSphere() const
 bool GameObject::collidesWith (const GameObject & other) const {
    return m_boundingSphere->collidesWith(other.getBoundingSphere(),m_position,
                                          other.getPosition()); 
+}
+
+bool GameObject::isAlive()
+{
+   return m_alive;
 }

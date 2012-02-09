@@ -1,4 +1,6 @@
 #include "Player.h"
+#include "Bullet.h"
+#include "Turret.h"
 
 #define VCHANGE 0.8
 #define VINTENS 0.5
@@ -7,8 +9,7 @@
 
 Player::Player(string fileName, string textureName, Modules *modules, 
 	Vector3<float> cam_pos, Vector3<float> cam_up, Vector3<float> cam_forw) 
-   :  Object3d(), Flyer(),
-      health(100), side(1,0,0), 
+   :  Object3d(), Flyer(), side(1,0,0), 
       lastScreenX(0), lastScreenY(0)
 {
    m_forward = cam_forw;
@@ -31,6 +32,8 @@ Player::Player(string fileName, string textureName, Modules *modules,
    mat4 modelMtx = mat4::Scale(MODEL_SCALE) * mat4::Rotate(180, vec3(0,1,0)) *
       mat4::Magic(getForward(), getUp(), getPosition());
    m_mesh->setModelMtx(modelMtx);
+   
+   m_health = 200000;
 }
 
 Player::~Player()
@@ -115,7 +118,26 @@ void Player::calculateSide() {
    side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
 }
 
-void Player::doCollision(GameObject & other){
-   cerr << "I'm hit!\n";
+void Player::doCollision(GameObject & other)
+{
+   if (typeid(other) == typeid(Bullet))
+   {
+      if (&((Bullet&)other).getParent() != this) 
+      {
+         m_health -= 1;
+         
+         if (m_health <= 0) 
+         {
+            m_alive = false;
+            m_mesh->setVisible(false);
+         }
+      }
+   }
+   
+   if (typeid(other) == typeid(Turret))
+   {
+      m_alive = false;
+   }
+   
    //DO Collision stuff
 }

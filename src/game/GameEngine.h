@@ -54,6 +54,7 @@ private:
    Sound* m_music;
    
    Explodeable* explosion;
+   uint64_t gameOver;
 };
 
 #endif

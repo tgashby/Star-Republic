@@ -28,7 +28,6 @@ public:
    Vector3<float> getHeadPosition();
    
    bool shouldFire();
-   bool isAlive();
    
 private:
    Mesh *m_headMesh;
@@ -36,7 +35,6 @@ private:
    Mesh *m_footMesh;
    
    bool firing;
-   bool alive;
    uint64_t firingTimer;
    
    void collideWith(Bullet& bullet);

@@ -29,12 +29,12 @@ ResourceManager::ResourceManager() {
 
 
 MeshData* ResourceManager::readMeshData(string fileName, LOAD_NORMAL_TYPE normalType, float scale) {
-    cout << "loading mesh: " << fileName << "\n";
+//    cout << "loading mesh: " << fileName << "\n";
    return loadMesh(fileName, normalType, scale);
 }
 
 TextureData* ResourceManager::loadBMPImage(string fileName) {
-   cout << "Load Texture: " << fileName << "\n";
+//   cout << "Load Texture: " << fileName << "\n";
    if (m_image != NULL)
       delete m_image; 
    
@@ -260,7 +260,7 @@ WorldData* ResourceManager::readWorldData(string fileName) {
                continue;
             }
             
-            cout << "y = " << link.y << "\n";
+//            cout << "y = " << link.y << "\n";
             
             world->path.push_back(loc);
             world->path.push_back(fwd);

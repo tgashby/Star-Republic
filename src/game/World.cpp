@@ -33,14 +33,14 @@ World::World(const string fileName, Modules* m_modules)
   readWorldData("maps/world2.wf");
   
   for (int i = 0; i < worldData->links.size(); i++) {
-    cerr << "i is " << i << "\n";
+//    cerr << "i is " << i << "\n";
     points.push_back(WorldPoint(worldData->path[i*3], worldData->path[i*3 + 1],
 				worldData->path[i*3 + 2], worldData->links[i]));
   }
    
   currentPoint = 1;
   previousPoint = 0;
-  cerr << points.size();
+//  cerr << points.size();
 }
 
 WorldPoint World::parseLine(const string line)
@@ -60,7 +60,7 @@ WorldPoint World::parseLine(const string line)
 		       &tempSide.x, &tempSide.y, &tempSide.z, &tempLeft,
 		       &tempMid, &tempRight) - 13;
 
-   cerr << "X IS: " << tempPosition.x << ", Y IS: " << tempPosition.y << ", Z IS: " << tempPosition.z << "\n";
+//   cerr << "X IS: " << tempPosition.x << ", Y IS: " << tempPosition.y << ", Z IS: " << tempPosition.z << "\n";
    
    WorldPoint point (tempPosition, tempUp, tempForward, tempSide);
    

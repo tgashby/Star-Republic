@@ -1,6 +1,6 @@
 import os, os.path, shutil
 
-includes = ['engine','game']
+includes = ['render','engine','game']
 include_dirs = [os.path.abspath(f) for f in includes]
 env = Environment( CC = 'g++', CPPPATH=include_dirs, LIBPATH=include_dirs )
 mainfiles = ['Main.cpp']
@@ -17,7 +17,7 @@ else:
 
 #Prawk! Stupid hack, part 1: In an ideal world, I would build a library out of
 # game using it's Sconscript file
-for subdir in ['engine','tools']:
+for subdir in ['render','engine','tools']:
    env.SConscript('%s/SConscript' % subdir, {'env':env})
 
 #Prawk! Stupid hack, part 2: In an ideal world, I would build a library out of

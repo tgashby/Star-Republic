@@ -37,7 +37,6 @@ public:
 
    
 private:
-   int health;
    Mesh *m_mesh;
    Vector3<float> side;
    Vector3<float> dpos;

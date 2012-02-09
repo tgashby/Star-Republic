@@ -9,6 +9,8 @@ GameEngine::GameEngine(Modules *modules) {
    m_objects = list<IObject3d *>(0);
    m_gameObjects = list<GameObject *>(0);
 
+   gameOver = 0;
+   
    InitData();
 }
 
@@ -27,10 +29,10 @@ GameEngine::~GameEngine() {
 void GameEngine::InitData()
 {
    m_world = new World("maps/world.wf", m_modules);
-   cerr << "I USED TO WONDER WHAT POINTERS COULD BE!\n";
+//   cerr << "I USED TO WONDER WHAT POINTERS COULD BE!\n";
    
    WorldPoint* debugtemp = m_world->getCurrentPointer();
-   cerr << debugtemp->getPosition().x << " " << debugtemp->getPosition().y << " " << debugtemp->getPosition().z << "\n";
+//   cerr << debugtemp->getPosition().x << " " << debugtemp->getPosition().y << " " << debugtemp->getPosition().z << "\n";
    m_camera = new Camera(m_world->getCurrentPointer(), m_world->getPreviousPointer());
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
 			 m_modules, m_camera->getPosition(), m_camera->getForward(), m_camera->getUp());
@@ -109,7 +111,7 @@ void GameEngine::InitData()
    
    
    //m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-   m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 30));
    
    initSound();
    m_bulletSound = loadSound("sound/arwingShot.ogg");
@@ -128,14 +130,30 @@ void GameEngine::InitData()
 }
 
 void GameEngine::tic(uint64_t td) {
+   gameOver += td;
+   
+   if (gameOver >= 40000) 
+   {
+      cout << "YOU WIN!\n";
+      exit(0);
+   }
+   
+   if (!m_player->isAlive()) {
+      cout << "YOU LOSE!\n";
+      exit(0);
+   }
+   
    // Update functions go here
   m_world->update(m_camera->getRef());
    m_currentPoint = m_world->getCurrentPointer();
    //m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    //m_player->tic(td);
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   
+   m_enemyShip->setPosition(m_player->getPosition() + (m_camera->getForward() * 300));
+   
    m_enemyShip->tic(td);
-
+   
    m_camera->checkPath(m_world->getCurrentPointer());
    m_camera->tic(td);
 
@@ -152,7 +170,7 @@ void GameEngine::tic(uint64_t td) {
       vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
       
       // Turret not currently firing, but I think it's because the player starts too close to the turret
-      if (dirToPlayer.Length() < 400 && (*i)->shouldFire()) 
+      if ((*i)->isAlive() && dirToPlayer.Length() < 1000 && (*i)->shouldFire()) 
       {
          vec3 dirToPlayerNorm = dirToPlayer.Normalized();
          
@@ -178,7 +196,7 @@ void GameEngine::tic(uint64_t td) {
          new Bullet("models/cube.obj", "textures/test4.bmp", 
                     m_modules, m_enemyShip->getLeftCannonPos(), 
                     m_enemyShip->getAimForward(), 
-                    dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()), *m_enemyShip);
+                    dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()), *m_enemyShip, Bullet::defaultTimeToLive, 0.2f);
          
       m_modules->renderingEngine->addObject3d(bullet);
       m_gameObjects.push_back(bullet);
@@ -189,7 +207,7 @@ void GameEngine::tic(uint64_t td) {
          new Bullet("models/cube.obj", "textures/test4.bmp", 
                     m_modules, m_enemyShip->getRightCannonPos(), 
                     m_enemyShip->getAimForward(), 
-                    dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()), *m_enemyShip);
+                    dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()), *m_enemyShip, Bullet::defaultTimeToLive, 0.2f);
          
       m_modules->renderingEngine->addObject3d(bullet);
       m_gameObjects.push_back(bullet);
@@ -210,14 +228,11 @@ void GameEngine::tic(uint64_t td) {
          
    }
    runCollisions();
-   
-
 }
 
 
 void GameEngine::render() {
    m_modules->renderingEngine->render(m_objects);
-
 }
 
 
@@ -274,7 +289,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
 				  m_modules, m_player->getPosition() 
 				  + (m_player->getSide() * 8),
-			     m_player->getAimForward(), m_player->getAimUp(), *m_player);
+                                  m_player->getAimForward(), m_player->getAimUp(), *m_player, Bullet::defaultTimeToLive, 1.0f);
       
       m_modules->renderingEngine->addObject3d(bullet);
       m_gameObjects.push_back(bullet);
@@ -284,7 +299,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
 			  m_modules, m_player->getPosition() 
 			  - (m_player->getSide() * 8),
-			  m_player->getAimForward(), m_player->getAimUp(), *m_player);
+			  m_player->getAimForward(), m_player->getAimUp(), *m_player, Bullet::defaultTimeToLive, 1.0f);
 
       
 
@@ -294,8 +309,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       m_bulletList.push_back(bullet);
       
      
-
-      //m_bulletSound->play(0);
+      m_bulletSound->play(0);
    }
    
    return running;
@@ -315,25 +329,27 @@ void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
  */ 
 void GameEngine::runCollisions()
 {
-   for(std::list<GameObject *>::size_type toCheckIndex = 0;
-   toCheckIndex < m_gameObjects.size();
-   toCheckIndex++)
+   for(std::list<GameObject *>::iterator gameObjectIterator = m_gameObjects.begin();
+   gameObjectIterator != m_gameObjects.end();
+   gameObjectIterator++)
    { 
       
-      for(std::list<GameObject *>::size_type against = 0;
-          against < m_gameObjects.size();
-          against++)
+      for(std::list<GameObject *>::iterator otherGameObjectIterator = m_gameObjects.begin();
+          otherGameObjectIterator != m_gameObjects.end();
+          otherGameObjectIterator++)
       { 
-//         
-//            if(gameObjectIterator != otherGameObjectIterator)
-//            {
-//               if((*gameObjectIterator)->collidesWith(*(*otherGameObjectIterator)))
-//               {
-//                  //cerr << "A collision has happeneded\n";
-//                  (*gameObjectIterator)->doCollision(*(*otherGameObjectIterator));
-//               //I'm not sure if this is a good idea
-//               }
-//            }
+         if ((*gameObjectIterator)->isAlive() && (*otherGameObjectIterator)->isAlive()) 
+         {
+            if(gameObjectIterator != otherGameObjectIterator)
+            {
+               if((*gameObjectIterator)->collidesWith(*(*otherGameObjectIterator)))
+               {
+                  //cerr << "A collision has happeneded\n";
+                  (*gameObjectIterator)->doCollision(*(*otherGameObjectIterator));
+               //I'm not sure if this is a good idea
+               }
+            }
+         }
       }
    }
      

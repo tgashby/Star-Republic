@@ -13,9 +13,7 @@ Bullet::Bullet(string fileName, string textureName, Modules *modules,
 	       Vector3<float> pos, Vector3<float> forw, Vector3<float> up, GameObject& parent,
           const uint64_t timeToLive, 
                const float speed) 
-  : Object3d(), m_position(0,0,0), m_forward(0,0,1), 
-    m_up(0, 1, 0), m_side(1, 0, 0),
-   GameObject(pos,forw.Normalized() * speed,forw.Normalized(),vec3(0,0,0),
+  : Object3d(),GameObject(pos,forw.Normalized() * speed,forw.Normalized(),vec3(0,0,0),
               m_up, defaultBulletRadius, 1), m_parent(parent)
 {
    m_position = pos;
@@ -33,7 +31,6 @@ Bullet::Bullet(string fileName, string textureName, Modules *modules,
    m_mesh->setModelMtx(modelMtx);
    
    m_lifetime = 0;
-   m_alive = true;
 }
 
 Bullet::~Bullet() 
@@ -57,11 +54,6 @@ void Bullet::tic(uint64_t time)
 
 }
 
-bool Bullet::isAlive(){
-   return m_alive;
-}
-
-
 Vector3<float> Bullet::getPosition() {
   return m_position;
 }
@@ -76,5 +68,13 @@ Vector3<float> Bullet::getUp() {
 
 void Bullet::doCollision(GameObject & other) {
    //The Bullet dies!
-   m_alive = false;
+   
+   if (m_mesh->isVisible())
+   {
+      if (&other != &m_parent) 
+      {
+         m_alive = false;
+         m_mesh->setVisible(false);
+      }
+   }
 }

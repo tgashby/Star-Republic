@@ -1,8 +1,8 @@
 #include "Reticle.h"
 
-#define SCALE1 1
-#define SCALE2 1.5
-#define SCALE3 2
+#define SCALE1 2
+#define SCALE2 2.5
+#define SCALE3 4
 #define TRANS1 -100
 #define TRANS2 -70 
 #define TRANS3 -40

@@ -10,6 +10,9 @@ bool handleEvents(float dt, SDL_Event& evt);
 bool handleKeyUp(SDLKey key);
 void handleMouseMotion(Uint16 x, Uint16 y);
 
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 1024;
+
 int main(int argc, char** argv)
 {
    SDL_Surface* screen;
@@ -27,11 +30,11 @@ int main(int argc, char** argv)
    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
    
    // Create the window
-   screen = SDL_SetVideoMode(800, 600, 32, SDL_SWSURFACE | SDL_OPENGL); // | SDL_FULLSCREEN);
+   screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_SWSURFACE | SDL_OPENGL | SDL_FULLSCREEN);
    
    SDL_WM_SetCaption("Star Republic", NULL);
    //SDL_WM_ToggleFullScreen(screen);
-   SDL_WarpMouse(400, 300);
+   SDL_WarpMouse(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
    SDL_WM_GrabInput(SDL_GRAB_ON);
    SDL_ShowCursor(SDL_FALSE);
    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);

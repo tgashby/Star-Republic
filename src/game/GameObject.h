@@ -45,6 +45,9 @@ public:
    
       
    const BoundingSphere * getBoundingSphere() const;
+   
+   bool isAlive();
+   
    //const BoundingHeirarchy getBounds();
 protected:
    int m_health;
@@ -53,6 +56,8 @@ protected:
    vec3 m_forward;
    vec3 m_acceleration;
    vec3 m_up;
+   
+   bool m_alive;
    
 private:
    static const float defaultBoundingRadius = 50;

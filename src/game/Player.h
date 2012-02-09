@@ -8,7 +8,7 @@
 #include "Mesh.h"
 #include <assert.h>
 #include <cmath>
-#define VELOCITY 0.4f
+#define VELOCITY 0.04f
 #define X_SCALAR 0.0005f
 #define Y_SCALAR 0.0005f
 #define MODEL_SCALE 0.8f
@@ -41,10 +41,8 @@ public:
 //   void setFuturePosition(Vector3<float> pos);
 //   void setHeads(Vector3<float> currHeadPos, Vector3<float> currHeadUp,
 //                 Vector3<float> prevHeadPos, Vector3<float> prevHeadUp); Flyer
-
    
 private:
-   int health;
    // for aim and rotation, consider the player on a plane normal to the forward
    float vx, vy; 
    float x, y;

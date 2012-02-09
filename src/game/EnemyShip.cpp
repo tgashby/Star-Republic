@@ -1,4 +1,5 @@
 #include "EnemyShip.h"
+#include "Bullet.h"
 
 #define VCHANGE 0.8
 #define VINTENS 0.5
@@ -10,8 +11,7 @@
 #define SIZE 40
 
 EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Player &p) 
-   :  Object3d(), Flyer(), Enemy(p),
-      health(100), side(1,0,0), 
+   :  Object3d(), Flyer(), Enemy(p), side(1,0,0), 
       currentAngle(0), prevAngle(0)
 {
   m_mesh = new Mesh(fileName, textureName, modules);
@@ -88,6 +88,8 @@ void EnemyShip::tic(uint64_t time)
   {
      firing = false;
   }
+   
+   firing = firing && isAlive();
 }
 
 void EnemyShip::setBearing(Vector3<float> headPosition, Vector3<float> headUp)
@@ -142,8 +144,21 @@ void EnemyShip::calculateSide() {
    side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
 }
 
-void EnemyShip::doCollision(GameObject & other){
-   health -= 25;
+void EnemyShip::doCollision(GameObject & other)
+{
+   if (typeid(other) == typeid(Bullet))
+   {
+      if (&((Bullet&)other).getParent() != this) 
+      {
+         m_health -= 25;
+         
+         if (m_health <= 0) 
+         {
+            m_alive = false;
+            m_mesh->setVisible(false);
+         }
+      }
+   }
 }
 bool EnemyShip::shouldFire()
 {
