@@ -107,7 +107,6 @@ void GameEngine::tic(uint64_t td) {
    m_turret->tic(td);
 
    vec3 dirToPlayer = m_turret->getPosition() - m_player->getPosition();
-   
    if (dirToPlayer.Length() < 500 && m_turret->shouldFire()) 
    {
       vec3 dirToPlayerNorm = dirToPlayer.Normalized();
@@ -117,6 +116,32 @@ void GameEngine::tic(uint64_t td) {
                     m_modules, m_turret->getHeadPosition(), 
                     -dirToPlayerNorm, 
                     dirToPlayerNorm.Cross(m_turret->getPosition()));
+         
+      m_modules->renderingEngine->addObject3d(bullet);
+      m_objects.push_back(bullet);
+      m_bulletList.push_back(bullet);
+   }
+
+   vec3 dirEnemyToPlayer = m_enemyShip->getPosition() - m_player->getPosition();
+   if (dirEnemyToPlayer.Length() < 400 && m_enemyShip->shouldFire()) 
+   {
+      vec3 dirToPlayerNorm = dirToPlayer.Normalized();
+      
+      Bullet* bullet = 
+         new Bullet("models/cube.obj", "textures/test4.bmp", 
+                    m_modules, m_enemyShip->getLeftCannonPos(), 
+                    m_enemyShip->getAimForward(), 
+                    dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()));
+         
+      m_modules->renderingEngine->addObject3d(bullet);
+      m_objects.push_back(bullet);
+      m_bulletList.push_back(bullet);
+
+      bullet = 
+         new Bullet("models/cube.obj", "textures/test4.bmp", 
+                    m_modules, m_enemyShip->getRightCannonPos(), 
+                    m_enemyShip->getAimForward(), 
+                    dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()));
          
       m_modules->renderingEngine->addObject3d(bullet);
       m_objects.push_back(bullet);
