@@ -21,13 +21,15 @@
  */ 
 GameObject::GameObject(vec3 startPos, vec3 startVelocity, 
                        vec3 forwardVec, vec3 accelerationVec, 
-                       vec3 upVec)
+                       vec3 upVec, float collideRadius)
 {
    m_position = startPos;
    m_velocity = startVelocity;
    m_forward = forwardVec;
    m_acceleration = accelerationVec;
    m_up = upVec;
+   m_boundingSphere = new BoundingSphere(collideRadius); 
+    
 }
 
 GameObject::GameObject()
@@ -37,10 +39,14 @@ GameObject::GameObject()
    m_forward = vec3(0,0,-1);
    m_acceleration = vec3(0,0,0);
    m_up = vec3(0,1,0);
+   m_boundingSphere = new BoundingSphere(defaultBoundingRadius); 
 }
 
 
-GameObject::~GameObject() {}
+GameObject::~GameObject()
+{
+   delete m_boundingSphere;
+}
 
 
 /**
@@ -80,21 +86,36 @@ void GameObject::setAcceleration(Vector3<float> acc)
    m_acceleration = acc;
 }
 
+void GameObject::setForward(Vector3<float> forward)
+{
+   m_forward = forward;
+}
+
 /**
  * getLocation gets the object's current location
  * @return the object's current location
  */
-const Vector3<float> GameObject::getPosition()
+const Vector3<float> GameObject::getPosition() const
 {
    return m_position;
 }
 
-const Vector3<float> GameObject::getForward()
+const Vector3<float> GameObject::getForward() const
 {
    return m_forward;
 }
 
-const Vector3<float> GameObject::getUp()
+const Vector3<float> GameObject::getUp() const
 {
    return m_up;
+}
+
+const BoundingSphere * GameObject::getBoundingSphere() const
+{
+   return m_boundingSphere;
+}
+
+bool GameObject::collidesWith (const GameObject & other) const {
+   return m_boundingSphere->collidesWith(other.getBoundingSphere(),m_position,
+                                         other.getPosition()); 
 }

@@ -2,7 +2,7 @@
 #include "Object3d.h"
 #include "Player.h"
 
-
+#define VELOCITY_CONSTANT 2
 
 GameEngine::GameEngine(Modules *modules) {
    m_modules = modules;
@@ -29,7 +29,7 @@ void GameEngine::InitData()
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
    
-   m_enemyShip = new EnemyShip("models/spaceship.obj", "textures/test3.bmp", m_modules);
+   m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", m_modules, *m_player);
 
    m_camera = new Camera(vec3(0, 0, 0));
    m_world = new World("maps/world.wf");
@@ -40,7 +40,9 @@ void GameEngine::InitData()
                          "models/turretbase.obj",
                          "textures/test3.bmp",
                          m_modules);
-   m_turret->setPosition(vec3(-144,-1168,5063));
+   
+   m_turret->setPosition(vec3(-144,-1168,4563));
+   m_turret->setForward(-m_player->getForward());
 
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
@@ -106,18 +108,36 @@ void GameEngine::tic(uint64_t td) {
    m_reticle->tic(td);
    m_turret->tic(td);
 
-   vec3 dirToPlayer = (m_turret->getPosition() - m_player->getPosition()).Normalized();
+   vec3 dirToPlayer = m_turret->getPosition() - m_player->getPosition();//(m_player->getPosition() + (m_player->getForward().Normalized() * VELOCITY_CONSTANT));
    
-   Bullet* bullet = 
-      new Bullet("models/cube.obj", "textures/test4.bmp", 
-                 m_modules, m_turret->getHeadPosition(), -dirToPlayer, dirToPlayer.Cross(m_turret->getPosition()));
+   // Turret not currently firing, but I think it's because the player starts too close to the turret
+   if (m_turret->getForward().Dot(m_player->getForward()) < 0 && dirToPlayer.Length() < 500 && m_turret->shouldFire()) 
+   {
+      vec3 dirToPlayerNorm = dirToPlayer.Normalized();
       
-   m_modules->renderingEngine->addObject3d(bullet);
-   m_objects.push_back(bullet);
-   m_bulletList.push_back(bullet);
+      Bullet* bullet = 
+         new Bullet("models/cube.obj", "textures/test4.bmp", 
+                    m_modules, m_turret->getHeadPosition(), 
+                    -dirToPlayerNorm, 
+                    dirToPlayerNorm.Cross(m_turret->getPosition()));
+         
+      m_modules->renderingEngine->addObject3d(bullet);
+      m_objects.push_back(bullet);
+      m_bulletList.push_back(bullet);
+   }
    
-   for (int i = 0; i < m_bulletList.size(); i++) {
-      m_bulletList[i]->tic(td);
+   //Use Iterators!
+   //for (int i = 0; i < m_bulletList.size(); i++) {
+   for(std::vector<Bullet *>::iterator bulletIterator = m_bulletList.begin();
+       bulletIterator != m_bulletList.end();
+       bulletIterator++){ 
+      (*bulletIterator)->tic(td);
+      //Cull the bullet!
+      if(!(*bulletIterator)->isAlive()){
+         //cerr << "Culling Bullet!\n";
+         //m_bulletList.erase(bulletIterator);
+      }
+         
    }
    
    m_camera->update(((m_player->getPosition() - m_player->getProgress()) / 2) + m_player->getProgress(), 

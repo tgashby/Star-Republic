@@ -4,85 +4,66 @@
 #define VINTENS 0.5
 #define SCREENX 400
 #define SCREENY 300
+#define MAXSCAREDANGLE 15
+#define MAXSCAREDSPEED 0.3
 
-EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules) 
-   :  Object3d(), Flyer(),
+EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Player &p) 
+   :  Object3d(), Flyer(), Enemy(p),
       health(100), side(1,0,0), 
-      lastScreenX(0), lastScreenY(0), 
       currentAngle(0), prevAngle(0)
 {
-   m_mesh = new Mesh(fileName, textureName, modules);
-   m_meshList.push_back(m_mesh);
-   
-   // these are relative to the 'forward' vector
-   x = SCREENX;
-   y = SCREENY;
-   
-   vx = 0;
-   vy = 0;
-   
-   mat4 modelMtx = mat4::Scale(mODEL_SCALE) * 
-      mat4::Magic(-getForward(), getUp(), getPosition());
-   m_mesh->setModelMtx(modelMtx);
+  m_mesh = new Mesh(fileName, textureName, modules);
+  m_meshList.push_back(m_mesh);
+
+  dpos = (m_playerRef.getPosition() - m_position).Normalized();
+
+  dodging = false;
+  dodgedir = 0;
+
+  mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
+     mat4::Magic(-getForward(), getUp(), getPosition());
+  m_mesh->setModelMtx(modelMtx);
 }
 
 EnemyShip::~EnemyShip()
 {
    delete m_mesh;
-
 }
 
 
 //All Vectors are updated in here
 void EnemyShip::tic(uint64_t time)
 {
-   mat4 tempMatrix;
-   float diffAngle;
-   vec3 tempUp, acosTest;
-   mat4 modelMtx;
-   
-   m_progressVelocity += m_acceleration * time;
-   currentAngle = currentAngle * (m_previousHeadPos - m_progress).Length() / 
-   (m_currentHeadPos - m_previousHeadPos).Length();
-   diffAngle = currentAngle - prevAngle;
-   
-   //Gets the matrix that you need to use to make the position rotate around at this angle
-   tempMatrix = mat4::Rotate(diffAngle, (m_currentHeadPos - m_progress).Normalized());	
-   
-   //Matrix multiplication to come up with the rotated up.
-   tempUp.x = (m_up.x * tempMatrix.x.x) + (m_up.y * tempMatrix.y.x) 
-   + (m_up.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
-   tempUp.y = (m_up.x * tempMatrix.x.y) + (m_up.y * tempMatrix.y.y) 
-   + (m_up.z * tempMatrix.z.y) + (1 * tempMatrix.w.y);
-   tempUp.z = (m_up.x * tempMatrix.x.z) + (m_up.y * tempMatrix.y.z) 
-   + (m_up.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
-   
-   //Up value set to the vector that was calculated above.
-   m_up = tempUp.Normalized();
-   calculateSide();
-   
-   //TempUp is actually Tempposition here.
-   tempUp.x = (m_position.x * tempMatrix.x.x) + (m_position.y * tempMatrix.y.x) 
-   + (m_position.z * tempMatrix.z.x) + (1 * tempMatrix.w.x);
-   tempUp.y = (m_position.x * tempMatrix.x.y) + (m_position.y * tempMatrix.y.y) 
-   + (m_position.z * tempMatrix.z.y) + (1 * tempMatrix.w.y);
-   tempUp.z = (m_position.x * tempMatrix.x.z) + (m_position.y * tempMatrix.y.z) 
-   + (m_position.z * tempMatrix.z.z) + (1 * tempMatrix.w.z);
-   
-   m_position = tempUp;
-   m_velocity = (((side * lastScreenX)) - (m_position - m_progress)) * x_SCALAR
-   + (((m_up * lastScreenY)) - (m_position - m_progress)) * y_SCALAR 
-   + m_progressVelocity;
-   m_progress += m_progressVelocity * time;
-   m_position = m_position + (m_velocity * time);
-   
-   modelMtx = mat4::Scale(mODEL_SCALE) * 
-   mat4::Magic(getAimForward(), getAimUp(), getPosition());
-   m_mesh->setModelMtx(modelMtx);
-   
-   x += vx * time;
-   y += vy * time;
-   updateVelocity(lastScreenX, lastScreenY);
+  dpos = (m_playerRef.getPosition() - m_position).Normalized();
+  
+  // moving based on the player's direction and it's aiming direction
+  m_position += m_playerRef.getForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
+
+  // 'scared ship' AI
+  float aimAngle;
+  aimAngle = 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getAimForward()));
+  if (aimAngle < MAXSCAREDANGLE)
+  {
+     if (!dodging)
+     {
+        if (180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getSide())) < 90)
+           dodgedir = 1;
+        else
+           dodgedir = -1;
+     }
+     vec3 motionDir = getScaredSide() / (aimAngle / MAXSCAREDANGLE) * MAXSCAREDSPEED * dodgedir;
+     m_position += motionDir;
+     dodging = true;
+  }
+  else
+  {
+     dodging = false;
+     dodgedir = 0;
+  }
+
+  mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0));
+  modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
+  m_mesh->setModelMtx(modelMtx);
 }
 
 void EnemyShip::setBearing(Vector3<float> headPosition, Vector3<float> headUp)
@@ -96,49 +77,27 @@ void EnemyShip::setBearing(Vector3<float> headPosition, Vector3<float> headUp)
    
    m_currentHeadUp = headUp.Normalized();
    
-   m_progressVelocity = (headPosition - m_progress).Normalized() * vELOCITY;
+   m_progressVelocity = (headPosition - m_progress).Normalized() * PATHVELOCITY;
    
    prevAngle = currentAngle;
    currentAngle = 180.0f / 3.14159265f * acos(m_previousHeadUp.Normalized().Dot(headUp.Normalized()));
 }
 
-void EnemyShip::updateVelocity(float diffX, float diffY)
-{
-   vx = -(diffX + x - SCREENX) / SCREENX;
-   vy = -(diffY + y - SCREENY) / SCREENY;
-   
-   lastScreenX = diffX;
-   lastScreenY = diffY;
-}
-
 Vector3<float> EnemyShip::getAimForward()
 {
-   if (vx > VCHANGE)
-      vx = VCHANGE;
-   if (vy > VCHANGE)
-      vy = VCHANGE;
-   if (vx < -VCHANGE)
-      vx = -VCHANGE;
-   if (vy < -VCHANGE)
-      vy = -VCHANGE;
-   float tvx = vx * VINTENS;
-   float tvy = vy * VINTENS;
-   return (-getForward() * (1 - abs(tvx)) * (1 - abs(tvy)) 
-           + getSide() * tvx + getUp() * tvy).Normalized();
+   return dpos;
 }
 Vector3<float> EnemyShip::getAimUp()
 {
-   if (vx > VCHANGE)
-      vx = VCHANGE;
-   if (vy > VCHANGE)
-      vy = VCHANGE;
-   if (vx < -VCHANGE)
-      vx = -VCHANGE;
-   if (vy < -VCHANGE)
-      vy = -VCHANGE;
-   float tvy = vy * VINTENS;
-   return (getUp() * (1 - abs(tvy)) + getForward() * tvy).Normalized();
+   return getUp();
 }
+
+Vector3<float> EnemyShip::getScaredSide()
+{
+   vec3 aaargh = m_playerRef.getAimForward().Cross(m_playerRef.getAimUp()).Normalized();
+   return aaargh;
+}
+
 
 Vector3<float> EnemyShip::getSide()
 {
@@ -148,4 +107,8 @@ Vector3<float> EnemyShip::getSide()
 
 void EnemyShip::calculateSide() {
    side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
+}
+
+void EnemyShip::doCollision(GameObject & other){
+   //DO Collision stuff
 }
