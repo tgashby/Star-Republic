@@ -35,7 +35,7 @@ void GameEngine::InitData()
    m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", m_modules, *m_player);
 
    m_camera = new Camera(vec3(0, 0, 0));
-   m_world = new World("maps/world.wf");
+   m_world = new World("maps/world.wf", m_modules);
    m_turret = new Turret(*m_player, "models/turrethead.obj",
                          "textures/test3.bmp",
                          "models/turretmiddle.obj",

@@ -1,11 +1,12 @@
 #pragma once
-#include "../engine/Vector.h"
+#include "../engine/Interfaces.h"
 
 class WorldPoint
 {
 public:
    
 WorldPoint(Vector3<float> position, Vector3<float> up, Vector3<float> forward, Vector3<float> side);
+ WorldPoint(vec3 position, vec3 forward, vec3 up, ivec4 links);
 ~WorldPoint();
 void setPosition(float x, float y, float z);
 void setUp(float x, float y, float z);
