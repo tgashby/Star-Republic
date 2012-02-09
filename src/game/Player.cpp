@@ -59,6 +59,9 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
  m_offsetPosition += (m_sideVelocity * time) + (m_upVelocity * time);
  m_position = m_offsetPosition + tempPos;
 
+ assert(m_up == m_up);
+ assert(m_up.y == m_up.y);
+
  modelMtx = mat4::Scale(MODEL_SCALE) * 
       mat4::Magic(-(((m_sideVelocity + m_upVelocity + m_forward)/3).Normalized()), m_up, m_position);
    m_mesh->setModelMtx(modelMtx);
