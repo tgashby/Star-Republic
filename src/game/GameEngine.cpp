@@ -102,7 +102,7 @@ cerr << "BAHHH! I'm awful\n";
    m_objects.push_back(canyon);
    canyon = new Object3d("models/course1e.obj", "textures/test3.bmp", m_modules);
    m_modules->renderingEngine->addObject3d(canyon);
-   m_objects.push_back(canyon);*/
+   m_objects.push_back(canyon);
    
    
    //m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());

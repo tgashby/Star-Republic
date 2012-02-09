@@ -74,9 +74,9 @@ void Camera::tic(uint64_t time) {
   }
   
   if (!m_turning) {
-  temp1 = m_up * (m_head->getPosition() - m_ref).Length() / 
+  temp1 = m_head->getUp() * (m_head->getPosition() - m_ref).Length() / 
      (m_head->getPosition() - m_tail->getPosition()).Length();
-  temp2 = m_up * (m_ref - m_tail->getPosition()).Length() / 
+  temp2 = m_head->getUp() * (m_ref - m_tail->getPosition()).Length() / 
      (m_head->getPosition() - m_tail->getPosition()).Length();
   m_up = (temp1 + temp2).Normalized();
     //ADD forward between them
