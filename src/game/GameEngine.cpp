@@ -108,13 +108,15 @@ void GameEngine::tic(uint64_t td) {
 
    vec3 dirToPlayer = m_turret->getPosition() - m_player->getPosition();
    
-   vec3 dirToPlayerNorm = dirToPlayer.Normalized();
-   
    if (dirToPlayer.Length() < 500 && m_turret->shouldFire()) 
    {
+      vec3 dirToPlayerNorm = dirToPlayer.Normalized();
+      
       Bullet* bullet = 
          new Bullet("models/cube.obj", "textures/test4.bmp", 
-                    m_modules, m_turret->getHeadPosition(), -dirToPlayerNorm, dirToPlayerNorm.Cross(m_turret->getPosition()));
+                    m_modules, m_turret->getHeadPosition(), 
+                    -dirToPlayerNorm, 
+                    dirToPlayerNorm.Cross(m_turret->getPosition()));
          
       m_modules->renderingEngine->addObject3d(bullet);
       m_objects.push_back(bullet);
