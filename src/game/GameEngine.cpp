@@ -37,7 +37,7 @@ void GameEngine::InitData()
                          "textures/test3.bmp",
                          "models/turretmiddle.obj",
                          "textures/test3.bmp",
-                         "models/canyon.obj",
+                         "models/turretbase.obj",
                          "textures/test3.bmp",
                          m_modules);
    m_turret->setPosition(vec3(-144,-1168,5063));
@@ -111,7 +111,7 @@ void GameEngine::tic(uint64_t td) {
       m_bulletList[i]->tic(td);
    }
    
-   m_camera->update(((m_player->getPosition() - m_player->getProgress()) / 2) + m_player->getProgress(), 
+   m_camera->update(m_player->getPosition(), 
 		    m_player->getForward(), 
 		    m_player->getUp());
 }
