@@ -11,7 +11,8 @@
 #include <assert.h>
 #include <cmath>
 
-const float vELOCITY = 0.02f;
+const float PATHVELOCITY = 0.8f;
+const float AIMVELOCITY = 0.2f;
 const float x_SCALAR = 0.0005f; 
 const float y_SCALAR = 0.0005f; 
 const float mODEL_SCALE = 0.05f;
@@ -33,6 +34,7 @@ private:
    int health;
    Mesh *m_mesh;
    Vector3<float> side;
+   Vector3<float> dpos;
    float prevAngle;
    float currentAngle;
 	

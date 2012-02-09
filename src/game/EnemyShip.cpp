@@ -10,12 +10,14 @@ EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Play
       health(100), side(1,0,0), 
       currentAngle(0), prevAngle(0)
 {
-   m_mesh = new Mesh(fileName, textureName, modules);
-   m_meshList.push_back(m_mesh);
+  m_mesh = new Mesh(fileName, textureName, modules);
+  m_meshList.push_back(m_mesh);
 
-   mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
-      mat4::Magic(-getForward(), getUp(), getPosition());
-   m_mesh->setModelMtx(modelMtx);
+  dpos = (m_playerRef.getPosition() - m_position).Normalized();
+
+  mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
+     mat4::Magic(-getForward(), getUp(), getPosition());
+  m_mesh->setModelMtx(modelMtx);
 }
 
 EnemyShip::~EnemyShip()
@@ -27,7 +29,11 @@ EnemyShip::~EnemyShip()
 //All Vectors are updated in here
 void EnemyShip::tic(uint64_t time)
 {
+  dpos = (m_playerRef.getPosition() - m_position).Normalized();
   
+  // moving based on the player's direction and it's aiming direction
+  m_position += m_playerRef.getForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
+
 
   mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0));
   modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
@@ -45,7 +51,7 @@ void EnemyShip::setBearing(Vector3<float> headPosition, Vector3<float> headUp)
    
    m_currentHeadUp = headUp.Normalized();
    
-   m_progressVelocity = (headPosition - m_progress).Normalized() * vELOCITY;
+   m_progressVelocity = (headPosition - m_progress).Normalized() * PATHVELOCITY;
    
    prevAngle = currentAngle;
    currentAngle = 180.0f / 3.14159265f * acos(m_previousHeadUp.Normalized().Dot(headUp.Normalized()));
@@ -53,7 +59,7 @@ void EnemyShip::setBearing(Vector3<float> headPosition, Vector3<float> headUp)
 
 Vector3<float> EnemyShip::getAimForward()
 {
-   return -getForward();
+   return dpos;
 }
 Vector3<float> EnemyShip::getAimUp()
 {
