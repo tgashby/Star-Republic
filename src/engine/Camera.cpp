@@ -35,7 +35,7 @@ mat4 Camera::getProjectionViewMtx() {
    
    // apply the view
    projectionMatrix = mat4::LookAt(projectionMatrix, m_eye, m_ref, m_up);
-   cout << "Camera eye is " << m_eye.x << " " << m_eye.y << " " << m_eye.z << "\n";
+   //cout << "Camera eye is " << m_eye.x << " " << m_eye.y << " " << m_eye.z << "\n";
    return projectionMatrix;
 }
 
@@ -74,7 +74,7 @@ void Camera::tic(uint64_t time) {
   }
   
   if (!m_turning) {
-  temp1 = m_head->getUp() * (m_head->getPosition() - m_ref).Length() / 
+  temp1 = m_tail->getUp() * (m_head->getPosition() - m_ref).Length() / 
      (m_head->getPosition() - m_tail->getPosition()).Length();
   temp2 = m_head->getUp() * (m_ref - m_tail->getPosition()).Length() / 
      (m_head->getPosition() - m_tail->getPosition()).Length();

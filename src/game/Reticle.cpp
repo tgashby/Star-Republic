@@ -3,9 +3,9 @@
 #define SCALE1 1
 #define SCALE2 1.5
 #define SCALE3 2
-#define TRANS1 100
-#define TRANS2 70 
-#define TRANS3 40
+#define TRANS1 -100
+#define TRANS2 -70 
+#define TRANS3 -40
 
 Reticle::Reticle(string fileName, string textureName, Modules *modules, Player *p) 
    :  Object3d()

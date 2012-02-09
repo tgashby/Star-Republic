@@ -102,7 +102,7 @@ cerr << "BAHHH! I'm awful\n";
    m_objects.push_back(canyon);
    canyon = new Object3d("models/course1e.obj", "textures/test3.bmp", m_modules);
    m_modules->renderingEngine->addObject3d(canyon);
-   m_objects.push_back(canyon);
+   m_objects.push_back(canyon);*/
    
    
    //m_player->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
@@ -268,7 +268,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
 				  m_modules, m_player->getPosition() 
 				  + (m_player->getSide() * 8),
-			     -m_player->getAimForward(), m_player->getAimUp());
+			     m_player->getAimForward(), m_player->getAimUp());
       
       m_modules->renderingEngine->addObject3d(bullet);
       m_gameObjects.push_back(bullet);
@@ -278,7 +278,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
 			  m_modules, m_player->getPosition() 
 			  - (m_player->getSide() * 8),
-			  -m_player->getAimForward(), m_player->getAimUp());
+			  m_player->getAimForward(), m_player->getAimUp());
 
       
 

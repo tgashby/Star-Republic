@@ -29,7 +29,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    vy = 0;
 
    mat4 modelMtx = mat4::Scale(MODEL_SCALE) * mat4::Rotate(180, vec3(0,1,0)) *
-      mat4::Magic(-getForward(), getUp(), getPosition());
+      mat4::Magic(getForward(), getUp(), getPosition());
    m_mesh->setModelMtx(modelMtx);
 }
 
@@ -45,13 +45,11 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
   mat4 modelMtx;
   Vector3<float> tempPos;
 
- //m_forward = cam_forward;	
- //m_up = cam_up;
  m_forward = cam_forward.Normalized();
  side = cam_forward.Cross(cam_up);
  side.Normalize();
  m_up = side.Cross(m_forward);
- //m_position = cam_position + (cam_forward * PLAYER_DISTANCE_FROM_CAMERA);
+
  tempPos = cam_position + (cam_forward * PLAYER_DISTANCE_FROM_CAMERA); 
  calculateSide();
  m_sideVelocity = (((side * lastScreenX)) - (m_position - tempPos)) * X_SCALAR;
@@ -60,7 +58,7 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
  m_position = m_offsetPosition + tempPos;
 
  modelMtx = mat4::Scale(MODEL_SCALE) * mat4::Rotate(180, vec3(0,1,0)) *
-      mat4::Magic(-getAimForward(), getAimUp(), m_position);
+      mat4::Magic(getAimForward(), getAimUp(), m_position);
    m_mesh->setModelMtx(modelMtx);
 
    x += vx * time;
@@ -88,10 +86,10 @@ Vector3<float> Player::getAimForward()
       vx = -VCHANGE;
    if (vy < -VCHANGE)
       vy = -VCHANGE;
-   float tvx = vx * VINTENS;
-   float tvy = vy * VINTENS;
-   return (-getForward() * (1 - abs(tvx)) * (1 - abs(tvy)) 
-      + getSide() * tvx + getUp() * tvy).Normalized();
+   float tvx = -vx * VINTENS;
+   float tvy = -vy * VINTENS;
+   return (m_forward * (1 - abs(tvx)) * (1 - abs(tvy)) 
+      + getSide() * tvx + m_up * tvy).Normalized();
 }
 Vector3<float> Player::getAimUp()
 {
@@ -103,8 +101,8 @@ Vector3<float> Player::getAimUp()
       vx = -VCHANGE;
    if (vy < -VCHANGE)
       vy = -VCHANGE;
-   float tvy = vy * VINTENS;
-   return (getUp() * (1 - abs(tvy)) + getForward() * tvy).Normalized();
+   float tvy = -vy * VINTENS;
+   return (m_up * (1 - abs(tvy)) + m_forward * tvy).Normalized();
 }
 
 Vector3<float> Player::getSide()
