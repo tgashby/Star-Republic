@@ -108,3 +108,7 @@ Vector3<float> EnemyShip::getSide()
 void EnemyShip::calculateSide() {
    side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
 }
+
+void EnemyShip::doCollision(GameObject & other){
+   //DO Collision stuff
+}

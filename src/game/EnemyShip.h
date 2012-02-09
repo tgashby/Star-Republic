@@ -30,6 +30,7 @@ public:
    void updateVelocity(float diffX, float diffY); //GOBJ
    Vector3<float> getAimForward();
    Vector3<float> getAimUp();
+   void doCollision(GameObject & other); 
    
 private:
    int health;
