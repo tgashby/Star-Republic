@@ -16,7 +16,6 @@ Turret::Turret(Player& player, string headName, string headTexture, string midNa
    mat4 modelMtx = mat4::Translate(0, 0, 0);
    m_footMesh->setModelMtx(modelMtx);
    
-   
    m_midMesh = new Mesh(midName, midTexture, modules);
    m_meshList.push_back(m_midMesh);
    modelMtx *= mat4::Translate(0, 1, 0);

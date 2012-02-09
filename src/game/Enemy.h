@@ -12,7 +12,7 @@
 #include "GameObject.h"
 #include "Player.h"
 
-class Enemy : public GameObject 
+class Enemy
 {
 public:
    Enemy(Player& player);

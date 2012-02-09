@@ -12,11 +12,12 @@
 #include "Interfaces.h"
 #include "Object3d.h"
 #include "Player.h"
+#include "GameObject.h"
 #include "Enemy.h"
 #include "Bullet.h"
 #include "Mesh.h"
 
-class Turret : public Object3d, public Enemy {
+class Turret : public Object3d, public Enemy, public GameObject {
 public:
    Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules);
    ~Turret();
