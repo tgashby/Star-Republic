@@ -9,10 +9,9 @@
 #ifndef StarRepub_Enemy_h
 #define StarRepub_Enemy_h
 
-#include "GameObject.h"
 #include "Player.h"
 
-class Enemy
+class Enemy 
 {
 public:
    Enemy(Player& player);

@@ -6,8 +6,6 @@
 #include "ResourceManager.h"
 
 #include "SDL_include.h"
-
-#define VELOCITY_CONSTANT 2
 #include "World.h"
 #include "WorldPoint.h"
 #include "Turret.h"

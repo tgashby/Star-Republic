@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Object3d.h"
 #include "Flyer.h"
+#include "Enemy.h"
 #include "Mesh.h"
 #include "Enemy.h"
 #include <assert.h>
@@ -32,6 +33,8 @@ private:
    int health;
    Mesh *m_mesh;
    Vector3<float> side;
+   float prevAngle;
+   float currentAngle;
 	
 };
 

@@ -2,7 +2,7 @@
 #include "Object3d.h"
 #include "Player.h"
 
-
+#define VELOCITY_CONSTANT 2
 
 GameEngine::GameEngine(Modules *modules) {
    m_modules = modules;
@@ -83,6 +83,15 @@ void GameEngine::InitData()
    m_music = loadMusic("sound/venom.mp3");
    
    m_music->play(1);
+   
+   // test loading a world
+   /*
+   WorldData *worldData = m_modules->resourceManager->readWorldData("maps/world2.wf");
+   cout << "loaded " << worldData->path.size() << " path elements\n";
+   cout << "loaded " << worldData->links.size() << " link elements\n";
+   cout << "loaded " << worldData->turrets.size() << " turret elements\n";
+   cout << "(" << worldData->path[0].x << ", " << worldData->path[0].y << ")\n"; 
+   delete worldData;*/
 }
 
 void GameEngine::tic(uint64_t td) {
@@ -97,15 +106,20 @@ void GameEngine::tic(uint64_t td) {
    m_reticle->tic(td);
    m_turret->tic(td);
 
-   vec3 dirToPlayer = (m_turret->getPosition() - m_player->getPosition()).Normalized();
+   vec3 dirToPlayer = m_turret->getPosition() - m_player->getPosition();
    
-   Bullet* bullet = 
-      new Bullet("models/cube.obj", "textures/test4.bmp", 
-                 m_modules, m_turret->getHeadPosition(), -dirToPlayer, dirToPlayer.Cross(m_turret->getPosition()));
-      
-   m_modules->renderingEngine->addObject3d(bullet);
-   m_objects.push_back(bullet);
-   m_bulletList.push_back(bullet);
+   vec3 dirToPlayerNorm = dirToPlayer.Normalized();
+   
+   if (dirToPlayer.Length() < 500 && m_turret->shouldFire()) 
+   {
+      Bullet* bullet = 
+         new Bullet("models/cube.obj", "textures/test4.bmp", 
+                    m_modules, m_turret->getHeadPosition(), -dirToPlayerNorm, dirToPlayerNorm.Cross(m_turret->getPosition()));
+         
+      m_modules->renderingEngine->addObject3d(bullet);
+      m_objects.push_back(bullet);
+      m_bulletList.push_back(bullet);
+   }
    
    for (int i = 0; i < m_bulletList.size(); i++) {
       m_bulletList[i]->tic(td);
