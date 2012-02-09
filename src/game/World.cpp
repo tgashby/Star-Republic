@@ -36,8 +36,8 @@ WorldPoint World::parseLine(const string line)
    totalPaths = sscanf(line.c_str(), 
 		       "%d %f %f %f %f %f %f %f %f %f %f %f %f %d %d %d", 
 		       &tempInt, &tempPosition.x, &tempPosition.y, 
-		       &tempPosition.z, &tempUp.x, &tempUp.y, &tempUp.z, 
-		       &tempForward.x, &tempForward.y, &tempForward.z, 
+		       &tempPosition.z, &tempForward.x, &tempForward.y, &tempForward.z, 
+		       &tempUp.x, &tempUp.y, &tempUp.z, 
 		       &tempSide.x, &tempSide.y, &tempSide.z, &tempLeft,
 		       &tempMid, &tempRight) - 13;
 
