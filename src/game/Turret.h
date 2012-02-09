@@ -34,8 +34,6 @@ private:
    Mesh *m_midMesh;
    Mesh *m_footMesh;
    
-   vec3 headPosition;
-   
    bool firing;
    uint64_t firingTimer;
    

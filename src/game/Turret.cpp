@@ -55,12 +55,14 @@ void Turret::tic(uint64_t time)
    m_headMesh->setModelMtx(modelMtx);
    
    vec3 dirToPlayer = (m_playerRef.getPosition() - m_position).Normalized();
+   vec3 intermed = dirToPlayer.Cross(m_up);
+   vec3 dirToPlayerFlat = intermed.Cross(m_up);
    
-   modelMtx = mat4::Magic(-dirToPlayer, m_up, m_position);
+   modelMtx = mat4::Magic(-dirToPlayerFlat, m_up, m_position);
    m_midMesh->setModelMtx(modelMtx);
    
+   modelMtx = mat4::Magic(-dirToPlayer, m_up, m_position);
    modelMtx *= mat4::Translate(0, 13, 0);
-   
    m_headMesh->setModelMtx(modelMtx);
    
    firingTimer += time;
@@ -78,7 +80,9 @@ void Turret::tic(uint64_t time)
 
 Vector3<float> Turret::getHeadPosition()
 {
-   return m_position;
+   vec3 toRet = m_position + (m_up.Normalized() * 13);
+   
+   return toRet;
 }
 bool Turret::shouldFire()
 {
