@@ -23,6 +23,7 @@ public:
    ~Turret();
    
    void tic(uint64_t time);
+   void doCollision(GameObject & other);
    
    Vector3<float> getHeadPosition();
    

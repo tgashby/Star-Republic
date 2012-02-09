@@ -118,7 +118,7 @@ void GameEngine::tic(uint64_t td) {
       Bullet* bullet = 
          new Bullet("models/cube.obj", "textures/test4.bmp", 
                     m_modules, m_turret->getHeadPosition(), 
-                    -dirToPlayerNorm , 
+                    -dirToPlayerNorm, 
                     dirToPlayerNorm.Cross(m_turret->getPosition()));
          
       m_modules->renderingEngine->addObject3d(bullet);
@@ -126,9 +126,18 @@ void GameEngine::tic(uint64_t td) {
       m_bulletList.push_back(bullet);
    }
    
-   for (int i = 0; i < m_bulletList.size(); i++) 
-   {
-      m_bulletList[i]->tic(td);
+   //Use Iterators!
+   //for (int i = 0; i < m_bulletList.size(); i++) {
+   for(std::vector<Bullet *>::iterator bulletIterator = m_bulletList.begin();
+       bulletIterator != m_bulletList.end();
+       bulletIterator++){ 
+      (*bulletIterator)->tic(td);
+      //Cull the bullet!
+      if(!(*bulletIterator)->isAlive()){
+         //cerr << "Culling Bullet!\n";
+         //m_bulletList.erase(bulletIterator);
+      }
+         
    }
    
    m_camera->update(((m_player->getPosition() - m_player->getProgress()) / 2) + m_player->getProgress(), 

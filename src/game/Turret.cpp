@@ -84,6 +84,11 @@ Vector3<float> Turret::getHeadPosition()
    
    return toRet;
 }
+
+void Turret::doCollision(GameObject & other){
+   //Do collision stuff here!
+} 
+
 bool Turret::shouldFire()
 {
    return firing;
