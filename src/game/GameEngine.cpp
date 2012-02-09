@@ -75,8 +75,19 @@ void GameEngine::tic(uint64_t td) {
    m_player->tic(td);
    m_reticle->tic(td);
    
-   for (int i = 0; i < m_bulletList.size(); i++) {
-      m_bulletList[i]->tic(td);
+   //Use Iterators!
+   //for (int i = 0; i < m_bulletList.size(); i++) {
+   cerr << "Tic!\n";
+   for(std::vector<Bullet *>::iterator bulletIterator = m_bulletList.begin();
+       bulletIterator != m_bulletList.end();
+       bulletIterator++){ 
+      (*bulletIterator)->tic(td);
+      //Cull the bullet!
+      if(!(*bulletIterator)->isAlive()){
+         cerr << "Culling Bullet!\n";
+         m_bulletList.erase(bulletIterator);
+      }
+         
    }
    m_camera->update(((m_player->getPosition() - m_player->getProgress()) / 2) + m_player->getProgress(), 
 		    m_player->getForward(), 
@@ -148,6 +159,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       m_modules->renderingEngine->addObject3d(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
+      cerr << "New bullet!\n";
 
       bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
 			  m_modules, m_player->getPosition() 
@@ -157,6 +169,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       m_modules->renderingEngine->addObject3d(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
+      cerr << "New bullet!\n";
       
       m_bulletSound->play(0);
    }

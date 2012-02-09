@@ -8,13 +8,14 @@
 #define GAMEOBJECT_H
 
 #include "Interfaces.h"
+#include "BoundingSphere.h"
 
 class GameObject {
 public:
    // Constructors
    GameObject(vec3 startPos, vec3 startVelocity, 
               vec3 forwardVec, vec3 accelerationVec, 
-              vec3 upVec);
+              vec3 upVec,float collideRadius );
    GameObject();
    
    // Destructors
@@ -30,13 +31,18 @@ public:
    void setAcceleration(Vector3<float> acc);
    
    // Getters
-   const vec3 getLocation();
-   const Vector3<float> getPosition();
-   const Vector3<float> getForward();
-   const Vector3<float> getUp();
+   const vec3 getLocation() const;
+   const Vector3<float> getPosition() const;
+   const Vector3<float> getForward() const;
+   const Vector3<float> getUp() const;
    
    // Bounding and Collision
-   //virtual void doCollision(GameObject & other) = 0;
+   virtual void doCollision(GameObject & other) = 0;
+   //In the future this will be replaced with a more complex boundingStructure
+   virtual bool collidesWith(const GameObject & other) const; 
+   
+      
+   const BoundingSphere * getBoundingSphere() const;
    //const BoundingHeirarchy getBounds();
 protected:
    vec3 m_position;
@@ -45,6 +51,9 @@ protected:
    vec3 m_acceleration;
    vec3 m_up;
    
+private:
+   static const float defaultBoundingRadius = 2;
+   const BoundingSphere * m_boundingSphere; 
    // BoundingHeirarchy bounds;
 };
 

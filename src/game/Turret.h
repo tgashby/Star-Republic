@@ -21,6 +21,7 @@ public:
    ~Turret();
    
    void tic(uint64_t time);
+   void doCollision(GameObject & other);
    
 private:
    int health;

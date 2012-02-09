@@ -9,7 +9,7 @@ Player::Player(string fileName, string textureName, Modules *modules)
    :  Object3d(), Flyer(),
       health(100), side(1,0,0), 
       lastScreenX(0), lastScreenY(0), 
-      currentAngle(0), prevAngle(0)
+      currentAngle(0), prevAngle(0) 
 {
    m_mesh = new Mesh(fileName, textureName, modules);
    m_meshList.push_back(m_mesh);
@@ -148,4 +148,8 @@ Vector3<float> Player::getSide()
 
 void Player::calculateSide() {
    side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
+}
+
+void Player::doCollision(GameObject & other){
+   //DO Collision stuff
 }

@@ -22,8 +22,8 @@ class BoundingSphere {
  public:
    BoundingSphere(float radius);
    float getRadius();
-   bool collidesWith(BoundingSphere* other, vec3 thisPos, 
-				     vec3 otherPos);
+   const bool collidesWith(const BoundingSphere* other, const vec3 thisPos, 
+				     const vec3 otherPos) const;
 
    //IF WE EXTEND BOUNDING OBJECT, WILL INCLUDE POSITIONS,
    //  SO WE CAN ROTATE THEM PIECE BY PIECE

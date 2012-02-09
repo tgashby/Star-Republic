@@ -72,4 +72,9 @@ void Turret::tic(uint64_t time)
    }
    
    m_headMesh->setModelMtx(mat4::Rotate(Rotation));
+
 }
+
+void Turret::doCollision(GameObject & other){
+   //Do collision stuff here!
+} 
