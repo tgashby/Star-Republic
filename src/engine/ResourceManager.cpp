@@ -284,7 +284,7 @@ WorldData* ResourceManager::readWorldData(string fileName) {
                world->turrets.push_back(fwd);
                world->turrets.push_back(up);
             }
-         }*/
+         }
          else if (!(start = line.find("m "))) {
             vec3 loc, fwd, up;
             int reads;
@@ -303,7 +303,7 @@ WorldData* ResourceManager::readWorldData(string fileName) {
                world->turrets.push_back(fwd);
                world->turrets.push_back(up);
             }
-         }
+         }*/
       }
    }
    else
