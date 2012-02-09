@@ -53,7 +53,7 @@ protected:
    vec3 m_up;
    
 private:
-   static const float defaultBoundingRadius = 2;
+   static const float defaultBoundingRadius = 4;
    const BoundingSphere * m_boundingSphere; 
    // BoundingHeirarchy bounds;
 };

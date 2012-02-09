@@ -67,7 +67,7 @@ void Turret::tic(uint64_t time)
    
    firingTimer += time;
    
-   if (firingTimer > 500)
+   if (firingTimer > 400)
    {
       firing = true;
       firingTimer = 0;
