@@ -247,7 +247,7 @@ WorldData* ResourceManager::readWorldData(string fileName) {
                                 &link.x, &loc.x, &loc.y, &loc.z, 
                                 &up.x, &up.y, &up.z, 
                                 &fwd.x, &fwd.y, &fwd.z, 
-                                &link.y, &link.z, &link.w) - 10;
+                                &link.y, &link.z, &link.w) - 9;
             
             if (totalLinks == 1)
                link.y = link.z = link.w = -1;
@@ -259,6 +259,8 @@ WorldData* ResourceManager::readWorldData(string fileName) {
                cerr << "error reading point on path\n";
                continue;
             }
+            
+            cout << "y = " << link.y << "\n";
             
             world->path.push_back(loc);
             world->path.push_back(fwd);

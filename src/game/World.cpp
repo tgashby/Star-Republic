@@ -26,11 +26,12 @@ World::World(const string fileName)
 
 World::World(const string fileName, Modules* m_modules)
 {
-  WorldPoint* currentPoint;
+   currentPoint = 1;
+   previousPoint = 0;
 
   WorldData *worldData = m_modules->resourceManager->
     readWorldData("maps/world2.wf");
-  for (int i = 0; i < worldData->path.size(); i++) { 
+  for (int i = 0; i < worldData->links.size(); i++) { 
     points.push_back(WorldPoint(worldData->path[i*3], worldData->path[i*3 + 1],
 				worldData->path[i*3 + 2], worldData->links[i]));
   }
@@ -101,6 +102,8 @@ World::~World()
 
 WorldPoint World::getAt(int index) 
 {
+   //cout << "index: " << index << "\n";
+   //cout << "from vector size: " << points.size() << "\n";
   return points.at(index);
 }
 
@@ -117,9 +120,11 @@ WorldPoint World::update(Vector3<float> playerPos)
   Vector3<float> vect1 (current.getPosition().x - previous.getPosition().x,
 			current.getPosition().y - previous.getPosition().y,
 			current.getPosition().z - previous.getPosition().z);
+   cout << "it worked1\n";
   Vector3<float> vect2 (current.getPosition().x + current.getUp().x,
 			current.getPosition().y + current.getUp().y,
 			current.getPosition().z + current.getUp().z);
+   cout << "it worked2\n";
   Vector3<float> normal;
   float distance = sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
   WorldPoint firstChoice = getAt(current.getFirstID());
