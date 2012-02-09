@@ -15,7 +15,7 @@ public:
    // Constructors
    GameObject(vec3 startPos, vec3 startVelocity, 
               vec3 forwardVec, vec3 accelerationVec, 
-              vec3 upVec,float collideRadius );
+              vec3 upVec,float collideRadius, int health);
    GameObject();
    
    // Destructors
@@ -46,6 +46,7 @@ public:
    const BoundingSphere * getBoundingSphere() const;
    //const BoundingHeirarchy getBounds();
 protected:
+   int m_health;
    vec3 m_position;
    vec3 m_velocity;
    vec3 m_forward;

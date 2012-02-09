@@ -28,19 +28,20 @@ public:
    Vector3<float> getHeadPosition();
    
    bool shouldFire();
-   
-   void collideWith(Bullet& bullet);
-   void collideWith(Player& player);
-   void collideWith(Enemy& enemy);
+   bool isAlive();
    
 private:
-   int health;
    Mesh *m_headMesh;
    Mesh *m_midMesh;
    Mesh *m_footMesh;
    
    bool firing;
+   bool alive;
    uint64_t firingTimer;
+   
+   void collideWith(Bullet& bullet);
+   void collideWith(Player& player);
+   void collideWith(Enemy& enemy);
    
 //   std::list<Bullet*> m_bullets;
 };

@@ -16,7 +16,7 @@ Bullet::Bullet(string fileName, string textureName, Modules *modules,
   : Object3d(), m_position(0,0,0), m_forward(0,0,1), 
     m_up(0, 1, 0), m_side(1, 0, 0),
    GameObject(pos,forw.Normalized() * speed,forw.Normalized(),vec3(0,0,0),
-                          m_up, defaultBulletRadius) 
+                          m_up, defaultBulletRadius, 1) 
 {
    m_position = pos;
    m_forward = forw.Normalized();

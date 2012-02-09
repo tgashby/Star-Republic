@@ -21,7 +21,7 @@
  */ 
 GameObject::GameObject(vec3 startPos, vec3 startVelocity, 
                        vec3 forwardVec, vec3 accelerationVec, 
-                       vec3 upVec, float collideRadius)
+                       vec3 upVec, float collideRadius, int health)
 {
    m_position = startPos;
    m_velocity = startVelocity;
@@ -29,7 +29,7 @@ GameObject::GameObject(vec3 startPos, vec3 startVelocity,
    m_acceleration = accelerationVec;
    m_up = upVec;
    m_boundingSphere = new BoundingSphere(collideRadius); 
-    
+   m_health = health;
 }
 
 GameObject::GameObject()
@@ -39,7 +39,8 @@ GameObject::GameObject()
    m_forward = vec3(0,0,-1);
    m_acceleration = vec3(0,0,0);
    m_up = vec3(0,1,0);
-   m_boundingSphere = new BoundingSphere(defaultBoundingRadius); 
+   m_boundingSphere = new BoundingSphere(defaultBoundingRadius);
+   m_health = 100;
 }
 
 
