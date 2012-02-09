@@ -13,10 +13,13 @@ WorldPoint::WorldPoint(vec3 position, vec3 forward, vec3 up, ivec4 links) {
   this->up = up.Normalized();
   this->forward = forward.Normalized();
   setFirstID(links.y);
+   setNumberOfIDs(1);
   if (links.z != -1) {
+     setNumberOfIDs(2);
     setSecondID(links.z);
   }
   if (links.w != -1) {
+     setNumberOfIDs(3);
     setThirdID(links.w);
   }
 }

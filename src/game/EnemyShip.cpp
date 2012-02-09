@@ -7,6 +7,7 @@
 #define MAXSCAREDANGLE 15
 #define MAXSCAREDSPEED 0.3
 #define DODGETIME 50
+#define SIZE 40
 
 EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Player &p) 
    :  Object3d(), Flyer(), Enemy(p),
@@ -17,6 +18,8 @@ EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Play
   m_meshList.push_back(m_mesh);
 
   dpos = (m_playerRef.getPosition() - m_position).Normalized();
+
+  setBounds(SIZE);
 
   dodging = false;
   dodgedir = 0;
@@ -140,7 +143,7 @@ void EnemyShip::calculateSide() {
 }
 
 void EnemyShip::doCollision(GameObject & other){
-   //DO Collision stuff
+   health -= 25;
 }
 bool EnemyShip::shouldFire()
 {
