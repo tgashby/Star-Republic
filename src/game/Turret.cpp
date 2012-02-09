@@ -67,7 +67,7 @@ void Turret::tic(uint64_t time)
    
    firingTimer += time;
    
-   if (firingTimer > 500)
+   if (firingTimer > 400)
    {
       firing = true;
       firingTimer = 0;
@@ -92,4 +92,26 @@ void Turret::doCollision(GameObject & other){
 bool Turret::shouldFire()
 {
    return firing;
+}
+
+void Turret::collideWith(Bullet& bullet)
+{
+   health -= 25;
+   
+   // bullet.removeMe()
+   
+   if (health <= 0) 
+   {
+      // alive = false;
+   }
+}
+
+void Turret::collideWith(Player& player)
+{
+   
+}
+
+void Turret::collideWith(Enemy& enemy)
+{
+   
 }

@@ -29,6 +29,7 @@ public:
    void setUp(Vector3<float> upVal);
    void setPosition(Vector3<float> pos);
    void setAcceleration(Vector3<float> acc);
+   void setForward(Vector3<float> forward);
    
    // Getters
    const vec3 getLocation() const;

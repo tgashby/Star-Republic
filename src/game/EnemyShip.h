@@ -31,6 +31,10 @@ public:
    Vector3<float> getAimForward();
    Vector3<float> getAimUp();
    void doCollision(GameObject & other); 
+   bool shouldFire();
+   Vector3<float> getLeftCannonPos();
+   Vector3<float> getRightCannonPos();
+
    
 private:
    int health;
@@ -40,8 +44,10 @@ private:
    float prevAngle;
    float currentAngle;
    bool dodging;
-   int dodgedir;
-	
+   int dodgedir, dodgecounter;
+
+   bool firing;
+   uint64_t firingTimer;
 };
 
 #endif

@@ -29,6 +29,10 @@ public:
    
    bool shouldFire();
    
+   void collideWith(Bullet& bullet);
+   void collideWith(Player& player);
+   void collideWith(Enemy& enemy);
+   
 private:
    int health;
    Mesh *m_headMesh;

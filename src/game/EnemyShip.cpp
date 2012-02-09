@@ -6,6 +6,7 @@
 #define SCREENY 300
 #define MAXSCAREDANGLE 15
 #define MAXSCAREDSPEED 0.3
+#define DODGETIME 50
 
 EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Player &p) 
    :  Object3d(), Flyer(), Enemy(p),
@@ -19,6 +20,7 @@ EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Play
 
   dodging = false;
   dodgedir = 0;
+  dodgecounter = DODGETIME;
 
   mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
      mat4::Magic(-getForward(), getUp(), getPosition());
@@ -51,19 +53,38 @@ void EnemyShip::tic(uint64_t time)
         else
            dodgedir = -1;
      }
+     if (dodgecounter == 0)
+     {
+        dodgecounter = DODGETIME;
+        dodgedir = -dodgedir;
+     }
      vec3 motionDir = getScaredSide() / (aimAngle / MAXSCAREDANGLE) * MAXSCAREDSPEED * dodgedir;
      m_position += motionDir;
      dodging = true;
+     dodgecounter--;
   }
   else
   {
      dodging = false;
      dodgedir = 0;
+     dodgecounter = DODGETIME;
   }
 
   mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0));
   modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
   m_mesh->setModelMtx(modelMtx);
+
+  firingTimer += time;
+   
+  if (firingTimer > 600 && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getForward())) > 80)
+  {
+     firing = true;
+     firingTimer = 0;
+  }
+  else 
+  {
+     firing = false;
+  }
 }
 
 void EnemyShip::setBearing(Vector3<float> headPosition, Vector3<float> headUp)
@@ -105,10 +126,23 @@ Vector3<float> EnemyShip::getSide()
    return side;
 }
 
+Vector3<float> EnemyShip::getLeftCannonPos()
+{
+   return m_position + getAimForward().Cross(getAimUp()) * 10;
+}
+Vector3<float> EnemyShip::getRightCannonPos()
+{
+   return m_position - getAimForward().Cross(getAimUp()) * 10;
+}
+
 void EnemyShip::calculateSide() {
    side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
 }
 
 void EnemyShip::doCollision(GameObject & other){
    //DO Collision stuff
+}
+bool EnemyShip::shouldFire()
+{
+   return firing;
 }

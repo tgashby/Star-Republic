@@ -86,6 +86,11 @@ void GameObject::setAcceleration(Vector3<float> acc)
    m_acceleration = acc;
 }
 
+void GameObject::setForward(Vector3<float> forward)
+{
+   m_forward = forward;
+}
+
 /**
  * getLocation gets the object's current location
  * @return the object's current location

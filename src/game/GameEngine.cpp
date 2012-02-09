@@ -43,7 +43,9 @@ void GameEngine::InitData()
                          "models/turretbase.obj",
                          "textures/test3.bmp",
                          m_modules);
-   m_turret->setPosition(vec3(-144,-1168,5063));
+   
+   m_turret->setPosition(vec3(-144,-1168,4563));
+   m_turret->setForward(-m_player->getForward());
 
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
@@ -112,9 +114,10 @@ void GameEngine::tic(uint64_t td) {
    m_reticle->tic(td);
    m_turret->tic(td);
 
-   vec3 dirToPlayer = m_turret->getPosition() - m_player->getPosition();
+   vec3 dirToPlayer = m_turret->getPosition() - m_player->getPosition();//(m_player->getPosition() + (m_player->getForward().Normalized() * VELOCITY_CONSTANT));
    
-   if (dirToPlayer.Length() < 500 && m_turret->shouldFire()) 
+   // Turret not currently firing, but I think it's because the player starts too close to the turret
+   if (m_turret->getForward().Dot(m_player->getForward()) < 0 && dirToPlayer.Length() < 500 && m_turret->shouldFire()) 
    {
       vec3 dirToPlayerNorm = dirToPlayer.Normalized();
       
@@ -126,6 +129,32 @@ void GameEngine::tic(uint64_t td) {
          
       m_modules->renderingEngine->addObject3d(bullet);
       m_gameObjects.push_back(bullet);
+      m_objects.push_back(bullet);
+      m_bulletList.push_back(bullet);
+   }
+
+   vec3 dirEnemyToPlayer = m_enemyShip->getPosition() - m_player->getPosition();
+   if (dirEnemyToPlayer.Length() < 400 && m_enemyShip->shouldFire()) 
+   {
+      vec3 dirToPlayerNorm = dirToPlayer.Normalized();
+      
+      Bullet* bullet = 
+         new Bullet("models/cube.obj", "textures/test4.bmp", 
+                    m_modules, m_enemyShip->getLeftCannonPos(), 
+                    m_enemyShip->getAimForward(), 
+                    dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()));
+         
+      m_modules->renderingEngine->addObject3d(bullet);
+      m_objects.push_back(bullet);
+      m_bulletList.push_back(bullet);
+
+      bullet = 
+         new Bullet("models/cube.obj", "textures/test4.bmp", 
+                    m_modules, m_enemyShip->getRightCannonPos(), 
+                    m_enemyShip->getAimForward(), 
+                    dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()));
+         
+      m_modules->renderingEngine->addObject3d(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
    }
