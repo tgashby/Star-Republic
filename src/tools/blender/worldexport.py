@@ -44,7 +44,15 @@ class Enemy:
       self.obj = obj
    
    def writeEnemy(self, out):
-      out.write('e %f %f %f ' % (self.obj.location.x, self.obj.location.y, self.obj.location.z))
+      rot = self.obj.rotation_euler.to_matrix()
+      out.write('u %f %f %f ' % (100 * self.obj.location.x, 100 * self.obj.location.y, 100 * self.obj.location.z))
+      fwd = Vector((0.0, 1.0, 0.0))
+      fwd = fwd * rot
+      out.write('%f %f %f ' % (fwd.x, fwd.z, -fwd.y))
+      up = Vector((0.0, 0.0, 1.0))
+      up = up * rot
+      out.write('%f %f %f ' % (up.x, up.z, -up.y))
+      
       out.write('turret\n')
 
 class Path:
@@ -56,19 +64,18 @@ class Path:
    
    def writePoints(self, index, out):
       for obj in self.objs:
-         out.write('%d ' % (index))
+         out.write('p %d ' % (index))
          out.write('%f %f %f ' % (100 * obj.location.x, 100 * obj.location.z, 100 * obj.location.y))
+         rot = obj.rotation_euler.to_matrix()
          fwd = Vector((0.0, 1.0, 0.0))
-         fwd = fwd * obj.matrix_world
+         fwd = fwd * rot
          out.write('%f %f %f ' % (fwd.x, fwd.z, -fwd.y))
          up = Vector((0.0, 0.0, 1.0))
-         up = up * obj.matrix_world
+         up = up * rot
          out.write('%f %f %f ' % (up.x, up.z, -up.y))
-         side = Vector((1.0, 0.0, 0.0))
-         side = side * obj.matrix_world
-         out.write('%f %f %f ' % (side.x, side.z, side.y))
          index += 1
          out.write('%d\n' % (index))
+      out.write('\n')
       return index
 
 def exportWorld(filePath):
@@ -93,8 +100,8 @@ def exportWorld(filePath):
    #for mesh in meshes:
    #   mesh.writeMesh(out)
    #out.write('enemies\n')
-   #for enemy in enemies:
-   #   enemy.writeEnemy(out)
+   for enemy in enemies:
+      enemy.writeEnemy(out)
    
    
    out.close()

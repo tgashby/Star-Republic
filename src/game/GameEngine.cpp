@@ -83,6 +83,15 @@ void GameEngine::InitData()
    m_music = loadMusic("sound/venom.mp3");
    
    m_music->play(1);
+   
+   // test loading a world
+   /*
+   WorldData *worldData = m_modules->resourceManager->readWorldData("maps/world2.wf");
+   cout << "loaded " << worldData->path.size() << " path elements\n";
+   cout << "loaded " << worldData->links.size() << " link elements\n";
+   cout << "loaded " << worldData->turrets.size() << " turret elements\n";
+   cout << "(" << worldData->path[0].x << ", " << worldData->path[0].y << ")\n"; 
+   delete worldData;*/
 }
 
 void GameEngine::tic(uint64_t td) {

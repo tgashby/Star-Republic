@@ -11,6 +11,7 @@ public:
    MeshData* readMeshData(string fileName, LOAD_NORMAL_TYPE normalType, float scale);
    TextureData* loadBMPImage(string fileName);
    //ImageData* loadPngImage(string fileName);
+   WorldData *readWorldData(string fileName);
    ~ResourceManager();
 private:
    SDL_Surface *m_image;
