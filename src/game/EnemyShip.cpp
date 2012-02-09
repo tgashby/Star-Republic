@@ -4,6 +4,8 @@
 #define VINTENS 0.5
 #define SCREENX 400
 #define SCREENY 300
+#define MAXSCAREDANGLE 15
+#define MAXSCAREDSPEED 0.3
 
 EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Player &p) 
    :  Object3d(), Flyer(), Enemy(p),
@@ -14,6 +16,9 @@ EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Play
   m_meshList.push_back(m_mesh);
 
   dpos = (m_playerRef.getPosition() - m_position).Normalized();
+
+  dodging = false;
+  dodgedir = 0;
 
   mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
      mat4::Magic(-getForward(), getUp(), getPosition());
@@ -34,6 +39,27 @@ void EnemyShip::tic(uint64_t time)
   // moving based on the player's direction and it's aiming direction
   m_position += m_playerRef.getForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
 
+  // 'scared ship' AI
+  float aimAngle;
+  aimAngle = 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getAimForward()));
+  if (aimAngle < MAXSCAREDANGLE)
+  {
+     if (!dodging)
+     {
+        if (180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getSide())) < 90)
+           dodgedir = 1;
+        else
+           dodgedir = -1;
+     }
+     vec3 motionDir = getScaredSide() / (aimAngle / MAXSCAREDANGLE) * MAXSCAREDSPEED * dodgedir;
+     m_position += motionDir;
+     dodging = true;
+  }
+  else
+  {
+     dodging = false;
+     dodgedir = 0;
+  }
 
   mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0));
   modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
@@ -65,6 +91,13 @@ Vector3<float> EnemyShip::getAimUp()
 {
    return getUp();
 }
+
+Vector3<float> EnemyShip::getScaredSide()
+{
+   vec3 aaargh = m_playerRef.getAimForward().Cross(m_playerRef.getAimUp()).Normalized();
+   return aaargh;
+}
+
 
 Vector3<float> EnemyShip::getSide()
 {
