@@ -130,14 +130,14 @@ void Camera::setLookAt() {
 	       - (m_player->getAimForward() * CAMERA_DIST_FROM_PLAYER) 
 	       + (m_player->getAimUp() * SHIP_CAMERA_ABOVE_SCALAR));
       m_ref = m_player->getAimForward() + m_player->getPosition();
-      m_up = m_pathUp;
+      m_up = m_player->getAimUp();
       m_player->setVisible(true);
    }
 
    if (cameraType == _FPS_CAMERA) {
       m_eye = m_player->getPosition();
       m_ref = m_player->getAimForward() + m_player->getPosition();
-      m_up = m_pathUp;
+      m_up = m_player->getAimUp();
       m_player->setVisible(false);
    }
 }
