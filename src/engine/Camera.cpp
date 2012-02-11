@@ -116,6 +116,7 @@ void Camera::setLookAt() {
       m_up = m_pathUp;
       m_player->setVisible(true);
    }
+
    if (cameraType == _MOTION_CAMERA) {
       //DOESNT'T WORK PERFECTLY NOW BECAUSE OF CHANGES TO CAMERA/PLAYER
       m_eye = (m_player->getPosition() + m_pathPos) / 2;
@@ -123,6 +124,16 @@ void Camera::setLookAt() {
       m_up = m_pathUp;
       m_player->setVisible(true);
    }
+   
+   if (cameraType == _SHIP_CAMERA) {
+      m_eye = (m_player->getPosition() 
+	       - (m_player->getAimForward() * CAMERA_DIST_FROM_PLAYER) 
+	       + (m_player->getAimUp() * SHIP_CAMERA_ABOVE_SCALAR));
+      m_ref = m_player->getAimForward() + m_player->getPosition();
+      m_up = m_pathUp;
+      m_player->setVisible(true);
+   }
+
    if (cameraType == _FPS_CAMERA) {
       m_eye = m_player->getPosition();
       m_ref = m_player->getAimForward() + m_player->getPosition();

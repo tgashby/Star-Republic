@@ -307,6 +307,10 @@ bool GameEngine::handleKeyUp(SDLKey key)
    if (key == SDLK_F2) {
       m_camera->setCameraType(_PATH_CAMERA);
    }
+
+   if (key == SDLK_F3) {
+      m_camera->setCameraType(_SHIP_CAMERA);
+   }
    
    if (key == SDLK_F4) {
       m_camera->setCameraType(_FPS_CAMERA);

@@ -4,8 +4,9 @@
 #include "Interfaces.h"
 #include "../game/WorldPoint.h"
 #include "../game/Player.h"
-#define CAMERA_DIST_FROM_PLAYER 160
+#define CAMERA_DIST_FROM_PLAYER 150
 #define CAMERA_LOOK_AHEAD_DISTANCE 200.0f
+#define SHIP_CAMERA_ABOVE_SCALAR 30
 #define CAMERA_REF_VELOCITY 0.3f
 
 #define _MOTION_CAMERA 1
