@@ -1,22 +1,28 @@
 #include "Camera.h"
 
 Camera::Camera(WorldPoint* head, WorldPoint* tail)
-  : m_eye(0,0,0), m_ref(0,0,1), m_up(0,1,0), m_side (1, 0, 0) {
-  m_tail = tail;
-  m_head = head;
-  
-  m_up = m_tail->getUp();
-  
+   : m_pathPos(0,0,0), m_pathRef(0,0,1), m_pathUp(0,1,0), m_pathSide (1, 0, 0),
+     m_eye(0,0,0), m_ref(0,0,1), m_up(0,1,0), cameraType(_PATH_CAMERA), 
+     m_turning(false) {
 
-  m_eye = tail->getPosition();
-  m_ref = m_eye + ((head->getPosition() - tail->getPosition()).Normalized() * CAMERA_LOOK_AHEAD_DISTANCE);
-  m_forw = (m_head->getPosition() - m_tail->getPosition()).Normalized();
-  calculateSide();
+   //Save the tail and head
+   m_tail = tail;
+   m_head = head;
+   
+   //Set the current up, position, reference, side, and forward vectors
+   m_pathUp = m_tail->getUp();
+   m_pathPos = tail->getPosition();
+   m_pathRef = m_pathPos + ((head->getPosition() - tail->getPosition()).Normalized() 
+			    * CAMERA_LOOK_AHEAD_DISTANCE);
+   m_pathForw = (m_head->getPosition() - 
+		 m_tail->getPosition()).Normalized();
+   calculateSide();
 
-  m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
-
-  m_turning = false;
-
+   //Calculate the angle between them
+   m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
+   
+   //Initialize the real look at vectors
+   setLookAt();
 }
 
 Camera::~Camera() {
@@ -25,7 +31,7 @@ Camera::~Camera() {
 
 vec3 Camera::getPosition()
 {
-  return m_eye;
+  return m_pathPos;
 }
 
 mat4 Camera::getProjectionViewMtx() {
@@ -33,9 +39,9 @@ mat4 Camera::getProjectionViewMtx() {
    float h = 4.0f * 640 / 480;
    mat4 projectionMatrix = mat4::Frustum(-h / 2, h / 2, -2, 2, 4, 2000);
    
-   // apply the view
+   // Apply the view
    projectionMatrix = mat4::LookAt(projectionMatrix, m_eye, m_ref, m_up);
-   //cout << "Camera eye is " << m_eye.x << " " << m_eye.y << " " << m_eye.z << "\n";
+
    return projectionMatrix;
 }
 
@@ -44,7 +50,8 @@ void Camera::checkPath(WorldPoint* head) {
     m_tail = m_head;
     m_head = head;
 
-    m_up = m_tail->getUp();
+    //Shouldn't need to change, but might have to
+    m_pathUp = m_tail->getUp();
     calculateSide();
 
     m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
@@ -54,7 +61,7 @@ void Camera::checkPath(WorldPoint* head) {
 }
 
 void Camera::calculateSide() {
-  m_side = m_up.Cross(m_ref - m_eye).Normalized();
+  m_pathSide = m_pathUp.Cross(m_pathRef - m_pathPos).Normalized();
 }
 
 void Camera::tic(uint64_t time) {
@@ -62,32 +69,47 @@ void Camera::tic(uint64_t time) {
   vec3 tempVec;
   mat4 tempMatrix;
 
-  float rotAngle = m_pathAngle * (m_head->getPosition() - m_eye).Length() / 
-    ((m_head->getPosition() - m_tail->getPosition()).Length() - CAMERA_LOOK_AHEAD_DISTANCE);
+  // Find the angle between the two paths
+  float rotAngle = m_pathAngle * (m_head->getPosition() - m_pathPos).Length() 
+     / ((m_head->getPosition() - m_tail->getPosition()).Length() 
+     - CAMERA_LOOK_AHEAD_DISTANCE);
 
+  // If we are turning our forward, but the angle between ourselves and the intended is
+  //  close enough, stop turning to allow for rotation
   if (m_turning && .5 > angleBetween(m_head->getPosition() - m_tail->getPosition(), 
-				     m_ref - m_eye)) {
+				     m_pathRef - m_pathPos)) {
     m_turning = false;
-    m_eye = m_ref - ((m_head->getPosition() - m_tail->getPosition()).Normalized() 
+    m_pathPos = m_pathRef - ((m_head->getPosition() - m_tail->getPosition()).Normalized() 
 		     * CAMERA_LOOK_AHEAD_DISTANCE);
-    m_up = m_tail->getUp();
+    m_pathUp = m_tail->getUp();
   }
   
+  // If we aren't turning, its safe to rotate
   if (!m_turning) {
-  temp1 = m_tail->getUp() * (m_head->getPosition() - m_ref).Length() / 
-     (m_head->getPosition() - m_tail->getPosition()).Length();
-  temp2 = m_head->getUp() * (m_ref - m_tail->getPosition()).Length() / 
-     (m_head->getPosition() - m_tail->getPosition()).Length();
-  m_up = (temp1 + temp2).Normalized();
-    //ADD forward between them
+     temp1 = m_tail->getUp() * (m_head->getPosition() - m_pathRef).Length() / 
+	(m_head->getPosition() - m_tail->getPosition()).Length();
+     temp2 = m_head->getUp() * (m_pathRef - m_tail->getPosition()).Length() / 
+	(m_head->getPosition() - m_tail->getPosition()).Length();
+     m_pathUp = (temp1 + temp2).Normalized();
   } 
 
-  m_ref += (((m_head->getPosition() - m_ref).Normalized()) * 
+  // Move our reference point down the path
+  m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
 	    (time * CAMERA_REF_VELOCITY));
   
   calculateSide();
-  tempVec = (m_ref - m_eye).Normalized();
-  m_eye = m_ref - (tempVec * CAMERA_LOOK_AHEAD_DISTANCE);
+  tempVec = (m_pathRef - m_pathPos).Normalized();
+  m_pathPos = m_pathRef - (tempVec * CAMERA_LOOK_AHEAD_DISTANCE);
+
+  setLookAt();
+}
+
+void Camera::setLookAt() {
+   if (cameraType == _PATH_CAMERA) {
+      m_eye = m_pathPos;
+      m_ref = m_pathRef;
+      m_up = m_pathUp;
+   }
 }
 
 float Camera::angleBetween(vec3 one, vec3 two) {
@@ -96,13 +118,13 @@ float Camera::angleBetween(vec3 one, vec3 two) {
 }
 
 vec3 Camera::getRef() {
-   return m_ref;
+   return m_pathRef;
 }
 
 vec3 Camera::getForward() {
-   return (getRef() - getPosition()).Normalized();
+   return (m_pathRef - m_pathPos).Normalized();
 }
 
 vec3 Camera::getUp() {
-  return m_up;
+  return m_pathUp;
 }

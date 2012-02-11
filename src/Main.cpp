@@ -10,8 +10,8 @@ bool handleEvents(float dt, SDL_Event& evt);
 bool handleKeyUp(SDLKey key);
 void handleMouseMotion(Uint16 x, Uint16 y);
 
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 1024;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1080;
 
 int main(int argc, char** argv)
 {

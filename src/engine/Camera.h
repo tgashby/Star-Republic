@@ -7,6 +7,12 @@
 #define CAMERA_LOOK_AHEAD_DISTANCE 200.0f
 #define CAMERA_REF_VELOCITY 0.3f
 
+#define _PATH_CAMERA 1
+#define _MOTION_CAMERA 2
+#define _SHIP_CAMERA 3
+#define _FPS_CAMERA 4
+
+
 #include <assert.h>
 #include <iostream>
 
@@ -15,11 +21,11 @@ class Camera: public ICamera {
   Camera(WorldPoint* head, WorldPoint* tail);
   ~Camera();
   mat4 getProjectionViewMtx();
-  void rotLocal(float pitch, float yaw);
-  void moveInOut(float dist);
   void calculateSide();
   void tic(uint64_t time);
   void checkPath(WorldPoint* head);
+
+  //Basic angle calculation method.
   float angleBetween(vec3 one, vec3 two);
   vec3 getPosition();
   vec3 getRef();
@@ -27,16 +33,33 @@ class Camera: public ICamera {
   vec3 getUp();
 
  private:
+  //Makes 
+  void setLookAt();
+
+  //Actual camera look at vectors.  These get set based on
+  // the type of camera we want
   vec3 m_eye;
   vec3 m_ref;
   vec3 m_up;
-  vec3 m_forw;
+
+  //Head and tail of our current path
+  // (imagine an arrow - the head is the triangle, where it is pointing)
   WorldPoint* m_tail;
   WorldPoint* m_head;
+
+  //Indicates whether we are turning our forward or not
   bool m_turning;
+  
+  //Path variables are the progress along the path
   float m_pathAngle;
-  vec3 m_side;
-  //vec3 m_forward;
+  vec3 m_pathSide;
+  vec3 m_pathUp;
+  vec3 m_pathPos;
+  vec3 m_pathRef;
+  vec3 m_pathForw;
+
+  int cameraType;
+
 };
 
 #endif
