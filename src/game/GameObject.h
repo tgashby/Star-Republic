@@ -4,10 +4,10 @@
  * @author Andrew J. Musselman
  */
 
-#ifndef GAMEOBJECT_H
-#define GAMEOBJECT_H
+#ifndef StarRepub_GameObject_h
+#define StarRepub_GameObject_h
 
-#include "Interfaces.h"
+#include "../engine/Interfaces.h"
 #include "BoundingSphere.h"
 
 class GameObject {

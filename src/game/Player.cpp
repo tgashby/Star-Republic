@@ -14,7 +14,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
 {
    m_forward = cam_forw;
    m_up = cam_up;
-   m_position = cam_up;
+   m_position = cam_pos;
    calculateSide();
 
    m_mesh = new Mesh(fileName, textureName, modules);
@@ -140,4 +140,8 @@ void Player::doCollision(GameObject & other)
    }
    
    //DO Collision stuff
+}
+
+void Player::setVisible(bool visibility) {
+   m_mesh->setVisible(visibility);
 }

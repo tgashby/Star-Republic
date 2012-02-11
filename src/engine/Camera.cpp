@@ -12,7 +12,8 @@ Camera::Camera(WorldPoint* head, WorldPoint* tail)
    //Set the current up, position, reference, side, and forward vectors
    m_pathUp = m_tail->getUp();
    m_pathPos = tail->getPosition();
-   m_pathRef = m_pathPos + ((head->getPosition() - tail->getPosition()).Normalized() 
+   m_pathRef = m_pathPos + ((head->getPosition() 
+			     - tail->getPosition()).Normalized() 
 			    * CAMERA_LOOK_AHEAD_DISTANCE);
    m_pathForw = (m_head->getPosition() - 
 		 m_tail->getPosition()).Normalized();
@@ -22,7 +23,9 @@ Camera::Camera(WorldPoint* head, WorldPoint* tail)
    m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
    
    //Initialize the real look at vectors
-   setLookAt();
+   m_eye = m_pathPos;
+   m_ref = m_pathRef;
+   m_up = m_pathUp;
 }
 
 Camera::~Camera() {
@@ -74,13 +77,15 @@ void Camera::tic(uint64_t time) {
      / ((m_head->getPosition() - m_tail->getPosition()).Length() 
      - CAMERA_LOOK_AHEAD_DISTANCE);
 
-  // If we are turning our forward, but the angle between ourselves and the intended is
-  //  close enough, stop turning to allow for rotation
-  if (m_turning && .5 > angleBetween(m_head->getPosition() - m_tail->getPosition(), 
-				     m_pathRef - m_pathPos)) {
+  // If we are turning our forward, but the angle between ourselves and 
+  // the intended is close enough, stop turning to allow for rotation
+  if (m_turning && .5 > 
+      angleBetween(m_head->getPosition() - m_tail->getPosition(), 
+		   m_pathRef - m_pathPos)) {
     m_turning = false;
-    m_pathPos = m_pathRef - ((m_head->getPosition() - m_tail->getPosition()).Normalized() 
-		     * CAMERA_LOOK_AHEAD_DISTANCE);
+    m_pathPos = m_pathRef - ((m_head->getPosition() 
+			      - m_tail->getPosition()).Normalized() 
+			     * CAMERA_LOOK_AHEAD_DISTANCE);
     m_pathUp = m_tail->getUp();
   }
   
@@ -109,6 +114,20 @@ void Camera::setLookAt() {
       m_eye = m_pathPos;
       m_ref = m_pathRef;
       m_up = m_pathUp;
+      m_player->setVisible(true);
+   }
+   if (cameraType == _MOTION_CAMERA) {
+      //DOESNT'T WORK PERFECTLY NOW BECAUSE OF CHANGES TO CAMERA/PLAYER
+      m_eye = (m_player->getPosition() + m_pathPos) / 2;
+      m_ref = m_pathRef;
+      m_up = m_pathUp;
+      m_player->setVisible(true);
+   }
+   if (cameraType == _FPS_CAMERA) {
+      m_eye = m_player->getPosition();
+      m_ref = m_player->getAimForward() + m_player->getPosition();
+      m_up = m_pathUp;
+      m_player->setVisible(false);
    }
 }
 
@@ -127,4 +146,12 @@ vec3 Camera::getForward() {
 
 vec3 Camera::getUp() {
   return m_pathUp;
+}
+
+void Camera::setCameraType(int cam) {
+   cameraType = cam;
+}
+
+void Camera::setPlayer(Player* player) {
+   m_player = player;
 }
