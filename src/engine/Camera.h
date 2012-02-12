@@ -7,7 +7,8 @@
 #define CAMERA_DIST_FROM_PLAYER 150
 #define CAMERA_LOOK_AHEAD_DISTANCE 200.0f
 #define SHIP_CAMERA_ABOVE_SCALAR 30
-#define CAMERA_REF_VELOCITY 0.3f
+#define CAMERA_DEF_VELOCITY 0.3f
+#define CAMERA_BOOST_VELOCITY 0.50f
 
 #define _MOTION_CAMERA 1
 #define _PATH_CAMERA 2
@@ -29,6 +30,7 @@ class Camera: public ICamera {
    void checkPath(WorldPoint* head);
    void setCameraType(int cam);
    void setPlayer(Player* player);
+   void setBoosting(bool boostStatus);
    
    vec3 getPosition();
    vec3 getRef();
@@ -56,6 +58,7 @@ class Camera: public ICamera {
    
    //Indicates whether we are turning our forward or not
    bool m_turning;
+   bool m_boosting;
    
    //Path variables are the progress along the path
    float m_pathAngle;

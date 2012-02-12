@@ -3,7 +3,7 @@
 Camera::Camera(WorldPoint* head, WorldPoint* tail)
    : m_pathPos(0,0,0), m_pathRef(0,0,1), m_pathUp(0,1,0), m_pathSide (1, 0, 0),
      m_eye(0,0,0), m_ref(0,0,1), m_up(0,1,0), cameraType(_PATH_CAMERA), 
-     m_turning(false) {
+     m_turning(false), m_boosting(false) {
 
    //Save the tail and head
    m_tail = tail;
@@ -99,8 +99,14 @@ void Camera::tic(uint64_t time) {
   } 
 
   // Move our reference point down the path
-  m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
-	    (time * CAMERA_REF_VELOCITY));
+  if (m_boosting) {
+     m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
+		   (time * CAMERA_BOOST_VELOCITY));
+  }
+  else {
+     m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
+		   (time * CAMERA_DEF_VELOCITY));
+  }
   
   calculateSide();
   tempVec = (m_pathRef - m_pathPos).Normalized();
@@ -165,4 +171,9 @@ void Camera::setCameraType(int cam) {
 
 void Camera::setPlayer(Player* player) {
    m_player = player;
+}
+
+//Might be adbantageous to use an acceleration rather than a flat boost
+void Camera::setBoosting(bool boostStatus) {
+   m_boosting = boostStatus;
 }

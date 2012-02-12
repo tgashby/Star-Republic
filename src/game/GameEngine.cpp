@@ -245,6 +245,10 @@ bool GameEngine::handleEvents()
       {
          running = handleKeyUp(evt.key.keysym.sym);
       }
+
+      if (evt.type == SDL_KEYDOWN) {
+	 running = handleKeyDown(evt.key.keysym.sym);
+      }
       
       // Mouse Events
       if (evt.type == SDL_MOUSEMOTION) 
@@ -258,6 +262,16 @@ bool GameEngine::handleEvents()
       //   }
    }
       
+   return running;
+}
+
+bool GameEngine::handleKeyDown(SDLKey key) {
+   bool running = true;
+
+   if (key == SDLK_SPACE) {
+      m_camera->setBoosting(true);
+   }
+
    return running;
 }
 
@@ -314,6 +328,10 @@ bool GameEngine::handleKeyUp(SDLKey key)
    
    if (key == SDLK_F4) {
       m_camera->setCameraType(_FPS_CAMERA);
+   }
+   
+   if (key == SDLK_SPACE) {
+      m_camera->setBoosting(false);
    }
    
    return running;

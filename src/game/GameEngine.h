@@ -27,6 +27,7 @@ public:
    
    bool handleEvents();
    bool handleKeyUp(SDLKey key);
+   bool handleKeyDown(SDLKey key);
    void handleMouseMotion(Uint16 x, Uint16 y);
    
 private:
