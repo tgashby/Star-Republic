@@ -159,7 +159,7 @@ void GameEngine::tic(uint64_t td) {
          vec3 dirToPlayerNorm = dirToPlayer.Normalized();
          
          Bullet* bullet = 
-            new Bullet("models/cube.obj", "textures/test4.bmp", 
+            new Bullet("models/cube.obj", "textures/test5.bmp", 
                        m_modules, (*i)->getHeadPosition(), 
                        -dirToPlayerNorm, 
                        dirToPlayerNorm.Cross((*i)->getPosition()), *(*i));
@@ -177,7 +177,7 @@ void GameEngine::tic(uint64_t td) {
       vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
       
       Bullet* bullet = 
-         new Bullet("models/cube.obj", "textures/test4.bmp", 
+         new Bullet("models/cube.obj", "textures/test5.bmp", 
                     m_modules, m_enemyShip->getLeftCannonPos(), 
                     m_enemyShip->getAimForward(), 
                     dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()), 
@@ -189,7 +189,7 @@ void GameEngine::tic(uint64_t td) {
       m_bulletList.push_back(bullet);
 
       bullet = 
-         new Bullet("models/cube.obj", "textures/test4.bmp", 
+         new Bullet("models/cube.obj", "textures/test5.bmp", 
                     m_modules, m_enemyShip->getRightCannonPos(), 
                     m_enemyShip->getAimForward(), 
                     dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()), 

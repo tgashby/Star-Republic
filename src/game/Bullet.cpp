@@ -13,8 +13,8 @@ Bullet::Bullet(string fileName, string textureName, Modules *modules,
 	       Vector3<float> pos, Vector3<float> forw, Vector3<float> up, GameObject& parent,
           const uint64_t timeToLive, 
                const float speed) 
-  : Object3d(),GameObject(pos,forw.Normalized() * speed,forw.Normalized(),vec3(0,0,0),
-              m_up, defaultBulletRadius, 1), m_parent(parent)
+  : Object3d(),GameObject(pos,forw.Normalized() * speed,forw.Normalized(),
+     vec3(0,0,0), m_up, defaultBulletRadius, 1), m_parent(parent)
 {
    m_position = pos;
    m_forward = forw.Normalized();
