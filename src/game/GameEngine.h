@@ -16,6 +16,7 @@
 #include "EnemyShip.h"
 #include "Explodeable.h"
 #include <algorithm>
+#include "Missile.h"
 
 
 class GameEngine : public IGameEngine {
@@ -48,6 +49,7 @@ private:
    void InitData();
    std::vector<Bullet *> m_bulletList;
    std::vector<Turret *> m_turrets;
+   std::vector<Missile *> m_missileList;
    
    EnemyShip* m_enemyShip;
    

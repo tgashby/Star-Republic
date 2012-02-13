@@ -6,7 +6,8 @@
 //  Copyright 2012 476 Proj. All rights reserved.
 //
 
-#pragma once
+#ifndef StarRepub_Bullet_h
+#define StarRepub_Bullet_h
 
 #include "../engine/Interfaces.h"
 #include "../engine/Camera.h"
@@ -16,7 +17,7 @@
 
 class Bullet : public Object3d, public GameObject {
 public:
-   //tine to live in milliseconds
+   //time to live in milliseconds
    static const uint64_t defaultTimeToLive=9000;
    //Default bullet speed
    static const float defaultSpeed=0.4f;
@@ -48,3 +49,5 @@ public:
    
    GameObject& m_parent;
 };
+
+#endif

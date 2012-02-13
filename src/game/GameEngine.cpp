@@ -213,6 +213,16 @@ void GameEngine::tic(uint64_t td) {
       }
          
    }
+
+   for (std::vector<Missile *>::iterator missileIterator = m_missileList.begin(); 
+	missileIterator != m_missileList.end(); 
+	missileIterator++) {
+      (*missileIterator)->tic(td);
+      //Cull the missile!
+   }
+
+   cerr << "Enemyship position is now : " << m_enemyShip->getPosition().x << ", " << m_enemyShip->getPosition().y << ", " << m_enemyShip->getPosition().z << "\n";
+
    runCollisions();
 }
 
@@ -312,6 +322,19 @@ bool GameEngine::handleKeyUp(SDLKey key)
       
      
       m_bulletSound->play(0);
+   }
+
+   if (key == SDLK_x) {
+      //For testing purposes only works vs enemy ship
+      Missile *missile = new Missile("models/cube.obj", "textures/test6.bmp",
+				     m_modules, m_player->getPosition(), 
+				     m_player->getAimForward(), m_player->getAimUp(),
+				     m_player, m_enemyShip);
+      //push to all lists
+      m_modules->renderingEngine->addObject3d(missile);
+      m_missileList.push_back(missile);
+      m_objects.push_back(missile);
+      m_gameObjects.push_back(missile);
    }
 
    if (key == SDLK_F1) {
