@@ -18,12 +18,12 @@
 #include <assert.h>
 #include <iostream>
 
-<<<<<<< HEAD
+class Player;
+
 /**
  * The game's camera.  This class not only controls our view, 
  * but our movement along the path.
  */
-
 class Camera: public ICamera {
  public:
 
@@ -40,6 +40,10 @@ class Camera: public ICamera {
    * Standard deconstructor for the camera.
    */
   ~Camera();
+
+  void setCameraType(int cam);
+  void setPlayer(Player* player);
+  void setBoosting(bool boostStatus);
   
   /**
    * Builds the projection view matrix for the RenderingEngine based on the given vectors.
@@ -172,9 +176,6 @@ class Camera: public ICamera {
   Player* m_player;
   float m_boostTime;
   bool m_boosting;
-  void setCameraType(int cam);
-  void setPlayer(Player* player);
-  void setBoosting(bool boostStatus);
    
 };
 
