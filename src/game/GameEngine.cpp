@@ -221,8 +221,6 @@ void GameEngine::tic(uint64_t td) {
       //Cull the missile!
    }
 
-   cerr << "Enemyship position is now : " << m_enemyShip->getPosition().x << ", " << m_enemyShip->getPosition().y << ", " << m_enemyShip->getPosition().z << "\n";
-
    runCollisions();
 }
 

@@ -12,7 +12,7 @@
 #define X_SCALAR 0.0005f
 #define Y_SCALAR 0.0005f
 #define MODEL_SCALE 0.8f
-#define PLAYER_DISTANCE_FROM_CAMERA 120
+#define PLAYER_DISTANCE_FROM_CAMERA 170
 
 class Player : public Object3d, public Flyer {
 public:
