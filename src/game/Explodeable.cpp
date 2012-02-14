@@ -13,70 +13,46 @@
 Explodeable::Explodeable(vec3 position, Modules* modules)
 : Object3d()
 {
-   m_mesh = new Mesh("models/cube.obj", "textures/test4.bmp", modules);
+   m_mesh = new Mesh("models/enemy.obj", "textures/test5.bmp", modules);
    m_meshList.push_back(m_mesh);
    
    m_position = position;
-   m_mesh->setModelMtx(mat4::Translate(m_position.x, m_position.y, m_position.z));
-   
-   state = START;
+   m_mesh->setModelMtx(mat4::Scale(0));
+
+   m_duration = _DEF_EXPLOSION_ANIMATION_TIME;
+   m_radius = _DEF_EXPLOSION_RADIUS;
 }
 
-void Explodeable::explode()
+Explodeable::Explodeable(vec3 position, int duration, float radius, 
+			 Modules* modules) : Object3d()
 {
-   mat4 newModelMtx = mat4::Translate(m_position.x, m_position.y, m_position.z);
-   
-   switch (state) 
-   {
-      case START:
-         // small
-         newModelMtx *= mat4::Scale(25.3f);
-         break;
-         
-      case MIDDLE:
-         // Big
-         newModelMtx *= mat4::Scale(200.0f);
-         break;
-         
-      case END:
-         //small
-         newModelMtx *= mat4::Scale(25.3f);
-         break;
-         
-      case DONE:
-         //disappear
-         newModelMtx *= mat4::Scale(0.0f);
-         break;
-         
-      default:
-         std::cerr << "This shouldn't happen... Explodeable\n";
-         break;
-   }
-   
-   m_mesh->setModelMtx(newModelMtx);
+   m_mesh = new Mesh("models/enemy.obj", "textures/test5.bmp", modules);
+   m_meshList.push_back(m_mesh);
+
+   m_position = position;
+   m_mesh->setModelMtx(mat4::Scale(0));
+
+   m_duration = duration;
+   m_radius = radius;
+}
+
+void Explodeable::setPosition(vec3 pos) {
+   m_position = pos;
 }
 
 void Explodeable::tic(uint64_t dt)
 {
-   stateTimer += dt;
-   
-   if (stateTimer > 1000 && stateTimer < 2000) 
-   {
-      state = MIDDLE;
-   }
-   else if (stateTimer >= 2000 && stateTimer < 3000)
-   {
-      state = END;
-   }
-   else if (stateTimer > 3000)
-   {
-      state = DONE;
-   }
-   
-   explode();
-}
+   //Going to be small, then jump to large eventually
+   m_stateTimer += dt;
 
-void Explodeable::setPosition(Vector3<float> position)
-{
-   m_position = position;
+   //FOR DEBUGGING
+   if (m_stateTimer > m_duration) {
+      m_stateTimer = m_duration;
+      m_mesh->setVisible(false);
+   }
+   
+   float modelScale = m_radius * m_stateTimer / m_duration;
+   
+   m_mesh->setModelMtx(mat4::Scale(modelScale) 
+    * mat4::Translate(m_position.x, m_position.y, m_position.z));
 }

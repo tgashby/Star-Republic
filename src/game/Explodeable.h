@@ -9,6 +9,10 @@
 #ifndef StarRepub_Explodeable_h
 #define StarRepub_Explodeable_h
 
+//Adjustments to be done
+#define _DEF_EXPLOSION_ANIMATION_TIME 750.0f
+#define _DEF_EXPLOSION_RADIUS 0.20f
+
 #include <string.h>
 #include "Object3d.h"
 #include "Mesh.h"
@@ -16,57 +20,69 @@
 
 using namespace std;
 
-/*
- * ExplosionState is a simple enum to keep track of what stage
- * the explosion is in
- */
-enum ExplosionState 
-{
-   START = 0,
-   MIDDLE = 1,
-   END = 2,
-   DONE = 3
-};
-
-/*
+/**
  * Explodable is an interface for things that can explode
  */
 class Explodeable : public Object3d {
 public:
-   /*
+   /**
     * Explodeable constructor that determines the position of an explosion
     * @param position the position of the explosion
     * @param modules the Modules pointer
     */
    Explodeable(vec3 position, Modules* modules);
-   
-   /*
-    * explode models a simple expanding and contracting mesh
+
+   /**
+    * Creates a new explosion with more aspects to set.
+    * @param position - the position of the explosion
+    * @param duration - the duration that the explosion should take
+    * @param modules - the Modules pointer
     */
-   void explode();
+   Explodeable(vec3 position, int duration, float radius, Modules* modules);
    
-   /*
+   /**
     * tic updates the explosion based on time passed
     * @param dt the time passed since the last update in milliseconds
     */
    void tic(uint64_t dt);
    
-   /*
-    * setPostition moves the explosion if ever needed
-    * @param position the new position for the explosion
-    */
-   void setPosition(Vector3<float> position);
-   
-   /*
+   /**
     * getPosition returns the explosion's current position
+    * @return Returns the position of the explosion
     */
    Vector3<float> getPosition() { return m_position; }
+
+   /**
+    * setPosition sets the explosion to a new location
+    * @param pos The new location for the explosion
+    */
+   void setPosition(vec3 pos);
    
 private:
+   /**
+    * The explosion's corresponding mesh
+    */
    Mesh* m_mesh;
-   ExplosionState state;
+
+   /**
+    * The position of the explosion
+    */
    vec3 m_position;
-   uint64_t stateTimer;
+
+   /**
+    * The time since the explosion's creation
+    */
+   float m_stateTimer;
+
+   /**
+    * The time the explosion takes to complete
+    */
+   float m_duration;
+
+   /**
+    * The radius of the explosion
+    */
+   float m_radius;
 };
 
 #endif
