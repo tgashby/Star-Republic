@@ -1,18 +1,18 @@
 #ifndef StarRepub_Player_h
 #define StarRepub_Player_h
 
-#include "Interfaces.h"
-#include "Camera.h"
-#include "Object3d.h"
-#include "Flyer.h"
-#include "Mesh.h"
+#include "../engine/Interfaces.h"
+#include "../engine/Camera.h"
+#include "../engine/Object3d.h"
+#include "../game/Flyer.h"
+#include "../engine/Mesh.h"
 #include <assert.h>
 #include <cmath>
 #define VELOCITY 0.04f
 #define X_SCALAR 0.0005f
 #define Y_SCALAR 0.0005f
 #define MODEL_SCALE 0.8f
-#define PLAYER_DISTANCE_FROM_CAMERA 120
+#define PLAYER_DISTANCE_FROM_CAMERA 170
 
 class Player : public Object3d, public Flyer {
 public:
@@ -29,6 +29,7 @@ public:
 //   void setFutureProgress(Vector3<float> pos);
    Vector3<float> getSide();
    void calculateSide();
+   void setVisible(bool visibility);
 //   Vector3<float> getPosition(); GOBJ
 //   Vector3<float> getForward(); GOBJ/Flyer
 //   Vector3<float> getUp(); GOBJ

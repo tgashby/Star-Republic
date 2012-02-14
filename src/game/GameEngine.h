@@ -16,6 +16,7 @@
 #include "EnemyShip.h"
 #include "Explodeable.h"
 #include <algorithm>
+#include "Missile.h"
 
 
 class GameEngine : public IGameEngine {
@@ -27,6 +28,7 @@ public:
    
    bool handleEvents();
    bool handleKeyUp(SDLKey key);
+   bool handleKeyDown(SDLKey key);
    void handleMouseMotion(Uint16 x, Uint16 y);
    
 private:
@@ -47,6 +49,7 @@ private:
    void InitData();
    std::vector<Bullet *> m_bulletList;
    std::vector<Turret *> m_turrets;
+   std::vector<Missile *> m_missileList;
    
    EnemyShip* m_enemyShip;
    

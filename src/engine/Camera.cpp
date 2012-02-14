@@ -3,7 +3,7 @@
 Camera::Camera(WorldPoint* head, WorldPoint* tail)
    : m_pathPos(0,0,0), m_pathRef(0,0,1), m_pathUp(0,1,0), m_pathSide (1, 0, 0),
      m_eye(0,0,0), m_ref(0,0,1), m_up(0,1,0), cameraType(_PATH_CAMERA), 
-     m_turning(false) {
+     m_turning(false), m_boosting(false), m_boostTime(0) {
 
    //Save the tail and head
    m_tail = tail;
@@ -12,7 +12,8 @@ Camera::Camera(WorldPoint* head, WorldPoint* tail)
    //Set the current up, position, reference, side, and forward vectors
    m_pathUp = m_tail->getUp();
    m_pathPos = tail->getPosition();
-   m_pathRef = m_pathPos + ((head->getPosition() - tail->getPosition()).Normalized() 
+   m_pathRef = m_pathPos + ((head->getPosition() 
+			     - tail->getPosition()).Normalized() 
 			    * CAMERA_LOOK_AHEAD_DISTANCE);
    m_pathForw = (m_head->getPosition() - 
 		 m_tail->getPosition()).Normalized();
@@ -21,8 +22,10 @@ Camera::Camera(WorldPoint* head, WorldPoint* tail)
    //Calculate the angle between them
    m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
    
-   //Initialize the real look at vectors
-   setLookAt();
+   //Initialize the real look at vectors  
+   m_eye = m_pathPos;
+   m_ref = m_pathRef;
+   m_up = m_pathUp;
 }
 
 Camera::~Camera() {
@@ -60,27 +63,29 @@ void Camera::checkPath(WorldPoint* head) {
   }
 }
 
-void Camera::calculateSide() {
+ void Camera::calculateSide() {
   m_pathSide = m_pathUp.Cross(m_pathRef - m_pathPos).Normalized();
 }
 
 void Camera::tic(uint64_t time) {
   vec3 temp1, temp2;
   vec3 tempVec;
-  mat4 tempMatrix;
+   mat4 tempMatrix;
 
   // Find the angle between the two paths
   float rotAngle = m_pathAngle * (m_head->getPosition() - m_pathPos).Length() 
      / ((m_head->getPosition() - m_tail->getPosition()).Length() 
      - CAMERA_LOOK_AHEAD_DISTANCE);
 
-  // If we are turning our forward, but the angle between ourselves and the intended is
-  //  close enough, stop turning to allow for rotation
-  if (m_turning && .5 > angleBetween(m_head->getPosition() - m_tail->getPosition(), 
-				     m_pathRef - m_pathPos)) {
+  // If we are turning our forward, but the angle between ourselves and 
+  // the intended is close enough, stop turning to allow for rotation
+  if (m_turning && .5 > 
+      angleBetween(m_head->getPosition() - m_tail->getPosition(), 
+		   m_pathRef - m_pathPos)) {
     m_turning = false;
-    m_pathPos = m_pathRef - ((m_head->getPosition() - m_tail->getPosition()).Normalized() 
-		     * CAMERA_LOOK_AHEAD_DISTANCE);
+    m_pathPos = m_pathRef - ((m_head->getPosition() 
+			      - m_tail->getPosition()).Normalized() 
+			     * CAMERA_LOOK_AHEAD_DISTANCE);
     m_pathUp = m_tail->getUp();
   }
   
@@ -94,8 +99,18 @@ void Camera::tic(uint64_t time) {
   } 
 
   // Move our reference point down the path
-  m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
-	    (time * CAMERA_REF_VELOCITY));
+  if (m_boosting) {
+     m_boostTime += time;
+     if (m_boostTime > 3000) {
+	m_boostTime = 3000;
+     }
+     m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
+		   ((time * CAMERA_DEF_VELOCITY) + (CAMERA_BOOST_ACC * m_boostTime)));
+  }
+  else {
+     m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
+		   (time * CAMERA_DEF_VELOCITY));
+  }
   
   calculateSide();
   tempVec = (m_pathRef - m_pathPos).Normalized();
@@ -109,6 +124,32 @@ void Camera::setLookAt() {
       m_eye = m_pathPos;
       m_ref = m_pathRef;
       m_up = m_pathUp;
+      m_player->setVisible(true);
+   }
+
+   if (cameraType == _MOTION_CAMERA) {
+      //DOESNT'T WORK PERFECTLY NOW BECAUSE OF CHANGES TO CAMERA/PLAYER
+      m_eye = (m_player->getPosition() - (getForward() * CAMERA_DIST_FROM_PLAYER) + m_pathPos) / 2;
+      m_ref = m_pathRef;
+      //POSSIBLY PLAYER UP
+      m_up = m_pathUp;
+      m_player->setVisible(true);
+   }
+   
+   if (cameraType == _SHIP_CAMERA) {
+      m_eye = (m_player->getPosition() 
+	       - (m_player->getAimForward() * CAMERA_DIST_FROM_PLAYER) 
+	       + (m_player->getAimUp() * SHIP_CAMERA_ABOVE_SCALAR));
+      m_ref = m_player->getAimForward() + m_player->getPosition();
+      m_up = m_player->getAimUp();
+      m_player->setVisible(true);
+   }
+
+   if (cameraType == _FPS_CAMERA) {
+      m_eye = m_player->getPosition();
+      m_ref = m_player->getAimForward() + m_player->getPosition();
+      m_up = m_player->getAimUp();
+      m_player->setVisible(false);
    }
 }
 
@@ -127,4 +168,20 @@ vec3 Camera::getForward() {
 
 vec3 Camera::getUp() {
   return m_pathUp;
+}
+
+void Camera::setCameraType(int cam) {
+   cameraType = cam;
+}
+
+void Camera::setPlayer(Player* player) {
+   m_player = player;
+}
+
+//Might be adbantageous to use an acceleration rather than a flat boost
+void Camera::setBoosting(bool boostStatus) {
+   m_boosting = boostStatus;
+   if (boostStatus == false) {
+      m_boostTime = 0;
+   }
 }

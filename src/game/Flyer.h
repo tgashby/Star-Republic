@@ -11,7 +11,7 @@
 
 #include <cassert>
 
-#include "Interfaces.h"
+#include "../engine/Interfaces.h"
 #include "GameObject.h"
 
 class Flyer : public GameObject
