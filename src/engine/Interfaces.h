@@ -166,9 +166,9 @@ public:
    virtual void pause() = 0;
    virtual void resume() = 0;
 protected:
-   int channel;
-   Mix_Chunk* chunk;
-   Mix_Music* music;
+   int m_channel;
+   Mix_Chunk* m_chunk;
+   Mix_Music* m_music;
 };
 
 // The main class that runs the game.

@@ -279,6 +279,36 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    if (key == SDLK_SPACE) {
       m_camera->setBoosting(true);
    }
+   
+   if (key == SDLK_z)
+   {
+      Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
+                                  m_modules, m_player->getPosition() 
+                                  + (m_player->getSide() * 8),
+                                  m_player->getAimForward(), m_player->getAimUp(), 
+                                  *m_player, Bullet::defaultTimeToLive, 1.0f);
+      
+      m_modules->renderingEngine->addObject3d(bullet);
+      m_gameObjects.push_back(bullet);
+      m_objects.push_back(bullet);
+      m_bulletList.push_back(bullet);
+      
+      bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
+                          m_modules, m_player->getPosition() 
+                          - (m_player->getSide() * 8),
+                          m_player->getAimForward(), m_player->getAimUp(), 
+                          *m_player, Bullet::defaultTimeToLive, 1.0f);
+      
+      
+      
+      m_modules->renderingEngine->addObject3d(bullet);
+      m_gameObjects.push_back(bullet);
+      m_objects.push_back(bullet);
+      m_bulletList.push_back(bullet);
+      
+      
+      m_bulletSound->play(0);
+   }
 
    return running;
 }
@@ -290,36 +320,6 @@ bool GameEngine::handleKeyUp(SDLKey key)
    if (key == SDLK_ESCAPE) 
    {
       running = false;
-   }
-
-   if (key == SDLK_z)
-   {
-      Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
-				  m_modules, m_player->getPosition() 
-				  + (m_player->getSide() * 8),
-                                  m_player->getAimForward(), m_player->getAimUp(), 
-				  *m_player, Bullet::defaultTimeToLive, 1.0f);
-      
-      m_modules->renderingEngine->addObject3d(bullet);
-      m_gameObjects.push_back(bullet);
-      m_objects.push_back(bullet);
-      m_bulletList.push_back(bullet);
-
-      bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
-			  m_modules, m_player->getPosition() 
-			  - (m_player->getSide() * 8),
-			  m_player->getAimForward(), m_player->getAimUp(), 
-			  *m_player, Bullet::defaultTimeToLive, 1.0f);
-
-      
-
-      m_modules->renderingEngine->addObject3d(bullet);
-      m_gameObjects.push_back(bullet);
-      m_objects.push_back(bullet);
-      m_bulletList.push_back(bullet);
-      
-     
-      m_bulletSound->play(0);
    }
 
    if (key == SDLK_x) {
