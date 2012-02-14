@@ -41,8 +41,20 @@ class Camera: public ICamera {
    */
   ~Camera();
 
+  /**
+   * Changes the camera to the specified type
+   * @param cam - The camera type; the types are specified in the include
+   */
   void setCameraType(int cam);
+
+  /**
+   * Sets the Player for some of the special cameras.
+   */
   void setPlayer(Player* player);
+
+  /**
+   * Sets the boosting status - this stops/begins the acceleration process
+   */
   void setBoosting(bool boostStatus);
   
   /**
@@ -71,6 +83,8 @@ class Camera: public ICamera {
 
   /**
    * Gives the current position along the path that the camera is.
+   * @param one - the first vector to find the angle between
+   * @param two - the second vector to find the angle between
    * @return The position of the camera along the path.
    */
   vec3 getPosition();
@@ -102,7 +116,8 @@ class Camera: public ICamera {
   void calculateSide();
 
   /**
-   * Calculates the camera's actual look at vectors based on what type of camera it is.
+   * Calculates the camera's actual look at vectors based on what 
+   * type of camera it is.
    */
   void setLookAt();
 
