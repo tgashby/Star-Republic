@@ -130,6 +130,7 @@ void Camera::setLookAt() {
    if (cameraType == _MOTION_CAMERA) {
       //DOESNT'T WORK PERFECTLY NOW BECAUSE OF CHANGES TO CAMERA/PLAYER
       m_eye = (m_player->getPosition() - (getForward() * CAMERA_DIST_FROM_PLAYER) + m_pathPos) / 2;
+      m_eye = m_eye - (getForward() * (.015 * m_boostTime));
       m_ref = m_pathRef;
       //POSSIBLY PLAYER UP
       m_up = m_pathUp;
