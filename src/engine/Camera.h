@@ -187,9 +187,19 @@ class Camera: public ICamera {
    */
   int cameraType;
 
-  //Some camera's require the player's position
+  /**
+   * The player, as some cameras rely on its position
+   */
   Player* m_player;
+  
+  /**
+   * The time we have been boosting for
+   */
   float m_boostTime;
+
+  /**
+   * Whether we are currently boosting or not
+   */
   bool m_boosting;
    
 };
