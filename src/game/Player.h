@@ -28,6 +28,7 @@ public:
    * path directly
    */
    Player(string fileName, string textureName, Modules *modules, 
+          
 	Vector3<float> cam_pos, Vector3<float> cam_up, Vector3<float> cam_forw);
    
    /**

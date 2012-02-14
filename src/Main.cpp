@@ -37,7 +37,7 @@ int main(int argc, char** argv)
    SDL_WarpMouse(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
    SDL_WM_GrabInput(SDL_GRAB_ON);
    SDL_ShowCursor(SDL_FALSE);
-   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, 250);
    
    // Setup the modules
    Modules *modules = new Modules();
