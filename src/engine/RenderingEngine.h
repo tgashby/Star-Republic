@@ -3,11 +3,9 @@
 
 #define GL_GLEXT_PROTOTYPES
 
-#include "../engine/SDL_include.h"
+#include "SDL_include.h"
 
 #include "Interfaces.h"
-//NOTE: THIS WAS INCLUDED AS PART OF AVOIDING A SEGFAULT
-#include "Camera.h"
 
 #define VERTEX_STRIDE 11
 #define NORMAL_OFFSET 3

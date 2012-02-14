@@ -1,17 +1,17 @@
 /* SDL */
-#include "engine/SDL_include.h"
+#include "SDL_include.h"
 
-#include "engine/Interfaces.h"
-#include "engine/ResourceManager.h"
-#include "game/GameEngine.h"
-#include "engine/RenderingEngine.h"
+#include "Interfaces.h"
+#include "ResourceManager.h"
+#include "GameEngine.h"
+#include "RenderingEngine.h"
 
 bool handleEvents(float dt, SDL_Event& evt);
 bool handleKeyUp(SDLKey key);
 void handleMouseMotion(Uint16 x, Uint16 y);
 
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1080;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 
 int main(int argc, char** argv)
 {
@@ -30,7 +30,7 @@ int main(int argc, char** argv)
    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
    
    // Create the window
-   screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_SWSURFACE | SDL_OPENGL | SDL_FULLSCREEN);
+   screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_OPENGL);
    
    SDL_WM_SetCaption("Star Republic", NULL);
    //SDL_WM_ToggleFullScreen(screen);

@@ -3,7 +3,7 @@
 
 #define DEFAULT_SCALE 2
 
-#include "../Interfaces.h"
+#include "Interfaces.h"
 
 class Mesh: public IMesh {
 public:
