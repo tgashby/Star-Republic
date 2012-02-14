@@ -19,21 +19,24 @@
  */
 class Player : public Object3d, public Flyer {
 public:
-   /**
-    * Player construct taking 2 strings representing the paths to the model
-    * and texture files, a Modules pointer, and vectors representing the
-    * camera state
-    * @param fileName the path to the model file
-    * @param textureName the path to the texture file
-    * @param modules the Modules pointer
-    * @param cam_pos the camera position
-    * @param cam_up the camera's up vector
-    * @param cam_forw the camera's forward vector
-    */
+
+  /**
+   * Constructor. This creates a player based on the given camera location.
+   * @param fileName - The filename of the mesh for the player.
+   * @param textureName - The filename of the texture for the player.
+   * @param modules - The set of game modules
+   * @param cam_pos - The position of the camera along the path
+   * @param cam_up - The up vector of the camera along the path
+   * @param cam_forw - The forward vector of the camera; it follows the
+   * path directly
+   */
    Player(string fileName, string textureName, Modules *modules, 
-          Vector3<float> cam_pos, Vector3<float> cam_up, 
-          Vector3<float> cam_forw);
+          
+	Vector3<float> cam_pos, Vector3<float> cam_up, Vector3<float> cam_forw);
    
+   /**
+    * Deconstructor. This deletes the player and its data.
+    */
    ~Player();
    
    /**
@@ -54,52 +57,123 @@ public:
     * calculateSide determines the player's side vector
     */
    void calculateSide();
-   
+
    /**
-    * setVisible set's the player's visibility, used for determining if
-    * we should draw the player
+    * Turns the ship visible/invisible (specifically for fps camera usage)
+    * @param The new visibility status of the player
     */
    void setVisible(bool visibility);
-   
+
    /**
-    * doCollision determines the action that the player should take
-    * based on what it has collided with
-    * @param other the object being collided with
+    * The collision handling code for the ship
+    * @param The object it is colliding with
     */
    void doCollision(GameObject & other);
-   
+
    /**
-    * updateVelocity determines the player's new velocity in each direction
-    * based on mouse input
-    * @param diffX the difference in x
-    * @param diffY the difference in y
+    * Changes the ship's look based on the changes in X and Y
+    * @param diffX - The change in X screen coordinates
+    * @param diffY - The change in Y screen coordinates
     */
    void updateVelocity(float diffX, float diffY);
-   
+
    /**
-    * getAimForward returns where the player is aiming
+    * Gives the player's direction of aiming, not movement
+    * @return The direction the player is aiming
     */
    Vector3<float> getAimForward();
-   
+
    /**
-    * getAimUp returns player's aim's up vector
+    * Gives the up vector of the player
+    * @return The up vector of the player's aim
     */
    Vector3<float> getAimUp();
-
+   
 private:
-   float vx, vy; 
-   float x, y;
-   Vector3<float> xPosition, yPosition;
+   /**
+    * The velocity in the left-right direction of the ship
+    */
+   float vx;
+
+   /**
+    * The velocity in the up-down direction of the ship
+    */
+   float vy; 
+   
+   /**
+    * The current x coordinate on the screen of the reticle
+    */
+   float x;
+
+   /**
+    * The current y coordinate on the screen of the reticle
+    */
+   float y;
+   
+   /**
+    * The horizontal position of the ship 
+    */
+   vec3 xPosition;
+
+   /**
+    * The vertical position of the ship
+    */
+   vec3 yPosition;
+
+   /**
+    * The mesh of the ship
+    */
    Mesh *m_mesh;
+
+   /**
+    * The forward velocity of the ship
+    */
    Vector3<float> m_shipVelocity;
+   
+   /**
+    * The horizontal velocity of the ship
+    */
    Vector3<float> m_sideVelocity;
+
+   /**
+    * The vertical velocity of the ship
+    */
    Vector3<float> m_upVelocity;
+
+   /**
+    * The change to position to be made
+    */
    Vector3<float> m_offsetPosition;
+
+   /** 
+    * The side vector of the ship
+    */
    Vector3<float> side;
+
+   /**
+    * The look ahead progress
+    * NEEDED?
+    */
    Vector3<float> futureProgress;
+
+   /**
+    * The last known horizontal screen coordinate
+    */
    float lastScreenX;
+   
+   /**
+    * The last known vertical screen coordinate
+    */
    float lastScreenY;
+
+   /**
+    * The last angle moved
+    */
    float prevAngle;
+
+   /**
+    * The current angle taken
+    */
    float currentAngle;
 };
 

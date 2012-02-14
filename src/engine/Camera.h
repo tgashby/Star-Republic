@@ -8,7 +8,7 @@
 #define CAMERA_LOOK_AHEAD_DISTANCE 200.0f
 #define SHIP_CAMERA_ABOVE_SCALAR 30
 #define CAMERA_DEF_VELOCITY 0.3f
-#define CAMERA_BOOST_ACC .0001f
+#define CAMERA_BOOST_ACC .0002f
 
 #define _MOTION_CAMERA 1
 #define _PATH_CAMERA 2
@@ -187,9 +187,19 @@ class Camera: public ICamera {
    */
   int cameraType;
 
-  //Some camera's require the player's position
+  /**
+   * The player, as some cameras rely on its position
+   */
   Player* m_player;
+  
+  /**
+   * The time we have been boosting for
+   */
   float m_boostTime;
+
+  /**
+   * Whether we are currently boosting or not
+   */
   bool m_boosting;
    
 };

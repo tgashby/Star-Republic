@@ -124,21 +124,19 @@ void Player::doCollision(GameObject & other)
    {
       if (&((Bullet&)other).getParent() != this) 
       {
-         m_health -= 1;
-         
-         if (m_health <= 0) 
-         {
-            m_alive = false;
-            m_mesh->setVisible(false);
-         }
+         m_health -= 2;
       }
    }
    
    if (typeid(other) == typeid(Turret))
    {
-      m_alive = false;
+     m_health -= 10;
    }
    
+   if (m_health <= 0) {
+       m_alive = false;
+       m_mesh->setVisible(false);
+   }
    //DO Collision stuff
 }
 

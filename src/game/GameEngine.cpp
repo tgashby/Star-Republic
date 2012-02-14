@@ -45,7 +45,7 @@ void GameEngine::InitData()
    Object3d *canyon = new Object3d("models/canyon.obj", 
 				   "textures/test3.bmp", m_modules);
    
-   explosion = new Explodeable(m_player->getPosition(), m_modules);
+   //explosion = new Explodeable(m_player->getPosition(), m_modules);
 
    m_turretLocs = m_modules->resourceManager->
    readWorldData("maps/turrets.wf");
@@ -76,7 +76,7 @@ void GameEngine::InitData()
    m_modules->renderingEngine->addObject3d(m_player);
    m_modules->renderingEngine->addObject3d(m_reticle);
    m_modules->renderingEngine->addObject3d(m_enemyShip);
-   m_modules->renderingEngine->addObject3d(explosion);
+   //m_modules->renderingEngine->addObject3d(explosion);
    m_modules->renderingEngine->addObject3d(canyon);
    
    for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
@@ -88,7 +88,7 @@ void GameEngine::InitData()
    m_objects.push_back(m_player);
    m_objects.push_back(m_reticle);
    m_objects.push_back(m_enemyShip);
-   m_objects.push_back(explosion);
+   //m_objects.push_back(explosion);
    m_objects.push_back(canyon);
    
    for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
@@ -143,8 +143,8 @@ void GameEngine::tic(uint64_t td) {
    m_player->tic(td, m_camera->getPosition(), m_camera->getUp(), m_camera->getForward());
    m_reticle->tic(td);
    
-   explosion->setPosition(m_player->getPosition());
-   explosion->tic(td);
+   //explosion->setPosition(m_player->getPosition());
+   //explosion->tic(td);
 
    for (std::vector<Turret*>::iterator i = m_turrets.begin(); i != m_turrets.end(); i++) 
    {
