@@ -112,7 +112,7 @@ void GameEngine::InitData()
    m_bulletSound = loadSound("sound/arwingShot.ogg");
    m_music = loadMusic("sound/venom.mp3");
    
-   m_music->play(1);
+   //m_music->play(1);
 }
 
 void GameEngine::tic(uint64_t td) {
@@ -307,7 +307,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
       m_bulletList.push_back(bullet);
       
       
-      m_bulletSound->play(0);
+      //m_bulletSound->play(0);
    }
 
    return running;

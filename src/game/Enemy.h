@@ -11,14 +11,15 @@
 
 #include "Player.h"
 
-/*
+/**
  * Enemy Interface, used only to force enemies to have a player reference
  */
 class Enemy 
 {
 public:
-   /*
-    * Enemy constructor, set the enemy's player reference to the given player reference
+   /**
+    * Enemy constructor, set the enemy's player reference to the given player
+    * reference
     * @param player the player reference
     */
    Enemy(Player& player);

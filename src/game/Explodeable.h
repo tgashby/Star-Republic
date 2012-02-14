@@ -28,36 +28,36 @@ enum ExplosionState
    DONE = 3
 };
 
-/*
+/**
  * Explodable is an interface for things that can explode
  */
 class Explodeable : public Object3d {
 public:
-   /*
+   /**
     * Explodeable constructor that determines the position of an explosion
     * @param position the position of the explosion
     * @param modules the Modules pointer
     */
    Explodeable(vec3 position, Modules* modules);
    
-   /*
+   /**
     * explode models a simple expanding and contracting mesh
     */
    void explode();
    
-   /*
+   /**
     * tic updates the explosion based on time passed
     * @param dt the time passed since the last update in milliseconds
     */
    void tic(uint64_t dt);
    
-   /*
+   /**
     * setPostition moves the explosion if ever needed
     * @param position the new position for the explosion
     */
    void setPosition(Vector3<float> position);
    
-   /*
+   /**
     * getPosition returns the explosion's current position
     */
    Vector3<float> getPosition() { return m_position; }

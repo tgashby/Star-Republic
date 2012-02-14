@@ -30,7 +30,7 @@ public:
               vec3 forwardVec, vec3 accelerationVec, 
               vec3 upVec,float collideRadius, int health);
    
-   /*
+   /**
     * Default constructor that sets all fields to default values
     */
    GameObject();
@@ -51,31 +51,31 @@ public:
     */
    void setVelocity(const Vector3<float> velocity);
    
-   /*
+   /**
     * setUp sets the object's up vector
     * @param upVal the new up vector
     */
    void setUp(Vector3<float> upVal);
    
-   /*
+   /**
     * setPosition sets the object's position in the world
     * @param pos the new position for the object
     */
    void setPosition(Vector3<float> pos);
    
-   /*
+   /**
     * setAcceleration sets the object's acceleration
     * @param acc the new acceleration
     */
    void setAcceleration(Vector3<float> acc);
    
-   /*
+   /**
     * setForward sets the object's forward vector
     * @ param forward the new forward vector
     */
    void setForward(Vector3<float> forward);
    
-   /*
+   /**
     * setBounds changes the object's bounding volume radius
     * @param f the new volume radius
     */
@@ -87,35 +87,35 @@ public:
     */
    const Vector3<float> getPosition() const;
    
-   /*
+   /**
     * getForward returns the object's forward vector
     */
    const Vector3<float> getForward() const;
    
-   /*
+   /**
     * getUp returns the object's up vector
     */
    const Vector3<float> getUp() const;
    
-   /*
+   /**
     * doCollision determines the action that the ship should take
     * based on what it has collided with
     * @param other the object being collided with
     */
    virtual void doCollision(GameObject & other) = 0;
    
-   /*
+   /**
     * collidesWith determines if the object has collided with 'other'
     * @param other the object to check against
     */
    virtual bool collidesWith(const GameObject & other) const; 
    
-   /*
+   /**
     * getBoundingSphere returns a pointer to the object's bounding sphere
     */
    const BoundingSphere * getBoundingSphere() const;
    
-   /*
+   /**
     * isAlive deters whether or not the object is still alive
     */
    bool isAlive();
