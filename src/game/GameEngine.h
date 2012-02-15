@@ -30,6 +30,7 @@ public:
    bool handleKeyUp(SDLKey key);
    bool handleKeyDown(SDLKey key);
    void handleMouseMotion(Uint16 x, Uint16 y);
+   std::vector<GameObject*> acquireMissileTargets();
    
 private:
    void runCollisions();

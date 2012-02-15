@@ -313,9 +313,23 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    return running;
 }
 
+std::vector<GameObject*> GameEngine::acquireMissileTargets() {
+  std::vector<GameObject*> temp;
+
+  for (list<GameObject *>::iterator it = m_gameObjects.begin(); 
+       it != m_gameObjects.end(); it++) {
+    if (((*it)->getPosition() - m_player->getPosition()).Length() < 200) {
+      temp.push_back(*it);
+    }
+  }
+
+  return temp;
+}
+
 bool GameEngine::handleKeyUp(SDLKey key)
 {
    bool running = true;
+   std::vector<GameObject*> targets;
    
    if (key == SDLK_ESCAPE) 
    {
@@ -323,16 +337,24 @@ bool GameEngine::handleKeyUp(SDLKey key)
    }
 
    if (key == SDLK_x) {
-      //For testing purposes only works vs enemy ship
-      Missile *missile = new Missile("models/cube.obj", "textures/test6.bmp",
-				     m_modules, m_player->getPosition(), 
-				     m_player->getAimForward(), m_player->getAimUp(),
-				     m_player, m_enemyShip);
-      //push to all lists
-      m_modules->renderingEngine->addObject3d(missile);
-      m_missileList.push_back(missile);
-      m_objects.push_back(missile);
-      m_gameObjects.push_back(missile);
+
+     targets = acquireMissileTargets();
+
+     //For each target
+     for (int index = 0; index < targets.size(); index++) {
+       Missile *missile = new Missile("models/cube.obj", "textures/test6.bmp",
+				      m_modules, 
+				      m_player->getPosition(), 
+				      m_player->getAimForward(), 
+				      m_player->getAimUp(),
+				      m_player, 
+				      targets.at(index));
+
+       m_modules->renderingEngine->addObject3d(missile);
+       m_missileList.push_back(missile);
+       m_objects.push_back(missile);
+       m_gameObjects.push_back(missile);
+     }
    }
 
    if (key == SDLK_F1) {
