@@ -313,7 +313,7 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
 
   for (list<GameObject *>::iterator it = m_gameObjects.begin(); 
        it != m_gameObjects.end(); it++) {
-    if (typeid(*it) != typeid(Bullet *) && typeid(*it) != typeid(Player *)) {
+    if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player)) {
 	if (((*it)->getPosition() - m_player->getPosition()).Length() < 1000) {
 	  temp.push_back(*it);
 	}
