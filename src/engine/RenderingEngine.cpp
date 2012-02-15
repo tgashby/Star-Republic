@@ -4,7 +4,8 @@
 #include "TexturedLighting.vert"
 #include "TexturedLighting.frag"
 
-RenderingEngine::RenderingEngine(Modules *modules) {
+RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
+   m_screenSize = screenSize;
    m_modules = modules;
    m_meshList = list<MeshRef>(0);
    m_textureList = list<TextureRef>(0);

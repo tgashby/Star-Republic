@@ -29,8 +29,11 @@ int main(int argc, char** argv)
    SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
    
+   // Define the screen size
+   ivec2 screenSize = ivec2(SCREEN_WIDTH, SCREEN_HEIGHT);
+   
    // Create the window
-   screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_OPENGL);
+   screen = SDL_SetVideoMode(screenSize.x, screenSize.y, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_OPENGL);
    
    SDL_WM_SetCaption("Star Republic", NULL);
    //SDL_WM_ToggleFullScreen(screen);
@@ -42,7 +45,7 @@ int main(int argc, char** argv)
    // Setup the modules
    Modules *modules = new Modules();
    modules->resourceManager = new ResourceManager();
-   modules->renderingEngine = new RenderingEngine(modules);
+   modules->renderingEngine = new RenderingEngine(screenSize, modules);
    modules->gameEngine = new GameEngine(modules);
    
    // Swap buffers to display what you've drawn
