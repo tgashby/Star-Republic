@@ -1,6 +1,7 @@
 #include "GameEngine.h"
 #include "Object3d.h"
 #include "Player.h"
+#include "SceneObject.h"
 
 #define VELOCITY_CONSTANT 2
 
@@ -28,7 +29,7 @@ GameEngine::~GameEngine() {
 
 void GameEngine::InitData()
 {
-   m_world = new World("maps/world.wf", m_modules);
+   m_world = new World("maps/course.wf", m_modules);
    
    m_camera = new Camera(m_world->getCurrentPointer(), m_world->getPreviousPointer());
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
@@ -40,15 +41,11 @@ void GameEngine::InitData()
 			       m_modules, *m_player);
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
-
-   // add one canyon mesh for now.
-   Object3d *canyon = new Object3d("models/canyon.obj", 
-				   "textures/test3.bmp", m_modules);
    
    //explosion = new Explodeable(m_player->getPosition(), m_modules);
 
    m_turretLocs = m_modules->resourceManager->
-   readWorldData("maps/turrets.wf");
+   readWorldData("maps/course.wf");
 
    createTurrets();
    
@@ -77,7 +74,6 @@ void GameEngine::InitData()
    m_modules->renderingEngine->addObject3d(m_reticle);
    m_modules->renderingEngine->addObject3d(m_enemyShip);
    //m_modules->renderingEngine->addObject3d(explosion);
-   m_modules->renderingEngine->addObject3d(canyon);
    
    for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
 	i != m_turrets.end(); i++) 
@@ -89,7 +85,6 @@ void GameEngine::InitData()
    m_objects.push_back(m_reticle);
    m_objects.push_back(m_enemyShip);
    //m_objects.push_back(explosion);
-   m_objects.push_back(canyon);
    
    for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
 	i != m_turrets.end(); i++) 
@@ -400,7 +395,7 @@ void GameEngine::runCollisions()
 void GameEngine::createTurrets()
 {
    for (std::vector< Vector3<float> >::iterator i = m_turretLocs->turrets.begin(); 
-	i != m_turretLocs->turrets.end(); i += 3)
+	i != m_turretLocs->turrets.end();)
    {
       // Loc, forward, up
       Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", 
@@ -409,9 +404,28 @@ void GameEngine::createTurrets()
 				     "textures/test3.bmp", m_modules);
       
       newTurret->setPosition(*i);
-      newTurret->setForward(*(i+1));
-      newTurret->setUp(*(i+2));
+      ++i;
+      newTurret->setForward(*i);
+      ++i;
+      newTurret->setUp(*i);
+      ++i;
       
       m_turrets.push_back(newTurret);
+   }
+   
+   vector<string>::iterator name = m_turretLocs->worldMeshes.begin();
+   vector<vec3>::iterator vec = m_turretLocs->worldLocs.begin();
+   while (name != m_turretLocs->worldMeshes.end()) {
+      vec3 pos = *vec;
+      ++vec;
+      vec3 fwd = *vec;
+      ++vec;
+      vec3 up = *vec;
+      ++vec;
+      string file = "models/" + *name;
+      ++name;
+      SceneObject *obj = new SceneObject(file, "textures/test3.bmp", pos, fwd, up, m_modules);
+      m_modules->renderingEngine->addObject3d(obj);
+      m_objects.push_back(obj);
    }
 }

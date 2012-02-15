@@ -47,7 +47,7 @@ class vertex:
       self.v = 0
       self.faces = []
    def writeVertex(self, out):
-      out.write('v %f %f %f\n' % (-self.x , self.y, self.z))
+      out.write('v %f %f %f\n' % (-100 * self.x , 100 * self.y, 100 * self.z))
    def writeNormal(self, out):
       out.write('vn %f %f %f\n' % (-self.normx, self.normy, self.normz))
    def writeTangent(self, out):
@@ -221,7 +221,7 @@ class Mesh:
       self.obj.location = origLoc
       
       out.write('m ')
-      out.write('%f %f %f ' % (newLoc.x, newLoc.y, newLoc.z))
+      out.write('%f %f %f ' % (100 * newLoc.x, 100 * newLoc.y, 100 * newLoc.z))
       out.write('%f %f %f %f ' % (newRot.x, newRot.y, newRot.z, newRot.w))
       out.write(self.name)
       out.write('\n')
@@ -246,7 +246,7 @@ class Enemy:
       self.obj.location = origLoc
       
       out.write('u ')
-      out.write('%f %f %f ' % (newLoc.x, newLoc.y, newLoc.z))
+      out.write('%f %f %f ' % (100 * newLoc.x, 100 * newLoc.y, 100 * newLoc.z))
       out.write('%f %f %f %f ' % (newRot.x, newRot.y, newRot.z, newRot.w))
       out.write('turret')
       out.write('\n')
@@ -275,7 +275,7 @@ class Path:
          obj.location = origLoc
          
          out.write('p %d ' % (index))
-         out.write('%f %f %f ' % (newLoc.x, newLoc.y, newLoc.z))
+         out.write('%f %f %f ' % (100 * newLoc.x, 100 * newLoc.y, 100 * newLoc.z))
          out.write('%f %f %f %f ' % (newRot.x, newRot.y, newRot.z, newRot.w))
          index += 1
          out.write('%d\n' % (index))

@@ -30,7 +30,7 @@ World::World(const string fileName, Modules* m_modules)
   previousPoint = 0;
 
   worldData = m_modules->resourceManager->
-  readWorldData("maps/world2.wf");
+  readWorldData(fileName);
   
   for (int i = 0; i < worldData->links.size(); i++) {
 //    cerr << "i is " << i << "\n";

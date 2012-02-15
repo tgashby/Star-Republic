@@ -41,7 +41,8 @@ void Turret::tic(uint64_t time)
    // Rotate head toward player
    // aim
    // fire
-   mat4 modelMtx = mat4::Translate(m_position.x, m_position.y, m_position.z);
+   //mat4 modelMtx = mat4::Translate(m_position.x, m_position.y, m_position.z);
+   mat4 modelMtx = mat4::Magic(m_forward, m_up, m_position);
    m_footMesh->setModelMtx(modelMtx);
    
    modelMtx *= mat4::Translate(0, 1, 0);
