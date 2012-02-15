@@ -46,6 +46,14 @@ struct Matrix3 {
         m.z.x = x.z; m.z.y = y.z; m.z.z = z.z;
         return m;
     }
+    vec3 TranslatePoint(vec3 pt) const
+    {
+       vec3 newpt;
+       newpt.x = pt.x * x.x + pt.y * y.x + pt.z * z.x;
+       newpt.y = pt.x * x.y + pt.y * y.y + pt.z * z.y;
+       newpt.z = pt.x * x.z + pt.y * y.z + pt.z * z.z;
+       return newpt;
+   }
     const T* Pointer() const
     {
         return &x.x;

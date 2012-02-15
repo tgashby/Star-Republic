@@ -71,6 +71,7 @@ void Camera::tic(uint64_t time) {
   vec3 temp1, temp2;
   vec3 tempVec;
    mat4 tempMatrix;
+   float pathAccOffset = 0.0;
 
   // Find the angle between the two paths
 //  float rotAngle = m_pathAngle * (m_head->getPosition() - m_pathPos).Length() 
@@ -101,11 +102,19 @@ void Camera::tic(uint64_t time) {
   // Move our reference point down the path
   if (m_boosting) {
      m_boostTime += time;
-     if (m_boostTime > 3000) {
-	m_boostTime = 3000;
+     if (m_boostTime > 2000) {
+	m_boostTime = 2000;
      }
+
+     //if (m_boostTime > 500) {
+	pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime);
+	//}
+	//else {
+	//pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime * -0.8);
+	//}
+
      m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
-		   ((time * CAMERA_DEF_VELOCITY) + (CAMERA_BOOST_ACC * m_boostTime)));
+		   ((time * CAMERA_DEF_VELOCITY) + pathAccOffset));
   }
   else {
      m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
@@ -130,9 +139,10 @@ void Camera::setLookAt() {
    if (cameraType == _MOTION_CAMERA) {
       //DOESNT'T WORK PERFECTLY NOW BECAUSE OF CHANGES TO CAMERA/PLAYER
       m_eye = (m_player->getPosition() - (getForward() * CAMERA_DIST_FROM_PLAYER) + m_pathPos) / 2;
-      m_eye = m_eye - (getForward() * (.015 * m_boostTime));
+      //Pulls camera back for acceleration purposes
+      //May want to make it be exponentially pulled back with time
+      m_eye = m_eye - (getForward() * (.025 * m_boostTime));
       m_ref = m_pathRef;
-      //POSSIBLY PLAYER UP
       m_up = m_pathUp;
       m_player->setVisible(true);
    }
@@ -179,7 +189,6 @@ void Camera::setPlayer(Player* player) {
    m_player = player;
 }
 
-//Might be adbantageous to use an acceleration rather than a flat boost
 void Camera::setBoosting(bool boostStatus) {
    m_boosting = boostStatus;
    if (boostStatus == false) {
