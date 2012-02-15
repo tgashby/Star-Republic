@@ -120,6 +120,8 @@ struct WorldData {
    vector<vec3> path; // locations for a path.
    vector<ivec4> links; // should be a 1/3rd the size of path.
    vector<vec3> turrets; // locations of turrets.
+   vector<vec3> worldLocs; // locations of the world meshes
+   vector<string> worldMeshes; // names of the world meshes
 };
 
 // An abstract class for the 
