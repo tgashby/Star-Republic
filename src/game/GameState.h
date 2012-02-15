@@ -1,20 +1,19 @@
 //
-//  MenuState.h
+//  GameState.h
 //  StarRepublic
 //
 //  Created by Taggart Ashby on 2/14/12.
 //  Copyright 2012 476 Proj. All rights reserved.
 //
 
-#ifndef StarRepublic_MenuState_h
-#define StarRepublic_MenuState_h
-
+#ifndef StarRepublic_GameState_h
+#define StarRepublic_GameState_h
 #include "State.h"
 
 /**
- * MenuState is the Menu state, before the game starts
+ * GameState is the main game state
  */
-class MenuState : public State 
+class GameState : public State 
 {
 public:
    void initialize();
@@ -26,6 +25,5 @@ public:
 private:
    
 };
-
 
 #endif
