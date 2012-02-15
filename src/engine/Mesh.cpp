@@ -56,6 +56,14 @@ mat4 Mesh::getModelMtx() {
    return m_modelMatrix;
 }
 
+void Mesh::setScale(float scale) {
+   m_scale = scale;
+}
+
+float Mesh::getScale() {
+   return m_scale;
+}
+
 vec4 Mesh::getColor() {
    return m_color;
 }
@@ -87,7 +95,7 @@ string Mesh::getTextureName() {
 MeshData* Mesh::getMeshData() {
    return m_modules->resourceManager->readMeshData(m_meshRef.name,
                                                    LOAD_NORMAL_VERTEX,
-                                                   m_scale);
+                                                   1.0);
 }
 
 TextureData* Mesh::getTextureData() {

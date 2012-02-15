@@ -132,6 +132,8 @@ struct IMesh {
    virtual void setTextureRef(TextureRef textureRef) = 0;
    virtual void setModelMtx(mat4 modelMtx) = 0;
    virtual mat4 getModelMtx() = 0;
+   virtual void setScale(float scale) = 0;
+   virtual float getScale() = 0;
    virtual vec4 getColor() = 0;
    virtual void setColor(vec4 color) = 0;
    virtual bool isVisible() = 0;

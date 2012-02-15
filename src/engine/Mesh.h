@@ -16,6 +16,8 @@ public:
    void setTextureRef(TextureRef textureRef);
    void setModelMtx(mat4 modelMtx);
    mat4 getModelMtx();
+   void setScale(float scale);
+   float getScale();
    vec4 getColor();
    void setColor(vec4 color);
    bool isVisible();
