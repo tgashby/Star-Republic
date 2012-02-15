@@ -11,7 +11,7 @@
 #include <assert.h>
 #include <cmath>
 
-const float PATHVELOCITY = 1.8f;
+const float PATHVELOCITY = 6.1f;
 const float AIMVELOCITY = 0.2f;
 const float x_SCALAR = 0.0005f; 
 const float y_SCALAR = 0.0005f; 

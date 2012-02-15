@@ -5,8 +5,8 @@
 #define VINTENS 0.5
 #define SCREENX 400
 #define SCREENY 300
-#define MAXSCAREDANGLE 15
-#define MAXSCAREDSPEED 0.3
+#define MAXSCAREDANGLE 160
+#define MAXSCAREDSPEED 3
 #define DODGETIME 50
 #define SIZE 40
 
@@ -37,6 +37,8 @@ EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Play
   mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
      mat4::Magic(-getForward(), getUp(), getPosition());
   m_mesh->setModelMtx(modelMtx);
+
+  m_health = 9001;
 }
 
 EnemyShip::~EnemyShip()
@@ -52,14 +54,15 @@ void EnemyShip::tic(uint64_t time)
   dpos = (m_playerRef.getPosition() - m_position).Normalized();
   
   // moving based on the player's direction and it's aiming direction
-  m_position += m_playerRef.getForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
+  m_position += /*m_playerRef.*/getForward() * PATHVELOCITY;// + getAimForward() * AIMVELOCITY; 
 
   /** 'scared ship' AI **/
   float aimAngle;
   /** the angle between the player's aim and the enemy's location:
    *  If the player is aiming near the enemy, it dodges **/
   aimAngle = 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getAimForward()));
-  if (aimAngle < MAXSCAREDANGLE)
+  printf("%f\n", aimAngle);
+  if (aimAngle > MAXSCAREDANGLE)
   {
      /** If this is the first tic he needs to dodge, compute the dodge direction **/
      if (!dodging)
@@ -76,6 +79,7 @@ void EnemyShip::tic(uint64_t time)
         dodgecounter = DODGETIME;
         dodgedir = -dodgedir;
      }
+     printf("AAAAAA\n");
      /** which direction to dodge in? **/
      vec3 motionDir = getScaredSide() / (aimAngle / MAXSCAREDANGLE) * MAXSCAREDSPEED * dodgedir;
      /** move and dodge **/

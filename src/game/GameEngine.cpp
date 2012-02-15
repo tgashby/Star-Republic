@@ -129,7 +129,7 @@ void GameEngine::tic(uint64_t td) {
    m_currentPoint = m_world->getCurrentPointer();
 
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-   m_enemyShip->setPosition(m_player->getPosition() + (m_camera->getForward() * 300));
+   //m_enemyShip->setPosition(m_player->getPosition() + (m_camera->getForward() * 300));
    m_enemyShip->tic(td);
    
    m_camera->checkPath(m_world->getCurrentPointer());
