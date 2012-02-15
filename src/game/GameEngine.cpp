@@ -313,7 +313,7 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
 
   for (list<GameObject *>::iterator it = m_gameObjects.begin(); 
        it != m_gameObjects.end(); it++) {
-    if (((*it)->getPosition() - m_player->getPosition()).Length() < 200) {
+    if (((*it)->getPosition() - m_player->getPosition()).Length() > 0) {
       temp.push_back(*it);
     }
   }
