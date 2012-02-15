@@ -2,7 +2,7 @@
 #define StarRepub_Camera_h
 
 #include "Interfaces.h"
-#include "../game/WorldPoint.h"
+#include "../game/PathPoint.h"
 #include "../game/Player.h"
 #define CAMERA_DIST_FROM_PLAYER 170
 #define CAMERA_LOOK_AHEAD_DISTANCE 200.0f
@@ -34,7 +34,7 @@ class Camera: public ICamera {
    * @param tail - The tail end of the path.  This is the PathPoint that we start
    * at.
    */
-  Camera(WorldPoint* head, WorldPoint* tail);
+  Camera(PathPoint* head, PathPoint* tail);
 
   /**
    * Standard deconstructor for the camera.
@@ -73,7 +73,7 @@ class Camera: public ICamera {
    * If not, it changes the forward vector.
    * @param head - The head of the current path we should be following
    */
-  void checkPath(WorldPoint* head);
+  void checkPath(PathPoint* head);
 
   /**
    * Calculates the angle between two vectors.
@@ -139,11 +139,11 @@ class Camera: public ICamera {
   /**
    * The tail of our path (i.e. the most recent point we passed)
    */
-  WorldPoint* m_tail;
+  PathPoint* m_tail;
   /**
    * The head of our path (i.e. the point we are currently heading toward
    */
-  WorldPoint* m_head;
+  PathPoint* m_head;
 
   /**
    * Indicates whether we are turning or not.

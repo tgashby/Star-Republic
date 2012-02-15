@@ -1,11 +1,11 @@
-#include "World.h"
+#include "Path.h"
 #include <iostream>
 #include <fstream>
 #define RANGE_CHECK 50
 #define MID_BUFFER_WIDTH 2
 #include <cmath>
 
-World::World(const string fileName)
+Path::Path(const string fileName)
 {
    string line;
    streampos linestart;
@@ -21,10 +21,10 @@ World::World(const string fileName)
       }
    }
    else
-   { cerr << "Problem is in World: the infile was never opened. \n"; }
+   { cerr << "Problem is in Path: the infile was never opened. \n"; }
 }
 
-World::World(const string fileName, Modules* m_modules)
+Path::Path(const string fileName, Modules* m_modules)
 {
   currentPoint = 1;
   previousPoint = 0;
@@ -34,7 +34,7 @@ World::World(const string fileName, Modules* m_modules)
   
   for (int i = 0; i < worldData->links.size(); i++) {
 //    cerr << "i is " << i << "\n";
-    points.push_back(WorldPoint(worldData->path[i*3], worldData->path[i*3 + 1],
+    points.push_back(PathPoint(worldData->path[i*3], worldData->path[i*3 + 1],
 				worldData->path[i*3 + 2], worldData->links[i]));
   }
    
@@ -43,7 +43,7 @@ World::World(const string fileName, Modules* m_modules)
 //  cerr << points.size();
 }
 
-WorldPoint World::parseLine(const string line)
+PathPoint Path::parseLine(const string line)
 {
    Vector3<float> tempPosition;
    Vector3<float> tempUp;
@@ -62,7 +62,7 @@ WorldPoint World::parseLine(const string line)
 
 //   cerr << "X IS: " << tempPosition.x << ", Y IS: " << tempPosition.y << ", Z IS: " << tempPosition.z << "\n";
    
-   WorldPoint point (tempPosition, tempUp, tempForward, tempSide);
+   PathPoint point (tempPosition, tempUp, tempForward, tempSide);
    
    if (totalPaths >= 1) {
       point.setFirstID(tempLeft);
@@ -81,41 +81,41 @@ WorldPoint World::parseLine(const string line)
    return point;
 }
 
-WorldPoint World::getCurrent() {
+PathPoint Path::getCurrent() {
   return points.at(currentPoint);
 }
-WorldPoint* World::getCurrentPointer() {
+PathPoint* Path::getCurrentPointer() {
    return &points.at(currentPoint);
 }
-WorldPoint World::getPrevious() {
+PathPoint Path::getPrevious() {
   return points.at(previousPoint);
 }
-WorldPoint* World::getPreviousPointer() {
+PathPoint* Path::getPreviousPointer() {
   return &points.at(previousPoint);
 }
 
-void World::setChoice(int next) {
+void Path::setChoice(int next) {
   previousPoint = currentPoint;
   currentPoint = next;
 }
 
-World::~World()
+Path::~Path()
 {
 
 }
 
-WorldPoint World::getAt(int index) 
+PathPoint Path::getAt(int index) 
 {
    //cout << "index: " << index << "\n";
    //cout << "from vector size: " << points.size() << "\n";
   return points.at(index);
 }
 
-WorldPoint World::update(Vector3<float> playerPos)
+PathPoint Path::update(Vector3<float> playerPos)
 {
   float D_val;
-  WorldPoint current = getCurrent();
-  WorldPoint previous = getPrevious();
+  PathPoint current = getCurrent();
+  PathPoint previous = getPrevious();
   float diffX = playerPos.x - current.getPosition().x;
   float diffY = playerPos.y - current.getPosition().y;
   float diffZ = playerPos.z - current.getPosition().z;
@@ -131,7 +131,7 @@ WorldPoint World::update(Vector3<float> playerPos)
 //   cout << "it worked2\n";
   Vector3<float> normal;
   float distance = sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
-  WorldPoint firstChoice = getAt(current.getFirstID());
+  PathPoint firstChoice = getAt(current.getFirstID());
 
   if (distance < RANGE_CHECK) {
     if (current.getNumberOfIDs() == 1) {

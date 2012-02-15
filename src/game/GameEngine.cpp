@@ -29,7 +29,7 @@ GameEngine::~GameEngine() {
 
 void GameEngine::InitData()
 {
-   m_world = new World("maps/course.wf", m_modules);
+   m_world = new Path("maps/course.wf", m_modules);
    
    m_camera = new Camera(m_world->getCurrentPointer(), m_world->getPreviousPointer());
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 

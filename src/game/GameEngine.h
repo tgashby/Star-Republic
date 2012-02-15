@@ -6,8 +6,8 @@
 #include "ResourceManager.h"
 
 #include "SDL_include.h"
-#include "World.h"
-#include "WorldPoint.h"
+#include "Path.h"
+#include "PathPoint.h"
 #include "Turret.h"
 #include "Player.h"
 #include "Reticle.h"
@@ -42,10 +42,10 @@ private:
    Reticle *m_reticle;
    Camera *m_camera;
    Modules *m_modules;
-   World *m_world;
+   Path *m_world;
    WorldData *m_turretLocs;
-   WorldPoint *m_currentPoint;
-   WorldPoint *m_previousPoint;
+   PathPoint *m_currentPoint;
+   PathPoint *m_previousPoint;
    Vector3<float> currentDirection;
    void InitData();
    std::vector<Bullet *> m_bulletList;
