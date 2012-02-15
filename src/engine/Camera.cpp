@@ -74,9 +74,9 @@ void Camera::tic(uint64_t time) {
    float pathAccOffset = 0.0;
 
   // Find the angle between the two paths
-  float rotAngle = m_pathAngle * (m_head->getPosition() - m_pathPos).Length() 
-     / ((m_head->getPosition() - m_tail->getPosition()).Length() 
-     - CAMERA_LOOK_AHEAD_DISTANCE);
+//  float rotAngle = m_pathAngle * (m_head->getPosition() - m_pathPos).Length() 
+//     / ((m_head->getPosition() - m_tail->getPosition()).Length() 
+//     - CAMERA_LOOK_AHEAD_DISTANCE);
 
   // If we are turning our forward, but the angle between ourselves and 
   // the intended is close enough, stop turning to allow for rotation

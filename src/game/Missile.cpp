@@ -22,7 +22,7 @@ Missile::Missile(string fileName, string textureName, Modules* modules,
       + (m_up * _MISSILE_ARC_HEIGHT);
    m_aimPos = m_archVecPos;
 
-   cerr << "Missile created at pos : " << m_position.x << " " << m_position.y << " " << m_position.z << "\n";
+//   cerr << "Missile created at pos : " << m_position.x << " " << m_position.y << " " << m_position.z << "\n";
 }
 
 Missile::~Missile() {
@@ -44,7 +44,7 @@ void Missile::tic(uint64_t time) {
    //DEBUG
    //m_position = m_aimPos;
    m_position = m_origPos + ((m_aimPos - m_origPos) * (m_lifetime / _MISSILE_REACH_DEST_TIME));
-   cerr << "Missile position is now : " << m_position.x << ", " << m_position.y << ", " << m_position.z << "\n";
+//   cerr << "Missile position is now : " << m_position.x << ", " << m_position.y << ", " << m_position.z << "\n";
 
    //WILL BECOME NAN AFTER IT HITS, NOT GOOD BUT OK FOR NOW
    m_forward = (m_target->getPosition() - m_position).Normalized();
