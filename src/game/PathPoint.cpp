@@ -1,6 +1,6 @@
-#include "WorldPoint.h"
+#include "PathPoint.h"
 
-WorldPoint::WorldPoint(Vector3<float> position, Vector3<float> up, Vector3<float> forward, Vector3<float> side)
+PathPoint::PathPoint(Vector3<float> position, Vector3<float> up, Vector3<float> forward, Vector3<float> side)
 {
    this->position = position;
    this->up = up.Normalized();
@@ -8,7 +8,7 @@ WorldPoint::WorldPoint(Vector3<float> position, Vector3<float> up, Vector3<float
    this->side = side.Normalized();
 }
 
-WorldPoint::WorldPoint(vec3 position, vec3 forward, vec3 up, ivec4 links) {
+PathPoint::PathPoint(vec3 position, vec3 forward, vec3 up, ivec4 links) {
   this->position = position;
   this->up = up.Normalized();
   this->forward = forward.Normalized();
@@ -24,87 +24,87 @@ WorldPoint::WorldPoint(vec3 position, vec3 forward, vec3 up, ivec4 links) {
   }
 }
 
-WorldPoint::~WorldPoint()
+PathPoint::~PathPoint()
 {
 }
 
-void WorldPoint::setPosition(float x, float y, float z)
+void PathPoint::setPosition(float x, float y, float z)
 {
    position.x = x;
    position.y = y;
    position.z = z;
 }
 
-void WorldPoint::setUp(float x, float y, float z)
+void PathPoint::setUp(float x, float y, float z)
 {
    up.x = x;
    up.y = y;
    up.z = z;
 }
 
-void WorldPoint::setForward(float x, float y, float z)
+void PathPoint::setForward(float x, float y, float z)
 {
    forward.x = x;
    forward.y = y;
    forward.z = z;
 }
 
-void WorldPoint::setFirstID(int ID)
+void PathPoint::setFirstID(int ID)
 {
    firstID = ID;
 }
 
-void WorldPoint::setSecondID(int ID)
+void PathPoint::setSecondID(int ID)
 {
    secondID = ID;
 }
 
-void WorldPoint::setThirdID(int ID)
+void PathPoint::setThirdID(int ID)
 {
    thirdID = ID;
 }
 
-void WorldPoint::setNumberOfIDs(int number)
+void PathPoint::setNumberOfIDs(int number)
 {
    numberOfIDs = number;
 }
 
-int WorldPoint::getNumberOfIDs()
+int PathPoint::getNumberOfIDs()
 {
   return numberOfIDs;
 }
 
-int WorldPoint::getFirstID()
+int PathPoint::getFirstID()
 {
   return firstID;
 }
 
-int WorldPoint::getSecondID()
+int PathPoint::getSecondID()
 {
   return secondID;
 }
 
-int WorldPoint::getThirdID()
+int PathPoint::getThirdID()
 {
    return thirdID;
 }
 
-Vector3<float> WorldPoint::getPosition() 
+Vector3<float> PathPoint::getPosition() 
 {
   return position;
 }
 
-Vector3<float> WorldPoint::getUp() 
+Vector3<float> PathPoint::getUp() 
 {
   return up;
 }
 
-Vector3<float> WorldPoint::getForward()
+Vector3<float> PathPoint::getForward()
 {
   return forward;
 }
 
-Vector3<float> WorldPoint::getSide()
+Vector3<float> PathPoint::getSide()
 {
   return side;
 }

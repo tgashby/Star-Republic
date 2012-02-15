@@ -29,7 +29,7 @@ GameEngine::~GameEngine() {
 
 void GameEngine::InitData()
 {
-   m_world = new World("maps/course.wf", m_modules);
+   m_world = new Path("maps/course.wf", m_modules);
    
    m_camera = new Camera(m_world->getCurrentPointer(), m_world->getPreviousPointer());
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
@@ -313,7 +313,7 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
 
   for (list<GameObject *>::iterator it = m_gameObjects.begin(); 
        it != m_gameObjects.end(); it++) {
-    if (((*it)->getPosition() - m_player->getPosition()).Length() < 200) {
+    if (((*it)->getPosition() - m_player->getPosition()).Length() > 0) {
       temp.push_back(*it);
     }
   }

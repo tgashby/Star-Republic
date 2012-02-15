@@ -1,13 +1,15 @@
-#pragma once
+#ifndef StarRepub_PathPoint_h
+#define StarRepub_PathPoint_h
+
 #include "../engine/Interfaces.h"
 
-class WorldPoint
+class PathPoint
 {
 public:
    
-WorldPoint(Vector3<float> position, Vector3<float> up, Vector3<float> forward, Vector3<float> side);
- WorldPoint(vec3 position, vec3 forward, vec3 up, ivec4 links);
-~WorldPoint();
+PathPoint(Vector3<float> position, Vector3<float> up, Vector3<float> forward, Vector3<float> side);
+ PathPoint(vec3 position, vec3 forward, vec3 up, ivec4 links);
+~PathPoint();
 void setPosition(float x, float y, float z);
 void setUp(float x, float y, float z);
 void setForward(float x, float y, float z);
@@ -35,3 +37,4 @@ private:
    //Example: if numberOfIDs == 2, then leftID and middleID have indexes to points, and rightID would not.
 };
 
+#endif
