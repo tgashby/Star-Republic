@@ -1,0 +1,7 @@
+all:
+	scons
+
+run:
+	./starrepublic
+
+
