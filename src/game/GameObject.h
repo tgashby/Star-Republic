@@ -132,7 +132,7 @@ protected:
    bool m_alive;
    
 private:
-   static const float defaultBoundingRadius = 50;
+   static const float defaultBoundingRadius;
    const BoundingSphere * m_boundingSphere; 
    // BoundingHeirarchy bounds;
 };

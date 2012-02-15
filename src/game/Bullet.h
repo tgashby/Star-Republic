@@ -18,11 +18,11 @@
 class Bullet : public Object3d, public GameObject {
 public:
    //time to live in milliseconds
-   static const uint64_t defaultTimeToLive=9000;
+   static const uint64_t defaultTimeToLive;
    //Default bullet speed
-   static const float defaultSpeed=0.4f;
+   static const float defaultSpeed;
    //Default collision radius
-   static const float defaultBulletRadius = 0.5f;
+   static const float defaultBulletRadius;
 
    Bullet(string fileName, string textureName, Modules *modules, 
     Vector3<float> pos, Vector3<float> forw, Vector3<float> up,

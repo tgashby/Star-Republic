@@ -22,7 +22,7 @@ Missile::Missile(string fileName, string textureName, Modules* modules,
       + (m_up * _MISSILE_ARC_HEIGHT);
    m_aimPos = m_archVecPos;
 
-   cerr << "Missile created at pos : " << m_position.x << " " << m_position.y << " " << m_position.z << "\n";
+//   cerr << "Missile created at pos : " << m_position.x << " " << m_position.y << " " << m_position.z << "\n";
 }
 
 Missile::~Missile() {

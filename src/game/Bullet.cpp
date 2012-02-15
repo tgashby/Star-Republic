@@ -8,6 +8,9 @@
 
 #include "Bullet.h"
 
+const float Bullet::defaultSpeed = 0.4f;
+const float Bullet::defaultBulletRadius = 0.5f;
+const uint64_t Bullet::defaultTimeToLive = 9000;
 
 Bullet::Bullet(string fileName, string textureName, Modules *modules, 
 	       Vector3<float> pos, Vector3<float> forw, Vector3<float> up, GameObject& parent,
