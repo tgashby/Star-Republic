@@ -5,8 +5,9 @@
 #define VINTENS 0.5
 #define SCREENX 400
 #define SCREENY 300
-#define MAXSCAREDANGLE 160
-#define MAXSCAREDSPEED 3
+#define MAXSCAREDANGLE 20
+#define MAXSCAREDSPEED 0.35
+#define DISTANCESCALE 100
 #define DODGETIME 50
 #define SIZE 40
 
@@ -18,7 +19,7 @@ EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Play
   m_mesh = new Mesh(fileName, textureName, modules);
   m_meshList.push_back(m_mesh);
 
-  /**  **/
+  /** aim vector **/
   dpos = (m_playerRef.getPosition() - m_position).Normalized();
 
   /** Setting the size of the bounding structure **/
@@ -54,15 +55,16 @@ void EnemyShip::tic(uint64_t time)
   dpos = (m_playerRef.getPosition() - m_position).Normalized();
   
   // moving based on the player's direction and it's aiming direction
-  m_position += /*m_playerRef.*/getForward() * PATHVELOCITY;// + getAimForward() * AIMVELOCITY; 
+  m_position += m_playerRef.getForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
 
   /** 'scared ship' AI **/
   float aimAngle;
+  float distance;
   /** the angle between the player's aim and the enemy's location:
    *  If the player is aiming near the enemy, it dodges **/
-  aimAngle = 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getAimForward()));
-  printf("%f\n", aimAngle);
-  if (aimAngle > MAXSCAREDANGLE)
+  aimAngle = 180 - 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getAimForward()));
+  distance = (float)((m_playerRef.getPosition() - m_position).Length());
+  if (aimAngle < MAXSCAREDANGLE)
   {
      /** If this is the first tic he needs to dodge, compute the dodge direction **/
      if (!dodging)
@@ -79,9 +81,9 @@ void EnemyShip::tic(uint64_t time)
         dodgecounter = DODGETIME;
         dodgedir = -dodgedir;
      }
-     printf("AAAAAA\n");
      /** which direction to dodge in? **/
-     vec3 motionDir = getScaredSide() / (aimAngle / MAXSCAREDANGLE) * MAXSCAREDSPEED * dodgedir;
+     vec3 motionDir = getScaredSide() / (aimAngle / MAXSCAREDANGLE) * MAXSCAREDSPEED * dodgedir *
+     ((DISTANCESCALE / distance) * (DISTANCESCALE / distance));
      /** move and dodge **/
      m_position += motionDir;
      dodging = true;
