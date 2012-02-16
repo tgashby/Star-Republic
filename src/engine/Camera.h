@@ -106,6 +106,12 @@ class Camera: public ICamera {
    * @return the up vector of the camera's position along the path.
    */
   vec3 getUp();
+  
+  /**
+   * isBoosting returns the boost status
+   * @return True if the camera is accelerating; otherwise false
+   */
+  bool isBoosting();
 
  private:
 

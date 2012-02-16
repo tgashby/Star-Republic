@@ -330,32 +330,34 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    
    if (key == SDLK_z)
    {
-      Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
-                                  m_modules, m_player->getPosition() 
-                                  + (m_player->getSide() * 8),
-                                  m_player->getAimForward(), m_player->getAimUp(), 
-                                  *m_player, Bullet::defaultTimeToLive, 1.0f);
-      
-      m_modules->renderingEngine->addObject3d(bullet);
-      m_gameObjects.push_back(bullet);
-      m_objects.push_back(bullet);
-      m_bulletList.push_back(bullet);
-      
-      bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
-                          m_modules, m_player->getPosition() 
-                          - (m_player->getSide() * 8),
-                          m_player->getAimForward(), m_player->getAimUp(), 
-                          *m_player, Bullet::defaultTimeToLive, 1.0f);
-      
-      
-      
-      m_modules->renderingEngine->addObject3d(bullet);
-      m_gameObjects.push_back(bullet);
-      m_objects.push_back(bullet);
-      m_bulletList.push_back(bullet);
+      if (!m_camera->isBoosting()) {
+	 Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
+				     m_modules, m_player->getPosition() 
+				     + (m_player->getSide() * 8),
+				     m_player->getAimForward(), m_player->getAimUp(), 
+				     *m_player, Bullet::defaultTimeToLive, 1.0f);
+	 
+	 m_modules->renderingEngine->addObject3d(bullet);
+	 m_gameObjects.push_back(bullet);
+	 m_objects.push_back(bullet);
+	 m_bulletList.push_back(bullet);
+	 
+	 bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
+			     m_modules, m_player->getPosition() 
+			     - (m_player->getSide() * 8),
+			     m_player->getAimForward(), m_player->getAimUp(), 
+			     *m_player, Bullet::defaultTimeToLive, 1.0f);
       
       
-      //m_bulletSound->play(0);
+      
+	 m_modules->renderingEngine->addObject3d(bullet);
+	 m_gameObjects.push_back(bullet);
+	 m_objects.push_back(bullet);
+	 m_bulletList.push_back(bullet);
+      
+      
+	 //m_bulletSound->play(0);
+      }
    }
 
    return running;
@@ -402,59 +404,60 @@ bool GameEngine::handleKeyUp(SDLKey key)
    }
 
    if (key == SDLK_x) {
+      if (!m_camera->isBoosting()) {
+	 targets = acquireMissileTargets();
 
-      targets = acquireMissileTargets();
-
-     //For each target
-      for (int index = 0; index < targets.size(); index++) {
-	 switch (index) {
-	 case 0:
-	    //AIM UP OR CAMERA UP?
-	    curveDir = ((m_player->getSide() * .75)
-			- (m_player->getAimUp() * .35)).Normalized();
-	    bulletOrigin = m_player->getSide() * 20;
-	    break;
-	 case 1:
-	    curveDir = ((m_player->getSide() * -.75) 
-			- (m_player->getAimUp() * .35)).Normalized();
-	    bulletOrigin = m_player->getSide() * -20;
-	    break;
-	 case 2:
-	    curveDir = ((m_player->getSide() * .75) 
-			+ (m_player->getAimUp() * .35)).Normalized();
-	    bulletOrigin = m_player->getSide() * 20;
-	    break;
-	 case 3:
-	    curveDir = ((m_player->getSide() * -.75) 
-			+ (m_player->getAimUp() * .35)).Normalized();
-	    bulletOrigin = m_player->getSide() * -20;
-	    break;
-	 case 4:
-	    curveDir = m_player->getSide();
-	    bulletOrigin = m_player->getSide() * 20;
-	    break;
-	 case 5:
-	    curveDir = m_player->getSide() * -1.0f;
-	    bulletOrigin = m_player->getSide() * -20;
+	 //For each target
+	 for (int index = 0; index < targets.size(); index++) {
+	    switch (index) {
+	    case 0:
+	       //AIM UP OR CAMERA UP?
+	       curveDir = ((m_player->getSide() * .75)
+			   - (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * 20;
+	       break;
+	    case 1:
+	       curveDir = ((m_player->getSide() * -.75) 
+			   - (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * -20;
+	       break;
+	    case 2:
+	       curveDir = ((m_player->getSide() * .75) 
+			   + (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * 20;
+	       break;
+	    case 3:
+	       curveDir = ((m_player->getSide() * -.75) 
+			   + (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * -20;
+	       break;
+	    case 4:
+	       curveDir = m_player->getSide();
+	       bulletOrigin = m_player->getSide() * 20;
+	       break;
+	    case 5:
+	       curveDir = m_player->getSide() * -1.0f;
+	       bulletOrigin = m_player->getSide() * -20;
+	    }
+	    
+	    bulletOrigin += (m_player->getAimForward() * 8.0f);
+	    
+	    Missile *missile = new Missile("models/cube.obj", "textures/test6.bmp",
+					   m_modules, 
+					   bulletOrigin, 
+					   m_player->getAimForward(), 
+					   curveDir,
+					   m_player, 
+					   targets.at(index));
+	    
+	    m_modules->renderingEngine->addObject3d(missile);
+	    m_missileList.push_back(missile);
+	    m_objects.push_back(missile);
+	    m_gameObjects.push_back(missile);
 	 }
-	 
-	 bulletOrigin += (m_player->getAimForward() * 8.0f);
-	 
-	 Missile *missile = new Missile("models/cube.obj", "textures/test6.bmp",
-					m_modules, 
-					bulletOrigin, 
-					m_player->getAimForward(), 
-					curveDir,
-					m_player, 
-					targets.at(index));
-	 
-	 m_modules->renderingEngine->addObject3d(missile);
-	 m_missileList.push_back(missile);
-	 m_objects.push_back(missile);
-	 m_gameObjects.push_back(missile);
       }
    }
-
+      
    if (key == SDLK_F1) {
       m_camera->setCameraType(_MOTION_CAMERA);
    }

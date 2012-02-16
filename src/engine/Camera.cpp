@@ -195,3 +195,7 @@ void Camera::setBoosting(bool boostStatus) {
       m_boostTime = 0;
    }
 }
+
+bool Camera::isBoosting() {
+   return m_boosting;
+}
