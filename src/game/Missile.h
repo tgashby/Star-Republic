@@ -40,7 +40,7 @@ class Missile : public Explodeable, public GameObject {
    * @param target - The target of the missile; it follows them based on their position
    */
    Missile(string fileName, string textureName, Modules *modules,
-	   vec3 pos, vec3 forw, vec3 up,
+	   vec3 pos_offset, vec3 forw, vec3 up,
 	   GameObject* parent, GameObject* target);
 
    /**

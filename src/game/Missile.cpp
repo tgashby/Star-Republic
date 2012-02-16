@@ -1,11 +1,12 @@
 #include "Missile.h"
 
 Missile::Missile(string fileName, string textureName, Modules* modules,
-		vec3 pos, vec3 forw, vec3 up,
-		 GameObject* parent, GameObject* target) : m_lifetime(0), Explodeable(pos, modules) {
-   m_origPos = pos;
+		vec3 pos_offset, vec3 forw, vec3 up,
+		 GameObject* parent, GameObject* target) 
+   : m_lifetime(0), Explodeable(pos_offset, modules) {
+   m_origPos = parent->getPosition() + pos_offset;
 
-   m_position = pos;
+   m_position = m_origPos;
    m_forward = forw.Normalized();
    m_up = up.Normalized();
    
@@ -40,7 +41,7 @@ void Missile::tic(uint64_t time) {
       }
       
       //CHANGE TO ACCOUNT FOR SIDES
-      m_archVecPos1 = m_parent->getPosition() + (m_forward * 80) + (m_up * 10);
+      m_archVecPos1 = m_parent->getPosition() + (m_forward * 40) + (m_up * 20);
       m_archVecPos2 = m_parent->getPosition() - (m_forward * 40) + (m_up * 60);
       m_archVecPos3 = m_parent->getPosition() + 
 	 ((m_target->getPosition() - m_parent->getPosition()) / 2) 
