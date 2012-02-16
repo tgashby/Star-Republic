@@ -50,24 +50,29 @@ public:
     * getPosition returns the explosion's current position
     * @return Returns the position of the explosion
     */
-   Vector3<float> getPosition() { return m_position; }
+   Vector3<float> getPosition() { return m_explosionPos; }
 
    /**
     * setPosition sets the explosion to a new location
     * @param pos The new location for the explosion
     */
-   void setPosition(vec3 pos);
-   
+   void setExplodePosition(vec3 pos);
+
+   /**
+    * explosionTic Tics 
+    */
+   void explosionTic(uint64_t dt);
+
 private:
    /**
     * The explosion's corresponding mesh
     */
-   Mesh* m_mesh;
+   Mesh* m_explosionMesh1;
 
    /**
     * The position of the explosion
     */
-   vec3 m_position;
+   vec3 m_explosionPos;
 
    /**
     * The time since the explosion's creation

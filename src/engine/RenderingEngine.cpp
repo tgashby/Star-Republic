@@ -4,7 +4,8 @@
 #include "TexturedLighting.vert"
 #include "TexturedLighting.frag"
 
-RenderingEngine::RenderingEngine(Modules *modules) {
+RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
+   m_screenSize = screenSize;
    m_modules = modules;
    m_meshList = list<MeshRef>(0);
    m_textureList = list<TextureRef>(0);
@@ -108,12 +109,15 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
          if (!(*mesh)->isVisible())
             continue;
          
+         // Start with a scale matrix from the mesh scale
+         mat4 modelMtx = mat4::Scale((*mesh)->getScale());
+         
          // Set the model view matrix
-         mat4 modelMtx = (*mesh)->getModelMtx() ;
+         modelMtx = modelMtx * (*mesh)->getModelMtx() ;
          glUniformMatrix4fv(m_uniforms.modelview, 1, 0, modelMtx.Pointer());
          
          // Set the normal matrix
-         mat3 normalMtx = modelMtx.ToMat3();
+         mat3 normalMtx = (*mesh)->getModelMtx().ToMat3();
          glUniformMatrix3fv(m_uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
          
          // Set the diffuse color.
