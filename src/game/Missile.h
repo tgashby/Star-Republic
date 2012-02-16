@@ -10,9 +10,12 @@
 #define StarRepub_Missile_h
 
 //the time it takes for the missile to reach its destination
-#define _MISSILE_REACH_DEST_TIME 1000
-#define _MISSILE_ARC_HEIGHT 300
+#define _MISSILE_REACH_DEST_TIME 1500
+#define _MISSILE_ARC_HEIGHT 500
 #define _MISSILE_RADIUS .4f
+#define _MISSILE_ARCH_VEC_1_TIME 500
+#define _MISSILE_ARCH_VEC_2_TIME 500
+#define _MISSILE_ARCH_VEC_3_TIME 500
 
 #include "GameObject.h"
 #include "Interfaces.h"
@@ -90,7 +93,11 @@ class Missile : public Explodeable, public GameObject {
    /**
     * The vector used to form an arc above the player
     */
-   vec3 m_archVecPos;
+   vec3 m_archVecPos1;
+   vec3 m_archVecPos2;
+   vec3 m_archVecPos3;
+
+   /**
 
    /**
     * The current location between the m_archVecPos and the target that the

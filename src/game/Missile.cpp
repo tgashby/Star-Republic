@@ -18,11 +18,12 @@ Missile::Missile(string fileName, string textureName, Modules* modules,
    m_parent = parent;
    m_target = target;
 
-   m_archVecPos = m_position + ((target->getPosition() - m_position) / 2) 
+   m_archVecPos1 = m_parent->getPosition() + (m_forward * 80) + (m_up * 10);
+   m_archVecPos2 = m_parent->getPosition() - (m_forward * 40) + (m_up * 80); 
+   m_archVecPos3 = m_position + ((target->getPosition() - m_position) / 2) 
       + (m_up * _MISSILE_ARC_HEIGHT);
-   m_aimPos = m_archVecPos;
+   m_aimPos = m_archVecPos3;
 
-//   cerr << "Missile created at pos : " << m_position.x << " " << m_position.y << " " << m_position.z << "\n";
 }
 
 Missile::~Missile() {
@@ -38,14 +39,34 @@ void Missile::tic(uint64_t time) {
 	 m_lifetime = _MISSILE_REACH_DEST_TIME;    
       }
       
-      m_archVecPos = m_parent->getPosition() + ((m_target->getPosition() - m_parent->getPosition()) / 2) + (m_up * _MISSILE_ARC_HEIGHT);
+      //CHANGE TO ACCOUNT FOR SIDES
+      m_archVecPos1 = m_parent->getPosition() + (m_forward * 80) + (m_up * 10);
+      m_archVecPos2 = m_parent->getPosition() - (m_forward * 40) + (m_up * 60);
+      m_archVecPos3 = m_parent->getPosition() + 
+	 ((m_target->getPosition() - m_parent->getPosition()) / 2) 
+	 + (m_up * _MISSILE_ARC_HEIGHT);
       
-      m_aimPos = m_archVecPos + ((m_target->getPosition() - m_archVecPos) 
-				 * (m_lifetime / _MISSILE_REACH_DEST_TIME));
+      m_aimPos = m_archVecPos3 + 
+	 ((m_target->getPosition() - m_archVecPos3) 
+	  * (m_lifetime / _MISSILE_REACH_DEST_TIME));
+
       //DEBUG
-      //m_position = m_aimPos;
-      m_position = m_origPos + ((m_aimPos - m_origPos) * (m_lifetime / _MISSILE_REACH_DEST_TIME));
-      //   cerr << "Missile position is now : " << m_position.x << ", " << m_position.y << ", " << m_position.z << "\n";
+
+      if (m_lifetime < _MISSILE_ARCH_VEC_1_TIME) {
+	 m_position = m_origPos + ((m_archVecPos1 - m_origPos)
+	  * (m_lifetime / _MISSILE_ARCH_VEC_1_TIME));
+      }
+      else if (m_lifetime < _MISSILE_ARCH_VEC_1_TIME + 
+	       _MISSILE_ARCH_VEC_2_TIME) {
+	 m_position = m_archVecPos1 + ((m_archVecPos2 - m_archVecPos1)
+	  * ((m_lifetime - _MISSILE_ARCH_VEC_1_TIME) / _MISSILE_ARCH_VEC_2_TIME));
+      }
+      else {
+	 //CHANGE
+	 m_position = m_archVecPos2 + ((m_aimPos - m_archVecPos2) 
+				       * ((m_lifetime - _MISSILE_ARCH_VEC_1_TIME - _MISSILE_ARCH_VEC_2_TIME)
+					  / _MISSILE_ARCH_VEC_3_TIME));
+      }
       
       //WILL BECOME NAN AFTER IT HITS, NOT GOOD BUT OK FOR NOW
       m_forward = (m_target->getPosition() - m_position).Normalized();
