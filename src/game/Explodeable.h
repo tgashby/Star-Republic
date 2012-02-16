@@ -11,7 +11,7 @@
 
 //Adjustments to be done
 #define _DEF_EXPLOSION_ANIMATION_TIME 750.0f
-#define _DEF_EXPLOSION_RADIUS 0.20f
+#define _DEF_EXPLOSION_RADIUS 20.00f
 
 #include <string.h>
 #include "Object3d.h"
@@ -56,7 +56,7 @@ public:
     * setPosition sets the explosion to a new location
     * @param pos The new location for the explosion
     */
-   void setExplodePosition(vec3 pos);
+   void setExplosionPosition(vec3 pos);
 
    /**
     * explosionTic Tics 

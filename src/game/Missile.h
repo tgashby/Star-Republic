@@ -18,8 +18,11 @@
 #include "Interfaces.h"
 #include "Mesh.h"
 #include "../engine/Object3d.h"
+#include "Explodeable.h"
+#include "Player.h"
+#include "Bullet.h"
 
-class Missile : public Object3d, public GameObject {
+class Missile : public Explodeable, public GameObject {
  public:
 
   /**
@@ -110,6 +113,11 @@ class Missile : public Object3d, public GameObject {
     * Allows the missile to fall behind the player
     */
    vec3 m_origPos;
+
+   /**
+    * Whether or not the missile has detonated
+    */
+   bool m_detonated;
 };
 
 #endif
