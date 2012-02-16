@@ -32,6 +32,12 @@ public:
     * @param time the time passed since the last update, in milliseconds
     */
    void tic(uint64_t time);
+
+   /**
+    * setVisible changes the reticle to invisible
+    * @param visibleStatus - The new visibility status of the reticle
+    */
+   void setVisible(bool visibleStatus);
    
 private:
    Player *player;

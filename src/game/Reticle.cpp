@@ -72,3 +72,9 @@ void Reticle::tic(uint64_t time)
       mat4::Magic(-(player->getAimForward()), player->getAimUp(), player->getPosition() - player->getAimForward() * TRANS3);
    m_mesh3->setModelMtx(modelMtx3);
 }
+
+void Reticle::setVisible(bool visibleStatus) {
+   m_mesh1->setVisible(visibleStatus);
+   m_mesh2->setVisible(visibleStatus);
+   m_mesh3->setVisible(visibleStatus);
+}

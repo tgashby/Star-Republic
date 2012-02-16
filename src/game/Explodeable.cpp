@@ -13,7 +13,7 @@
 Explodeable::Explodeable(vec3 position, Modules* modules)
 : Object3d()
 {
-   m_explosionMesh1 = new Mesh("models/enemy.obj", "textures/test5.bmp", modules);
+   m_explosionMesh1 = new Mesh("models/sphere.obj", "textures/test5.bmp", modules);
    m_meshList.push_back(m_explosionMesh1);
    
    m_explosionPos = position;
@@ -26,7 +26,7 @@ Explodeable::Explodeable(vec3 position, Modules* modules)
 Explodeable::Explodeable(vec3 position, int duration, float radius, 
 			 Modules* modules) : Object3d()
 {
-   m_explosionMesh1 = new Mesh("models/enemy.obj", "textures/test5.bmp", modules);
+   m_explosionMesh1 = new Mesh("models/sphere.obj", "textures/test5.bmp", modules);
    m_meshList.push_back(m_explosionMesh1);
 
    m_explosionPos = position;
@@ -36,7 +36,7 @@ Explodeable::Explodeable(vec3 position, int duration, float radius,
    m_radius = radius;
 }
 
-void Explodeable::setExplodePosition(vec3 pos) {
+void Explodeable::setExplosionPosition(vec3 pos) {
    m_explosionPos = pos;
 }
 

@@ -2,7 +2,7 @@
 
 Camera::Camera(PathPoint* head, PathPoint* tail)
    : m_pathPos(0,0,0), m_pathRef(0,0,1), m_pathUp(0,1,0), m_pathSide (1, 0, 0),
-     m_eye(0,0,0), m_ref(0,0,1), m_up(0,1,0), cameraType(_PATH_CAMERA), 
+     m_eye(0,0,0), m_ref(0,0,1), m_up(0,1,0), cameraType(_MOTION_CAMERA), 
      m_turning(false), m_boosting(false), m_boostTime(0) {
 
    //Save the tail and head
@@ -194,4 +194,8 @@ void Camera::setBoosting(bool boostStatus) {
    if (boostStatus == false) {
       m_boostTime = 0;
    }
+}
+
+bool Camera::isBoosting() {
+   return m_boosting;
 }

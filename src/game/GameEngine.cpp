@@ -39,8 +39,8 @@ void GameEngine::InitData()
 
    m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", 
 			       m_modules, *m_player);
-   m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
-          "models/enemy2turrethead.obj", "textures/test3.bmp", m_modules, *m_player);
+   /*m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
+          "models/enemy2turrethead.obj", "textures/test3.bmp", m_modules, *m_player);*/
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
    
@@ -70,20 +70,20 @@ void GameEngine::InitData()
 			 m_previousPoint->getUp());
    m_enemyShip->calculateSide();
 
-   m_enemyGunner->setProgress(m_previousPoint->getPosition());
+   /*m_enemyGunner->setProgress(m_previousPoint->getPosition());
    m_enemyGunner->setPosition(m_previousPoint->getPosition());
    m_enemyGunner->setUp(m_previousPoint->getUp());
    m_enemyGunner->setHeads(m_currentPoint->getPosition(), 
 			 m_currentPoint->getUp(), m_previousPoint->getPosition(), 
 			 m_previousPoint->getUp());
-   m_enemyGunner->calculateSide();
+   m_enemyGunner->calculateSide();*/
    
    m_modules->renderingEngine->setCamera(m_camera);
 
    m_modules->renderingEngine->addObject3d(m_player);
    m_modules->renderingEngine->addObject3d(m_reticle);
    m_modules->renderingEngine->addObject3d(m_enemyShip);
-   m_modules->renderingEngine->addObject3d(m_enemyGunner);
+   //m_modules->renderingEngine->addObject3d(m_enemyGunner);
    //m_modules->renderingEngine->addObject3d(explosion);
    
    for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
@@ -95,7 +95,7 @@ void GameEngine::InitData()
    m_objects.push_back(m_player);
    m_objects.push_back(m_reticle);
    m_objects.push_back(m_enemyShip);
-   m_objects.push_back(m_enemyGunner);
+   //m_objects.push_back(m_enemyGunner);
    //m_objects.push_back(explosion);
    
    for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
@@ -105,7 +105,7 @@ void GameEngine::InitData()
    }
    
    m_gameObjects.push_back(m_enemyShip);
-   m_gameObjects.push_back(m_enemyGunner);
+   //m_gameObjects.push_back(m_enemyGunner);
    m_gameObjects.push_back(m_player);
    
    for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
@@ -115,7 +115,7 @@ void GameEngine::InitData()
    }
 
    m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 10000));
-   m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 800));
+   //m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 800));
    
    initSound();
    m_bulletSound = loadSound("sound/arwingShot.ogg");
@@ -145,8 +145,8 @@ void GameEngine::tic(uint64_t td) {
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->tic(td);
 
-   m_enemyGunner->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-   m_enemyGunner->tic(td);
+   /*m_enemyGunner->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   m_enemyGunner->tic(td); */
    
    m_camera->checkPath(m_world->getCurrentPointer());
    m_camera->tic(td);
@@ -212,7 +212,7 @@ void GameEngine::tic(uint64_t td) {
       m_bulletList.push_back(bullet);
    }
    
-   dirEnemyToPlayer = m_enemyGunner->getPosition() - m_player->getPosition();
+   /*dirEnemyToPlayer = m_enemyGunner->getPosition() - m_player->getPosition();
    if (dirEnemyToPlayer.Length() < 700 && 
        (m_enemyGunner->shouldFire1() || m_enemyGunner->shouldFire2())) 
    {
@@ -246,7 +246,7 @@ void GameEngine::tic(uint64_t td) {
         m_objects.push_back(bullet);
         m_bulletList.push_back(bullet);
       }
-   }
+   }*/
 
    //Use Iterators!
    //for (int i = 0; i < m_bulletList.size(); i++) {
@@ -325,36 +325,39 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 
    if (key == SDLK_SPACE) {
       m_camera->setBoosting(true);
+      m_reticle->setVisible(false);
    }
    
    if (key == SDLK_z)
    {
-      Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
-                                  m_modules, m_player->getPosition() 
-                                  + (m_player->getSide() * 8),
-                                  m_player->getAimForward(), m_player->getAimUp(), 
-                                  *m_player, Bullet::defaultTimeToLive, 1.0f);
-      
-      m_modules->renderingEngine->addObject3d(bullet);
-      m_gameObjects.push_back(bullet);
-      m_objects.push_back(bullet);
-      m_bulletList.push_back(bullet);
-      
-      bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
-                          m_modules, m_player->getPosition() 
-                          - (m_player->getSide() * 8),
-                          m_player->getAimForward(), m_player->getAimUp(), 
-                          *m_player, Bullet::defaultTimeToLive, 1.0f);
-      
-      
-      
-      m_modules->renderingEngine->addObject3d(bullet);
-      m_gameObjects.push_back(bullet);
-      m_objects.push_back(bullet);
-      m_bulletList.push_back(bullet);
+      if (!m_camera->isBoosting()) {
+	 Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
+				     m_modules, m_player->getPosition() 
+				     + (m_player->getSide() * 8),
+				     m_player->getAimForward(), m_player->getAimUp(), 
+				     *m_player, Bullet::defaultTimeToLive, 1.0f);
+	 
+	 m_modules->renderingEngine->addObject3d(bullet);
+	 m_gameObjects.push_back(bullet);
+	 m_objects.push_back(bullet);
+	 m_bulletList.push_back(bullet);
+	 
+	 bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
+			     m_modules, m_player->getPosition() 
+			     - (m_player->getSide() * 8),
+			     m_player->getAimForward(), m_player->getAimUp(), 
+			     *m_player, Bullet::defaultTimeToLive, 1.0f);
       
       
-      //m_bulletSound->play(0);
+      
+	 m_modules->renderingEngine->addObject3d(bullet);
+	 m_gameObjects.push_back(bullet);
+	 m_objects.push_back(bullet);
+	 m_bulletList.push_back(bullet);
+      
+      
+	 //m_bulletSound->play(0);
+      }
    }
 
    return running;
@@ -362,12 +365,21 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 
 std::vector<GameObject*> GameEngine::acquireMissileTargets() {
   std::vector<GameObject*> temp;
+  vec3 playerToObjVec;
+  int count = 0;
 
   for (list<GameObject *>::iterator it = m_gameObjects.begin(); 
        it != m_gameObjects.end(); it++) {
-    if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player)) {
-	if (((*it)->getPosition() - m_player->getPosition()).Length() < 1000) {
-	  temp.push_back(*it);
+     if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) && typeid(**it) != typeid(Missile)) {
+	playerToObjVec = (*it)->getPosition() - m_player->getPosition();
+	if (playerToObjVec.Length() > 350 && 
+	    playerToObjVec.Length() < 1500 && 
+	    angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) {
+	   temp.push_back(*it);
+	   count++;
+	   if (count == 6) {
+	      return temp;
+	   }
 	}
     }
   }
@@ -375,10 +387,16 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
   return temp;
 }
 
+float GameEngine::angleBetween(vec3 one, vec3 two) {
+  return 180.0f / 3.14159265f *
+    acos(one.Normalized().Dot(two.Normalized()));
+}
+
 bool GameEngine::handleKeyUp(SDLKey key)
 {
    bool running = true;
    std::vector<GameObject*> targets;
+   vec3 curveDir, bulletOrigin;
    
    if (key == SDLK_ESCAPE) 
    {
@@ -386,26 +404,60 @@ bool GameEngine::handleKeyUp(SDLKey key)
    }
 
    if (key == SDLK_x) {
+      if (!m_camera->isBoosting()) {
+	 targets = acquireMissileTargets();
 
-     targets = acquireMissileTargets();
-
-     //For each target
-     for (int index = 0; index < targets.size(); index++) {
-       Missile *missile = new Missile("models/cube.obj", "textures/test6.bmp",
-				      m_modules, 
-				      m_player->getPosition(), 
-				      m_player->getAimForward(), 
-				      m_player->getAimUp(),
-				      m_player, 
-				      targets.at(index));
-
-       m_modules->renderingEngine->addObject3d(missile);
-       m_missileList.push_back(missile);
-       m_objects.push_back(missile);
-       m_gameObjects.push_back(missile);
-     }
+	 //For each target
+	 for (int index = 0; index < targets.size(); index++) {
+	    switch (index) {
+	    case 0:
+	       //AIM UP OR CAMERA UP?
+	       curveDir = ((m_player->getSide() * .75)
+			   - (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * 20;
+	       break;
+	    case 1:
+	       curveDir = ((m_player->getSide() * -.75) 
+			   - (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * -20;
+	       break;
+	    case 2:
+	       curveDir = ((m_player->getSide() * .75) 
+			   + (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * 20;
+	       break;
+	    case 3:
+	       curveDir = ((m_player->getSide() * -.75) 
+			   + (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * -20;
+	       break;
+	    case 4:
+	       curveDir = m_player->getSide();
+	       bulletOrigin = m_player->getSide() * 20;
+	       break;
+	    case 5:
+	       curveDir = m_player->getSide() * -1.0f;
+	       bulletOrigin = m_player->getSide() * -20;
+	    }
+	    
+	    bulletOrigin += (m_player->getAimForward() * 8.0f);
+	    
+	    Missile *missile = new Missile("models/cube.obj", "textures/test6.bmp",
+					   m_modules, 
+					   bulletOrigin, 
+					   m_player->getAimForward(), 
+					   curveDir,
+					   m_player, 
+					   targets.at(index));
+	    
+	    m_modules->renderingEngine->addObject3d(missile);
+	    m_missileList.push_back(missile);
+	    m_objects.push_back(missile);
+	    m_gameObjects.push_back(missile);
+	 }
+      }
    }
-
+      
    if (key == SDLK_F1) {
       m_camera->setCameraType(_MOTION_CAMERA);
    }
@@ -424,6 +476,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
    
    if (key == SDLK_SPACE) {
       m_camera->setBoosting(false);
+      m_reticle->setVisible(true);
    }
    
    return running;
