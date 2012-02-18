@@ -13,7 +13,7 @@
 #include <assert.h>
 #include <iostream>
 #include "BoundingSphere.h"
-#include "Interfaces.h"
+#include "../engine/Interfaces.h"
 #include <typeinfo>
 
 //May be held in a BoundingStructure later

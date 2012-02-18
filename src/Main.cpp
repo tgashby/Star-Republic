@@ -1,14 +1,17 @@
 /* SDL */
-#include "engine/SDL_include.h"
+#include "SDL_include.h"
 
-#include "engine/Interfaces.h"
-#include "engine/ResourceManager.h"
-#include "game/GameEngine.h"
-#include "engine/RenderingEngine.h"
+#include "Interfaces.h"
+#include "ResourceManager.h"
+#include "GameEngine.h"
+#include "RenderingEngine.h"
 
 bool handleEvents(float dt, SDL_Event& evt);
 bool handleKeyUp(SDLKey key);
 void handleMouseMotion(Uint16 x, Uint16 y);
+
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 
 int main(int argc, char** argv)
 {
@@ -26,20 +29,23 @@ int main(int argc, char** argv)
    SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
    
+   // Define the screen size
+   ivec2 screenSize = ivec2(SCREEN_WIDTH, SCREEN_HEIGHT);
+   
    // Create the window
-   screen = SDL_SetVideoMode(800, 600, 32, SDL_SWSURFACE | SDL_OPENGL); // | SDL_FULLSCREEN);
+   screen = SDL_SetVideoMode(screenSize.x, screenSize.y, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_OPENGL);
    
    SDL_WM_SetCaption("Star Republic", NULL);
    //SDL_WM_ToggleFullScreen(screen);
-   SDL_WarpMouse(400, 300);
+   SDL_WarpMouse(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
    SDL_WM_GrabInput(SDL_GRAB_ON);
    SDL_ShowCursor(SDL_FALSE);
-   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+   SDL_EnableKeyRepeat(100, 250);
    
    // Setup the modules
    Modules *modules = new Modules();
    modules->resourceManager = new ResourceManager();
-   modules->renderingEngine = new RenderingEngine(modules);
+   modules->renderingEngine = new RenderingEngine(screenSize, modules);
    modules->gameEngine = new GameEngine(modules);
    
    // Swap buffers to display what you've drawn

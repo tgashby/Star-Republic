@@ -27,7 +27,6 @@ Turret::Turret(Player& player, string headName, string headTexture, string midNa
    m_headMesh->setModelMtx(modelMtx);
    
    firing = false;
-   alive = true;
    firingTimer = 0;
 }
 
@@ -42,7 +41,8 @@ void Turret::tic(uint64_t time)
    // Rotate head toward player
    // aim
    // fire
-   mat4 modelMtx = mat4::Translate(m_position.x, m_position.y, m_position.z);
+   //mat4 modelMtx = mat4::Translate(m_position.x, m_position.y, m_position.z);
+   mat4 modelMtx = mat4::Magic(m_forward, m_up, m_position);
    m_footMesh->setModelMtx(modelMtx);
    
    modelMtx *= mat4::Translate(0, 1, 0);
@@ -85,31 +85,20 @@ Vector3<float> Turret::getHeadPosition()
 void Turret::doCollision(GameObject & other){
    //Do collision stuff here!
    
-//   if (typeid(other) == typeid(Bullet)) 
-//   {
-//      collideWith(((Bullet&)other));
-//   }
-//   
-//   if (typeid(other) == typeid(Player)) 
-//   {
-//      collideWith(((Player&)other));
-//   }
-//   
-//   if (typeid(other) == typeid(Enemy)) 
-//   {
-//      collideWith(((Enemy&)other));
-//   }
-   m_health -= 25;
-   
-   if (m_health <= 0) 
+   if (typeid(other) == typeid(Bullet)) 
    {
-      alive = false;
+      collideWith(((Bullet&)other));
    }
-}
-
-bool Turret::isAlive()
-{
-   return alive;
+   
+   if (typeid(other) == typeid(Player)) 
+   {
+      collideWith(((Player&)other));
+   }
+   
+   if (typeid(other) == typeid(Enemy)) 
+   {
+      collideWith(((Enemy&)other));
+   }
 }
 
 bool Turret::shouldFire()
@@ -119,7 +108,18 @@ bool Turret::shouldFire()
 
 void Turret::collideWith(Bullet& bullet)
 {
-
+   if (&bullet.getParent() != this) 
+   {
+      m_health -= 25;
+      
+      if (m_health <= 0) 
+      {
+         m_alive = false;
+         m_headMesh->setVisible(false);
+         m_midMesh->setVisible(false);
+         m_footMesh->setVisible(false);
+      }
+   }
 }
 
 void Turret::collideWith(Player& player)

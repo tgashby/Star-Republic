@@ -29,12 +29,12 @@ ResourceManager::ResourceManager() {
 
 
 MeshData* ResourceManager::readMeshData(string fileName, LOAD_NORMAL_TYPE normalType, float scale) {
-    cout << "loading mesh: " << fileName << "\n";
+//    cout << "loading mesh: " << fileName << "\n";
    return loadMesh(fileName, normalType, scale);
 }
 
 TextureData* ResourceManager::loadBMPImage(string fileName) {
-   cout << "Load Texture: " << fileName << "\n";
+//   cout << "Load Texture: " << fileName << "\n";
    if (m_image != NULL)
       delete m_image; 
    
@@ -238,70 +238,94 @@ WorldData* ResourceManager::readWorldData(string fileName) {
          long start;
          
          if (!(start = line.find("p "))) {
+            vec4 quant;
+            Quaternion rot;
+            mat3 rotMtx;
             vec3 loc, fwd, up;
             ivec4 link;
             int totalLinks;
             
             totalLinks = sscanf(line.c_str(), 
-                                "p %d %f %f %f %f %f %f %f %f %f %d %d %d", 
+                                "p %d %f %f %f %f %f %f %f %d %d %d", 
                                 &link.x, &loc.x, &loc.y, &loc.z, 
-                                &up.x, &up.y, &up.z, 
-                                &fwd.x, &fwd.y, &fwd.z, 
-                                &link.y, &link.z, &link.w) - 9;
+                                &quant.x, &quant.y, &quant.z, &quant.w,
+                                &link.y, &link.z, &link.w);
             
-            if (totalLinks == 1)
-               link.y = link.z = link.w = -1;
-            else if (totalLinks == 2)
+            if (totalLinks == 9)
                link.z = link.w = -1;
-            else if (totalLinks == 1)
+            else if (totalLinks == 10)
                link.w = -1;
-            else {
-               cerr << "error reading point on path\n";
-               continue;
-            }
             
-            cout << "y = " << link.y << "\n";
+            rot = QuaternionT<float>(quant.x, quant.y, quant.z, quant.w);
+            rotMtx = rot.ToMatrix();
+            up = vec3(0, 0, 1);
+            up = rotMtx.TranslatePoint(up);
+            fwd = vec3(0, 1, 0);
+            fwd = rotMtx.TranslatePoint(fwd);
             
             world->path.push_back(loc);
             world->path.push_back(fwd);
             world->path.push_back(up);
+            //world->path.push_back(vec3(0, 1, 0));
             world->links.push_back(link);
          }
          else if (!(start = line.find("u "))) {
+            vec4 quant;
+            Quaternion rot;
+            mat3 rotMtx;
             vec3 loc, fwd, up;
-            int reads;
-            reads = sscanf(line.c_str(), 
-                                "u %f %f %f %f %f %f %f %f %f", 
-                                &loc.x, &loc.y, &loc.z, 
-                                &up.x, &up.y, &up.z, 
-                                &fwd.x, &fwd.y, &fwd.z);
-            if (reads != 9) {
-               cerr << "error reading unit\n";
-               continue;
-            }
+            char buffer[64];
+            string name;
+            int read;
+            
+            read = sscanf(line.c_str(), 
+                          "u %f %f %f %f %f %f %f %s", 
+                          &loc.x, &loc.y, &loc.z, 
+                          &quant.x, &quant.y, &quant.z, &quant.w,
+                          buffer);
+            
+            name = string(buffer);
+            
+            rot = QuaternionT<float>(quant.x, quant.y, quant.z, quant.w);
+            rotMtx = rot.ToMatrix();
+            up = vec3(0, 0, 1);
+            up = rotMtx.TranslatePoint(up);
+            fwd = vec3(0, 1, 0);
+            fwd = rotMtx.TranslatePoint(fwd);
+            
             world->turrets.push_back(loc);
             world->turrets.push_back(fwd);
             world->turrets.push_back(up);
-         }/*
+         }
          else if (!(start = line.find("m "))) {
+            vec4 quant;
+            Quaternion rot;
+            mat3 rotMtx;
             vec3 loc, fwd, up;
-            int reads;
-            reads = sscanf(line.c_str(), 
-                           "u %f %f %f %f %f %f %f %f %f", 
-                           &loc.x, &loc.y, &loc.z, 
-                           &up.x, &up.y, &up.z, 
-                           &fwd.x, &fwd.y, &fwd.z);
-            if (reads != 9) {
-               cerr << "error reading unit\n";
-               continue;
-            }
-            cout << line.find("turret") << "\n";
-            if (line.find("turret") != SIZE_T_MAX) {
-               world->turrets.push_back(loc);
-               world->turrets.push_back(fwd);
-               world->turrets.push_back(up);
-            }
-         }*/
+            char buffer[64];
+            string name;
+            int read;
+            
+            read = sscanf(line.c_str(), 
+                          "m %f %f %f %f %f %f %f %s", 
+                          &loc.x, &loc.y, &loc.z, 
+                          &quant.x, &quant.y, &quant.z, &quant.w,
+                          buffer);
+            
+            name = string(buffer);
+            
+            rot = QuaternionT<float>(quant.x, quant.y, quant.z, quant.w);
+            rotMtx = rot.ToMatrix();
+            up = vec3(0, 1, 0);
+            up = rotMtx.TranslatePoint(up);
+            fwd = vec3(0, 0, 1);
+            fwd = rotMtx.TranslatePoint(fwd);
+            
+            world->worldLocs.push_back(loc);
+            world->worldLocs.push_back(fwd);
+            world->worldLocs.push_back(up);
+            world->worldMeshes.push_back(name);
+         }
       }
    }
    else

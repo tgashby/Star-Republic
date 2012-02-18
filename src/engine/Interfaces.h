@@ -120,6 +120,8 @@ struct WorldData {
    vector<vec3> path; // locations for a path.
    vector<ivec4> links; // should be a 1/3rd the size of path.
    vector<vec3> turrets; // locations of turrets.
+   vector<vec3> worldLocs; // locations of the world meshes
+   vector<string> worldMeshes; // names of the world meshes
 };
 
 // An abstract class for the 
@@ -130,6 +132,8 @@ struct IMesh {
    virtual void setTextureRef(TextureRef textureRef) = 0;
    virtual void setModelMtx(mat4 modelMtx) = 0;
    virtual mat4 getModelMtx() = 0;
+   virtual void setScale(float scale) = 0;
+   virtual float getScale() = 0;
    virtual vec4 getColor() = 0;
    virtual void setColor(vec4 color) = 0;
    virtual bool isVisible() = 0;
@@ -166,9 +170,9 @@ public:
    virtual void pause() = 0;
    virtual void resume() = 0;
 protected:
-   int channel;
-   Mix_Chunk* chunk;
-   Mix_Music* music;
+   int m_channel;
+   Mix_Chunk* m_chunk;
+   Mix_Music* m_music;
 };
 
 // The main class that runs the game.

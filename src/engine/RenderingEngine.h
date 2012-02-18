@@ -3,11 +3,9 @@
 
 #define GL_GLEXT_PROTOTYPES
 
-#include "../engine/SDL_include.h"
+#include "SDL_include.h"
 
 #include "Interfaces.h"
-//NOTE: THIS WAS INCLUDED AS PART OF AVOIDING A SEGFAULT
-#include "Camera.h"
 
 #define VERTEX_STRIDE 11
 #define NORMAL_OFFSET 3
@@ -33,7 +31,7 @@ struct AttributeHandles {
 
 class RenderingEngine : public IRenderingEngine {
 public:
-   RenderingEngine(Modules *modules);
+   RenderingEngine(ivec2 screenSize, Modules *modules);
    ~RenderingEngine();
    void setCamera(ICamera *camera);
    void addObject3d(IObject3d *obj);
@@ -44,6 +42,7 @@ private:
    GLuint buildProgram(const char* vShader, const char* fShader) const;
    void loadMesh(IMesh *newMesh);
    void unLoadMesh(IMesh *rmvMesh);
+   ivec2 m_screenSize;
    Modules *m_modules;
    UniformHandles m_uniforms;
    AttributeHandles m_attributes;

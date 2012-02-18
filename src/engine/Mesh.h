@@ -8,6 +8,7 @@
 class Mesh: public IMesh {
 public:
    Mesh(string meshName, string textureName, Modules *modules);
+   Mesh(string meshName, string textureName, float scale, Modules *modules);
    ~Mesh();
    MeshRef getMeshRef();
    void setMeshRef(MeshRef meshRef);
@@ -15,6 +16,8 @@ public:
    void setTextureRef(TextureRef textureRef);
    void setModelMtx(mat4 modelMtx);
    mat4 getModelMtx();
+   void setScale(float scale);
+   float getScale();
    vec4 getColor();
    void setColor(vec4 color);
    bool isVisible();
@@ -33,6 +36,7 @@ private:
    MeshBounds m_bounds;
    Modules *m_modules;
    bool m_visible;
+   float m_scale;
 };
 
 #endif

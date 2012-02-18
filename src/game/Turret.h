@@ -17,18 +17,50 @@
 #include "Bullet.h"
 #include "Mesh.h"
 
+/**
+ * Turret class for turrets
+ */
 class Turret : public Object3d, public Enemy, public GameObject {
 public:
+   /**
+    * Turret Constructor with a Player reference, 6 strings representing the
+    * models and textures of the turret (it's in 3 pieces), and a Modules
+    * pointer
+    * @param player the player reference, so the turrets know where to aim
+    * @headName path to file for head model
+    * @headTexture path to file for head texture
+    * @midName path to file for middle model
+    * @midTexture path to file for middle texture
+    * @footName path to file for foot model
+    * @footTexture path to file for foot texture
+    * @param modules the Modules pointer
+    */
    Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules);
    ~Turret();
    
+   /**
+    * tic updates the turret based on the time passed
+    * @param time the time passed since the last update, in milliseconds
+    */
    void tic(uint64_t time);
+   
+   /**
+    * doCollision determines the action that the player should take
+    * based on what it has collided with
+    * @param other the object being collided with
+    */
    void doCollision(GameObject & other);
    
+   /**
+    * getHeadPosition returns the Turret's head position, used for
+    * shooting bullets from the right place
+    */
    Vector3<float> getHeadPosition();
    
+   /**
+    * shouldFire regulates the turret's firing rate
+    */
    bool shouldFire();
-   bool isAlive();
    
 private:
    Mesh *m_headMesh;
@@ -36,7 +68,6 @@ private:
    Mesh *m_footMesh;
    
    bool firing;
-   bool alive;
    uint64_t firingTimer;
    
    void collideWith(Bullet& bullet);

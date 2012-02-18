@@ -11,32 +11,32 @@
 
 Sound::Sound()
 {
-   chunk = NULL;
-   music = NULL;
+   m_chunk = NULL;
+   m_music = NULL;
 }
 
 void Sound::setChunk(Mix_Chunk* chunk)
 {
-   this->chunk = chunk;
+   m_chunk = chunk;
 }
 
 void Sound::setMusic(Mix_Music* music)
 {
-   this->music = music;
+   m_music = music;
 }
 
 void Sound::play(int loops)
 {
-   if (this->chunk != NULL) 
+   if (m_chunk != NULL) 
    {
-      channel = Mix_PlayChannel(-1, this->chunk, loops);
+      m_channel = Mix_PlayChannel(-1, m_chunk, loops);
    }
    else
    {
-      channel = Mix_PlayMusic(this->music, loops);
+      m_channel = Mix_PlayMusic(m_music, loops);
    }
    
-   if (channel == -1)
+   if (m_channel == -1)
    {
       printf("Mix_Play error: %s\n", Mix_GetError());
    }
@@ -44,9 +44,9 @@ void Sound::play(int loops)
 
 void Sound::pause()
 {
-   if (this->chunk != NULL && channel != INVALID_CHANNEL) 
+   if (m_chunk != NULL && m_channel != INVALID_CHANNEL) 
    {
-      Mix_Pause(channel);
+      Mix_Pause(m_channel);
    }
    else
    {
@@ -56,9 +56,9 @@ void Sound::pause()
 
 void Sound::resume()
 {
-   if (this->chunk != NULL && channel != INVALID_CHANNEL) 
+   if (m_chunk != NULL && m_channel != INVALID_CHANNEL) 
    {
-      Mix_Resume(channel);
+      Mix_Resume(m_channel);
    }
    else
    {

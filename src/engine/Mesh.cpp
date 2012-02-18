@@ -11,6 +11,21 @@ Mesh::Mesh(string meshName, string textureName, Modules *modules) {
    m_modelMatrix = mat4::Identity();
    m_color = vec4(0.8f, 0.8f, 0.8f, 1.0f);
    m_visible = true;
+   m_scale = DEFAULT_SCALE;
+}
+
+Mesh::Mesh(string meshName, string textureName, float scale, Modules *modules) {
+   m_meshRef = MeshRef();
+   m_meshRef.name = meshName;
+   m_modules = modules;
+   
+   m_textureRef = TextureRef();
+   m_textureRef.name = textureName;
+   
+   m_modelMatrix = mat4::Identity();
+   m_color = vec4(0.8f, 0.8f, 0.8f, 1.0f);
+   m_visible = true;
+   m_scale = scale;
 }
 
 Mesh::~Mesh() {
@@ -39,6 +54,14 @@ void Mesh::setModelMtx(mat4 modelMtx) {
 
 mat4 Mesh::getModelMtx() {
    return m_modelMatrix;
+}
+
+void Mesh::setScale(float scale) {
+   m_scale = scale;
+}
+
+float Mesh::getScale() {
+   return m_scale;
 }
 
 vec4 Mesh::getColor() {
@@ -72,7 +95,7 @@ string Mesh::getTextureName() {
 MeshData* Mesh::getMeshData() {
    return m_modules->resourceManager->readMeshData(m_meshRef.name,
                                                    LOAD_NORMAL_VERTEX,
-                                                   DEFAULT_SCALE);
+                                                   1.0);
 }
 
 TextureData* Mesh::getTextureData() {

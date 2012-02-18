@@ -31,7 +31,7 @@ public:
       //v2.Normalize();
       normal = v2.Cross(v1);
       normal.Normalize();
-      cout << "(" << normal.x << ", " << normal.y << ", " << normal.z << ")\n";
+//      cout << "(" << normal.x << ", " << normal.y << ", " << normal.z << ")\n";
    }
    ivec3 vertices;
    ivec3 normals;
