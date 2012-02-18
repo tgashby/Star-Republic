@@ -15,6 +15,7 @@
 #include "Bullet.h"
 #include "EnemyShip.h"
 //#include "EnemyGunship.h"
+#include "WorldGrid.h"
 #include "Explodeable.h"
 #include <algorithm>
 #include "Missile.h"
@@ -38,29 +39,29 @@ private:
    void runCollisions();
    void createTurrets();
    
-   list<IObject3d *> m_objects;
-   list<GameObject *> m_gameObjects;
-   Player *m_player;
-   Reticle *m_reticle;
-   Camera *m_camera;
-   Modules *m_modules;
+//   list<IObject3d *> m_objects;
+//   list<GameObject *> m_gameObjects;
+//   Player *m_player;
+//   Reticle *m_reticle;
+//   Camera *m_camera;
+//   Modules *m_modules;
    Path *m_world;
-   WorldData *m_turretLocs;
-   PathPoint *m_currentPoint;
-   PathPoint *m_previousPoint;
+//   WorldData *m_turretLocs;
+//   PathPoint *m_currentPoint;
+//   PathPoint *m_previousPoint;
    Vector3<float> currentDirection;
    void InitData();
-   std::vector<Bullet *> m_bulletList;
-   std::vector<Turret *> m_turrets;
-   std::vector<Missile *> m_missileList;
+//   std::vector<Bullet *> m_bulletList;
+//   std::vector<Turret *> m_turrets;
+//   std::vector<Missile *> m_missileList;
    
-   EnemyShip* m_enemyShip;
+//   EnemyShip* m_enemyShip;
    //EnemyGunship* m_enemyGunner;
    
    Sound* m_bulletSound;
    Sound* m_music;
    
-   Explodeable* explosion;
+//   Explodeable* explosion;
    uint64_t gameOver;
 };
 

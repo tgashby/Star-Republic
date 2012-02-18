@@ -46,8 +46,7 @@ void GameEngine::InitData()
    
    //explosion = new Explodeable(m_player->getPosition(), m_modules);
 
-   m_turretLocs = m_modules->resourceManager->
-   readWorldData("maps/course.wf");
+   m_turretLocs = m_world->worldData;
 
    createTurrets();
    
