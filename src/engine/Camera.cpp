@@ -70,7 +70,7 @@ void Camera::tic(uint64_t time) {
     m_turning = false;
     m_eye = m_ref - ((m_head->getPosition() - m_tail->getPosition()).Normalized() 
 		     * CAMERA_LOOK_AHEAD_DISTANCE);
-    m_up = m_tail->getUp();
+    //m_up = m_tail->getUp();
   }
   
   if (!m_turning) {
@@ -79,6 +79,7 @@ void Camera::tic(uint64_t time) {
   temp2 = m_head->getUp() * (m_ref - m_tail->getPosition()).Length() / 
      (m_head->getPosition() - m_tail->getPosition()).Length();
   m_up = (temp1 + temp2).Normalized();
+  m_up = vec3(0, 1, 0);
     //ADD forward between them
   } 
 
