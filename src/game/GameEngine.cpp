@@ -41,6 +41,7 @@ void GameEngine::InitData()
    m_turretLocs = m_world->worldData;
 
    createTurrets();
+   createTerrain();
    
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
@@ -508,40 +509,21 @@ void GameEngine::runCollisions()
      
 }
 
-void GameEngine::createTurrets()
+void GameEngine::createTerrain()
 {
-   for (std::vector< Vector3<float> >::iterator i = m_turretLocs->turrets.begin(); 
-        i != m_turretLocs->turrets.end())
-   {
-      // Loc, forward, up
-      Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", 
-				     "textures/test3.bmp", "models/turretmiddle.obj", 
-				     "textures/test3.bmp", "models/turretbase.obj", 
-				     "textures/test3.bmp", m_modules);
-      
-      newTurret->setPosition(*i);
-      ++i;
-      newTurret->setForward(*i);
-      ++i;
-      newTurret->setUp(*i);
-      ++i;
-      
-      m_turrets.push_back(newTurret);
+   vector<string>::iterator name = m_world->worldData->worldMeshes.begin();
+   vector<vec3>::iterator vec = m_world->worldData->worldLocs.begin();
+   while (name != m_world->worldData->worldMeshes.end()) {
+      vec3 pos = *vec;
+      ++vec;
+      vec3 fwd = *vec;
+      ++vec;
+      vec3 up = *vec;
+      ++vec;
+      string file = "models/" + *name;
+      ++name;
+      SceneObject *obj = new SceneObject(file, "textures/test3.bmp", pos, fwd, up, m_modules);
+      m_modules->renderingEngine->addObject3d(obj);
+      m_objects.push_back(obj);
    }
-   
-//   vector<string>::iterator name = m_turretLocs->worldMeshes.begin();
-//   vector<vec3>::iterator vec = m_turretLocs->worldLocs.begin();
-//   while (name != m_turretLocs->worldMeshes.end()) {
-//      vec3 pos = *vec;
-//      ++vec;
-//      vec3 fwd = *vec;
-//      ++vec;
-//      vec3 up = *vec;
-//      ++vec;
-//      string file = "models/" + *name;
-//      ++name;
-//      SceneObject *obj = new SceneObject(file, "textures/test3.bmp", pos, fwd, up, m_modules);
-//      m_modules->renderingEngine->addObject3d(obj);
-//      m_objects.push_back(obj);
-//   }
 }
