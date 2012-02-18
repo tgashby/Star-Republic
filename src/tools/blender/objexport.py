@@ -94,7 +94,7 @@ class face:
    def writetofile(self, out):
       out.write('f %d/%d/%d/%d ' % (self.verts[0], self.uvs[0].i, self.verts[0], 0))
       out.write('%d/%d/%d/%d ' % (self.verts[1], self.uvs[1].i, self.verts[1], 0))
-      out.write('%d/%d/%d/%d\n' % (self.verts[2], self.uvs[2].i, self.verts[2], 0))
+      out.write('%d/%d/%d/%d\n' % (self.verts[2], self.uvs[2].i, 1 - self.verts[2], 0))
    def adduvs(self, uvs):
       self.uvs = uvs
    def reverseFace(self):
