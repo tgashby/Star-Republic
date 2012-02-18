@@ -12,7 +12,7 @@
 //the time it takes for the missile to reach its destination
 #define _MISSILE_REACH_DEST_TIME 1500
 #define _MISSILE_ARC_HEIGHT 500
-#define _MISSILE_RADIUS .4f
+#define _MISSILE_RADIUS .5f
 #define _MISSILE_ARCH_VEC_1_TIME 500
 #define _MISSILE_ARCH_VEC_2_TIME 500
 #define _MISSILE_ARCH_VEC_3_TIME 500

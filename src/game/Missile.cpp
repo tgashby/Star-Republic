@@ -3,7 +3,9 @@
 Missile::Missile(string fileName, string textureName, Modules* modules,
 		vec3 pos_offset, vec3 forw, vec3 up,
 		 GameObject* parent, GameObject* target) 
-   : m_lifetime(0), Explodeable(pos_offset, modules) {
+  : m_lifetime(0), Explodeable(pos_offset, modules),
+    GameObject(parent->getPosition() + pos_offset, _MISSILE_RADIUS) {
+
    m_origPos = parent->getPosition() + pos_offset;
 
    m_position = m_origPos;
@@ -85,6 +87,7 @@ void Missile::doCollision(GameObject &other) {
    if (typeid(other) != typeid(Player) && typeid(other) != typeid(Bullet)
        && typeid(other) != typeid(Missile)) {
       m_detonated = true;
+      m_mesh->setVisible(false);
       setExplosionPosition(m_position);
    }
 }

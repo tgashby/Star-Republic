@@ -82,7 +82,7 @@ Vector3<float> Turret::getHeadPosition()
    return toRet;
 }
 
-void Turret::doCollision(GameObject & other){
+void Turret::doCollision(GameObject & other) {
    //Do collision stuff here!
    
    if (typeid(other) == typeid(Bullet)) 
