@@ -6,3 +6,8 @@ SceneObject::SceneObject(string fileName, string textureName, vec3 pos, vec3 fwd
    newMesh->setModelMtx(mat4::Magic(fwd, up, pos));
    m_meshList.push_back(newMesh);
 }
+
+SceneObject::~SceneObject() 
+{
+   
+}

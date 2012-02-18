@@ -284,6 +284,11 @@ WorldData* ResourceManager::readWorldData(string fileName) {
                           &quant.x, &quant.y, &quant.z, &quant.w,
                           buffer);
             
+            if (read != 8)
+            {
+               std::cerr << "Short-read!\n";
+            }
+            
             name = string(buffer);
             
             rot = QuaternionT<float>(quant.x, quant.y, quant.z, quant.w);
@@ -311,6 +316,11 @@ WorldData* ResourceManager::readWorldData(string fileName) {
                           &loc.x, &loc.y, &loc.z, 
                           &quant.x, &quant.y, &quant.z, &quant.w,
                           buffer);
+            
+            if (read != 8)
+            {
+               std::cerr << "Short-read!\n";
+            }
             
             name = string(buffer);
             

@@ -39,7 +39,7 @@ class Camera: public ICamera {
   /**
    * Standard deconstructor for the camera.
    */
-  ~Camera();
+  virtual ~Camera();
 
   /**
    * Changes the camera to the specified type

@@ -35,6 +35,12 @@ int main(int argc, char** argv)
    // Create the window
    screen = SDL_SetVideoMode(screenSize.x, screenSize.y, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_OPENGL);
    
+   if (!screen) 
+   {
+      std::cerr << SDL_GetError() << "\n";
+      exit(1);
+   }
+   
    SDL_WM_SetCaption("Star Republic", NULL);
    //SDL_WM_ToggleFullScreen(screen);
    SDL_WarpMouse(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);

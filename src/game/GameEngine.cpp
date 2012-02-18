@@ -17,10 +17,10 @@ GameEngine::GameEngine(Modules *modules) {
 
 
 GameEngine::~GameEngine() {
-   list<IObject3d *>::iterator object = m_objects.begin();
-   for (; object != m_objects.end(); ++object) {
-      delete *object;
-   }
+//   list<IObject3d *>::iterator object = m_objects.begin();
+//   for (; object != m_objects.end(); ++object) {
+//      delete *object;
+//   }
    m_objects.clear();
    m_gameObjects.clear();
 
@@ -283,14 +283,10 @@ bool GameEngine::handleEvents()
    bool running = true;
    
    SDL_Event evt;
-   uint64_t old = SDL_GetTicks();
    
    
    while (SDL_PollEvent(&evt))
    {
-      uint64_t now = SDL_GetTicks();
-      
-      old = now;
       
       if (evt.type == SDL_QUIT)
          running = false;
