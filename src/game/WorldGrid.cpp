@@ -68,10 +68,23 @@ std::list<GameObject*> WorldGrid::getUpdateableObjects()
 
 void WorldGrid::makeGrid()
 {
+   Plane lftPlane;
+   Plane rtPlane;
+   Plane downPlane;
+   Plane upPlane;
+   Plane nearPlane;
+   Plane farPlane;
+   
    // Connect the points into quadrants
    for (std::vector<vec3>::iterator i = m_world.path.begin(); i != m_world.path.end(); i += 2) 
    {
-      m_quadrants.push_back(Quadrant(*i, *(i+1)));
+      Quadrant quad(*i, *(i+1));
+      
+      
+      
+      quad.m_bounds = new Cube(lftPlane, rtPlane, upPlane, downPlane, nearPlane, farPlane);
+      
+      m_quadrants.push_back(quad);
    }
 }
 

@@ -26,8 +26,6 @@ struct Quadrant
    {
       m_startPt = startPt;
       m_endPt = endPt;
-      
-      
    }
    
    ~Quadrant()
