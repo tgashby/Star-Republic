@@ -37,6 +37,7 @@ public:
 private:
    void runCollisions();
    void createTurrets();
+   void createTerrain();
    
    list<IObject3d *> m_objects;
    list<GameObject *> m_gameObjects;
@@ -45,7 +46,6 @@ private:
    Camera *m_camera;
    Modules *m_modules;
    Path *m_world;
-   WorldData *m_turretLocs;
    PathPoint *m_currentPoint;
    PathPoint *m_previousPoint;
    Vector3<float> currentDirection;

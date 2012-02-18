@@ -46,10 +46,8 @@ void GameEngine::InitData()
    
    //explosion = new Explodeable(m_player->getPosition(), m_modules);
 
-   m_turretLocs = m_modules->resourceManager->
-   readWorldData("maps/course.wf");
-
    createTurrets();
+   createTerrain();
    
    m_currentPoint = m_world->getCurrentPointer();
    m_previousPoint = m_world->getPreviousPointer();
@@ -519,8 +517,8 @@ void GameEngine::runCollisions()
 
 void GameEngine::createTurrets()
 {
-   for (std::vector< Vector3<float> >::iterator i = m_turretLocs->turrets.begin(); 
-	i != m_turretLocs->turrets.end();)
+   for (std::vector< Vector3<float> >::iterator i = m_world->worldData->turrets.begin(); 
+	i != m_world->worldData->turrets.end(); i += 3)
    {
       // Loc, forward, up
       Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", 
@@ -529,18 +527,18 @@ void GameEngine::createTurrets()
 				     "textures/test3.bmp", m_modules);
       
       newTurret->setPosition(*i);
-      ++i;
-      newTurret->setForward(*i);
-      ++i;
-      newTurret->setUp(*i);
-      ++i;
+      newTurret->setForward(*(i + 1));
+      newTurret->setUp(*(i + 2));
       
       m_turrets.push_back(newTurret);
    }
-   
-   vector<string>::iterator name = m_turretLocs->worldMeshes.begin();
-   vector<vec3>::iterator vec = m_turretLocs->worldLocs.begin();
-   while (name != m_turretLocs->worldMeshes.end()) {
+}
+
+void GameEngine::createTerrain()
+{
+   vector<string>::iterator name = m_world->worldData->worldMeshes.begin();
+   vector<vec3>::iterator vec = m_world->worldData->worldLocs.begin();
+   while (name != m_world->worldData->worldMeshes.end()) {
       vec3 pos = *vec;
       ++vec;
       vec3 fwd = *vec;
