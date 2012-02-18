@@ -98,8 +98,6 @@ class Missile : public Explodeable, public GameObject {
    vec3 m_archVecPos3;
 
    /**
-
-   /**
     * The current location between the m_archVecPos and the target that the
     * missile is looking at
     */
