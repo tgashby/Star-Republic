@@ -1,5 +1,5 @@
-#ifndef StarRepub_EnemyShip_h
-#define StarRepub_EnemyShip_h
+#ifndef StarRepub_EnemyGunship_h
+#define StarRepub_EnemyGunship_h
 
 #include "Interfaces.h"
 #include "Camera.h"
@@ -11,30 +11,27 @@
 #include <assert.h>
 #include <cmath>
 
-const float PATHVELOCITY = 4.2f;
-const float AIMVELOCITY = 0.3f;
-const float x_SCALAR = 0.0005f; 
-const float y_SCALAR = 0.0005f; 
-const float mODEL_SCALE = 0.05f;
-const float ROTATE_CONSTANT = 90;
 
 /**
  * EnemyShip represents a shy enemy flyer who will dodge based on where
  * the player is currently aiming
  */
-class EnemyShip : public Object3d, public Flyer, public Enemy {
+class EnemyGunship : public Object3d, public Flyer, public Enemy {
 public:
    /**
     * EnemyShip construct, takes 2 strings representing the object file path 
     * and the texture file path respectively, a Modules pointer, and a 
     * player reference.
     * @param fileName the object file, i.e. the model
+    * @param turretFileName1 an object file for the turretbase
+    * @param turretFileName2 an object file for the turrethead
     * @param textureName the texture file
     * @param modules the Modules pointer
     * @param p the player reference to pass to Enemy
     */
-   EnemyShip(string fileName, string textureName, Modules *modules, Player &p);
-   ~EnemyShip();
+   EnemyGunship(string fileName, string turretFileName1, string turretFileName2,
+      string textureName, Modules *modules, Player &p);
+   ~EnemyGunship();
    
    /**
     * tic updates the player ship based on time passed and the player
@@ -54,12 +51,7 @@ public:
     */
    Vector3<float> getSide();
    
-   /**
-    * getScaredSide returns the vector the ship will head based on where the player is aiming
-    */
-   Vector3<float> getScaredSide();
-   
-   /**
+   /*
     * calculateSide determines the side vector based on the current position
     */
    void calculateSide();
@@ -89,8 +81,16 @@ public:
    /**
     * shouldFire slows down the enemy's rate of fire so that the player isn't
     * dodging a constant stream of bullets
+    * -left cannon
     */
-   bool shouldFire();
+   bool shouldFire1();
+
+   /**
+    * shouldFire slows down the enemy's rate of fire so that the player isn't
+    * dodging a constant stream of bullets
+    * -right cannon
+    */
+   bool shouldFire2();
    
    /**
     * getLeftCannonPos returns the position of the left cannon, used for 
@@ -107,15 +107,19 @@ public:
    
 private:
    Mesh *m_mesh;
+   /** two turrets, each consisting of 2 parts **/
+   Mesh *m_turretbasemesh1, *m_turretbasemesh2;
+   Mesh *m_turretheadmesh1, *m_turretheadmesh2;
    Vector3<float> side;
    Vector3<float> dpos;
    float prevAngle;
    float currentAngle;
-   bool dodging;
-   int dodgedir, dodgecounter;
 
-   bool firing;
-   uint64_t firingTimer;
+   bool firing1, firing2;
+   uint64_t firingTimer1, firingTimer2;
+   uint64_t motionTimer;
+   // for moving 
+   int xdir, ydir, pxdir, pydir;
 };
 
 #endif

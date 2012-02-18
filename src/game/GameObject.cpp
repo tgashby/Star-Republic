@@ -4,7 +4,7 @@
 #define DEFAULT_MESH "spaceship.obj"
 #define DEFAULT_TEXTURE "blank.bmp"
 
-const float GameObject::defaultBoundingRadius = 50;
+const float GameObject::defaultBoundingRadius = 40;
 
 GameObject::GameObject(vec3 startPos, vec3 startVelocity, 
                        vec3 forwardVec, vec3 accelerationVec, 
@@ -32,6 +32,17 @@ GameObject::GameObject()
    m_health = 100;
    
    m_alive = true;
+}
+
+GameObject::GameObject(vec3 pos, float radius) {
+  m_position = pos;
+  m_velocity = vec3(0,0,0);
+  m_forward = vec3(0,0,-1);
+  m_acceleration = vec3(0,0,0);
+  m_up = vec3(0,1,0);
+  m_boundingSphere = new BoundingSphere(radius);
+  m_health = 100;
+  m_alive = true;
 }
 
 

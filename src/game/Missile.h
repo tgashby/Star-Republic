@@ -10,16 +10,22 @@
 #define StarRepub_Missile_h
 
 //the time it takes for the missile to reach its destination
-#define _MISSILE_REACH_DEST_TIME 1000
-#define _MISSILE_ARC_HEIGHT 300
-#define _MISSILE_RADIUS .4f
+#define _MISSILE_REACH_DEST_TIME 1500
+#define _MISSILE_ARC_HEIGHT 500
+#define _MISSILE_RADIUS .5f
+#define _MISSILE_ARCH_VEC_1_TIME 500
+#define _MISSILE_ARCH_VEC_2_TIME 500
+#define _MISSILE_ARCH_VEC_3_TIME 500
 
 #include "GameObject.h"
 #include "Interfaces.h"
 #include "Mesh.h"
 #include "../engine/Object3d.h"
+#include "Explodeable.h"
+#include "Player.h"
+#include "Bullet.h"
 
-class Missile : public Object3d, public GameObject {
+class Missile : public Explodeable, public GameObject {
  public:
 
   /**
@@ -34,7 +40,7 @@ class Missile : public Object3d, public GameObject {
    * @param target - The target of the missile; it follows them based on their position
    */
    Missile(string fileName, string textureName, Modules *modules,
-	   vec3 pos, vec3 forw, vec3 up,
+	   vec3 pos_offset, vec3 forw, vec3 up,
 	   GameObject* parent, GameObject* target);
 
    /**
@@ -87,7 +93,9 @@ class Missile : public Object3d, public GameObject {
    /**
     * The vector used to form an arc above the player
     */
-   vec3 m_archVecPos;
+   vec3 m_archVecPos1;
+   vec3 m_archVecPos2;
+   vec3 m_archVecPos3;
 
    /**
     * The current location between the m_archVecPos and the target that the
@@ -110,6 +118,11 @@ class Missile : public Object3d, public GameObject {
     * Allows the missile to fall behind the player
     */
    vec3 m_origPos;
+
+   /**
+    * Whether or not the missile has detonated
+    */
+   bool m_detonated;
 };
 
 #endif
