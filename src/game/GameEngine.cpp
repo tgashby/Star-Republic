@@ -7,8 +7,6 @@
 
 GameEngine::GameEngine(Modules *modules) {
    m_modules = modules;
-   m_objects = list<IObject3d *>(0);
-   m_gameObjects = list<GameObject *>(0);
 
    gameOver = 0;
    
@@ -16,15 +14,9 @@ GameEngine::GameEngine(Modules *modules) {
 }
 
 
-GameEngine::~GameEngine() {
-//   list<IObject3d *>::iterator object = m_objects.begin();
-//   for (; object != m_objects.end(); ++object) {
-//      delete *object;
-//   }
-   m_objects.clear();
-   m_gameObjects.clear();
-
-   //delete m_camera;
+GameEngine::~GameEngine() 
+{
+   
 }
 
 void GameEngine::InitData()
@@ -519,7 +511,7 @@ void GameEngine::runCollisions()
 void GameEngine::createTurrets()
 {
    for (std::vector< Vector3<float> >::iterator i = m_turretLocs->turrets.begin(); 
-	i != m_turretLocs->turrets.end();)
+        i != m_turretLocs->turrets.end())
    {
       // Loc, forward, up
       Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", 
@@ -537,19 +529,19 @@ void GameEngine::createTurrets()
       m_turrets.push_back(newTurret);
    }
    
-   vector<string>::iterator name = m_turretLocs->worldMeshes.begin();
-   vector<vec3>::iterator vec = m_turretLocs->worldLocs.begin();
-   while (name != m_turretLocs->worldMeshes.end()) {
-      vec3 pos = *vec;
-      ++vec;
-      vec3 fwd = *vec;
-      ++vec;
-      vec3 up = *vec;
-      ++vec;
-      string file = "models/" + *name;
-      ++name;
-      SceneObject *obj = new SceneObject(file, "textures/test3.bmp", pos, fwd, up, m_modules);
-      m_modules->renderingEngine->addObject3d(obj);
-      m_objects.push_back(obj);
-   }
+//   vector<string>::iterator name = m_turretLocs->worldMeshes.begin();
+//   vector<vec3>::iterator vec = m_turretLocs->worldLocs.begin();
+//   while (name != m_turretLocs->worldMeshes.end()) {
+//      vec3 pos = *vec;
+//      ++vec;
+//      vec3 fwd = *vec;
+//      ++vec;
+//      vec3 up = *vec;
+//      ++vec;
+//      string file = "models/" + *name;
+//      ++name;
+//      SceneObject *obj = new SceneObject(file, "textures/test3.bmp", pos, fwd, up, m_modules);
+//      m_modules->renderingEngine->addObject3d(obj);
+//      m_objects.push_back(obj);
+//   }
 }

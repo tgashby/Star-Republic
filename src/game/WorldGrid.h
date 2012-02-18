@@ -14,7 +14,15 @@
 
 struct Quadrant
 {
+   Quadrant(vec3 startPt, vec3 endPt) 
+   {
+      m_startPt = startPt;
+      m_endPt = endPt;
+   }
+   
    std::list<GameObject*> m_gameObjects;
+   vec3 m_startPt;
+   vec3 m_endPt;
 };
 
 /**
@@ -57,7 +65,7 @@ public:
    
 private:
    WorldData& m_world;
-   std::list<Quadrant> m_quadrants;
+   std::vector<Quadrant> m_quadrants;
    
    void makeGrid();
 };
