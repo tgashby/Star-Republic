@@ -2,14 +2,11 @@
 #define StarRepub_PathPoint_h
 
 #include "../engine/Interfaces.h"
-#include "Turret.h"
-#include "WorldMesh.h"
 
-class PathPoint
-{
+class PathPoint {
 public:
-   
-   PathPoint(Vector3<float> position, Vector3<float> up, Vector3<float> forward, Vector3<float> side, ivec4 links);
+   PathPoint(PathPointData pointData);
+   PathPoint(vec3 position, vec3 up, vec3 forward, vec3 side);
    PathPoint(vec3 position, vec3 forward, vec3 up, ivec4 links);
    ~PathPoint();
    void setPosition(float x, float y, float z);
@@ -24,20 +21,16 @@ public:
    int getFirstID();
    int getSecondID();
    int getThirdID();
-   Vector3<float> getPosition();
-   Vector3<float> getUp();
-   Vector3<float> getForward();
-   Vector3<float> getSide();
+   vec3 getPosition();
+   vec3 getUp();
+   vec3 getForward();
+   vec3 getSide();
 
-   vector<WorldMesh*> worldMeshes;
-   vector<Turret*> turrets;
-   
 private:
-   Vector3<float> position;
-   Vector3<float> up;
-   Vector3<float> forward;
-   Vector3<float> side;
-   ivec4 links;
+   vec3 position;
+   vec3 up;
+   vec3 forward;
+   vec3 side;
    int firstID, secondID, thirdID;
    int numberOfIDs;  //Keeps track of the number of IDs linking from this point. The convention is that left is filled first, then middle, then right.
    //Example: if numberOfIDs == 2, then leftID and middleID have indexes to points, and rightID would not.

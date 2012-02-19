@@ -11,7 +11,6 @@
 #include "Explodeable.h"
 
 Explodeable::Explodeable(vec3 position, Modules* modules)
-: Object3d()
 {
    m_explosionMesh1 = new Mesh("models/sphere.obj", "textures/test5.bmp", modules);
    m_meshList.push_back(m_explosionMesh1);
@@ -23,6 +22,18 @@ Explodeable::Explodeable(vec3 position, Modules* modules)
    m_radius = _DEF_EXPLOSION_RADIUS;
 }
 
+Explodeable::Explodeable(vec3 position, float radius, Modules* modules)
+{
+   m_explosionMesh1 = new Mesh("models/sphere.obj", "textures/test5.bmp", modules);
+   m_meshList.push_back(m_explosionMesh1);
+   
+   m_explosionPos = position;
+   m_explosionMesh1->setModelMtx(mat4::Scale(0));
+
+   m_duration = _DEF_EXPLOSION_ANIMATION_TIME;
+   m_radius = radius;
+}
+
 Explodeable::Explodeable(vec3 position, int duration, float radius, 
 			 Modules* modules) : Object3d()
 {
@@ -30,14 +41,14 @@ Explodeable::Explodeable(vec3 position, int duration, float radius,
    m_meshList.push_back(m_explosionMesh1);
 
    m_explosionPos = position;
-   m_explosionMesh1->setModelMtx(mat4::Scale(0));
+   m_explosionMesh1->setScale(0.0f);
 
    m_duration = duration;
    m_radius = radius;
 }
 
 void Explodeable::setExplosionPosition(vec3 pos) {
-   m_explosionPos = pos;
+  m_explosionPos = pos;
 }
 
 void Explodeable::tic(uint64_t dt) {
@@ -57,6 +68,6 @@ void Explodeable::explosionTic(uint64_t dt)
    
    float modelScale = m_radius * m_stateTimer / m_duration;
    
-   m_explosionMesh1->setModelMtx(mat4::Scale(modelScale) 
-    * mat4::Translate(m_explosionPos.x, m_explosionPos.y, m_explosionPos.z));
+   m_explosionMesh1->setScale(modelScale);
+   m_explosionMesh1->setModelMtx(mat4::Translate(m_explosionPos.x, m_explosionPos.y, m_explosionPos.z));
 }

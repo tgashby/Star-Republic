@@ -40,8 +40,10 @@ private:
    void createTerrain();
    
    Modules *m_modules;
-   Path *m_world;
-   WorldGrid *m_worldGrid;
+   Path *m_path;
+   WorldData *m_worldData;
+   PathPoint *m_currentPoint;
+   PathPoint *m_previousPoint;
    Vector3<float> currentDirection;
    void InitData();
    

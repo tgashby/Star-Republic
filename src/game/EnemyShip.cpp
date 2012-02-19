@@ -10,11 +10,12 @@
 #define DISTANCESCALE 100
 #define DODGETIME 50
 #define SIZE 40
+#define EXPLOSION_SIZE 40
 
 /** Scared Enemy: Takes in the mesh info and a reference to the player to aim at **/
 EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Player &p) 
-   :  Object3d(), Flyer(), Enemy(p), side(1,0,0), 
-      currentAngle(0), prevAngle(0)
+  :  Explodeable(vec3(0,0,0), EXPLOSION_SIZE, modules), 
+     Flyer(), Enemy(p), side(1,0,0), currentAngle(0), prevAngle(0)
 {
   m_mesh = new Mesh(fileName, textureName, modules);
   m_meshList.push_back(m_mesh);
@@ -51,75 +52,80 @@ EnemyShip::~EnemyShip()
 //All Vectors are updated in here
 void EnemyShip::tic(uint64_t time)
 {
-  /** the normalized vector between the player and the enemy **/
-  dpos = (m_playerRef.getPosition() - m_position).Normalized();
+  if (isAlive()) {
+    /** the normalized vector between the player and the enemy **/
+    dpos = (m_playerRef.getPosition() - m_position).Normalized();
   
-  // moving based on the player's direction and it's aiming direction
-  m_position += m_playerRef.getForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
+    // moving based on the player's direction and it's aiming direction
+    m_position += m_playerRef.getForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
+    
+    /** 'scared ship' AI **/
+    float aimAngle;
+    float distance;
+    /** the angle between the player's aim and the enemy's location:
+     *  If the player is aiming near the enemy, it dodges **/
+    aimAngle = 180 - 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getAimForward()));
+    distance = (float)((m_playerRef.getPosition() - m_position).Length());
+    if (aimAngle < MAXSCAREDANGLE)
+      {
+	/** If this is the first tic he needs to dodge, compute the dodge direction **/
+	if (!dodging)
+	  {
+	    if (180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getSide())) < 90)
+	      dodgedir = 1;
+	    else
+	      dodgedir = -1;
+	  }
+	/** if he's dodged long enough, but is still being aimed at, 
+	 *  dodge in the opposite direction **/
+	if (dodgecounter == 0)
+	  {
+	    dodgecounter = DODGETIME;
+	    dodgedir = -dodgedir;
+	  }
+	/** which direction to dodge in? **/
+	vec3 motionDir = getScaredSide() / (aimAngle / MAXSCAREDANGLE) * MAXSCAREDSPEED * dodgedir *
+	  ((DISTANCESCALE / distance) * (DISTANCESCALE / distance));
+	/** move and dodge **/
+	m_position += motionDir;
+	dodging = true;
+	/** count down - you can't dodge in the same direction forever **/
+	dodgecounter--;
+      }
+    else
+      {
+	/** no longer being aimed at, dodging unnecessary **/
+	dodging = false;
+	dodgedir = 0;
+	dodgecounter = DODGETIME;
+      }
 
-  /** 'scared ship' AI **/
-  float aimAngle;
-  float distance;
-  /** the angle between the player's aim and the enemy's location:
-   *  If the player is aiming near the enemy, it dodges **/
-  aimAngle = 180 - 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getAimForward()));
-  distance = (float)((m_playerRef.getPosition() - m_position).Length());
-  if (aimAngle < MAXSCAREDANGLE)
-  {
-     /** If this is the first tic he needs to dodge, compute the dodge direction **/
-     if (!dodging)
-     {
-        if (180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getSide())) < 90)
-           dodgedir = 1;
-        else
-           dodgedir = -1;
-     }
-     /** if he's dodged long enough, but is still being aimed at, 
-      *  dodge in the opposite direction **/
-     if (dodgecounter == 0)
-     {
-        dodgecounter = DODGETIME;
-        dodgedir = -dodgedir;
-     }
-     /** which direction to dodge in? **/
-     vec3 motionDir = getScaredSide() / (aimAngle / MAXSCAREDANGLE) * MAXSCAREDSPEED * dodgedir *
-     ((DISTANCESCALE / distance) * (DISTANCESCALE / distance));
-     /** move and dodge **/
-     m_position += motionDir;
-     dodging = true;
-     /** count down - you can't dodge in the same direction forever **/
-     dodgecounter--;
+    /** setting the modelmatrix based on a constant scale and rotation,
+     *  and the forward, up and position (aka Magic) - note that 
+     *  the enemy constantly aims at the player **/
+    mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0));
+    modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
+    m_mesh->setModelMtx(modelMtx);
+    
+    /** update the timer for shooting **/
+    firingTimer += time;
+    
+    /** if it's time to shoot, let loose the cannons! (provided you're not behing the player) **/
+    if (firingTimer > 600 && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getForward())) > 80)
+      {
+	firing = true;
+	firingTimer = 0;
+      }
+    else 
+      {
+	firing = false;
+      }
+    
+    firing = firing && isAlive();
   }
-  else
-  {
-     /** no longer being aimed at, dodging unnecessary **/
-     dodging = false;
-     dodgedir = 0;
-     dodgecounter = DODGETIME;
+  else {
+    explosionTic(time);
   }
-
-  /** setting the modelmatrix based on a constant scale and rotation,
-   *  and the forward, up and position (aka Magic) - note that 
-   *  the enemy constantly aims at the player **/
-  mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0));
-  modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
-  m_mesh->setModelMtx(modelMtx);
-
-  /** update the timer for shooting **/
-  firingTimer += time;
-   
-  /** if it's time to shoot, let loose the cannons! (provided you're not behing the player) **/
-  if (firingTimer > 600 && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getForward())) > 80)
-  {
-     firing = true;
-     firingTimer = 0;
-  }
-  else 
-  {
-     firing = false;
-  }
-   
-   firing = firing && isAlive();
 }
 
 /** see: Player **/
@@ -190,18 +196,27 @@ void EnemyShip::doCollision(GameObject & other)
    {
       if (&((Bullet&)other).getParent() != this) 
       {
-         m_health -= 25;
-         
-         if (m_health <= 0) 
-         {
-            m_alive = false;
-            m_mesh->setVisible(false);
-         }
+         m_health -= 25;    
       }
    }
+
+   if (typeid(other) == typeid(Missile)) {
+     m_health -= 100;
+   }
+   
+   if (m_health <= 0) 
+     {
+       m_alive = false;
+       m_mesh->setVisible(false);
+       setExplosionPosition(m_position);
+     }
 }
 /** to fire or not to fire? **/
 bool EnemyShip::shouldFire()
 {
    return firing;
+}
+
+vec3 EnemyShip::getPosition() {
+  return m_position;
 }

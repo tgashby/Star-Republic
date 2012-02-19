@@ -10,21 +10,21 @@
 using namespace std;
 
 //Point in space vector for forward (Z),  up(Y), and side(X). Instead of Meshes, use object3ds
-class Path
-{
- public:
-  Path(const string fileName);
-  Path(const string fileName, Modules* m_modules);
-  ~Path();
-  PathPoint getCurrent();
-  void setChoice(int next);
-  PathPoint getAt(int index);
-  PathPoint update(Vector3<float> playerPos);
-  PathPoint getPrevious();
-  PathPoint* getPreviousPointer();
-  PathPoint* getCurrentPointer();
+class Path {
+public:
+   Path(WorldData *data);
+   //Path(const string fileName);
+   //Path(const string fileName, Modules* m_modules);
+   ~Path();
+   PathPoint getCurrent();
+   void setChoice(int next);
+   PathPoint getAt(int index);
+   PathPoint update(Vector3<float> playerPos);
+   PathPoint getPrevious();
+   PathPoint* getPreviousPointer();
+   PathPoint* getCurrentPointer();
 	
-  WorldData* worldData;
+   WorldData* worldData;
    
  private:
   PathPoint parseLine(const string line);

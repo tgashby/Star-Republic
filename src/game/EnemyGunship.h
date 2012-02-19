@@ -10,14 +10,15 @@
 #include "Enemy.h"
 #include <assert.h>
 #include <cmath>
-
+#include "Explodeable.h"
+#include "Missile.h"
 
 /**
  * EnemyShip represents a shy enemy flyer who will dodge based on where
  * the player is currently aiming
  */
-class EnemyGunship : public Object3d, public Flyer, public Enemy {
-public:
+class EnemyGunship : public Flyer, public Enemy, public Explodeable {
+ public:
    /**
     * EnemyShip construct, takes 2 strings representing the object file path 
     * and the texture file path respectively, a Modules pointer, and a 
@@ -104,7 +105,12 @@ public:
     */
    Vector3<float> getRightCannonPos();
 
-   
+   /**
+    * getPosition returns the ships position.  It is to deal with the problem
+    * of ambiguous getPosition calls.
+    */
+   vec3 getPosition();
+
 private:
    Mesh *m_mesh;
    /** two turrets, each consisting of 2 parts **/

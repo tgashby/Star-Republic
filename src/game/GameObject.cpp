@@ -34,6 +34,17 @@ GameObject::GameObject()
    m_alive = true;
 }
 
+GameObject::GameObject(vec3 pos, float radius) {
+  m_position = pos;
+  m_velocity = vec3(0,0,0);
+  m_forward = vec3(0,0,-1);
+  m_acceleration = vec3(0,0,0);
+  m_up = vec3(0,1,0);
+  m_boundingSphere = new BoundingSphere(radius);
+  m_health = 100;
+  m_alive = true;
+}
+
 
 GameObject::~GameObject()
 {

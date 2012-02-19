@@ -16,11 +16,16 @@
 #include "Enemy.h"
 #include "Bullet.h"
 #include "Mesh.h"
+#include "Explodeable.h"
+#include "Missile.h"
+
+#define _TURRET_DEFAULT_EXPLOSION_RADIUS 40.0f
 
 /**
  * Turret class for turrets
  */
-class Turret : public Object3d, public Enemy, public GameObject {
+class Turret : public Enemy, public GameObject, 
+  public Explodeable {
 public:
    /**
     * Turret Constructor with a Player reference, 6 strings representing the
@@ -61,6 +66,8 @@ public:
     * shouldFire regulates the turret's firing rate
     */
    bool shouldFire();
+
+   vec3 getPosition();
    
 private:
    Mesh *m_headMesh;
@@ -73,6 +80,7 @@ private:
    void collideWith(Bullet& bullet);
    void collideWith(Player& player);
    void collideWith(Enemy& enemy);
+   void collideWith(Missile& missile);
    
 //   std::list<Bullet*> m_bullets;
 };
