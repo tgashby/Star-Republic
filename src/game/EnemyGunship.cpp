@@ -1,4 +1,5 @@
 #include "EnemyGunship.h"
+
 #include "Bullet.h"
 #include <math.h>
 
@@ -10,6 +11,7 @@
 #define TURRETSIDEOFFSET 20
 #define TURRETFORWARDOFFSET 20
 #define TURRETUPOFFSET -16
+#define _ENEMY_GUNSHIP_EXPLOSION_RADIUS 60.0f
 const float PATHVELOCITY = 3.0f;
 const float AIMVELOCITY = 0.003f;
 const float x_SCALAR = 0.0005f; 
@@ -20,10 +22,12 @@ const float TURRETHEAD_SCALE = 0.1f;
 const float ROTATE_CONSTANT = -90;
 
 /** Gunner Enemy: Takes in the mesh info and a reference to the player to aim at **/
-EnemyGunship::EnemyGunship(string fileName, string turretFileName1, string turretFileName2, 
-    string textureName, Modules *modules, Player &p) 
-   :  Object3d(), Flyer(), Enemy(p), side(1,0,0), 
-      currentAngle(0), prevAngle(0)
+EnemyGunship::EnemyGunship(string fileName, string turretFileName1, 
+			   string turretFileName2, string textureName, 
+			   Modules *modules, Player &p) 
+  : Flyer(), Enemy(p), 
+    Explodeable(vec3(0,0,0), _ENEMY_GUNSHIP_EXPLOSION_RADIUS, modules), 
+    side(1,0,0), currentAngle(0), prevAngle(0)
 {
   m_mesh = new Mesh(fileName, textureName, modules);
   m_meshList.push_back(m_mesh);
@@ -90,91 +94,96 @@ EnemyGunship::~EnemyGunship()
 //All Vectors are updated in here
 void EnemyGunship::tic(uint64_t time)
 {
-  /** the normalized vector between the player and the enemy **/
-  dpos = (m_playerRef.getPosition() - m_position).Normalized();
-  
-  // moving based on the player's direction
-  m_position += m_playerRef.getForward() * PATHVELOCITY; 
+  if (isAlive()) {
+    /** the normalized vector between the player and the enemy **/
+    dpos = (m_playerRef.getPosition() - m_position).Normalized();
+    
+    // moving based on the player's direction
+    m_position += m_playerRef.getForward() * PATHVELOCITY; 
+    
+    /** gunship AI -> movement first (the last term is there to simulate acceleration **/
+    m_position += getUp() * ydir * AIMVELOCITY * 
+      ((1 + MOTIONTIME / 2 - abs((float)motionTimer - (MOTIONTIME / 2)))); 
+    m_position += getSide() * xdir * AIMVELOCITY * 
+      ((1 + MOTIONTIME / 2 - abs((float)motionTimer - (MOTIONTIME / 2)))); 
 
-  /** gunship AI -> movement first (the last term is there to simulate acceleration **/
-  m_position += getUp() * ydir * AIMVELOCITY * 
-     ((1 + MOTIONTIME / 2 - abs((float)motionTimer - (MOTIONTIME / 2)))); 
-  m_position += getSide() * xdir * AIMVELOCITY * 
-     ((1 + MOTIONTIME / 2 - abs((float)motionTimer - (MOTIONTIME / 2)))); 
+    /** setting the modelmatrix based on a constant scale and rotation,
+     *  and the forward, up and position (aka Magic) **/
+    mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0));
+    modelMtx *= mat4::Magic(getForward(), getAimUp(), getPosition());
+    m_mesh->setModelMtx(modelMtx);
 
-  /** setting the modelmatrix based on a constant scale and rotation,
-   *  and the forward, up and position (aka Magic) **/
-  mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0));
-  modelMtx *= mat4::Magic(getForward(), getAimUp(), getPosition());
-  m_mesh->setModelMtx(modelMtx);
+    /** first turret **/
+    mat4 modelMtx2 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(90, vec3(0,0,1)) *
+      mat4::Translate(TURRETSIDEOFFSET + m_position.x, 
+		      TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
+    m_turretbasemesh1->setModelMtx(modelMtx2);
+    
+    /*mat4 modelMtx3 = mat4::Scale(TURRET_SCALE) * mat4::Rotate(90, vec3(0,0,1)) *
+      mat4::Translate(TURRETSIDEOFFSET, 0, -TURRETFORWARDOFFSET) * 
+      mat4::Magic(-getAimForward(), getAimUp(), getPosition());
+      m_turretheadmesh1->setModelMtx(modelMtx3);*/
+    
 
-  /** first turret **/
-  mat4 modelMtx2 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(90, vec3(0,0,1)) *
-     mat4::Translate(TURRETSIDEOFFSET + m_position.x, 
-       TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
-  m_turretbasemesh1->setModelMtx(modelMtx2);
+    /** second turret **/
+    mat4 modelMtx4 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,0,1)) *
+      mat4::Translate(-TURRETSIDEOFFSET + m_position.x, 
+		      TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
+    m_turretbasemesh2->setModelMtx(modelMtx4);
+    
+    /** update the timer for shooting **/
+    firingTimer1 += time;
+    firingTimer2 += time;
 
-  /*mat4 modelMtx3 = mat4::Scale(TURRET_SCALE) * mat4::Rotate(90, vec3(0,0,1)) *
-     mat4::Translate(TURRETSIDEOFFSET, 0, -TURRETFORWARDOFFSET) * 
-     mat4::Magic(-getAimForward(), getAimUp(), getPosition());
-  m_turretheadmesh1->setModelMtx(modelMtx3);*/
+    /** to shoot? **/
+    if (firingTimer1 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getForward())) > 90)
+      {
+	firing1 = true;
+	firingTimer1 %= FIRINGTIME;
+      }
+    else 
+      {
+	firing1 = false;
+      }
+    firing1 = firing1 && isAlive();
+    
+    /** to shoot? **/
+    if (firingTimer2 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getForward())) > 90)
+      {
+	firing2 = true;
+	firingTimer2 %= FIRINGTIME;
+      }
+    else 
+      {
+	firing2 = false;
+      }
+    firing2 = firing2 && isAlive();
 
-
-  /** second turret **/
-  mat4 modelMtx4 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,0,1)) *
-     mat4::Translate(-TURRETSIDEOFFSET + m_position.x, 
-       TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
-  m_turretbasemesh2->setModelMtx(modelMtx4);
-
-  /** update the timer for shooting **/
-  firingTimer1 += time;
-  firingTimer2 += time;
-
-  /** to shoot? **/
-  if (firingTimer1 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getForward())) > 90)
-  {
-     firing1 = true;
-     firingTimer1 %= FIRINGTIME;
+    /** every so often, change direction of motion **/
+    motionTimer += time;
+    if (motionTimer > MOTIONTIME)
+      {
+	/** If the player is currently moving, store the direction
+	 *  so we can avoid moving repeatedly in the same direction **/
+	if (xdir != 0)
+	  pxdir = xdir;
+	if (ydir != 0)
+	  pydir = ydir;
+	
+	/** select a new direction (i.e. one that hasn't been chosen recently) **/
+	do
+	  xdir = random()%3 - 1;
+	while (xdir == pxdir);
+	
+	do
+	  ydir = random()%3 - 1;
+	while (ydir == pydir);
+	
+	motionTimer = 0;
+      }
   }
-  else 
-  {
-     firing1 = false;
-  }
-  firing1 = firing1 && isAlive();
-
-  /** to shoot? **/
-  if (firingTimer2 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getForward())) > 90)
-  {
-     firing2 = true;
-     firingTimer2 %= FIRINGTIME;
-  }
-  else 
-  {
-     firing2 = false;
-  }
-  firing2 = firing2 && isAlive();
-
-  /** every so often, change direction of motion **/
-  motionTimer += time;
-  if (motionTimer > MOTIONTIME)
-  {
-     /** If the player is currently moving, store the direction
-      *  so we can avoid moving repeatedly in the same direction **/
-     if (xdir != 0)
-        pxdir = xdir;
-     if (ydir != 0)
-        pydir = ydir;
-
-     /** select a new direction (i.e. one that hasn't been chosen recently) **/
-     do
-        xdir = random()%3 - 1;
-     while (xdir == pxdir);
-
-     do
-        ydir = random()%3 - 1;
-     while (ydir == pydir);
-
-     motionTimer = 0;
+  else {
+    explosionTic(time);
   }
 }
 
@@ -240,14 +249,18 @@ void EnemyGunship::doCollision(GameObject & other)
       if (&((Bullet&)other).getParent() != this) 
       {
          m_health -= 25;
-         
-         if (m_health <= 0) 
-         {
-            m_alive = false;
-            m_mesh->setVisible(false);
-         }
       }
    }
+   if (typeid(other) == typeid(Missile)) {
+     m_health -= 100;
+   }
+   
+   if (m_health <= 0) 
+     {
+       m_alive = false;
+       m_mesh->setVisible(false);
+       setExplosionPosition(m_position);
+     }
 }
 /** to fire or not to fire? **/
 bool EnemyGunship::shouldFire1()
@@ -258,4 +271,8 @@ bool EnemyGunship::shouldFire1()
 bool EnemyGunship::shouldFire2()
 {
    return firing2;
+}
+
+vec3 EnemyGunship::getPosition() {
+  return m_position;
 }
