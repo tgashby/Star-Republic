@@ -29,9 +29,12 @@ GameEngine::~GameEngine() {
 
 void GameEngine::InitData()
 {
-   m_world = new Path("maps/course.wf", m_modules);
+   m_worldData = m_modules->resourceManager->readWorldData("maps/course.wf");
    
-   m_camera = new Camera(m_world->getCurrentPointer(), m_world->getPreviousPointer());
+   m_path = new Path(m_worldData);
+   //m_world = new Path("maps/course.wf", m_modules);
+   
+   m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
 			 m_modules, m_camera->getPosition(), 
 			 m_camera->getForward(), m_camera->getUp());
@@ -49,8 +52,8 @@ void GameEngine::InitData()
    createTurrets();
    createTerrain();
    
-   m_currentPoint = m_world->getCurrentPointer();
-   m_previousPoint = m_world->getPreviousPointer();
+   m_currentPoint = m_path->getCurrentPointer();
+   m_previousPoint = m_path->getPreviousPointer();
    
    m_player->setProgress(m_previousPoint->getPosition());
    m_player->setPosition(m_previousPoint->getPosition());
@@ -137,8 +140,8 @@ void GameEngine::tic(uint64_t td) {
    }
    
    // Update functions go here
-   m_world->update(m_camera->getRef());
-   m_currentPoint = m_world->getCurrentPointer();
+   m_path->update(m_camera->getRef());
+   m_currentPoint = m_path->getCurrentPointer();
 
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->tic(td);
@@ -146,7 +149,7 @@ void GameEngine::tic(uint64_t td) {
    /*m_enemyGunner->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyGunner->tic(td); */
    
-   m_camera->checkPath(m_world->getCurrentPointer());
+   m_camera->checkPath(m_path->getCurrentPointer());
    m_camera->tic(td);
 
    m_player->tic(td, m_camera->getPosition(), m_camera->getUp(), m_camera->getForward());
@@ -517,6 +520,26 @@ void GameEngine::runCollisions()
 
 void GameEngine::createTurrets()
 {
+   vector<PathPointData>::iterator point;
+   vector<UnitData>::iterator unit;
+   
+   for (point = m_worldData->path.begin(); point != m_worldData->path.end(); ++point) {
+      for (unit = point->units.begin(); unit != point->units.end(); ++unit) {
+         if (unit->type == UNIT_TURRET) {
+            Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", 
+                                           "textures/test3.bmp", "models/turretmiddle.obj", 
+                                           "textures/test3.bmp", "models/turretbase.obj", 
+                                           "textures/test3.bmp", m_modules);
+            newTurret->setPosition(unit->loc);
+            newTurret->setForward(unit->fwd);
+            newTurret->setUp(unit->up);
+            
+            m_turrets.push_back(newTurret);
+         }
+      }
+   }
+   
+   /*
    for (std::vector< Vector3<float> >::iterator i = m_world->worldData->turrets.begin(); 
 	i != m_world->worldData->turrets.end(); i += 3)
    {
@@ -531,11 +554,24 @@ void GameEngine::createTurrets()
       newTurret->setUp(*(i + 2));
       
       m_turrets.push_back(newTurret);
-   }
+   }*/
 }
 
 void GameEngine::createTerrain()
 {
+   vector<PathPointData>::iterator point;
+   vector<PropData>::iterator prop;
+   
+   for (point = m_worldData->path.begin(); point != m_worldData->path.end(); ++point) {
+      for (prop = point->props.begin(); prop != point->props.end(); ++prop) {
+         string fileName = "models/" + prop->name;
+         SceneObject *obj = new SceneObject(fileName, "textures/test3.bmp", prop->loc, prop->fwd, prop->up, m_modules);
+         m_modules->renderingEngine->addObject3d(obj);
+         m_objects.push_back(obj);
+      }
+   }
+   
+   /*
    vector<string>::iterator name = m_world->worldData->worldMeshes.begin();
    vector<vec3>::iterator vec = m_world->worldData->worldLocs.begin();
    while (name != m_world->worldData->worldMeshes.end()) {
@@ -550,5 +586,5 @@ void GameEngine::createTerrain()
       SceneObject *obj = new SceneObject(file, "textures/test3.bmp", pos, fwd, up, m_modules);
       m_modules->renderingEngine->addObject3d(obj);
       m_objects.push_back(obj);
-   }
+   }*/
 }

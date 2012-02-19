@@ -55,8 +55,8 @@ EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
 
   pxdir = 0;
   pydir = 0;
-  xdir = random()%3 - 1;
-  ydir = random()%3 - 1;
+  xdir = (int) random()%3 - 1;
+  ydir = (int) random()%3 - 1;
 
   /** setting the modelmatrix based on a constant scale and rotation,
    *  and the forward, up and position (aka Magic) **/
@@ -172,11 +172,11 @@ void EnemyGunship::tic(uint64_t time)
 	
 	/** select a new direction (i.e. one that hasn't been chosen recently) **/
 	do
-	  xdir = random()%3 - 1;
+	  xdir = (int) random()%3 - 1;
 	while (xdir == pxdir);
 	
 	do
-	  ydir = random()%3 - 1;
+	  ydir = (int) random()%3 - 1;
 	while (ydir == pydir);
 	
 	motionTimer = 0;

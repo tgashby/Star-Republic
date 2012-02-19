@@ -12,19 +12,20 @@ ResourceManager::ResourceManager() {
    chdir("../assets");
    
    m_image = NULL;
-   
-//#ifdef __APPLE__
-//   CFBundleRef mainBundle = CFBundleGetMainBundle();
-//   CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
-//   char path[PATH_MAX];
-//   if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
-//   {
-//      // error!
-//   }
-//   CFRelease(resourcesURL);
-//   chdir(path);
-//   std::cout << "Current Path: " << path << std::endl;
-//#endif
+
+   /*
+#ifdef __APPLE__
+   CFBundleRef mainBundle = CFBundleGetMainBundle();
+   CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+   char path[PATH_MAX];
+   if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
+   {
+      // error!
+   }
+   CFRelease(resourcesURL);
+   chdir(path);
+   std::cout << "Current Path: " << path << std::endl;
+#endif*/
 }
 
 
@@ -263,11 +264,7 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             fwd = vec3(0, 1, 0);
             fwd = rotMtx.TranslatePoint(fwd);
             
-            world->path.push_back(loc);
-            world->path.push_back(fwd);
-            world->path.push_back(up);
-            //world->path.push_back(vec3(0, 1, 0));
-            world->links.push_back(link);
+            world->path.push_back(PathPointData(link, loc, fwd, up));
          }
          else if (!(start = line.find("u "))) {
             vec4 quant;
@@ -299,9 +296,7 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             fwd = vec3(0, 1, 0);
             fwd = rotMtx.TranslatePoint(fwd);
             
-            world->turrets.push_back(loc);
-            world->turrets.push_back(fwd);
-            world->turrets.push_back(up);
+            world->path[index].units.push_back(UnitData(UNIT_TURRET, loc, fwd, up));
          }
          else if (!(start = line.find("m "))) {
             vec4 quant;
@@ -333,10 +328,7 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             fwd = vec3(0, 0, 1);
             fwd = rotMtx.TranslatePoint(fwd);
             
-            world->worldLocs.push_back(loc);
-            world->worldLocs.push_back(fwd);
-            world->worldLocs.push_back(up);
-            world->worldMeshes.push_back(name);
+            world->path[index].props.push_back(PropData(name, loc, fwd, up));
          }
       }
    }
