@@ -263,11 +263,11 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             fwd = vec3(0, 1, 0);
             fwd = rotMtx.TranslatePoint(fwd);
             
-            world->path.push_back(loc);
-            world->path.push_back(fwd);
-            world->path.push_back(up);
-            //world->path.push_back(vec3(0, 1, 0));
-            world->links.push_back(link);
+            world->pathPoints.push_back(PathPoint(loc, up, fwd, vec3(0,0,0), link));
+//            world->path.push_back(fwd);
+//            world->path.push_back(up);
+//            //world->path.push_back(vec3(0, 1, 0));
+//            world->links.push_back(link);
          }
          else if (!(start = line.find("u "))) {
             vec4 quant;
@@ -276,15 +276,15 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             vec3 loc, fwd, up;
             char buffer[64];
             string name;
-            int read;
+            int read, ndx;
             
             read = sscanf(line.c_str(), 
-                          "u %f %f %f %f %f %f %f %s", 
-                          &loc.x, &loc.y, &loc.z, 
+                          "u %d %f %f %f %f %f %f %f %s", 
+                          &ndx, &loc.x, &loc.y, &loc.z, 
                           &quant.x, &quant.y, &quant.z, &quant.w,
                           buffer);
             
-            if (read != 8)
+            if (read != 9)
             {
                std::cerr << "Short-read!\n";
             }
@@ -298,9 +298,10 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             fwd = vec3(0, 1, 0);
             fwd = rotMtx.TranslatePoint(fwd);
             
-            world->turrets.push_back(loc);
-            world->turrets.push_back(fwd);
-            world->turrets.push_back(up);
+            world->pathPoints.at(ndx).worldMeshes.push_back(new WorldMesh(name, loc, fwd, up);
+//            world->turrets.push_back(loc);
+//            world->turrets.push_back(fwd);
+//            world->turrets.push_back(up);
          }
          else if (!(start = line.find("m "))) {
             vec4 quant;
@@ -309,11 +310,11 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             vec3 loc, fwd, up;
             char buffer[64];
             string name;
-            int read;
+            int read, ndx;
             
             read = sscanf(line.c_str(), 
-                          "m %f %f %f %f %f %f %f %s", 
-                          &loc.x, &loc.y, &loc.z, 
+                          "m %d %f %f %f %f %f %f %f %s", 
+                          &ndx, &loc.x, &loc.y, &loc.z, 
                           &quant.x, &quant.y, &quant.z, &quant.w,
                           buffer);
             
@@ -331,6 +332,7 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             fwd = vec3(0, 0, 1);
             fwd = rotMtx.TranslatePoint(fwd);
             
+            world->pathPoints.at(ndx).turrets.push_back(/* DERRRP */);
             world->worldLocs.push_back(loc);
             world->worldLocs.push_back(fwd);
             world->worldLocs.push_back(up);

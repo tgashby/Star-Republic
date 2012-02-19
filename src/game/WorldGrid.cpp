@@ -12,11 +12,17 @@
 
 /*
  TODO:
+ - Update makeGrid and placeTurrets to use new style
  - Update player
  - Position player
  - Determine when to update (m_shouldUpdate)
  - Update moving objects
  - Keep track of which quadrant we're in
+ - Make a Cube for each quadrant when it's made
+ - Implement determineQuadrant, using Cube.checkPoint(objPos) against
+   each quadrant's Cube
+ - Move GameEngine stuff into here/integrate with GameEngine
+ - Prob lots more...
  */
 
 WorldGrid::WorldGrid(WorldData& world, Modules* modules)

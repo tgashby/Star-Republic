@@ -11,10 +11,13 @@
 #include "Vector.h"
 #include "Matrix.h"
 #include "Quaternion.h"
+#include "PathPoint.h"
 #include <vector>
 #include <list>
 #include <string>
 #include <iostream>
+
+class PathPoint;
 
 using namespace std;
 
@@ -117,11 +120,12 @@ struct TextureData {
 // 1: fowrward vector
 // 2: up vector
 struct WorldData {
-   vector<vec3> path; // locations for a path.
-   vector<ivec4> links; // should be a 1/3rd the size of path.
-   vector<vec3> turrets; // locations of turrets.
-   vector<vec3> worldLocs; // locations of the world meshes
-   vector<string> worldMeshes; // names of the world meshes
+//   vector<vec3> path; // locations for a path.
+//   vector<ivec4> links; // should be a 1/3rd the size of path.
+//   vector<vec3> turrets; // locations of turrets.
+//   vector<vec3> worldLocs; // locations of the world meshes
+//   vector<string> worldMeshes; // names of the world meshes
+   vector<PathPoint> pathPoints;
 };
 
 // An abstract class for the 
