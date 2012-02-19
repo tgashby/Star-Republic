@@ -128,8 +128,7 @@ struct WorldData {
 
 // An abstract class for the 
 struct IMesh {
-   virtual ~IMesh() = 0;
-   
+   virtual ~IMesh() {}
    virtual MeshRef getMeshRef() = 0;
    virtual void setMeshRef(MeshRef meshRef) = 0;
    virtual TextureRef getTextureRef() = 0;
@@ -155,14 +154,13 @@ struct IMesh {
 
 // Accessed by the RenderingEngine for a combined projection and view matrix.
 struct ICamera {
-   virtual ~ICamera() = 0;
-   
+   virtual ~ICamera() {}
    virtual mat4 getProjectionViewMtx() = 0;
 };
 
 // Each object needs to provide the RenderingEngine a list of meshes.
 struct IObject3d {
-   virtual ~IObject3d() = 0;
+   virtual ~IObject3d() {}
    virtual list<IMesh *>* getMeshes() = 0;
 };
 
@@ -171,7 +169,7 @@ const int INVALID_CHANNEL = -2;
 class ISound 
 {
 public:
-   virtual ~ISound() = 0;
+   virtual ~ISound() {}
    virtual void play(int loops) = 0;
    virtual void pause() = 0;
    virtual void resume() = 0;
@@ -183,8 +181,7 @@ protected:
 
 // The main class that runs the game.
 struct IGameEngine {
-   virtual ~IGameEngine() = 0;
-   
+   virtual ~IGameEngine() {}
    virtual void tic(uint64_t td) = 0;
    virtual void render() = 0;
    virtual bool handleEvents() = 0;
@@ -195,8 +192,7 @@ struct IGameEngine {
 
 // All OpenGL calls should be implemented in the RenderingEngine.
 struct IRenderingEngine {
-   virtual ~IRenderingEngine() = 0;
-   
+   virtual ~IRenderingEngine() {}
    virtual void render(list<IObject3d *> &objects) = 0;
    virtual void setCamera(ICamera *camera) = 0;
    virtual void addObject3d(IObject3d *obj) = 0;
@@ -206,8 +202,7 @@ struct IRenderingEngine {
 // Any resurces from the file system should be accessed
 // through this class.
 struct IResourceManager {
-   virtual ~IResourceManager() = 0;
-   
+   virtual ~IResourceManager() {}
    virtual MeshData *readMeshData(string fileName, LOAD_NORMAL_TYPE normalType, float scale) = 0;
    virtual TextureData *loadBMPImage(string fileName) = 0;
    //virtual ImageData *loadPngImage(string fileName) = 0;
