@@ -277,14 +277,15 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             char buffer[64];
             string name;
             int read;
+            int index;
             
             read = sscanf(line.c_str(), 
-                          "u %f %f %f %f %f %f %f %s", 
-                          &loc.x, &loc.y, &loc.z, 
+                          "u %d %f %f %f %f %f %f %f %s", 
+                          &index, &loc.x, &loc.y, &loc.z, 
                           &quant.x, &quant.y, &quant.z, &quant.w,
                           buffer);
             
-            if (read != 8)
+            if (read != 9)
             {
                std::cerr << "Short-read!\n";
             }
@@ -310,14 +311,15 @@ WorldData* ResourceManager::readWorldData(string fileName) {
             char buffer[64];
             string name;
             int read;
+            int index;
             
             read = sscanf(line.c_str(), 
-                          "m %f %f %f %f %f %f %f %s", 
-                          &loc.x, &loc.y, &loc.z, 
+                          "m %d %f %f %f %f %f %f %f %s", 
+                          &index, &loc.x, &loc.y, &loc.z, 
                           &quant.x, &quant.y, &quant.z, &quant.w,
                           buffer);
             
-            if (read != 8)
+            if (read != 9)
             {
                std::cerr << "Short-read!\n";
             }
