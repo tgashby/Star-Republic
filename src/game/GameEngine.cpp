@@ -29,7 +29,7 @@ GameEngine::~GameEngine() {
 
 void GameEngine::InitData()
 {
-   m_worldData = m_modules->resourceManager->readWorldData("maps/course.wf");
+   m_worldData = m_modules->resourceManager->readWorldData("maps/course2.wf");
    
    m_path = new Path(m_worldData);
    //m_world = new Path("maps/course.wf", m_modules);
@@ -128,6 +128,7 @@ void GameEngine::InitData()
 void GameEngine::tic(uint64_t td) {
    gameOver += td;
    
+   /*
    if (gameOver >= 40000) 
    {
       cout << "YOU WIN!\n";
@@ -137,7 +138,7 @@ void GameEngine::tic(uint64_t td) {
    if (!m_player->isAlive()) {
       cout << "YOU LOSE!\n";
       exit(0);
-   }
+   }*/
    
    // Update functions go here
    m_path->update(m_camera->getRef());
