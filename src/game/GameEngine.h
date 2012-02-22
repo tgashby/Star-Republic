@@ -21,6 +21,7 @@
 #include "Missile.h"
 #include "GameState.h"
 #include "MenuState.h"
+#include "Asteroid.h"
 
 
 class GameEngine : public IGameEngine {
@@ -41,6 +42,7 @@ private:
    void runCollisions();
    void createTurrets();
    void createTerrain();
+   void addAsteroids();
    
    list<IObject3d *> m_objects;
    list<GameObject *> m_gameObjects;

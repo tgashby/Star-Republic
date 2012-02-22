@@ -54,17 +54,17 @@ void Camera::checkPath(PathPoint* head) {
     m_head = head;
 
     //Shouldn't need to change, but might have to
-    m_pathUp = m_tail->getUp();
+    //m_pathUp = m_tail->getUp();
     calculateSide();
 
-    m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
+    //m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
     
-    m_turning = true;
+    //m_turning = true;
   }
 }
 
  void Camera::calculateSide() {
-  m_pathSide = m_pathUp.Cross(m_pathRef - m_pathPos).Normalized();
+    m_pathSide = m_pathUp.Cross(m_head->getPosition() - m_tail->getPosition()).Normalized();
 }
 
 void Camera::tic(uint64_t time) {
@@ -80,24 +80,24 @@ void Camera::tic(uint64_t time) {
 
   // If we are turning our forward, but the angle between ourselves and 
   // the intended is close enough, stop turning to allow for rotation
-  if (m_turning && .5 > 
+  /*if (m_turning && .5 > 
       angleBetween(m_head->getPosition() - m_tail->getPosition(), 
 		   m_pathRef - m_pathPos)) {
-    m_turning = false;
+		   m_turning = false;
     m_pathPos = m_pathRef - ((m_head->getPosition() 
 			      - m_tail->getPosition()).Normalized() 
 			     * CAMERA_LOOK_AHEAD_DISTANCE);
-    m_pathUp = m_tail->getUp();
-  }
+    //  m_pathUp = m_tail->getUp();
+    //} 
   
   // If we aren't turning, its safe to rotate
-  if (!m_turning) {
+  //if (!m_turning) {*/
      temp1 = m_tail->getUp() * (m_head->getPosition() - m_pathRef).Length() / 
 	(m_head->getPosition() - m_tail->getPosition()).Length();
      temp2 = m_head->getUp() * (m_pathRef - m_tail->getPosition()).Length() / 
 	(m_head->getPosition() - m_tail->getPosition()).Length();
      m_pathUp = (temp1 + temp2).Normalized();
-  } 
+   //  }
 
   // Move our reference point down the path
   if (m_boosting) {
@@ -106,20 +106,18 @@ void Camera::tic(uint64_t time) {
 	m_boostTime = 2000;
      }
 
-     //if (m_boostTime > 500) {
-	pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime);
-	//}
-	//else {
-	//pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime * -0.8);
-	//}
+     pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime);
 
-     m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
-		   ((time * CAMERA_DEF_VELOCITY) + pathAccOffset));
   }
   else {
-     m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
-		   (time * CAMERA_DEF_VELOCITY));
+     m_boostTime -= time * 3;
+     if(m_boostTime < 0) {
+	m_boostTime = 0;
+     }
   }
+
+  m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
+		   ((time * CAMERA_DEF_VELOCITY) + pathAccOffset));
   
   calculateSide();
   tempVec = (m_pathRef - m_pathPos).Normalized();
@@ -176,6 +174,7 @@ vec3 Camera::getRef() {
 
 vec3 Camera::getForward() {
    return (m_pathRef - m_pathPos).Normalized();
+   //return (m_head->getPosition() - m_tail->getPosition()).Normalized();
 }
 
 vec3 Camera::getUp() {
@@ -192,9 +191,6 @@ void Camera::setPlayer(Player* player) {
 
 void Camera::setBoosting(bool boostStatus) {
    m_boosting = boostStatus;
-   if (boostStatus == false) {
-      m_boostTime = 0;
-   }
 }
 
 bool Camera::isBoosting() {

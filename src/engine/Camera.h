@@ -5,10 +5,10 @@
 #include "../game/PathPoint.h"
 #include "../game/Player.h"
 #define CAMERA_DIST_FROM_PLAYER 170
-#define CAMERA_LOOK_AHEAD_DISTANCE 200.0f
+#define CAMERA_LOOK_AHEAD_DISTANCE 600.0f
 #define SHIP_CAMERA_ABOVE_SCALAR 30
-#define CAMERA_DEF_VELOCITY 0.3f
-#define CAMERA_BOOST_ACC .00015f
+#define CAMERA_DEF_VELOCITY 0.50f
+#define CAMERA_BOOST_ACC .00075f
 
 #define _MOTION_CAMERA 1
 #define _PATH_CAMERA 2

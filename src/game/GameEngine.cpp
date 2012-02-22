@@ -127,7 +127,7 @@ void GameEngine::InitData()
    initSound();
    m_bulletSound = loadSound("sound/arwingShot.ogg");
    m_music = loadMusic("sound/venom.mp3");
-   
+   //addAsteroids();
    //m_music->play(1);
 }
 
@@ -288,7 +288,7 @@ void GameEngine::render() {
    //Checks if the current state is the game state. This could be made more elegant.
    if (m_stateManager->getCurrentState() == m_game)
    {
-   m_modules->renderingEngine->render(m_objects);
+      m_modules->renderingEngine->render(m_objects);
    }
 }
 
@@ -326,6 +326,27 @@ bool GameEngine::handleEvents()
    }
       
    return running;
+}
+
+void GameEngine::addAsteroids() {
+   Asteroid* tempAst;
+   PathPoint* current;
+   PathPoint* prev;
+   for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex++) {
+      current = &(m_path->getAt(pntIndex));
+      prev = &(m_path->getAt(pntIndex - 1));
+      //ADD AN ASTEROID
+      tempAst = new Asteroid("models/sphere.obj", "textures/test4.bmp", 
+			     m_modules, current->getPosition(), current->getUp(), 			     prev->getPosition() - current->getPosition());
+      m_modules->renderingEngine->addObject3d(tempAst);
+      m_gameObjects.push_back(tempAst);
+      m_objects.push_back(tempAst);
+      tempAst = new Asteroid("models/cube.obj", "textures/test5.bmp",
+			     m_modules, current->getPosition() + (current->getUp() * 10.0f), current->getUp(), current->getForward());
+      m_modules->renderingEngine->addObject3d(tempAst);
+      m_gameObjects.push_back(tempAst);
+      m_objects.push_back(tempAst);
+   }
 }
 
 bool GameEngine::handleKeyDown(SDLKey key) {

@@ -14,7 +14,7 @@ Asteroid::Asteroid(string fileName, string textureName, Modules *modules,
   m_meshList.push_back(m_mesh);
 
   m_mesh->setScale(MODEL_SCALE);
-  m_mesh->setModelMtx(mat4::Translate(m_position.x, m_position.y, m_position.z));
+  m_mesh->setModelMtx(mat4::Magic(m_forward, m_up, m_position));
 }
 
 Asteroid::~Asteroid() {

@@ -153,7 +153,7 @@ private:
    /** 
     * The side vector of the ship
     */
-   Vector3<float> side;
+   Vector3<float> m_side;
 
    /**
     * The look ahead progress
