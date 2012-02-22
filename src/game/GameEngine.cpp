@@ -43,7 +43,7 @@ void GameEngine::InitData()
    m_enemyShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", 
 			       m_modules, *m_player);
    m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
-          "models/enemy2turrethead.obj", "textures/test3.bmp", m_modules, *m_player);
+          "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", m_modules, *m_player);
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
    
