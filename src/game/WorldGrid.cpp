@@ -14,6 +14,7 @@
  TODO:
  - Update moving objects
  - Move GameEngine stuff into here/integrate with GameEngine (Done?)
+ - Change Enemy setting player reference, & -> *?
  - Prob lots more...
  */
 
@@ -128,6 +129,21 @@ void WorldGrid::makeGrid()
 void WorldGrid::setPlayer(Player *player)
 {
    m_player = player;
+   
+   for (std::vector<Quadrant*>::iterator i = m_quadrants.begin(); i != m_quadrants.end(); i++) 
+   {
+      Quadrant* currQuad = *i;
+      
+      for (std::list<GameObject*>::iterator j = currQuad->m_gameObjects.begin(); j != currQuad->m_gameObjects.end(); j++) 
+      {
+         if (typeid(**j) == typeid(Turret)) 
+         {
+            Turret* enemy = ((Turret*)*j);
+            
+            enemy->setPlayer(*m_player);
+         }
+      }
+   }
 }
 
 void WorldGrid::placeInGrid(GameObject* gameObj, Object3d* obj3D)

@@ -24,7 +24,7 @@ public:
     */
    Enemy(Player& player);
    
-   void setPlayer(Player& player);
+   void setPlayer(Player player);
    
 protected:
    Player& m_playerRef;

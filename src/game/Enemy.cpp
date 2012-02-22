@@ -15,7 +15,7 @@ Enemy::Enemy(Player& player)
 {
 }
 
-void Enemy::setPlayer(Player &player)
+void Enemy::setPlayer(Player player)
 {
    m_playerRef = player;
 }
