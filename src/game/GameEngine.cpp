@@ -46,8 +46,6 @@ void GameEngine::InitData()
           "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", m_modules, *m_player);
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
-   
-   //explosion = new Explodeable(m_player->getPosition(), m_modules);
 
    createTurrets();
    createTerrain();
@@ -141,7 +139,7 @@ void GameEngine::tic(uint64_t td) {
    }*/
    
    // Update functions go here
-   m_path->update(m_camera->getRef());
+   m_path->update(m_camera->getRef(), m_player->getPosition());
    m_currentPoint = m_path->getCurrentPointer();
 
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());

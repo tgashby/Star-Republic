@@ -1,7 +1,7 @@
 
 #include "Asteroid.h"
 
-#define MODEL_SCALE 10.0
+#define MODEL_SCALE 10.0f
 
 Asteroid::Asteroid(string fileName, string textureName, Modules *modules,
 		   vec3 pos, vec3 forw, vec3 up) 
