@@ -91,7 +91,7 @@ void WorldGrid::makeGrid()
          switch (currUnit.type) 
          {
             case UNIT_TURRET:
-               Turret* newTurret = new Turret(m_player, 
+               Turret* newTurret = new Turret(*m_player, 
                                               "models/turrethead.obj", "textures/test3.bmp", 
                                               "models/turretmiddle.obj", "textures/test3.bmp", 
                                               "models/turretbase.obj", "textures/test3.bmp", m_modules);
