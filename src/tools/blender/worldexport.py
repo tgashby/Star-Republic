@@ -309,8 +309,12 @@ class Path:
       return enemies
    
    def writePoints(self, index, out):
+      last = self.points[0]
       for point in self.points:
+         if (last.obj.name[:3] != point.obj.name[:3]):
+            out.write('\n')
          point.write(out)
+         last = point
       out.write('\n')
 
 def exportWorld(filePath):

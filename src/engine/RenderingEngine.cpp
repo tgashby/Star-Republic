@@ -255,8 +255,8 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
       glBindTexture(GL_TEXTURE_2D, textureBuffer);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureData->size.x, textureData->size.y, 0,
-                   GL_BGRA, GL_UNSIGNED_BYTE, textureData->pixels);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureData->size.x, textureData->size.y, 0,
+                   GL_BGR, GL_UNSIGNED_BYTE, textureData->pixels);
       delete textureData;
       glGenerateMipmapEXT(GL_TEXTURE_2D);
       
