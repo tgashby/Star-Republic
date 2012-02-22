@@ -29,7 +29,7 @@ GameEngine::~GameEngine() {
 
 void GameEngine::InitData()
 {
-   m_worldData = m_modules->resourceManager->readWorldData("maps/course2.wf");
+   m_worldData = m_modules->resourceManager->readWorldData("maps/course3.wf");
    
    m_path = new Path(m_worldData);
    //m_world = new Path("maps/course.wf", m_modules);
