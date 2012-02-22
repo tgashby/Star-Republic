@@ -330,6 +330,14 @@ bool GameEngine::handleEvents()
 
 bool GameEngine::handleKeyDown(SDLKey key) {
    bool running = true;
+
+   //Checks to see whether the current state is the menu, and pops the state if so. Will be revised later.
+   if (m_stateManager->getCurrentState() == m_menu)
+   {
+      m_stateManager->popState();
+      InitData();
+      return running;
+   }
    if (key == SDLK_SPACE) {
       m_camera->setBoosting(true);
       m_reticle->setVisible(false);
