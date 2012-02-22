@@ -14,7 +14,7 @@
 #include <assert.h>
 #include "Bullet.h"
 #include "EnemyShip.h"
-//#include "EnemyGunship.h"
+#include "EnemyGunship.h"
 #include "Explodeable.h"
 #include <algorithm>
 #include "Missile.h"
@@ -55,7 +55,7 @@ private:
    std::vector<Missile *> m_missileList;
    
    EnemyShip* m_enemyShip;
-   //EnemyGunship* m_enemyGunner;
+   EnemyGunship* m_enemyGunner;
    
    Sound* m_bulletSound;
    Sound* m_music;
