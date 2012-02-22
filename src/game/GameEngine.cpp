@@ -35,7 +35,7 @@ void GameEngine::InitData()
    //m_world = new Path("maps/course.wf", m_modules);
    
    m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
-   m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
+   m_player = new Player("models/spaceship.obj", "textures/spaceship.bmp", 
 			 m_modules, m_camera->getPosition(), 
 			 m_camera->getForward(), m_camera->getUp());
    m_camera->setPlayer(m_player);
