@@ -62,6 +62,11 @@ public:
    ~WorldGrid();
    
    /**
+    *
+    */
+   void makeGrid();
+   
+   /**
     * Set the player pointer in WorldGrid
     */
    void setPlayer(Player* player);
@@ -116,11 +121,6 @@ private:
    std::vector<Quadrant*>::size_type m_currentQuadrant;
    std::list<GameObject*> m_updateableObjs;
    std::list<IObject3d*> m_drawableObjs;
-   
-   /**
-    *
-    */
-   void makeGrid();
    
    /**
     *

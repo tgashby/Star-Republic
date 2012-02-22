@@ -156,7 +156,8 @@ MeshData* loadMesh(const string fileName, LOAD_NORMAL_TYPE type, float scale)
    } 
    else
    {
-      throw("Could not open file ");
+      std::cerr << "Could not open file: " << fileName << "\n";
+      exit(EXIT_FAILURE);
    }
    
    MeshData *meshData = new MeshData();
