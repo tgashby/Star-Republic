@@ -23,7 +23,7 @@ public:
    PathPoint getPrevious();
    PathPoint* getPreviousPointer();
    PathPoint* getCurrentPointer();
-	
+   int getSize();
    WorldData* worldData;
    
  private:

@@ -99,12 +99,15 @@ PathPoint Path::parseLine(const string line)
 PathPoint Path::getCurrent() {
   return points.at(currentPoint);
 }
+
 PathPoint* Path::getCurrentPointer() {
    return &points.at(currentPoint);
 }
+
 PathPoint Path::getPrevious() {
   return points.at(previousPoint);
 }
+
 PathPoint* Path::getPreviousPointer() {
   return &points.at(previousPoint);
 }
@@ -121,8 +124,6 @@ Path::~Path()
 
 PathPoint Path::getAt(int index) 
 {
-   //cout << "index: " << index << "\n";
-   //cout << "from vector size: " << points.size() << "\n";
   return points.at(index);
 }
 
@@ -139,11 +140,11 @@ PathPoint Path::update(Vector3<float> playerPos)
   Vector3<float> vect1 (current.getPosition().x - previous.getPosition().x,
 			current.getPosition().y - previous.getPosition().y,
 			current.getPosition().z - previous.getPosition().z);
-//   cout << "it worked1\n";
+
   Vector3<float> vect2 (current.getPosition().x + current.getUp().x,
 			current.getPosition().y + current.getUp().y,
 			current.getPosition().z + current.getUp().z);
-//   cout << "it worked2\n";
+
   Vector3<float> normal;
   float distance = sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
   PathPoint firstChoice = getAt(current.getFirstID());
@@ -184,3 +185,6 @@ PathPoint Path::update(Vector3<float> playerPos)
   return getCurrent();
 }
 
+int Path::getSize() {
+  return points.size();
+}
