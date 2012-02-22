@@ -34,16 +34,18 @@ public:
    void handleMouseMotion(Uint16 x, Uint16 y);
    float angleBetween(vec3 one, vec3 two);
    std::vector<GameObject*> acquireMissileTargets();
+   ICamera& getCamera();
    
 private:
    void runCollisions();
-   void createTerrain();
    
+   Camera *m_camera;
+   Player *m_player;
+   Reticle *m_reticle;
+   EnemyShip* m_enemyShip;
    Modules *m_modules;
-   Path *m_path;
    WorldData *m_worldData;
-   PathPoint *m_currentPoint;
-   PathPoint *m_previousPoint;
+   WorldGrid *m_worldGrid;
    Vector3<float> currentDirection;
    void InitData();
    

@@ -12,8 +12,10 @@
 #include <list>
 #include "GameObject.h"
 #include "Cube.h"
+#include "SceneObject.h"
 #include "Turret.h"
 #include "Player.h"
+#include "Reticle.h"
 #include "EnemyShip.h"
 #include "EnemyGunship.h"
 
@@ -22,10 +24,10 @@
  */
 struct Quadrant
 {
-   Quadrant(vec3 startPt, vec3 endPt)
+   Quadrant(PathPointData startPt, PathPointData endPt)
+   : m_startPt(startPt), m_endPt(endPt)
    {
-      m_startPt = startPt;
-      m_endPt = endPt;
+      
    }
    
    ~Quadrant()
@@ -34,15 +36,16 @@ struct Quadrant
    }
    
    std::list<GameObject*> m_gameObjects;
-   vec3 m_startPt;
-   vec3 m_endPt;
+   std::list<IObject3d*> m_obj3Ds;
+   PathPointData m_startPt;
+   PathPointData m_endPt;
    
    Cube* m_bounds;
 };
 
 /**
  * WorldGrid represents the world as a uniform spatial subdivision.
- * It is a list of cubes encompassing the path and all it's objects.
+ * It is a list of cubes encompassing the path and all its objects.
  */
 class WorldGrid 
 {
@@ -70,27 +73,49 @@ public:
     * @param gameObj the object to add to the world
     * @param objPosition the object's position in the world
     */
-   void placeInGrid(GameObject* gameObj, vec3 objPosition);
+   void placeInGrid(GameObject* gameObj, Object3d* obj3D);
    
    /**
-    * 
+    *
     */
-   std::list<GameObject*> getUpdateableObjects();
+   void placeInCurrQuadrant(GameObject* gameObj, Object3d* obj3D);
+   
+   /**
+    *
+    */
+   void tic(uint64_t dt);
    
    /**
     * 
     */
    void checkCollisions();
    
+   /**
+    *
+    */
+   const Quadrant& getCurrentQuadrant();
+   
+   /**
+    *
+    */
+   std::list<IObject3d*> getDrawableObjects();
+   
 private:
    WorldData& m_world;
-   std::vector<Quadrant> m_quadrants;
+   std::vector<Quadrant*> m_quadrants;
    Player* m_player;
    Modules* m_modules;
    bool m_shouldUpdate;
    
-   std::vector<Quadrant>::size_type m_currentQuadrant;
+   
+   /**
+    * 
+    */
+   void updateObjects();
+   
+   std::vector<Quadrant*>::size_type m_currentQuadrant;
    std::list<GameObject*> m_updateableObjs;
+   std::list<IObject3d*> m_drawableObjs;
    
    /**
     *
@@ -100,12 +125,7 @@ private:
    /**
     *
     */
-   std::vector<Quadrant>::size_type determineQuadrant(const Vector3<float> pos);
-   
-   /**
-    *
-    */
-   void placeTurrets();
+   std::vector<Quadrant*>::size_type determineQuadrant(const Vector3<float> pos);
    
 };
 
