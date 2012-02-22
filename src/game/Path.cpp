@@ -99,12 +99,15 @@ PathPoint Path::parseLine(const string line)
 PathPoint Path::getCurrent() {
   return points.at(currentPoint);
 }
+
 PathPoint* Path::getCurrentPointer() {
    return &points.at(currentPoint);
 }
+
 PathPoint Path::getPrevious() {
   return points.at(previousPoint);
 }
+
 PathPoint* Path::getPreviousPointer() {
   return &points.at(previousPoint);
 }
@@ -121,29 +124,27 @@ Path::~Path()
 
 PathPoint Path::getAt(int index) 
 {
-   //cout << "index: " << index << "\n";
-   //cout << "from vector size: " << points.size() << "\n";
   return points.at(index);
 }
 
-PathPoint Path::update(Vector3<float> playerPos)
+PathPoint Path::update(Vector3<float> refPos, Vector3<float> playerPos)
 {
   float D_val;
   PathPoint current = getCurrent();
   PathPoint previous = getPrevious();
-  float diffX = playerPos.x - current.getPosition().x;
-  float diffY = playerPos.y - current.getPosition().y;
-  float diffZ = playerPos.z - current.getPosition().z;
+  float diffX = refPos.x - current.getPosition().x;
+  float diffY = refPos.y - current.getPosition().y;
+  float diffZ = refPos.z - current.getPosition().z;
   float playerDistFromPlane = 0;
   float firstDistFromPlane = 0;
   Vector3<float> vect1 (current.getPosition().x - previous.getPosition().x,
 			current.getPosition().y - previous.getPosition().y,
 			current.getPosition().z - previous.getPosition().z);
-//   cout << "it worked1\n";
+
   Vector3<float> vect2 (current.getPosition().x + current.getUp().x,
 			current.getPosition().y + current.getUp().y,
 			current.getPosition().z + current.getUp().z);
-//   cout << "it worked2\n";
+
   Vector3<float> normal;
   float distance = sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
   PathPoint firstChoice = getAt(current.getFirstID());
@@ -153,6 +154,7 @@ PathPoint Path::update(Vector3<float> playerPos)
       setChoice(current.getFirstID());
       return getCurrent();
     }
+
     normal = vect1.Cross(vect2);
     D_val = (current.getPosition().x * normal.x + current.getPosition().y 
 	     * normal.y * current.getPosition().z * normal.z) * -1.0f;
@@ -184,3 +186,6 @@ PathPoint Path::update(Vector3<float> playerPos)
   return getCurrent();
 }
 
+int Path::getSize() {
+  return points.size();
+}

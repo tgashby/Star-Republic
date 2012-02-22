@@ -11,8 +11,16 @@ GameEngine::GameEngine(Modules *modules) {
    m_gameObjects = list<GameObject *>(0);
 
    gameOver = 0;
-   
-   InitData();
+   m_stateManager = new StateManager();
+   m_menu = new MenuState();
+   m_game = new GameState();
+   m_game->initialize();
+   m_menu->initialize();
+   m_stateManager->pushState(m_game);
+   m_stateManager->pushState(m_menu);
+
+   //INIT DATA not being called, only called when the menu is left.
+   //InitData();
 }
 
 
@@ -40,14 +48,12 @@ void GameEngine::InitData()
 			 m_camera->getForward(), m_camera->getUp());
    m_camera->setPlayer(m_player);
 
-   m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", 
+   m_enemyShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", 
 			       m_modules, *m_player);
-   /*m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
-          "models/enemy2turrethead.obj", "textures/test3.bmp", m_modules, *m_player);*/
+   m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
+          "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", m_modules, *m_player);
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
-   
-   //explosion = new Explodeable(m_player->getPosition(), m_modules);
 
    createTurrets();
    createTerrain();
@@ -71,20 +77,20 @@ void GameEngine::InitData()
 			 m_previousPoint->getUp());
    m_enemyShip->calculateSide();
 
-   /*m_enemyGunner->setProgress(m_previousPoint->getPosition());
+   m_enemyGunner->setProgress(m_previousPoint->getPosition());
    m_enemyGunner->setPosition(m_previousPoint->getPosition());
    m_enemyGunner->setUp(m_previousPoint->getUp());
    m_enemyGunner->setHeads(m_currentPoint->getPosition(), 
 			 m_currentPoint->getUp(), m_previousPoint->getPosition(), 
 			 m_previousPoint->getUp());
-   m_enemyGunner->calculateSide();*/
+   m_enemyGunner->calculateSide();
    
    m_modules->renderingEngine->setCamera(m_camera);
 
    m_modules->renderingEngine->addObject3d(m_player);
    m_modules->renderingEngine->addObject3d(m_reticle);
    m_modules->renderingEngine->addObject3d(m_enemyShip);
-   //m_modules->renderingEngine->addObject3d(m_enemyGunner);
+   m_modules->renderingEngine->addObject3d(m_enemyGunner);
    //m_modules->renderingEngine->addObject3d(explosion);
    
    for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
@@ -96,7 +102,7 @@ void GameEngine::InitData()
    m_objects.push_back(m_player);
    m_objects.push_back(m_reticle);
    m_objects.push_back(m_enemyShip);
-   //m_objects.push_back(m_enemyGunner);
+   m_objects.push_back(m_enemyGunner);
    //m_objects.push_back(explosion);
    
    for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
@@ -106,7 +112,7 @@ void GameEngine::InitData()
    }
    
    m_gameObjects.push_back(m_enemyShip);
-   //m_gameObjects.push_back(m_enemyGunner);
+   m_gameObjects.push_back(m_enemyGunner);
    m_gameObjects.push_back(m_player);
    
    for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
@@ -115,8 +121,8 @@ void GameEngine::InitData()
       m_gameObjects.push_back(*i);
    }
 
-   m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 10000));
-   //m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 800));
+   m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 400));
+   m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 800));
    
    initSound();
    m_bulletSound = loadSound("sound/arwingShot.ogg");
@@ -126,6 +132,9 @@ void GameEngine::InitData()
 }
 
 void GameEngine::tic(uint64_t td) {
+   //CHECKS TO MAKE SURE THE CURRENT STATE IS A GAME STATE. THIS SHOULD PROBABLY BE MODIFIED TO SOMETHING MORE ELEGANT.
+   if (m_stateManager->getCurrentState() == m_game)
+   {
    gameOver += td;
    
    /*
@@ -141,14 +150,14 @@ void GameEngine::tic(uint64_t td) {
    }*/
    
    // Update functions go here
-   m_path->update(m_camera->getRef());
+   m_path->update(m_camera->getRef(), m_player->getPosition());
    m_currentPoint = m_path->getCurrentPointer();
 
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->tic(td);
 
-   /*m_enemyGunner->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-   m_enemyGunner->tic(td); */
+   m_enemyGunner->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   m_enemyGunner->tic(td);
    
    m_camera->checkPath(m_path->getCurrentPointer());
    m_camera->tic(td);
@@ -214,7 +223,7 @@ void GameEngine::tic(uint64_t td) {
       m_bulletList.push_back(bullet);
    }
    
-   /*dirEnemyToPlayer = m_enemyGunner->getPosition() - m_player->getPosition();
+   dirEnemyToPlayer = m_enemyGunner->getPosition() - m_player->getPosition();
    if (dirEnemyToPlayer.Length() < 700 && 
        (m_enemyGunner->shouldFire1() || m_enemyGunner->shouldFire2())) 
    {
@@ -248,7 +257,7 @@ void GameEngine::tic(uint64_t td) {
         m_objects.push_back(bullet);
         m_bulletList.push_back(bullet);
       }
-   }*/
+   }
 
    //Use Iterators!
    //for (int i = 0; i < m_bulletList.size(); i++) {
@@ -271,11 +280,16 @@ void GameEngine::tic(uint64_t td) {
    }
 
    runCollisions();
+   }
 }
 
 
 void GameEngine::render() {
+   //Checks if the current state is the game state. This could be made more elegant.
+   if (m_stateManager->getCurrentState() == m_game)
+   {
    m_modules->renderingEngine->render(m_objects);
+   }
 }
 
 
@@ -289,10 +303,8 @@ bool GameEngine::handleEvents()
    
    while (SDL_PollEvent(&evt))
    {
-      
       if (evt.type == SDL_QUIT)
          running = false;
-      
       // Keyboard events
       if (evt.type == SDL_KEYUP)
       {
@@ -302,13 +314,11 @@ bool GameEngine::handleEvents()
       if (evt.type == SDL_KEYDOWN) {
 	 running = handleKeyDown(evt.key.keysym.sym);
       }
-      
       // Mouse Events
       if (evt.type == SDL_MOUSEMOTION) 
       {
          handleMouseMotion(evt.motion.x, evt.motion.y);
       }
-      
       //   if (evt.type == SDL_MOUSEBUTTONUP)
       //   {
       //      mouse_click(evt.button.button);
@@ -321,6 +331,13 @@ bool GameEngine::handleEvents()
 bool GameEngine::handleKeyDown(SDLKey key) {
    bool running = true;
 
+   //Checks to see whether the current state is the menu, and pops the state if so. Will be revised later.
+   if (m_stateManager->getCurrentState() == m_menu)
+   {
+      m_stateManager->popState();
+      InitData();
+      return running;
+   }
    if (key == SDLK_SPACE) {
       m_camera->setBoosting(true);
       m_reticle->setVisible(false);
@@ -357,7 +374,6 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 	 //m_bulletSound->play(0);
       }
    }
-
    return running;
 }
 
@@ -395,7 +411,14 @@ bool GameEngine::handleKeyUp(SDLKey key)
    bool running = true;
    std::vector<GameObject*> targets;
    vec3 curveDir, bulletOrigin;
-   
+
+   //Checks if the current state is the "menu", if so it closes the main menu to start the game state. Could be improved.
+   if (m_stateManager->getCurrentState() == m_menu)
+   {
+      m_stateManager->popState();
+      InitData();
+      return running;
+   }
    if (key == SDLK_ESCAPE) 
    {
       running = false;
@@ -482,10 +505,14 @@ bool GameEngine::handleKeyUp(SDLKey key)
 
 void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
 {
+   //Checks if the current state is a game state. If so, reads in the mouse motion.
+   if (m_stateManager->getCurrentState() == m_game)
+   {
    // Rotate player?
    // X seems to be reading in backwards...?
    m_player->updateVelocity(400-x, 300-y);
    //setVelocity(vec3((400 - x), (300 - y), m_player->getPosition().z));
+   }
 }
 
 /**

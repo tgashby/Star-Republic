@@ -74,7 +74,6 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    updateVelocity(lastScreenX, lastScreenY);
 }
 
-
 void Player::updateVelocity(float diffX, float diffY)
 {
    /** **/
@@ -161,4 +160,8 @@ void Player::doCollision(GameObject & other)
 
 void Player::setVisible(bool visibility) {
    m_mesh->setVisible(visibility);
+}
+
+vec3 Player::getOffSet() {
+  return m_offsetPosition;
 }

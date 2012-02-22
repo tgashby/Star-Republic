@@ -37,10 +37,11 @@ EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Play
   /** setting the modelmatrix based on a constant scale and rotation,
    *  and the forward, up and position (aka Magic) **/
   mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
+     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1)) *
      mat4::Magic(-getForward(), getUp(), getPosition());
   m_mesh->setModelMtx(modelMtx);
 
-  m_health = 9001;
+  m_health = 500;
 }
 
 EnemyShip::~EnemyShip()
@@ -103,7 +104,8 @@ void EnemyShip::tic(uint64_t time)
     /** setting the modelmatrix based on a constant scale and rotation,
      *  and the forward, up and position (aka Magic) - note that 
      *  the enemy constantly aims at the player **/
-    mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0));
+    mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
+                    mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
     modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
     m_mesh->setModelMtx(modelMtx);
     

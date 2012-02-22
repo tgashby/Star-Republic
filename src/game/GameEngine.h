@@ -3,6 +3,7 @@
 
 #include "Interfaces.h"
 #include "Camera.h"
+#include "StateManager.h"
 #include "ResourceManager.h"
 
 #include "SDL_include.h"
@@ -14,10 +15,12 @@
 #include <assert.h>
 #include "Bullet.h"
 #include "EnemyShip.h"
-//#include "EnemyGunship.h"
+#include "EnemyGunship.h"
 #include "Explodeable.h"
 #include <algorithm>
 #include "Missile.h"
+#include "GameState.h"
+#include "MenuState.h"
 
 
 class GameEngine : public IGameEngine {
@@ -45,6 +48,9 @@ private:
    Reticle *m_reticle;
    Camera *m_camera;
    Modules *m_modules;
+   StateManager *m_stateManager;
+   MenuState* m_menu;
+   GameState* m_game;
    Path *m_path;
    WorldData *m_worldData;
    PathPoint *m_currentPoint;
@@ -56,7 +62,7 @@ private:
    std::vector<Missile *> m_missileList;
    
    EnemyShip* m_enemyShip;
-   //EnemyGunship* m_enemyGunner;
+   EnemyGunship* m_enemyGunner;
    
    Sound* m_bulletSound;
    Sound* m_music;
