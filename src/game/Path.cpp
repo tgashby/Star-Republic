@@ -151,27 +151,27 @@ PathPoint Path::update(Vector3<float> refPos, Vector3<float> playerPos)
 
   if (distance < RANGE_CHECK) {
     if (current.getNumberOfIDs() == 1) {
+
       setChoice(current.getFirstID());
       return getCurrent();
     }
 
-    normal = vect1.Cross(vect2);
+    normal = vect1.Cross(vect2).Normalized();
     D_val = (current.getPosition().x * normal.x + current.getPosition().y 
-	     * normal.y * current.getPosition().z * normal.z) * -1.0f;
+	     * normal.y + current.getPosition().z * normal.z) * -1.0f;
     
-    playerDistFromPlane = current.getPosition().x * playerPos.x + 
-      current.getPosition().y * playerPos.y + current.getPosition().z 
-      * playerPos.z + D_val;
+    playerDistFromPlane = (normal.x * playerPos.x) + 
+       (normal.y * playerPos.y) + (normal.z * playerPos.z) + D_val;
     
     if (abs(playerDistFromPlane) < MID_BUFFER_WIDTH && 
 	current.getNumberOfIDs() == 3) {
-      setChoice(current.getSecondID());
+      setChoice(current.getThirdID());
       return getCurrent();
     }
     
-    firstDistFromPlane = current.getPosition().x * firstChoice.getPosition().x 
-      + current.getPosition().y * firstChoice.getPosition().y + 
-      current.getPosition().z * firstChoice.getPosition().z + D_val;
+    firstDistFromPlane = normal.x * firstChoice.getPosition().x 
+       + normal.y * firstChoice.getPosition().y 
+       + normal.z * firstChoice.getPosition().z + D_val;
 
     if (playerDistFromPlane / abs(playerDistFromPlane) == 
 	firstDistFromPlane / abs(firstDistFromPlane)) {
@@ -179,7 +179,7 @@ PathPoint Path::update(Vector3<float> refPos, Vector3<float> playerPos)
       return getCurrent();
     }
     else {
-      setChoice(current.getThirdID());
+      setChoice(current.getSecondID());
       return getCurrent();
     }
   }
