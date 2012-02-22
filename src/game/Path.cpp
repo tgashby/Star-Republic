@@ -127,14 +127,14 @@ PathPoint Path::getAt(int index)
   return points.at(index);
 }
 
-PathPoint Path::update(Vector3<float> playerPos)
+PathPoint Path::update(Vector3<float> refPos, Vector3<float> playerPos)
 {
   float D_val;
   PathPoint current = getCurrent();
   PathPoint previous = getPrevious();
-  float diffX = playerPos.x - current.getPosition().x;
-  float diffY = playerPos.y - current.getPosition().y;
-  float diffZ = playerPos.z - current.getPosition().z;
+  float diffX = refPos.x - current.getPosition().x;
+  float diffY = refPos.y - current.getPosition().y;
+  float diffZ = refPos.z - current.getPosition().z;
   float playerDistFromPlane = 0;
   float firstDistFromPlane = 0;
   Vector3<float> vect1 (current.getPosition().x - previous.getPosition().x,
@@ -154,6 +154,7 @@ PathPoint Path::update(Vector3<float> playerPos)
       setChoice(current.getFirstID());
       return getCurrent();
     }
+
     normal = vect1.Cross(vect2);
     D_val = (current.getPosition().x * normal.x + current.getPosition().y 
 	     * normal.y * current.getPosition().z * normal.z) * -1.0f;

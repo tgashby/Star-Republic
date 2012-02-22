@@ -88,6 +88,11 @@ public:
     * @return The up vector of the player's aim
     */
    Vector3<float> getAimUp();
+
+   /**
+    * Returns the vector off of the center of the ship
+    */
+   vec3 getOffSet();
    
 private:
    /**
