@@ -5,6 +5,21 @@
 #define MID_BUFFER_WIDTH 2
 #include <cmath>
 
+Path::Path(WorldData *data) {
+   worldData = data;
+   currentPoint = 1;
+   previousPoint = 0;
+   
+   vector<PathPointData>::iterator newPoint;
+   for (newPoint = data->path.begin(); newPoint != data->path.end(); ++newPoint) {
+      PathPoint point = PathPoint(*newPoint);
+      points.push_back(point);
+   }
+   
+   currentPoint = 1;
+   previousPoint = 0;
+}
+/*
 Path::Path(const string fileName)
 {
    string line;
@@ -79,7 +94,7 @@ PathPoint Path::parseLine(const string line)
    point.setNumberOfIDs(totalPaths);
    
    return point;
-}
+}*/
 
 PathPoint Path::getCurrent() {
   return points.at(currentPoint);

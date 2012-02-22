@@ -32,6 +32,8 @@ public:
     */
    Explodeable(vec3 position, Modules* modules);
 
+   Explodeable(vec3 position, float radius, Modules* modules);
+
    /**
     * Creates a new explosion with more aspects to set.
     * @param position - the position of the explosion

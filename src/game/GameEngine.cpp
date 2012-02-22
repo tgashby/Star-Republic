@@ -17,10 +17,10 @@ GameEngine::GameEngine(Modules *modules) {
 
 
 GameEngine::~GameEngine() {
-   list<IObject3d *>::iterator object = m_objects.begin();
-   for (; object != m_objects.end(); ++object) {
-      delete *object;
-   }
+//   list<IObject3d *>::iterator object = m_objects.begin();
+//   for (; object != m_objects.end(); ++object) {
+//      delete *object;
+//   }
    m_objects.clear();
    m_gameObjects.clear();
 
@@ -29,9 +29,12 @@ GameEngine::~GameEngine() {
 
 void GameEngine::InitData()
 {
-   m_world = new Path("maps/course.wf", m_modules);
+   m_worldData = m_modules->resourceManager->readWorldData("maps/course2.wf");
    
-   m_camera = new Camera(m_world->getCurrentPointer(), m_world->getPreviousPointer());
+   m_path = new Path(m_worldData);
+   //m_world = new Path("maps/course.wf", m_modules);
+   
+   m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
 			 m_modules, m_camera->getPosition(), 
 			 m_camera->getForward(), m_camera->getUp());
@@ -46,13 +49,11 @@ void GameEngine::InitData()
    
    //explosion = new Explodeable(m_player->getPosition(), m_modules);
 
-   m_turretLocs = m_modules->resourceManager->
-   readWorldData("maps/course.wf");
-
    createTurrets();
+   createTerrain();
    
-   m_currentPoint = m_world->getCurrentPointer();
-   m_previousPoint = m_world->getPreviousPointer();
+   m_currentPoint = m_path->getCurrentPointer();
+   m_previousPoint = m_path->getPreviousPointer();
    
    m_player->setProgress(m_previousPoint->getPosition());
    m_player->setPosition(m_previousPoint->getPosition());
@@ -127,6 +128,7 @@ void GameEngine::InitData()
 void GameEngine::tic(uint64_t td) {
    gameOver += td;
    
+   /*
    if (gameOver >= 40000) 
    {
       cout << "YOU WIN!\n";
@@ -136,11 +138,11 @@ void GameEngine::tic(uint64_t td) {
    if (!m_player->isAlive()) {
       cout << "YOU LOSE!\n";
       exit(0);
-   }
+   }*/
    
    // Update functions go here
-   m_world->update(m_camera->getRef());
-   m_currentPoint = m_world->getCurrentPointer();
+   m_path->update(m_camera->getRef());
+   m_currentPoint = m_path->getCurrentPointer();
 
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->tic(td);
@@ -148,7 +150,7 @@ void GameEngine::tic(uint64_t td) {
    m_enemyGunner->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyGunner->tic(td);
    
-   m_camera->checkPath(m_world->getCurrentPointer());
+   m_camera->checkPath(m_path->getCurrentPointer());
    m_camera->tic(td);
 
    m_player->tic(td, m_camera->getPosition(), m_camera->getUp(), m_camera->getForward());
@@ -283,14 +285,10 @@ bool GameEngine::handleEvents()
    bool running = true;
    
    SDL_Event evt;
-   uint64_t old = SDL_GetTicks();
    
    
    while (SDL_PollEvent(&evt))
    {
-      uint64_t now = SDL_GetTicks();
-      
-      old = now;
       
       if (evt.type == SDL_QUIT)
          running = false;
@@ -523,8 +521,28 @@ void GameEngine::runCollisions()
 
 void GameEngine::createTurrets()
 {
-   for (std::vector< Vector3<float> >::iterator i = m_turretLocs->turrets.begin(); 
-	i != m_turretLocs->turrets.end();)
+   vector<PathPointData>::iterator point;
+   vector<UnitData>::iterator unit;
+   
+   for (point = m_worldData->path.begin(); point != m_worldData->path.end(); ++point) {
+      for (unit = point->units.begin(); unit != point->units.end(); ++unit) {
+         if (unit->type == UNIT_TURRET) {
+            Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", 
+                                           "textures/test3.bmp", "models/turretmiddle.obj", 
+                                           "textures/test3.bmp", "models/turretbase.obj", 
+                                           "textures/test3.bmp", m_modules);
+            newTurret->setPosition(unit->loc);
+            newTurret->setForward(unit->fwd);
+            newTurret->setUp(unit->up);
+            
+            m_turrets.push_back(newTurret);
+         }
+      }
+   }
+   
+   /*
+   for (std::vector< Vector3<float> >::iterator i = m_world->worldData->turrets.begin(); 
+	i != m_world->worldData->turrets.end(); i += 3)
    {
       // Loc, forward, up
       Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", 
@@ -533,18 +551,31 @@ void GameEngine::createTurrets()
 				     "textures/test3.bmp", m_modules);
       
       newTurret->setPosition(*i);
-      ++i;
-      newTurret->setForward(*i);
-      ++i;
-      newTurret->setUp(*i);
-      ++i;
+      newTurret->setForward(*(i + 1));
+      newTurret->setUp(*(i + 2));
       
       m_turrets.push_back(newTurret);
+   }*/
+}
+
+void GameEngine::createTerrain()
+{
+   vector<PathPointData>::iterator point;
+   vector<PropData>::iterator prop;
+   
+   for (point = m_worldData->path.begin(); point != m_worldData->path.end(); ++point) {
+      for (prop = point->props.begin(); prop != point->props.end(); ++prop) {
+         string fileName = "models/" + prop->name;
+         SceneObject *obj = new SceneObject(fileName, "textures/test3.bmp", prop->loc, prop->fwd, prop->up, m_modules);
+         m_modules->renderingEngine->addObject3d(obj);
+         m_objects.push_back(obj);
+      }
    }
    
-   vector<string>::iterator name = m_turretLocs->worldMeshes.begin();
-   vector<vec3>::iterator vec = m_turretLocs->worldLocs.begin();
-   while (name != m_turretLocs->worldMeshes.end()) {
+   /*
+   vector<string>::iterator name = m_world->worldData->worldMeshes.begin();
+   vector<vec3>::iterator vec = m_world->worldData->worldLocs.begin();
+   while (name != m_world->worldData->worldMeshes.end()) {
       vec3 pos = *vec;
       ++vec;
       vec3 fwd = *vec;
@@ -556,5 +587,5 @@ void GameEngine::createTurrets()
       SceneObject *obj = new SceneObject(file, "textures/test3.bmp", pos, fwd, up, m_modules);
       m_modules->renderingEngine->addObject3d(obj);
       m_objects.push_back(obj);
-   }
+   }*/
 }

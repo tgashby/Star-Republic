@@ -11,6 +11,7 @@
 #include "Vector.h"
 #include "Matrix.h"
 #include "Quaternion.h"
+#include "WorldData.h"
 #include <vector>
 #include <list>
 #include <string>
@@ -111,6 +112,7 @@ struct TextureData {
    ivec2 size;
 };
 
+/*
 // holds world data for loading a map.
 // locations in the world are described by a sequence of three vectors.
 // 0: point in the world
@@ -122,10 +124,11 @@ struct WorldData {
    vector<vec3> turrets; // locations of turrets.
    vector<vec3> worldLocs; // locations of the world meshes
    vector<string> worldMeshes; // names of the world meshes
-};
+};*/
 
 // An abstract class for the 
 struct IMesh {
+   virtual ~IMesh() {}
    virtual MeshRef getMeshRef() = 0;
    virtual void setMeshRef(MeshRef meshRef) = 0;
    virtual TextureRef getTextureRef() = 0;
@@ -149,15 +152,15 @@ struct IMesh {
    virtual TextureData* getTextureData() = 0;
 };
 
-
 // Accessed by the RenderingEngine for a combined projection and view matrix.
 struct ICamera {
+   virtual ~ICamera() {}
    virtual mat4 getProjectionViewMtx() = 0;
 };
 
-
 // Each object needs to provide the RenderingEngine a list of meshes.
 struct IObject3d {
+   virtual ~IObject3d() {}
    virtual list<IMesh *>* getMeshes() = 0;
 };
 
@@ -166,6 +169,7 @@ const int INVALID_CHANNEL = -2;
 class ISound 
 {
 public:
+   virtual ~ISound() {}
    virtual void play(int loops) = 0;
    virtual void pause() = 0;
    virtual void resume() = 0;
@@ -177,6 +181,7 @@ protected:
 
 // The main class that runs the game.
 struct IGameEngine {
+   virtual ~IGameEngine() {}
    virtual void tic(uint64_t td) = 0;
    virtual void render() = 0;
    virtual bool handleEvents() = 0;
@@ -187,16 +192,17 @@ struct IGameEngine {
 
 // All OpenGL calls should be implemented in the RenderingEngine.
 struct IRenderingEngine {
+   virtual ~IRenderingEngine() {}
    virtual void render(list<IObject3d *> &objects) = 0;
    virtual void setCamera(ICamera *camera) = 0;
    virtual void addObject3d(IObject3d *obj) = 0;
    virtual void removeObject3d(IObject3d *obj) = 0;
 };
 
-
 // Any resurces from the file system should be accessed
 // through this class.
 struct IResourceManager {
+   virtual ~IResourceManager() {}
    virtual MeshData *readMeshData(string fileName, LOAD_NORMAL_TYPE normalType, float scale) = 0;
    virtual TextureData *loadBMPImage(string fileName) = 0;
    //virtual ImageData *loadPngImage(string fileName) = 0;

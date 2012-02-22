@@ -201,8 +201,9 @@ def exportMesh(obj, filePath):
 #####################################
 
 class Mesh:
-   def __init__(self, obj):
+   def __init__(self, obj, index):
       self.obj = obj
+      self.index = index
       self.name = obj.name[2:] + '.obj'
    
    def writeMesh(self, out):
@@ -220,15 +221,16 @@ class Mesh:
       self.obj.rotation_euler = origRot
       self.obj.location = origLoc
       
-      out.write('m ')
+      out.write('m %d ' %(self.index))
       out.write('%f %f %f ' % (100 * newLoc.x, 100 * newLoc.y, 100 * newLoc.z))
       out.write('%f %f %f %f ' % (newRot.x, newRot.y, newRot.z, newRot.w))
       out.write(self.name)
       out.write('\n')
 
 class Enemy:
-   def __init__(self, obj):
+   def __init__(self, obj, index):
       self.obj = obj
+      self.index = index
    
    def writeEnemy(self, out):
       self.obj.rotation_mode = 'XYZ'
@@ -245,47 +247,76 @@ class Enemy:
       self.obj.rotation_euler = origRot
       self.obj.location = origLoc
       
-      out.write('u ')
+      out.write('u %d ' %(self.index))
       out.write('%f %f %f ' % (100 * newLoc.x, 100 * newLoc.y, 100 * newLoc.z))
       out.write('%f %f %f %f ' % (newRot.x, newRot.y, newRot.z, newRot.w))
-      out.write('turret')
-      out.write('\n')
+      out.write(' turret\n')
+
+class Point:
+   def __init__(self, obj, index):
+      self.obj = obj
+      self.index = index
+      self.meshes = []
+      self.enemies = []
+      
+      for child in obj.children:
+         if (child.name.find('U_') == 0):
+            self.enemies.append(Enemy(child, index))
+         if (child.name.find('M_') == 0):
+            self.meshes.append(Mesh(child, index))
+   
+   def write(self, out):
+      self.obj.rotation_mode = 'XYZ'
+      origLoc = Vector(self.obj.location)
+      origRot = Euler(self.obj.rotation_euler)
+         
+      newLoc = Vector(origLoc)
+         
+      self.obj.location = Vector((0.0, 0.0, 0.0))
+      self.obj.rotation_mode = 'QUATERNION'
+      newRot = Quaternion(self.obj.rotation_quaternion)
+         
+      self.obj.rotation_mode = 'XYZ'
+      self.obj.rotation_euler = origRot
+      self.obj.location = origLoc
+         
+      out.write('p %d ' % (self.index))
+      out.write('%f %f %f ' % (100 * newLoc.x, 100 * newLoc.y, 100 * newLoc.z))
+      out.write('%f %f %f %f ' % (newRot.x, newRot.y, newRot.z, newRot.w))
+      out.write('%d\n' % (self.index + 1))
+      
 
 class Path:
-   def __init__(self):
-      self.objs = []
+   def __init__(self, start):
+      self.points = []
+      self.start = start
+      self.size = 0
    
    def addPoint(self, obj):
-      self.objs.append(obj)
+      self.points.append(Point(obj, self.start + self.size))
+      self.size += 1
+
+   def getMeshes(self):
+      meshes = []
+      for point in self.points:
+         meshes.extend(point.meshes)
+      return meshes
+
+   def getEnemies(self):
+      enemies = []
+      for point in self.points:
+         enemies.extend(point.enemies)
+      return enemies
    
    def writePoints(self, index, out):
-      for obj in self.objs:
-         obj.rotation_mode = 'XYZ'
-         origLoc = Vector(obj.location)
-         origRot = Euler(obj.rotation_euler)
-         
-         newLoc = Vector(origLoc)
-         
-         obj.location = Vector((0.0, 0.0, 0.0))
-         obj.rotation_mode = 'QUATERNION'
-         newRot = Quaternion(obj.rotation_quaternion)
-         
-         obj.rotation_mode = 'XYZ'
-         obj.rotation_euler = origRot
-         obj.location = origLoc
-         
-         out.write('p %d ' % (index))
-         out.write('%f %f %f ' % (100 * newLoc.x, 100 * newLoc.y, 100 * newLoc.z))
-         out.write('%f %f %f %f ' % (newRot.x, newRot.y, newRot.z, newRot.w))
-         index += 1
-         out.write('%d\n' % (index))
+      for point in self.points:
+         point.write(out)
       out.write('\n')
-      return index
 
 def exportWorld(filePath):
    loc = filePath.rfind('/') + 1
    fileDir = filePath[:loc]
-   path = Path()
+   path = Path(0)
    meshes = []
    enemies = []
    
@@ -294,10 +325,9 @@ def exportWorld(filePath):
    for obj in objs:
       if obj.name.find('P_') == 0:
          path.addPoint(obj)
-      if obj.name.find('M_') == 0:
-         meshes.append(Mesh(obj))
-      if obj.name.find('U_') == 0:
-         enemies.append(Enemy(obj))
+   
+   meshes = path.getMeshes()
+   enemies = path.getEnemies()
    
    out = open(filePath, "w")
    

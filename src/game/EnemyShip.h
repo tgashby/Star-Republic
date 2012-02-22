@@ -10,6 +10,8 @@
 #include "Enemy.h"
 #include <assert.h>
 #include <cmath>
+#include "Explodeable.h"
+#include "Missile.h"
 
 const float PATHVELOCITY = 4.2f;
 const float AIMVELOCITY = 0.3f;
@@ -22,7 +24,7 @@ const float ROTATE_CONSTANT = 90;
  * EnemyShip represents a shy enemy flyer who will dodge based on where
  * the player is currently aiming
  */
-class EnemyShip : public Object3d, public Flyer, public Enemy {
+class EnemyShip : public Explodeable, public Flyer, public Enemy {
 public:
    /**
     * EnemyShip construct, takes 2 strings representing the object file path 
@@ -104,7 +106,10 @@ public:
     */
    Vector3<float> getRightCannonPos();
 
-   
+   /**
+    * getPosition is required since otherwise it is ambiguous.
+    */
+   vec3 getPosition();
 private:
    Mesh *m_mesh;
    Vector3<float> side;

@@ -16,7 +16,9 @@ Object3d::Object3d() {
 Object3d::~Object3d() {
    list<IMesh *>::iterator mesh;
    for (mesh = m_meshList.begin(); mesh != m_meshList.end(); ++mesh) {
-      delete *mesh;
+      IMesh* temp = *mesh;
+      
+      delete temp;
    }
 }
 
