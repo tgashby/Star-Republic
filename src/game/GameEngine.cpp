@@ -40,7 +40,7 @@ void GameEngine::InitData()
 			 m_camera->getForward(), m_camera->getUp());
    m_camera->setPlayer(m_player);
 
-   m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", 
+   m_enemyShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", 
 			       m_modules, *m_player);
    m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
           "models/enemy2turrethead.obj", "textures/test3.bmp", m_modules, *m_player);
@@ -115,7 +115,7 @@ void GameEngine::InitData()
       m_gameObjects.push_back(*i);
    }
 
-   m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 1000));
+   m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 400));
    m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 800));
    
    initSound();
