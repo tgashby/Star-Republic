@@ -11,8 +11,16 @@ GameEngine::GameEngine(Modules *modules) {
    m_gameObjects = list<GameObject *>(0);
 
    gameOver = 0;
-   
-   InitData();
+   m_stateManager = new StateManager();
+   m_menu = new MenuState();
+   m_game = new GameState();
+   m_game->initialize();
+   m_menu->initialize();
+   m_stateManager->pushState(m_game);
+   m_stateManager->pushState(m_menu);
+
+   //INIT DATA not being called, only called when the menu is left.
+   //InitData();
 }
 
 
@@ -126,6 +134,9 @@ void GameEngine::InitData()
 }
 
 void GameEngine::tic(uint64_t td) {
+   //CHECKS TO MAKE SURE THE CURRENT STATE IS A GAME STATE. THIS SHOULD PROBABLY BE MODIFIED TO SOMETHING MORE ELEGANT.
+   if (m_stateManager->getCurrentState() == m_game)
+   {
    gameOver += td;
    
    /*
@@ -271,11 +282,16 @@ void GameEngine::tic(uint64_t td) {
    }
 
    runCollisions();
+   }
 }
 
 
 void GameEngine::render() {
+   //Checks if the current state is the game state. This could be made more elegant.
+   if (m_stateManager->getCurrentState() == m_game)
+   {
    m_modules->renderingEngine->render(m_objects);
+   }
 }
 
 
@@ -289,10 +305,8 @@ bool GameEngine::handleEvents()
    
    while (SDL_PollEvent(&evt))
    {
-      
       if (evt.type == SDL_QUIT)
          running = false;
-      
       // Keyboard events
       if (evt.type == SDL_KEYUP)
       {
@@ -302,13 +316,11 @@ bool GameEngine::handleEvents()
       if (evt.type == SDL_KEYDOWN) {
 	 running = handleKeyDown(evt.key.keysym.sym);
       }
-      
       // Mouse Events
       if (evt.type == SDL_MOUSEMOTION) 
       {
          handleMouseMotion(evt.motion.x, evt.motion.y);
       }
-      
       //   if (evt.type == SDL_MOUSEBUTTONUP)
       //   {
       //      mouse_click(evt.button.button);
@@ -320,7 +332,6 @@ bool GameEngine::handleEvents()
 
 bool GameEngine::handleKeyDown(SDLKey key) {
    bool running = true;
-
    if (key == SDLK_SPACE) {
       m_camera->setBoosting(true);
       m_reticle->setVisible(false);
@@ -357,7 +368,6 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 	 //m_bulletSound->play(0);
       }
    }
-
    return running;
 }
 
@@ -395,7 +405,14 @@ bool GameEngine::handleKeyUp(SDLKey key)
    bool running = true;
    std::vector<GameObject*> targets;
    vec3 curveDir, bulletOrigin;
-   
+
+   //Checks if the current state is the "menu", if so it closes the main menu to start the game state. Could be improved.
+   if (m_stateManager->getCurrentState() == m_menu)
+   {
+      m_stateManager->popState();
+      InitData();
+      return running;
+   }
    if (key == SDLK_ESCAPE) 
    {
       running = false;
@@ -482,10 +499,14 @@ bool GameEngine::handleKeyUp(SDLKey key)
 
 void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
 {
+   //Checks if the current state is a game state. If so, reads in the mouse motion.
+   if (m_stateManager->getCurrentState() == m_game)
+   {
    // Rotate player?
    // X seems to be reading in backwards...?
    m_player->updateVelocity(400-x, 300-y);
    //setVelocity(vec3((400 - x), (300 - y), m_player->getPosition().z));
+   }
 }
 
 /**
