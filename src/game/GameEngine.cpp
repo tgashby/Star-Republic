@@ -9,8 +9,16 @@ GameEngine::GameEngine(Modules *modules) {
    m_modules = modules;
 
    gameOver = 0;
-   
-   InitData();
+   m_stateManager = new StateManager();
+   m_menu = new MenuState();
+   m_game = new GameState();
+   m_game->initialize();
+   m_menu->initialize();
+   m_stateManager->pushState(m_game);
+   m_stateManager->pushState(m_menu);
+
+   //INIT DATA not being called, only called when the menu is left.
+   //InitData();
 }
 
 
@@ -21,7 +29,7 @@ GameEngine::~GameEngine()
 
 void GameEngine::InitData()
 {
-   m_worldData = m_modules->resourceManager->readWorldData("maps/course.wf");
+   m_worldData = m_modules->resourceManager->readWorldData("maps/course3.wf");
    
    m_worldGrid = new WorldGrid(*m_worldData, m_modules);
    
@@ -59,6 +67,14 @@ void GameEngine::InitData()
 			 currPath.getUp(), prevPath.getPosition(), 
 			 prevPath.getUp());
    m_enemyShip->calculateSide();
+
+   m_enemyGunner->setProgress(m_previousPoint->getPosition());
+   m_enemyGunner->setPosition(m_previousPoint->getPosition());
+   m_enemyGunner->setUp(m_previousPoint->getUp());
+   m_enemyGunner->setHeads(m_currentPoint->getPosition(), 
+			 m_currentPoint->getUp(), m_previousPoint->getPosition(), 
+			 m_previousPoint->getUp());
+   m_enemyGunner->calculateSide();
    
    m_modules->renderingEngine->setCamera(m_camera);
 
@@ -70,23 +86,22 @@ void GameEngine::InitData()
    initSound();
    m_bulletSound = loadSound("sound/arwingShot.ogg");
    m_music = loadMusic("sound/venom.mp3");
-   
+   //addAsteroids();
    //m_music->play(1);
 }
 
 void GameEngine::tic(uint64_t td) {
+   //CHECKS TO MAKE SURE THE CURRENT STATE IS A GAME STATE. THIS SHOULD PROBABLY BE MODIFIED TO SOMETHING MORE ELEGANT.
+   if (m_stateManager->getCurrentState() == m_game)
+   {
    gameOver += td;
    
-//   if (gameOver >= 40000) 
-//   {
-//      cout << "YOU WIN!\n";
-//      exit(0);
-//   }
-//   
-//   if (!m_player->isAlive()) {
-//      cout << "YOU LOSE!\n";
-//      exit(0);
-//   }
+   /*
+   if (gameOver >= 40000) 
+   {
+      cout << "YOU WIN!\n";
+      exit(0);
+   }
    
    PathPointData currPPD = m_worldGrid->getCurrentQuadrant().m_startPt;
    
@@ -94,8 +109,11 @@ void GameEngine::tic(uint64_t td) {
    
    // Update functions go here
 
-//   m_enemyShip->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
-//   m_enemyShip->tic(td);
+   m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   m_enemyShip->tic(td);
+
+   m_enemyGunner->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
+   m_enemyGunner->tic(td);
    
    m_camera->checkPath(&m_currentPoint);
    m_camera->tic(td);
@@ -124,10 +142,8 @@ bool GameEngine::handleEvents()
    
    while (SDL_PollEvent(&evt))
    {
-      
       if (evt.type == SDL_QUIT)
          running = false;
-      
       // Keyboard events
       if (evt.type == SDL_KEYUP)
       {
@@ -137,13 +153,11 @@ bool GameEngine::handleEvents()
       if (evt.type == SDL_KEYDOWN) {
 	 running = handleKeyDown(evt.key.keysym.sym);
       }
-      
       // Mouse Events
       if (evt.type == SDL_MOUSEMOTION) 
       {
          handleMouseMotion(evt.motion.x, evt.motion.y);
       }
-      
       //   if (evt.type == SDL_MOUSEBUTTONUP)
       //   {
       //      mouse_click(evt.button.button);
@@ -153,9 +167,37 @@ bool GameEngine::handleEvents()
    return running;
 }
 
+void GameEngine::addAsteroids() {
+   Asteroid* tempAst;
+   PathPoint* current;
+   PathPoint* prev;
+   for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex++) {
+      current = &(m_path->getAt(pntIndex));
+      prev = &(m_path->getAt(pntIndex - 1));
+      //ADD AN ASTEROID
+      tempAst = new Asteroid("models/sphere.obj", "textures/test4.bmp", 
+			     m_modules, current->getPosition(), current->getUp(), 			     prev->getPosition() - current->getPosition());
+      m_modules->renderingEngine->addObject3d(tempAst);
+      m_gameObjects.push_back(tempAst);
+      m_objects.push_back(tempAst);
+      tempAst = new Asteroid("models/cube.obj", "textures/test5.bmp",
+			     m_modules, current->getPosition() + (current->getUp() * 10.0f), current->getUp(), current->getForward());
+      m_modules->renderingEngine->addObject3d(tempAst);
+      m_gameObjects.push_back(tempAst);
+      m_objects.push_back(tempAst);
+   }
+}
+
 bool GameEngine::handleKeyDown(SDLKey key) {
    bool running = true;
 
+   //Checks to see whether the current state is the menu, and pops the state if so. Will be revised later.
+   if (m_stateManager->getCurrentState() == m_menu)
+   {
+      m_stateManager->popState();
+      InitData();
+      return running;
+   }
    if (key == SDLK_SPACE) {
       m_camera->setBoosting(true);
       m_reticle->setVisible(false);
@@ -185,32 +227,29 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 	 //m_bulletSound->play(0);
       }
    }
-
    return running;
 }
 
 std::vector<GameObject*> GameEngine::acquireMissileTargets() {
-   std::vector<GameObject*> temp;
-   vec3 playerToObjVec;
-   int count = 0;
-   
-   for (list<GameObject *>::const_iterator it = 
-        m_worldGrid->getCurrentQuadrant(). m_gameObjects.begin(); 
-        it != m_worldGrid->getCurrentQuadrant().m_gameObjects.end(); it++) 
-   {
-      if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) && typeid(**it) != typeid(Missile)) {
-         playerToObjVec = (*it)->getPosition() - m_player->getPosition();
-         if (playerToObjVec.Length() > 350 && 
-             playerToObjVec.Length() < 1500 && 
-             angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) {
-            temp.push_back(*it);
-            count++;
-            if (count == 6) {
-               return temp;
-            }
-         }
-      }
-   }
+  std::vector<GameObject*> temp;
+  vec3 playerToObjVec;
+  int count = 0;
+
+  for (list<GameObject *>::iterator it = m_gameObjects.begin(); 
+       it != m_gameObjects.end(); it++) {
+     if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) && typeid(**it) != typeid(Missile)) {
+	playerToObjVec = (*it)->getPosition() - m_player->getPosition();
+	if (playerToObjVec.Length() > 350 && 
+	    playerToObjVec.Length() < 1500 && 
+	    angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) {
+	   temp.push_back(*it);
+	   count++;
+	   if (count == 6) {
+	      return temp;
+	   }
+	}
+    }
+  }
 
   return temp;
 }
@@ -230,7 +269,14 @@ bool GameEngine::handleKeyUp(SDLKey key)
    bool running = true;
    std::vector<GameObject*> targets;
    vec3 curveDir, bulletOrigin;
-   
+
+   //Checks if the current state is the "menu", if so it closes the main menu to start the game state. Could be improved.
+   if (m_stateManager->getCurrentState() == m_menu)
+   {
+      m_stateManager->popState();
+      InitData();
+      return running;
+   }
    if (key == SDLK_ESCAPE) 
    {
       running = false;
@@ -238,54 +284,56 @@ bool GameEngine::handleKeyUp(SDLKey key)
    
    if (key == SDLK_x) {
       if (!m_camera->isBoosting()) {
-         targets = acquireMissileTargets();
-         
-         //For each target
-         for (int index = 0; index < targets.size(); index++) {
-            switch (index) {
-               case 0:
-                  //AIM UP OR CAMERA UP?
-                  curveDir = ((m_player->getSide() * .75)
-                              - (m_player->getAimUp() * .35)).Normalized();
-                  bulletOrigin = m_player->getSide() * 20;
-                  break;
-               case 1:
-                  curveDir = ((m_player->getSide() * -.75) 
-                              - (m_player->getAimUp() * .35)).Normalized();
-                  bulletOrigin = m_player->getSide() * -20;
-                  break;
-               case 2:
-                  curveDir = ((m_player->getSide() * .75) 
-                              + (m_player->getAimUp() * .35)).Normalized();
-                  bulletOrigin = m_player->getSide() * 20;
-                  break;
-               case 3:
-                  curveDir = ((m_player->getSide() * -.75) 
-                              + (m_player->getAimUp() * .35)).Normalized();
-                  bulletOrigin = m_player->getSide() * -20;
-                  break;
-               case 4:
-                  curveDir = m_player->getSide();
-                  bulletOrigin = m_player->getSide() * 20;
-                  break;
-               case 5:
-                  curveDir = m_player->getSide() * -1.0f;
-                  bulletOrigin = m_player->getSide() * -20;
-            }
-            
-            bulletOrigin += (m_player->getAimForward() * 8.0f);
-            
-            Missile *missile = new Missile("models/cube.obj", 
-                                           "textures/test6.bmp",
-                                           m_modules, 
-                                           bulletOrigin, 
-                                           m_player->getAimForward(), 
-                                           curveDir,
-                                           m_player, 
-                                           targets.at(index));
-            
-            m_worldGrid->placeInCurrQuadrant(missile, missile);
-         }
+	 targets = acquireMissileTargets();
+
+	 //For each target
+	 for (int index = 0; index < targets.size(); index++) {
+	    switch (index) {
+	    case 0:
+	       //AIM UP OR CAMERA UP?
+	       curveDir = ((m_player->getSide() * .75)
+			   - (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * 20;
+	       break;
+	    case 1:
+	       curveDir = ((m_player->getSide() * -.75) 
+			   - (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * -20;
+	       break;
+	    case 2:
+	       curveDir = ((m_player->getSide() * .75) 
+			   + (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * 20;
+	       break;
+	    case 3:
+	       curveDir = ((m_player->getSide() * -.75) 
+			   + (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * -20;
+	       break;
+	    case 4:
+	       curveDir = m_player->getSide();
+	       bulletOrigin = m_player->getSide() * 20;
+	       break;
+	    case 5:
+	       curveDir = m_player->getSide() * -1.0f;
+	       bulletOrigin = m_player->getSide() * -20;
+	    }
+	    
+	    bulletOrigin += (m_player->getAimForward() * 8.0f);
+	    
+	    Missile *missile = new Missile("models/cube.obj", "textures/test6.bmp",
+					   m_modules, 
+					   bulletOrigin, 
+					   m_player->getAimForward(), 
+					   curveDir,
+					   m_player, 
+					   targets.at(index));
+	    
+	    m_modules->renderingEngine->addObject3d(missile);
+	    m_missileList.push_back(missile);
+	    m_objects.push_back(missile);
+	    m_gameObjects.push_back(missile);
+	 }
       }
    }
       
@@ -315,8 +363,12 @@ bool GameEngine::handleKeyUp(SDLKey key)
 
 void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
 {
+   //Checks if the current state is a game state. If so, reads in the mouse motion.
+   if (m_stateManager->getCurrentState() == m_game)
+   {
    // Rotate player?
    // X seems to be reading in backwards...?
    m_player->updateVelocity(400-x, 300-y);
    //setVelocity(vec3((400 - x), (300 - y), m_player->getPosition().z));
+   }
 }

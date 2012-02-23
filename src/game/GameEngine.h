@@ -3,6 +3,7 @@
 
 #include "Interfaces.h"
 #include "Camera.h"
+#include "StateManager.h"
 #include "ResourceManager.h"
 
 #include "SDL_include.h"
@@ -19,6 +20,9 @@
 #include "Explodeable.h"
 #include <algorithm>
 #include "Missile.h"
+#include "GameState.h"
+#include "MenuState.h"
+#include "Asteroid.h"
 
 
 class GameEngine : public IGameEngine {
@@ -42,12 +46,19 @@ private:
    Camera *m_camera;
    Player *m_player;
    Reticle *m_reticle;
-   EnemyShip* m_enemyShip;
+   Camera *m_camera;
    Modules *m_modules;
+   StateManager *m_stateManager;
+   MenuState* m_menu;
+   GameState* m_game;
+   Path *m_path;
    WorldData *m_worldData;
    WorldGrid *m_worldGrid;
    Vector3<float> currentDirection;
    void InitData();
+   
+   EnemyShip* m_enemyShip;
+   EnemyGunship* m_enemyGunner;
    
    Sound* m_bulletSound;
    Sound* m_music;

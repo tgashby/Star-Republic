@@ -19,11 +19,11 @@ public:
    PathPoint getCurrent();
    void setChoice(int next);
    PathPoint getAt(int index);
-   PathPoint update(Vector3<float> playerPos);
+   PathPoint update(Vector3<float> refPos, Vector3<float> playerPos);
    PathPoint getPrevious();
    PathPoint* getPreviousPointer();
    PathPoint* getCurrentPointer();
-	
+   int getSize();
    WorldData* worldData;
    
  private:

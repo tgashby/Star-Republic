@@ -88,6 +88,11 @@ public:
     * @return The up vector of the player's aim
     */
    Vector3<float> getAimUp();
+
+   /**
+    * Returns the vector off of the center of the ship
+    */
+   vec3 getOffSet();
    
 private:
    /**
@@ -148,7 +153,7 @@ private:
    /** 
     * The side vector of the ship
     */
-   Vector3<float> side;
+   Vector3<float> m_side;
 
    /**
     * The look ahead progress

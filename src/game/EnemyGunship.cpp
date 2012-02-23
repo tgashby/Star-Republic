@@ -61,7 +61,7 @@ EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
   /** setting the modelmatrix based on a constant scale and rotation,
    *  and the forward, up and position (aka Magic) **/
   mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
-     mat4::Magic(-getForward(), getUp(), getPosition());
+     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1)) * mat4::Magic(-getForward(), getUp(), getPosition());
   m_mesh->setModelMtx(modelMtx);
 
   /** first turret **/
@@ -109,7 +109,8 @@ void EnemyGunship::tic(uint64_t time)
 
     /** setting the modelmatrix based on a constant scale and rotation,
      *  and the forward, up and position (aka Magic) **/
-    mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0));
+    mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
+                    mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
     modelMtx *= mat4::Magic(getForward(), getAimUp(), getPosition());
     m_mesh->setModelMtx(modelMtx);
 

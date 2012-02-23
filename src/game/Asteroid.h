@@ -19,6 +19,7 @@ class Asteroid : public Object3d, public GameObject {
   void tic(uint64_t time);
   void doCollision(GameObject & other);
  private:
+  Mesh* m_mesh;
   
 };
 

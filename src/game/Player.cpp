@@ -10,8 +10,7 @@
 /** Constructor **/
 Player::Player(string fileName, string textureName, Modules *modules, 
 	Vector3<float> cam_pos, Vector3<float> cam_up, Vector3<float> cam_forw) 
-   :  Object3d(), Flyer(), side(1,0,0), 
-      lastScreenX(0), lastScreenY(0)
+   :  Object3d(), Flyer(), m_side(1,0,0), lastScreenX(0), lastScreenY(0), m_sideVelocity(0,0,0), m_upVelocity(0,0,0)
 {
    m_forward = cam_forw;
    m_up = cam_up;
@@ -52,13 +51,12 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    Vector3<float> tempPos;
 
    m_forward = cam_forward.Normalized();
-   side = cam_forward.Cross(cam_up);
-   side.Normalize();
-   m_up = side.Cross(m_forward);
+   m_up = cam_up.Normalized();
+   calculateSide();
 
    tempPos = cam_position + (cam_forward * PLAYER_DISTANCE_FROM_CAMERA); 
-   calculateSide();
-   m_sideVelocity = (((side * lastScreenX)) - (m_position - tempPos)) * X_SCALAR;
+   
+   m_sideVelocity = (((m_side * lastScreenX)) - (m_position - tempPos)) * X_SCALAR;
    m_upVelocity = (((m_up * lastScreenY)) - (m_position - tempPos)) * Y_SCALAR;
    m_offsetPosition += (m_sideVelocity * time) + (m_upVelocity * time);
    m_position = m_offsetPosition + tempPos;
@@ -73,7 +71,6 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    y += vy * time;
    updateVelocity(lastScreenX, lastScreenY);
 }
-
 
 void Player::updateVelocity(float diffX, float diffY)
 {
@@ -129,12 +126,12 @@ Vector3<float> Player::getAimUp()
 
 Vector3<float> Player::getSide()
 {
-   side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
-   return side;
+   m_side = m_up.Cross(m_forward).Normalized();
+   return m_side;
 }
 
 void Player::calculateSide() {
-   side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
+   m_side = m_up.Cross(m_forward).Normalized();
 }
 
 void Player::doCollision(GameObject & other)
@@ -161,4 +158,8 @@ void Player::doCollision(GameObject & other)
 
 void Player::setVisible(bool visibility) {
    m_mesh->setVisible(visibility);
+}
+
+vec3 Player::getOffSet() {
+  return m_offsetPosition;
 }
