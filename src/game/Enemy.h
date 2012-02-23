@@ -22,12 +22,12 @@ public:
     * reference
     * @param player the player reference
     */
-   Enemy(Player& player);
+   Enemy(Player* player);
    
-   void setPlayer(Player player);
+   void setPlayer(Player* player);
    
 protected:
-   Player& m_playerRef;
+   Player* m_playerRef;
 };
 
 #endif

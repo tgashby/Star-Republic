@@ -8,7 +8,7 @@
 
 #include "Turret.h"
 
-Turret::Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules) 
+Turret::Turret(Player* player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules) 
   : Enemy(player), Explodeable(vec3(0,0,0), _TURRET_DEFAULT_EXPLOSION_RADIUS, modules)
 {
    m_footMesh = new Mesh(footName, footTexture, modules);
@@ -52,7 +52,7 @@ void Turret::tic(uint64_t time)
     modelMtx *= mat4::Translate(0, 13, 0);
     m_headMesh->setModelMtx(modelMtx);
    
-    vec3 dirToPlayer = (m_playerRef.getPosition() - m_position).Normalized();
+    vec3 dirToPlayer = (m_playerRef->getPosition() - m_position).Normalized();
     vec3 intermed = dirToPlayer.Cross(m_up);
     vec3 dirToPlayerFlat = intermed.Cross(m_up);
    

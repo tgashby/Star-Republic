@@ -40,7 +40,7 @@ void GameEngine::InitData()
                            m_modules, m_player);
    
    m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", 
-			       m_modules, *m_player);
+			       m_modules, m_player);
    /*m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
           "models/enemy2turrethead.obj", "textures/test3.bmp", m_modules, *m_player);*/
    

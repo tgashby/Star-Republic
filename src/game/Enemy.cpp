@@ -10,12 +10,12 @@
 
 #include "Enemy.h"
 
-Enemy::Enemy(Player& player)
+Enemy::Enemy(Player* player)
 : m_playerRef(player)
 {
 }
 
-void Enemy::setPlayer(Player player)
+void Enemy::setPlayer(Player* player)
 {
    m_playerRef = player;
 }

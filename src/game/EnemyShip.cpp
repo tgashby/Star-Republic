@@ -13,7 +13,7 @@
 #define EXPLOSION_SIZE 40
 
 /** Scared Enemy: Takes in the mesh info and a reference to the player to aim at **/
-EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Player &p) 
+EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Player *p) 
   :  Explodeable(vec3(0,0,0), EXPLOSION_SIZE, modules), 
      Flyer(), Enemy(p), side(1,0,0), currentAngle(0), prevAngle(0)
 {
@@ -21,7 +21,7 @@ EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Play
   m_meshList.push_back(m_mesh);
 
   /** aim vector **/
-  dpos = (m_playerRef.getPosition() - m_position).Normalized();
+  dpos = (m_playerRef->getPosition() - m_position).Normalized();
 
   /** Setting the size of the bounding structure **/
   setBounds(SIZE);
@@ -54,24 +54,24 @@ void EnemyShip::tic(uint64_t time)
 {
   if (isAlive()) {
     /** the normalized vector between the player and the enemy **/
-    dpos = (m_playerRef.getPosition() - m_position).Normalized();
+    dpos = (m_playerRef->getPosition() - m_position).Normalized();
   
     // moving based on the player's direction and it's aiming direction
-    m_position += m_playerRef.getForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
+    m_position += m_playerRef->getForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
     
     /** 'scared ship' AI **/
     float aimAngle;
     float distance;
     /** the angle between the player's aim and the enemy's location:
      *  If the player is aiming near the enemy, it dodges **/
-    aimAngle = 180 - 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getAimForward()));
-    distance = (float)((m_playerRef.getPosition() - m_position).Length());
+    aimAngle = 180 - 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getAimForward()));
+    distance = (float)((m_playerRef->getPosition() - m_position).Length());
     if (aimAngle < MAXSCAREDANGLE)
       {
 	/** If this is the first tic he needs to dodge, compute the dodge direction **/
 	if (!dodging)
 	  {
-	    if (180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getSide())) < 90)
+	    if (180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getSide())) < 90)
 	      dodgedir = 1;
 	    else
 	      dodgedir = -1;
@@ -111,7 +111,7 @@ void EnemyShip::tic(uint64_t time)
     firingTimer += time;
     
     /** if it's time to shoot, let loose the cannons! (provided you're not behing the player) **/
-    if (firingTimer > 600 && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getForward())) > 80)
+    if (firingTimer > 600 && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 80)
       {
 	firing = true;
 	firingTimer = 0;
@@ -162,7 +162,7 @@ Vector3<float> EnemyShip::getAimUp()
  *  (rather than where he's moving) and the up vector **/
 Vector3<float> EnemyShip::getScaredSide()
 {
-   vec3 aaargh = m_playerRef.getAimForward().Cross(m_playerRef.getAimUp()).Normalized();
+   vec3 aaargh = m_playerRef->getAimForward().Cross(m_playerRef->getAimUp()).Normalized();
    return aaargh;
 }
 

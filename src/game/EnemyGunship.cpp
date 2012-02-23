@@ -24,7 +24,7 @@ const float ROTATE_CONSTANT = -90;
 /** Gunner Enemy: Takes in the mesh info and a reference to the player to aim at **/
 EnemyGunship::EnemyGunship(string fileName, string turretFileName1, 
 			   string turretFileName2, string textureName, 
-			   Modules *modules, Player &p) 
+			   Modules *modules, Player *p) 
   : Flyer(), Enemy(p), 
     Explodeable(vec3(0,0,0), _ENEMY_GUNSHIP_EXPLOSION_RADIUS, modules), 
     side(1,0,0), currentAngle(0), prevAngle(0)
@@ -43,7 +43,7 @@ EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
   srandom(99901);
  
   /** aim vector **/
-  dpos = (m_playerRef.getPosition() - m_position).Normalized();
+  dpos = (m_playerRef->getPosition() - m_position).Normalized();
 
   /** Setting the size of the bounding structure **/
   setBounds(SIZE);
@@ -96,10 +96,10 @@ void EnemyGunship::tic(uint64_t time)
 {
   if (isAlive()) {
     /** the normalized vector between the player and the enemy **/
-    dpos = (m_playerRef.getPosition() - m_position).Normalized();
+    dpos = (m_playerRef->getPosition() - m_position).Normalized();
     
     // moving based on the player's direction
-    m_position += m_playerRef.getForward() * PATHVELOCITY; 
+    m_position += m_playerRef->getForward() * PATHVELOCITY; 
     
     /** gunship AI -> movement first (the last term is there to simulate acceleration **/
     m_position += getUp() * ydir * AIMVELOCITY * 
@@ -136,7 +136,7 @@ void EnemyGunship::tic(uint64_t time)
     firingTimer2 += time;
 
     /** to shoot? **/
-    if (firingTimer1 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getForward())) > 90)
+    if (firingTimer1 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 90)
       {
 	firing1 = true;
 	firingTimer1 %= FIRINGTIME;
@@ -148,7 +148,7 @@ void EnemyGunship::tic(uint64_t time)
     firing1 = firing1 && isAlive();
     
     /** to shoot? **/
-    if (firingTimer2 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getForward())) > 90)
+    if (firingTimer2 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 90)
       {
 	firing2 = true;
 	firingTimer2 %= FIRINGTIME;

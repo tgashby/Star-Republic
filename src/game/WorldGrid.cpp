@@ -14,11 +14,10 @@
  TODO:
  - Update moving objects
  - Move GameEngine stuff into here/integrate with GameEngine (Done?)
- - Change Enemy setting player reference, & -> *?
  - Prob lots more...
  */
 
-const float VEC_OFFSET = 4.0f;
+const float VEC_OFFSET = 1000.0f;
 const int QUADS_TO_CHECK = 4;
 
 WorldGrid::WorldGrid(WorldData& world, Modules* modules)
@@ -65,11 +64,25 @@ void WorldGrid::makeGrid()
       vec3 sideVec = avgUp.Cross(avgForward).Normalized();
       
       vec3 leftPt  = quad->m_startPt.loc + (sideVec * VEC_OFFSET);
-      vec3 rightPt = quad->m_startPt.loc + (-sideVec * VEC_OFFSET);
-      vec3 downPt  = quad->m_startPt.loc + (-avgUp * VEC_OFFSET);
+      vec3 rightPt = quad->m_startPt.loc + ((-sideVec) * VEC_OFFSET);
+      vec3 downPt  = quad->m_startPt.loc + ((-avgUp) * VEC_OFFSET);
       vec3 upPt    = quad->m_startPt.loc + (avgUp * VEC_OFFSET);
       vec3 nearPt  = quad->m_startPt.loc;
       vec3 farPt   = quad->m_endPt.loc;
+      
+      std::cout << "L: ";
+      leftPt.print();
+      std::cout << "R: "; 
+      rightPt.print();
+      std::cout << "D: ";
+      downPt.print();
+      std::cout << "U: ";
+      upPt.print();
+      std::cout << "N: ";
+      nearPt.print();
+      std::cout << "F: ";
+      farPt.print();
+      std::cout << "\n\n";
       
       lftPlane  = Plane::MakePlane(sideVec, leftPt);
       rtPlane   = Plane::MakePlane(-sideVec, rightPt);
@@ -92,7 +105,7 @@ void WorldGrid::makeGrid()
          switch (currUnit.type) 
          {
             case UNIT_TURRET:
-               Turret* newTurret = new Turret(*m_player, 
+               Turret* newTurret = new Turret(m_player, 
                                               "models/turrethead.obj", "textures/test3.bmp", 
                                               "models/turretmiddle.obj", "textures/test3.bmp", 
                                               "models/turretbase.obj", "textures/test3.bmp", m_modules);
@@ -140,7 +153,7 @@ void WorldGrid::setPlayer(Player *player)
          {
             Turret* enemy = ((Turret*)*j);
             
-            enemy->setPlayer(*m_player);
+            enemy->setPlayer(m_player);
          }
       }
    }
@@ -333,6 +346,9 @@ void WorldGrid::updateObjects()
 
 std::vector<Quadrant>::size_type WorldGrid::determineQuadrant(const Vector3<float> pos)
 {
+   // Checking for NaNs
+   //assert(pos.x == pos.x && pos.y == pos.y && pos.z == pos.z);
+   
    std::vector<Quadrant>::size_type i;
    for (i = 0; i < m_quadrants.size(); i++) 
    {
