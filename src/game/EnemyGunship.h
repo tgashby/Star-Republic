@@ -26,12 +26,15 @@ class EnemyGunship : public Flyer, public Enemy, public Explodeable {
     * @param fileName the object file, i.e. the model
     * @param turretFileName1 an object file for the turretbase
     * @param turretFileName2 an object file for the turrethead
-    * @param textureName the texture file
+    * @param bodyTextureName the texture file for the main part of the model
+    * @param baseTextureName the texture file for the lower part of the turret
+    * @param headTextureName the texture file for the upper part of the turret
     * @param modules the Modules pointer
     * @param p the player reference to pass to Enemy
     */
    EnemyGunship(string fileName, string turretFileName1, string turretFileName2,
-      string textureName, Modules *modules, Player &p);
+      string bodyTextureName, string baseTextureName, 
+      string headTextureName,  Modules *modules, Player &p);
    ~EnemyGunship();
    
    /**
@@ -110,6 +113,11 @@ class EnemyGunship : public Flyer, public Enemy, public Explodeable {
     * of ambiguous getPosition calls.
     */
    vec3 getPosition();
+
+   /**
+    * returns the cross of the m_forward and m_up vectors
+    */
+   vec3 getMSide();
 
 private:
    Mesh *m_mesh;
