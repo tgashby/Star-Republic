@@ -123,8 +123,8 @@ void GameEngine::InitData()
       m_gameObjects.push_back(*i);
    }
 
-   m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 2000));
-   m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 1200));
+   m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 1000));
+   //m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 400));
    
    initSound();
    m_bulletSound = loadSound("sound/arwingShot.ogg");

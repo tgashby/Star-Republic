@@ -61,7 +61,6 @@ void Turret::tic(uint64_t time)
    
     modelMtx = mat4::Magic(-dirToPlayer, m_up, m_position);
     modelMtx *= mat4::Translate(0, 13, 0);
-    modelMtx *= mat4::Scale(0.001);
     m_headMesh->setModelMtx(modelMtx);
    
     firingTimer += time;

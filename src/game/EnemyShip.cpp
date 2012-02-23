@@ -58,7 +58,7 @@ void EnemyShip::tic(uint64_t time)
     dpos = (m_playerRef.getPosition() - m_position).Normalized();
   
     // moving based on the player's direction and it's aiming direction
-    m_position += m_playerRef.getForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
+    m_position += m_playerRef.getMForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
     
     /** 'scared ship' AI **/
     float aimAngle;
