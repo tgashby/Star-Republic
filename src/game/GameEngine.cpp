@@ -185,7 +185,7 @@ void GameEngine::tic(uint64_t td) {
          vec3 dirToPlayerNorm = dirToPlayer.Normalized();
          
          Bullet* bullet = 
-            new Bullet("models/cube.obj", "textures/test5.bmp", 
+            new Bullet("models/lance.obj", "textures/test5.bmp", 
                        m_modules, (*i)->getHeadPosition(), 
                        -dirToPlayerNorm, 
                        dirToPlayerNorm.Cross((*i)->getPosition()), *(*i));
@@ -203,7 +203,7 @@ void GameEngine::tic(uint64_t td) {
       vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
       
       Bullet* bullet = 
-         new Bullet("models/cube.obj", "textures/test5.bmp", 
+         new Bullet("models/lance.obj", "textures/test5.bmp", 
                     m_modules, m_enemyShip->getLeftCannonPos(), 
                     m_enemyShip->getAimForward(), 
                     dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()), 
@@ -215,7 +215,7 @@ void GameEngine::tic(uint64_t td) {
       m_bulletList.push_back(bullet);
 
       bullet = 
-         new Bullet("models/cube.obj", "textures/test5.bmp", 
+         new Bullet("models/lance.obj", "textures/test5.bmp", 
                     m_modules, m_enemyShip->getRightCannonPos(), 
                     m_enemyShip->getAimForward(), 
                     dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()), 
@@ -236,7 +236,7 @@ void GameEngine::tic(uint64_t td) {
       if (m_enemyGunner->shouldFire1())
       {
         Bullet* bullet = 
-           new Bullet("models/cube.obj", "textures/test5.bmp", 
+           new Bullet("models/lance.obj", "textures/test5.bmp", 
                       m_modules, m_enemyGunner->getLeftCannonPos(), 
                       m_enemyGunner->getAimForward(), 
                       dirToPlayerNorm.Cross(m_enemyGunner->getLeftCannonPos()), 
@@ -250,7 +250,7 @@ void GameEngine::tic(uint64_t td) {
       if (m_enemyGunner->shouldFire2())
       {
         Bullet* bullet = 
-           new Bullet("models/cube.obj", "textures/test5.bmp", 
+           new Bullet("models/lance.obj", "textures/test5.bmp", 
                       m_modules, m_enemyGunner->getRightCannonPos(), 
                       m_enemyGunner->getAimForward(), 
                       dirToPlayerNorm.Cross(m_enemyGunner->getRightCannonPos()), 
@@ -381,7 +381,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    if (key == SDLK_z)
    {
       if (!m_camera->isBoosting()) {
-	 Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
+	 Bullet *bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
 				     m_modules, m_player->getPosition() 
 				     + (m_player->getSide() * 8),
 				     m_player->getAimForward(), m_player->getAimUp(), 
@@ -392,7 +392,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 	 m_objects.push_back(bullet);
 	 m_bulletList.push_back(bullet);
 	 
-	 bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
+	 bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
 			     m_modules, m_player->getPosition() 
 			     - (m_player->getSide() * 8),
 			     m_player->getAimForward(), m_player->getAimUp(), 

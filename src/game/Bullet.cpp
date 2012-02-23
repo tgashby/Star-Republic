@@ -8,6 +8,9 @@
 
 #include "Bullet.h"
 
+#define SCALE 0.7
+#define ROTATE 90
+
 const float Bullet::defaultSpeed = 0.4f;
 const float Bullet::defaultBulletRadius = 0.5f;
 const uint64_t Bullet::defaultTimeToLive = 9000;
@@ -30,7 +33,7 @@ Bullet::Bullet(string fileName, string textureName, Modules *modules,
    m_mesh = new Mesh(fileName, textureName, modules);
    m_meshList.push_back(m_mesh);
 
-   mat4 modelMtx = mat4::Magic(m_forward, m_up, m_position);
+   mat4 modelMtx = mat4::Scale(SCALE) * mat4::Rotate(ROTATE, vec3(0,1,0)) * mat4::Magic(m_forward, m_up, m_position);
    m_mesh->setModelMtx(modelMtx);
    
    m_lifetime = 0;
@@ -47,7 +50,7 @@ void Bullet::tic(uint64_t time)
    //Add position to global velocity
    m_position = m_position + (m_forward * time * m_speed);
 
-   modelMtx = mat4::Magic(m_forward, m_up, m_position);
+   modelMtx = mat4::Scale(SCALE) * mat4::Rotate(ROTATE, vec3(0,1,0)) * mat4::Magic(m_forward, m_up, m_position);
    m_mesh->setModelMtx(modelMtx);
    
    m_lifetime += time;

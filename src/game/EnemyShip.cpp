@@ -5,6 +5,7 @@
 #define VINTENS 0.5
 #define SCREENX 400
 #define SCREENY 300
+#define MAXDISTANCE 1000
 #define MAXSCAREDANGLE 20
 #define MAXSCAREDSPEED 0.35
 #define DISTANCESCALE 100
@@ -53,9 +54,10 @@ EnemyShip::~EnemyShip()
 //All Vectors are updated in here
 void EnemyShip::tic(uint64_t time)
 {
-  if (isAlive()) {
+  dpos = (m_playerRef.getPosition() - m_position);
+  if (isAlive() && dpos.Length() < MAXDISTANCE) {
     /** the normalized vector between the player and the enemy **/
-    dpos = (m_playerRef.getPosition() - m_position).Normalized();
+    dpos = dpos.Normalized();
   
     // moving based on the player's direction and it's aiming direction
     m_position += m_playerRef.getMForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
