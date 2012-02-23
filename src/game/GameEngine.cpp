@@ -131,7 +131,7 @@ void GameEngine::InitData()
    m_missileSound = loadSound("sound/missileLaunch.wav");;
    m_music = loadMusic("sound/ambient1.wav");
    m_boostSound = loadSound("sound/boost.wav");
-   //addAsteroids();
+   addAsteroids();
    m_music->play(-1);
 }
 
@@ -333,23 +333,30 @@ bool GameEngine::handleEvents()
 }
 
 void GameEngine::addAsteroids() {
-   Asteroid* tempAst;
-   PathPoint* current;
-   PathPoint* prev;
-   for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex++) {
-      /*current = &(m_path->getAt(pntIndex));
-      prev = &(m_path->getAt(pntIndex - 1));
+   EnemyShip* tempShip;
+   EnemyGunship* tempGunner;
+   PathPoint current(vec3(0,0,0), vec3(0,0,0), vec3(0,0,0), vec3(0,0,0));
+
+   for (int pntIndex = 10; pntIndex < m_path->getSize(); pntIndex+=10) {
+      current = m_path->getAt(pntIndex);
+
       //ADD AN ASTEROID
-      tempAst = new Asteroid("models/sphere.obj", "textures/test4.bmp", 
-			     m_modules, current->getPosition(), current->getUp(), 			     prev->getPosition() - current->getPosition());
-      m_modules->renderingEngine->addObject3d(tempAst);
-      m_gameObjects.push_back(tempAst);
-      m_objects.push_back(tempAst);
-      tempAst = new Asteroid("models/cube.obj", "textures/test5.bmp",
-			     m_modules, current->getPosition() + (current->getUp() * 10.0f), current->getUp(), current->getForward());
-      m_modules->renderingEngine->addObject3d(tempAst);
-      m_gameObjects.push_back(tempAst);
-      m_objects.push_back(tempAst);*/
+      if (pntIndex % 20 == 0) {
+	tempShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", m_modules, *m_player);
+
+	tempShip->setPosition(current.getPosition());
+	m_modules->renderingEngine->addObject3d(tempShip);
+	m_gameObjects.push_back(tempShip);
+	m_objects.push_back(tempShip);
+
+      }
+      else {
+	tempGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj", "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp", m_modules, *m_player);
+	tempGunner->setPosition(current.getPosition());
+	m_modules->renderingEngine->addObject3d(tempGunner);
+	m_gameObjects.push_back(tempGunner);
+	m_objects.push_back(tempGunner);
+      }
    }
 }
 
