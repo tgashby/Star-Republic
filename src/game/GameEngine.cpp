@@ -68,12 +68,12 @@ void GameEngine::InitData()
 			 prevPath.getUp());
    m_enemyShip->calculateSide();
 
-   m_enemyGunner->setProgress(m_previousPoint->getPosition());
-   m_enemyGunner->setPosition(m_previousPoint->getPosition());
-   m_enemyGunner->setUp(m_previousPoint->getUp());
-   m_enemyGunner->setHeads(m_currentPoint->getPosition(), 
-			 m_currentPoint->getUp(), m_previousPoint->getPosition(), 
-			 m_previousPoint->getUp());
+   m_enemyGunner->setProgress(prevPath.getPosition());
+   m_enemyGunner->setPosition(prevPath.getPosition());
+   m_enemyGunner->setUp(prevPath.getUp());
+   m_enemyGunner->setHeads(currPath.getPosition(), 
+			 currPath.getUp(), prevPath.getPosition(), 
+			 prevPath.getUp());
    m_enemyGunner->calculateSide();
    
    m_modules->renderingEngine->setCamera(m_camera);
@@ -81,7 +81,8 @@ void GameEngine::InitData()
    m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 10000));
    
    m_worldGrid->placeInCurrQuadrant(m_player, m_player);
-   //m_worldGrid->placeInGrid(m_enemyShip, m_enemyShip);
+//   m_worldGrid->placeInGrid(m_enemyShip, m_enemyShip);
+//   m_worldGrid->placeInGrid(m_enemyGunner, m_enemyGunner);
    
    initSound();
    m_bulletSound = loadSound("sound/arwingShot.ogg");
@@ -94,34 +95,36 @@ void GameEngine::tic(uint64_t td) {
    //CHECKS TO MAKE SURE THE CURRENT STATE IS A GAME STATE. THIS SHOULD PROBABLY BE MODIFIED TO SOMETHING MORE ELEGANT.
    if (m_stateManager->getCurrentState() == m_game)
    {
-   gameOver += td;
-   
-   /*
-   if (gameOver >= 40000) 
-   {
-      cout << "YOU WIN!\n";
-      exit(0);
+      gameOver += td;
+      
+      /*
+      if (gameOver >= 40000) 
+      {
+         cout << "YOU WIN!\n";
+         exit(0);
+      }
+       */
+      
+      PathPointData currPPD = m_worldGrid->getCurrentQuadrant().m_startPt;
+      
+      PathPoint m_currentPoint(currPPD);
+      
+      // Update functions go here
+
+      m_enemyShip->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
+      m_enemyShip->tic(td);
+
+      m_enemyGunner->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
+      m_enemyGunner->tic(td);
+      
+      m_camera->checkPath(&m_currentPoint);
+      m_camera->tic(td);
+      
+      m_worldGrid->tic(td);
+      m_reticle->tic(td);
+
+      m_worldGrid->checkCollisions();
    }
-   
-   PathPointData currPPD = m_worldGrid->getCurrentQuadrant().m_startPt;
-   
-   PathPoint m_currentPoint(currPPD);
-   
-   // Update functions go here
-
-   m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-   m_enemyShip->tic(td);
-
-   m_enemyGunner->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-   m_enemyGunner->tic(td);
-   
-   m_camera->checkPath(&m_currentPoint);
-   m_camera->tic(td);
-   
-   m_worldGrid->tic(td);
-   m_reticle->tic(td);
-
-   m_worldGrid->checkCollisions();
 }
 
 
@@ -167,26 +170,26 @@ bool GameEngine::handleEvents()
    return running;
 }
 
-void GameEngine::addAsteroids() {
-   Asteroid* tempAst;
-   PathPoint* current;
-   PathPoint* prev;
-   for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex++) {
-      current = &(m_path->getAt(pntIndex));
-      prev = &(m_path->getAt(pntIndex - 1));
-      //ADD AN ASTEROID
-      tempAst = new Asteroid("models/sphere.obj", "textures/test4.bmp", 
-			     m_modules, current->getPosition(), current->getUp(), 			     prev->getPosition() - current->getPosition());
-      m_modules->renderingEngine->addObject3d(tempAst);
-      m_gameObjects.push_back(tempAst);
-      m_objects.push_back(tempAst);
-      tempAst = new Asteroid("models/cube.obj", "textures/test5.bmp",
-			     m_modules, current->getPosition() + (current->getUp() * 10.0f), current->getUp(), current->getForward());
-      m_modules->renderingEngine->addObject3d(tempAst);
-      m_gameObjects.push_back(tempAst);
-      m_objects.push_back(tempAst);
-   }
-}
+//void GameEngine::addAsteroids() {
+//   Asteroid* tempAst;
+//   PathPoint* current;
+//   PathPoint* prev;
+//   for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex++) {
+//      current = &(m_path->getAt(pntIndex));
+//      prev = &(m_path->getAt(pntIndex - 1));
+//      //ADD AN ASTEROID
+//      tempAst = new Asteroid("models/sphere.obj", "textures/test4.bmp", 
+//			     m_modules, current->getPosition(), current->getUp(), 			     prev->getPosition() - current->getPosition());
+//      m_modules->renderingEngine->addObject3d(tempAst);
+//      m_gameObjects.push_back(tempAst);
+//      m_objects.push_back(tempAst);
+//      tempAst = new Asteroid("models/cube.obj", "textures/test5.bmp",
+//			     m_modules, current->getPosition() + (current->getUp() * 10.0f), current->getUp(), current->getForward());
+//      m_modules->renderingEngine->addObject3d(tempAst);
+//      m_gameObjects.push_back(tempAst);
+//      m_objects.push_back(tempAst);
+//   }
+//}
 
 bool GameEngine::handleKeyDown(SDLKey key) {
    bool running = true;
@@ -234,24 +237,26 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
   std::vector<GameObject*> temp;
   vec3 playerToObjVec;
   int count = 0;
-
-  for (list<GameObject *>::iterator it = m_gameObjects.begin(); 
-       it != m_gameObjects.end(); it++) {
-     if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) && typeid(**it) != typeid(Missile)) {
-	playerToObjVec = (*it)->getPosition() - m_player->getPosition();
-	if (playerToObjVec.Length() > 350 && 
-	    playerToObjVec.Length() < 1500 && 
-	    angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) {
-	   temp.push_back(*it);
-	   count++;
-	   if (count == 6) {
-	      return temp;
-	   }
-	}
-    }
-  }
-
-  return temp;
+   
+   Quadrant quad = m_worldGrid->getCurrentQuadrant();
+   
+   for (list<GameObject *>::iterator it = quad.m_gameObjects.begin(); 
+        it != quad.m_gameObjects.end(); it++) {
+      if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) && typeid(**it) != typeid(Missile)) {
+         playerToObjVec = (*it)->getPosition() - m_player->getPosition();
+         if (playerToObjVec.Length() > 350 && 
+             playerToObjVec.Length() < 1500 && 
+             angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) {
+            temp.push_back(*it);
+            count++;
+            if (count == 6) {
+               return temp;
+            }
+         }
+      }
+   }
+   
+   return temp;
 }
 
 ICamera& GameEngine::getCamera()
@@ -329,10 +334,8 @@ bool GameEngine::handleKeyUp(SDLKey key)
 					   m_player, 
 					   targets.at(index));
 	    
-	    m_modules->renderingEngine->addObject3d(missile);
-	    m_missileList.push_back(missile);
-	    m_objects.push_back(missile);
-	    m_gameObjects.push_back(missile);
+	    // HACK so that I can use it as both a GameObject and an Object3d
+       m_worldGrid->placeInCurrQuadrant(missile, missile);
 	 }
       }
    }
