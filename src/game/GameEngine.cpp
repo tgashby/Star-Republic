@@ -314,7 +314,7 @@ void GameEngine::render() {
    {
       m_modules->renderingEngine->clearScreen();
       m_modules->renderingEngine->drawText("YOU LOSE", ivec2(-350,0), ivec2(800,100));
-      m_modules->renderingEngine->drawText("Press Any Button To Retry", ivec2(-350, -100), ivec2(500,50));
+      m_modules->renderingEngine->drawText("Close The Window", ivec2(-350, -100), ivec2(500,50));
    }
 }
 
@@ -388,7 +388,11 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    bool running = true;
 
    //Checks to see whether the current state is the menu, and pops the state if so. Will be revised later.
-   if (m_stateManager->getCurrentState() == m_menu || m_stateManager->getCurrentState() == m_lose)
+   if (m_stateManager->getCurrentState() == m_lose)
+   {
+      return running;
+   }
+   if (m_stateManager->getCurrentState() == m_menu)
    {
       m_stateManager->popState();
       InitData();
@@ -472,13 +476,13 @@ bool GameEngine::handleKeyUp(SDLKey key)
    vec3 curveDir, bulletOrigin;
 
    //Checks if the current state is the "menu", if so it closes the main menu to start the game state. Could be improved.
-   if (m_stateManager->getCurrentState() == m_menu || m_stateManager->getCurrentState() == m_lose)
+   if (m_stateManager->getCurrentState() == m_menu)
    {
       m_stateManager->popState();
       InitData();
       return running;
    }
-   if (key == SDLK_ESCAPE)
+   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() == m_lose)
    {
       running = false;
    }
