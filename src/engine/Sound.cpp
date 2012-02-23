@@ -13,6 +13,7 @@ Sound::Sound()
 {
    m_chunk = NULL;
    m_music = NULL;
+   m_channel = INVALID_CHANNEL;
 }
 
 void Sound::setChunk(Mix_Chunk* chunk)

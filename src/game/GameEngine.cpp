@@ -25,10 +25,10 @@ GameEngine::GameEngine(Modules *modules) {
 
 
 GameEngine::~GameEngine() {
-//   list<IObject3d *>::iterator object = m_objects.begin();
-//   for (; object != m_objects.end(); ++object) {
-//      delete *object;
-//   }
+// list<IObject3d *>::iterator object = m_objects.begin();
+// for (; object != m_objects.end(); ++object) {
+// delete *object;
+// }
    m_objects.clear();
    m_gameObjects.clear();
 
@@ -43,13 +43,13 @@ void GameEngine::InitData()
    //m_world = new Path("maps/course.wf", m_modules);
    
    m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
-   m_player = new Player("models/spaceship.obj", "textures/spaceship.bmp", 
-			 m_modules, m_camera->getPosition(), 
-			 m_camera->getForward(), m_camera->getUp());
+   m_player = new Player("models/spaceship.obj", "textures/spaceship.bmp",
+m_modules, m_camera->getPosition(),
+m_camera->getForward(), m_camera->getUp());
    m_camera->setPlayer(m_player);
 
-   m_enemyShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", 
-			       m_modules, *m_player);
+   m_enemyShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp",
+m_modules, *m_player);
    m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
           "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", 
           "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp",
@@ -66,25 +66,25 @@ void GameEngine::InitData()
    m_player->setProgress(m_previousPoint->getPosition());
    m_player->setPosition(m_previousPoint->getPosition());
    m_player->setUp(m_previousPoint->getUp());
-   m_player->setHeads(m_currentPoint->getPosition(), 
-		      m_currentPoint->getUp(), m_previousPoint->getPosition(), 
-		      m_previousPoint->getUp());
+   m_player->setHeads(m_currentPoint->getPosition(),
+m_currentPoint->getUp(), m_previousPoint->getPosition(),
+m_previousPoint->getUp());
    m_player->calculateSide();
    
    m_enemyShip->setProgress(m_previousPoint->getPosition());
    m_enemyShip->setPosition(m_previousPoint->getPosition());
    m_enemyShip->setUp(m_previousPoint->getUp());
-   m_enemyShip->setHeads(m_currentPoint->getPosition(), 
-			 m_currentPoint->getUp(), m_previousPoint->getPosition(), 
-			 m_previousPoint->getUp());
+   m_enemyShip->setHeads(m_currentPoint->getPosition(),
+m_currentPoint->getUp(), m_previousPoint->getPosition(),
+m_previousPoint->getUp());
    m_enemyShip->calculateSide();
 
    m_enemyGunner->setProgress(m_previousPoint->getPosition());
    m_enemyGunner->setPosition(m_previousPoint->getPosition());
    m_enemyGunner->setUp(m_previousPoint->getUp());
-   m_enemyGunner->setHeads(m_currentPoint->getPosition(), 
-			 m_currentPoint->getUp(), m_previousPoint->getPosition(), 
-			 m_previousPoint->getUp());
+   m_enemyGunner->setHeads(m_currentPoint->getPosition(),
+m_currentPoint->getUp(), m_previousPoint->getPosition(),
+m_previousPoint->getUp());
    m_enemyGunner->calculateSide();
    
    m_modules->renderingEngine->setCamera(m_camera);
@@ -95,8 +95,8 @@ void GameEngine::InitData()
    m_modules->renderingEngine->addObject3d(m_enemyGunner);
    //m_modules->renderingEngine->addObject3d(explosion);
    
-   for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
-	i != m_turrets.end(); i++) 
+   for (std::vector<Turret*>::const_iterator i = m_turrets.begin();
+i != m_turrets.end(); i++)
    {
       m_modules->renderingEngine->addObject3d(*i);
    }
@@ -107,8 +107,8 @@ void GameEngine::InitData()
    m_objects.push_back(m_enemyGunner);
    //m_objects.push_back(explosion);
    
-   for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
-	i != m_turrets.end(); i++) 
+   for (std::vector<Turret*>::const_iterator i = m_turrets.begin();
+i != m_turrets.end(); i++)
    {
       m_objects.push_back(*i);
    }
@@ -117,8 +117,8 @@ void GameEngine::InitData()
    m_gameObjects.push_back(m_enemyGunner);
    m_gameObjects.push_back(m_player);
    
-   for (std::vector<Turret*>::const_iterator i = m_turrets.begin(); 
-	i != m_turrets.end(); i++) 
+   for (std::vector<Turret*>::const_iterator i = m_turrets.begin();
+i != m_turrets.end(); i++)
    {
       m_gameObjects.push_back(*i);
    }
@@ -142,16 +142,15 @@ void GameEngine::tic(uint64_t td) {
    gameOver += td;
    
    /*
-   if (gameOver >= 40000) 
-   {
-      cout << "YOU WIN!\n";
-      exit(0);
-   }
-   
-   if (!m_player->isAlive()) {
-      cout << "YOU LOSE!\n";
-      exit(0);
-   }*/
+if (gameOver >= 40000)
+{
+cout << "YOU WIN!\n";
+exit(0);
+}
+if (!m_player->isAlive()) {
+cout << "YOU LOSE!\n";
+exit(0);
+}*/
    
    // Update functions go here
    m_path->update(m_camera->getRef(), m_player->getPosition());
@@ -183,8 +182,8 @@ void GameEngine::tic(uint64_t td) {
       vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
       
       // Turret not currently firing, but I think it's because
-      //  the player starts too close to the turret
-      if ((*i)->isAlive() && dirToPlayer.Length() < 1000 && (*i)->shouldFire()) 
+      // the player starts too close to the turret
+      if ((*i)->isAlive() && dirToPlayer.Length() < 1000 && (*i)->shouldFire())
       {
          vec3 dirToPlayerNorm = dirToPlayer.Normalized();
          
@@ -202,7 +201,7 @@ void GameEngine::tic(uint64_t td) {
    }
 
    vec3 dirEnemyToPlayer = m_enemyShip->getPosition() - m_player->getPosition();
-   if (dirEnemyToPlayer.Length() < 400 && m_enemyShip->shouldFire()) 
+   if (dirEnemyToPlayer.Length() < 400 && m_enemyShip->shouldFire())
    {
       vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
       
@@ -217,7 +216,6 @@ void GameEngine::tic(uint64_t td) {
       m_gameObjects.push_back(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
-
       bullet = 
          new Bullet("models/lance.obj", "textures/test5.bmp", 
                     m_modules, m_enemyShip->getRightCannonPos(), 
@@ -232,8 +230,8 @@ void GameEngine::tic(uint64_t td) {
    }
    
    dirEnemyToPlayer = m_enemyGunner->getPosition() - m_player->getPosition();
-   if (dirEnemyToPlayer.Length() < 700 && 
-       (m_enemyGunner->shouldFire1() || m_enemyGunner->shouldFire2())) 
+   if (dirEnemyToPlayer.Length() < 700 &&
+       (m_enemyGunner->shouldFire1() || m_enemyGunner->shouldFire2()))
    {
       vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
       
@@ -271,7 +269,7 @@ void GameEngine::tic(uint64_t td) {
    //for (int i = 0; i < m_bulletList.size(); i++) {
    for(std::vector<Bullet *>::iterator bulletIterator = m_bulletList.begin();
        bulletIterator != m_bulletList.end();
-       bulletIterator++){ 
+       bulletIterator++){
       (*bulletIterator)->tic(td);
       //Cull the bullet!
       if(!(*bulletIterator)->isAlive()){
@@ -280,9 +278,9 @@ void GameEngine::tic(uint64_t td) {
          
    }
 
-   for (std::vector<Missile *>::iterator missileIterator = m_missileList.begin(); 
-	missileIterator != m_missileList.end(); 
-	missileIterator++) {
+   for (std::vector<Missile *>::iterator missileIterator = m_missileList.begin();
+missileIterator != m_missileList.end();
+missileIterator++) {
       (*missileIterator)->tic(td);
       //Cull the missile!
    }
@@ -297,6 +295,10 @@ void GameEngine::render() {
    if (m_stateManager->getCurrentState() == m_game)
    {
       m_modules->renderingEngine->render(m_objects);
+   }
+   if (m_stateManager->getCurrentState() == m_menu)
+   {
+      m_modules->renderingEngine->drawText("STAR REPUBLIC", ivec2(-20,0), ivec2(400,50));
    }
 }
 
@@ -319,17 +321,17 @@ bool GameEngine::handleEvents()
       }
 
       if (evt.type == SDL_KEYDOWN) {
-	 running = handleKeyDown(evt.key.keysym.sym);
+running = handleKeyDown(evt.key.keysym.sym);
       }
       // Mouse Events
-      if (evt.type == SDL_MOUSEMOTION) 
+      if (evt.type == SDL_MOUSEMOTION)
       {
          handleMouseMotion(evt.motion.x, evt.motion.y);
       }
-      //   if (evt.type == SDL_MOUSEBUTTONUP)
-      //   {
-      //      mouse_click(evt.button.button);
-      //   }
+      // if (evt.type == SDL_MOUSEBUTTONUP)
+      // {
+      // mouse_click(evt.button.button);
+      // }
    }
       
    return running;
@@ -406,10 +408,10 @@ bool GameEngine::handleKeyDown(SDLKey key) {
       
       
       
-	 m_modules->renderingEngine->addObject3d(bullet);
-	 m_gameObjects.push_back(bullet);
-	 m_objects.push_back(bullet);
-	 m_bulletList.push_back(bullet);
+m_modules->renderingEngine->addObject3d(bullet);
+m_gameObjects.push_back(bullet);
+m_objects.push_back(bullet);
+m_bulletList.push_back(bullet);
       
       
 	 m_bulletSound->play(0);
@@ -423,7 +425,7 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
   vec3 playerToObjVec;
   int count = 0;
 
-  for (list<GameObject *>::iterator it = m_gameObjects.begin(); 
+  for (list<GameObject *>::iterator it = m_gameObjects.begin();
        it != m_gameObjects.end(); it++) {
      if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) && typeid(**it) != typeid(Missile)) {
 	playerToObjVec = (*it)->getPosition() - m_player->getPosition();
@@ -460,7 +462,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       InitData();
       return running;
    }
-   if (key == SDLK_ESCAPE) 
+   if (key == SDLK_ESCAPE)
    {
       running = false;
    }
@@ -559,22 +561,22 @@ void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
 }
 
 /**
- * This runs the collision functions on all objects upon which collide with the
- * given object. 
- */ 
+* This runs the collision functions on all objects upon which collide with the
+* given object.
+*/
 void GameEngine::runCollisions()
 {
    for(std::list<GameObject *>::iterator gameObjectIterator = m_gameObjects.begin();
    gameObjectIterator != m_gameObjects.end();
    gameObjectIterator++)
-   { 
+   {
       
-      for(std::list<GameObject *>::iterator otherGameObjectIterator 
-	     = m_gameObjects.begin();
+      for(std::list<GameObject *>::iterator otherGameObjectIterator
+= m_gameObjects.begin();
           otherGameObjectIterator != m_gameObjects.end();
           otherGameObjectIterator++)
-      { 
-         if ((*gameObjectIterator)->isAlive() && (*otherGameObjectIterator)->isAlive()) 
+      {
+         if ((*gameObjectIterator)->isAlive() && (*otherGameObjectIterator)->isAlive())
          {
             if(gameObjectIterator != otherGameObjectIterator)
             {
@@ -612,21 +614,19 @@ void GameEngine::createTurrets()
    }
    
    /*
-   for (std::vector< Vector3<float> >::iterator i = m_world->worldData->turrets.begin(); 
-	i != m_world->worldData->turrets.end(); i += 3)
-   {
-      // Loc, forward, up
-      Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", 
-				     "textures/test3.bmp", "models/turretmiddle.obj", 
-				     "textures/test3.bmp", "models/turretbase.obj", 
-				     "textures/test3.bmp", m_modules);
-      
-      newTurret->setPosition(*i);
-      newTurret->setForward(*(i + 1));
-      newTurret->setUp(*(i + 2));
-      
-      m_turrets.push_back(newTurret);
-   }*/
+for (std::vector< Vector3<float> >::iterator i = m_world->worldData->turrets.begin();
+i != m_world->worldData->turrets.end(); i += 3)
+{
+// Loc, forward, up
+Turret* newTurret = new Turret(*m_player, "models/turrethead.obj",
+"textures/test3.bmp", "models/turretmiddle.obj",
+"textures/test3.bmp", "models/turretbase.obj",
+"textures/test3.bmp", m_modules);
+newTurret->setPosition(*i);
+newTurret->setForward(*(i + 1));
+newTurret->setUp(*(i + 2));
+m_turrets.push_back(newTurret);
+}*/
 }
 
 void GameEngine::createTerrain()
@@ -644,19 +644,19 @@ void GameEngine::createTerrain()
    }
    
    /*
-   vector<string>::iterator name = m_world->worldData->worldMeshes.begin();
-   vector<vec3>::iterator vec = m_world->worldData->worldLocs.begin();
-   while (name != m_world->worldData->worldMeshes.end()) {
-      vec3 pos = *vec;
-      ++vec;
-      vec3 fwd = *vec;
-      ++vec;
-      vec3 up = *vec;
-      ++vec;
-      string file = "models/" + *name;
-      ++name;
-      SceneObject *obj = new SceneObject(file, "textures/test3.bmp", pos, fwd, up, m_modules);
-      m_modules->renderingEngine->addObject3d(obj);
-      m_objects.push_back(obj);
-   }*/
+vector<string>::iterator name = m_world->worldData->worldMeshes.begin();
+vector<vec3>::iterator vec = m_world->worldData->worldLocs.begin();
+while (name != m_world->worldData->worldMeshes.end()) {
+vec3 pos = *vec;
+++vec;
+vec3 fwd = *vec;
+++vec;
+vec3 up = *vec;
+++vec;
+string file = "models/" + *name;
+++name;
+SceneObject *obj = new SceneObject(file, "textures/test3.bmp", pos, fwd, up, m_modules);
+m_modules->renderingEngine->addObject3d(obj);
+m_objects.push_back(obj);
+}*/
 }
