@@ -41,8 +41,7 @@ void GameEngine::InitData()
    
    m_path = new Path(m_worldData);
    //m_world = new Path("maps/course.wf", m_modules);
-   
-<<<<<<< HEAD
+
    m_camera = new Camera(m_world->getCurrentPointer(), m_world->getPreviousPointer());
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp",
 m_modules, m_camera->getPosition(),
@@ -60,20 +59,6 @@ m_modules, m_player);
 
    m_turretLocs = m_modules->resourceManager->
    readWorldData("maps/course.wf");
-=======
-   m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
-   m_player = new Player("models/spaceship.obj", "textures/spaceship.bmp", 
-			 m_modules, m_camera->getPosition(), 
-			 m_camera->getForward(), m_camera->getUp());
-   m_camera->setPlayer(m_player);
-
-   m_enemyShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", 
-			       m_modules, *m_player);
-   m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
-          "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", m_modules, *m_player);
-   m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
-			 m_modules, m_player);
->>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
 
    createTurrets();
    createTerrain();
@@ -97,15 +82,7 @@ m_currentPoint->getUp(), m_previousPoint->getPosition(),
 m_previousPoint->getUp());
    m_enemyShip->calculateSide();
 
-<<<<<<< HEAD
-   /*m_enemyGunner->setProgress(m_previousPoint->getPosition());
-m_enemyGunner->setPosition(m_previousPoint->getPosition());
-m_enemyGunner->setUp(m_previousPoint->getUp());
-m_enemyGunner->setHeads(m_currentPoint->getPosition(),
-m_currentPoint->getUp(), m_previousPoint->getPosition(),
-m_previousPoint->getUp());
-m_enemyGunner->calculateSide();*/
-=======
+
    m_enemyGunner->setProgress(m_previousPoint->getPosition());
    m_enemyGunner->setPosition(m_previousPoint->getPosition());
    m_enemyGunner->setUp(m_previousPoint->getUp());
@@ -113,7 +90,7 @@ m_enemyGunner->calculateSide();*/
 			 m_currentPoint->getUp(), m_previousPoint->getPosition(), 
 			 m_previousPoint->getUp());
    m_enemyGunner->calculateSide();
->>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
+
    
    m_modules->renderingEngine->setCamera(m_camera);
 
@@ -167,12 +144,10 @@ void GameEngine::tic(uint64_t td) {
    {
    gameOver += td;
    
-<<<<<<< HEAD
-   if (gameOver >= 40000)
-=======
+
    /*
    if (gameOver >= 40000) 
->>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
+
    {
       cout << "YOU WIN!\n";
       exit(0);
@@ -190,13 +165,8 @@ void GameEngine::tic(uint64_t td) {
    m_enemyShip->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyShip->tic(td);
 
-<<<<<<< HEAD
-   /*m_enemyGunner->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
-m_enemyGunner->tic(td); */
-=======
    m_enemyGunner->setBearing(m_currentPoint->getPosition(), m_currentPoint->getUp());
    m_enemyGunner->tic(td);
->>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
    
    m_camera->checkPath(m_path->getCurrentPointer());
    m_camera->tic(td);
@@ -262,40 +232,6 @@ m_enemyGunner->tic(td); */
       m_bulletList.push_back(bullet);
    }
    
-<<<<<<< HEAD
-   /*dirEnemyToPlayer = m_enemyGunner->getPosition() - m_player->getPosition();
-if (dirEnemyToPlayer.Length() < 700 &&
-(m_enemyGunner->shouldFire1() || m_enemyGunner->shouldFire2()))
-{
-vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
-if (m_enemyGunner->shouldFire1())
-{
-Bullet* bullet =
-new Bullet("models/cube.obj", "textures/test5.bmp",
-m_modules, m_enemyGunner->getLeftCannonPos(),
-m_enemyGunner->getAimForward(),
-dirToPlayerNorm.Cross(m_enemyGunner->getLeftCannonPos()),
-*m_enemyGunner, Bullet::defaultTimeToLive, 0.5f);
-m_modules->renderingEngine->addObject3d(bullet);
-m_gameObjects.push_back(bullet);
-m_objects.push_back(bullet);
-m_bulletList.push_back(bullet);
-}
-if (m_enemyGunner->shouldFire2())
-{
-Bullet* bullet =
-new Bullet("models/cube.obj", "textures/test5.bmp",
-m_modules, m_enemyGunner->getRightCannonPos(),
-m_enemyGunner->getAimForward(),
-dirToPlayerNorm.Cross(m_enemyGunner->getRightCannonPos()),
-*m_enemyGunner, Bullet::defaultTimeToLive, 0.5f);
-m_modules->renderingEngine->addObject3d(bullet);
-m_gameObjects.push_back(bullet);
-m_objects.push_back(bullet);
-m_bulletList.push_back(bullet);
-}
-}*/
-=======
    dirEnemyToPlayer = m_enemyGunner->getPosition() - m_player->getPosition();
    if (dirEnemyToPlayer.Length() < 700 && 
        (m_enemyGunner->shouldFire1() || m_enemyGunner->shouldFire2())) 
@@ -331,7 +267,6 @@ m_bulletList.push_back(bullet);
         m_bulletList.push_back(bullet);
       }
    }
->>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
 
    //Use Iterators!
    //for (int i = 0; i < m_bulletList.size(); i++) {
@@ -393,18 +328,11 @@ running = handleKeyDown(evt.key.keysym.sym);
       {
          handleMouseMotion(evt.motion.x, evt.motion.y);
       }
-<<<<<<< HEAD
-      
-      // if (evt.type == SDL_MOUSEBUTTONUP)
-      // {
-      // mouse_click(evt.button.button);
-      // }
-=======
+
       //   if (evt.type == SDL_MOUSEBUTTONUP)
       //   {
       //      mouse_click(evt.button.button);
       //   }
->>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
    }
       
    return running;
@@ -514,10 +442,6 @@ bool GameEngine::handleKeyUp(SDLKey key)
    bool running = true;
    std::vector<GameObject*> targets;
    vec3 curveDir, bulletOrigin;
-<<<<<<< HEAD
-   
-   if (key == SDLK_ESCAPE)
-=======
 
    //Checks if the current state is the "menu", if so it closes the main menu to start the game state. Could be improved.
    if (m_stateManager->getCurrentState() == m_menu)
@@ -527,7 +451,6 @@ bool GameEngine::handleKeyUp(SDLKey key)
       return running;
    }
    if (key == SDLK_ESCAPE) 
->>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
    {
       running = false;
    }
@@ -656,10 +579,6 @@ void GameEngine::runCollisions()
 
 void GameEngine::createTurrets()
 {
-<<<<<<< HEAD
-   for (std::vector< Vector3<float> >::iterator i = m_turretLocs->turrets.begin();
-i != m_turretLocs->turrets.end();)
-=======
    vector<PathPointData>::iterator point;
    vector<UnitData>::iterator unit;
    
@@ -682,7 +601,6 @@ i != m_turretLocs->turrets.end();)
    /*
    for (std::vector< Vector3<float> >::iterator i = m_world->worldData->turrets.begin(); 
 	i != m_world->worldData->turrets.end(); i += 3)
->>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
    {
       // Loc, forward, up
       Turret* newTurret = new Turret(*m_player, "models/turrethead.obj",

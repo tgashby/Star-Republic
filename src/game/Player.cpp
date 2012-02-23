@@ -8,6 +8,7 @@
 #define SCREENY 300
 
 /** Constructor **/
+
 Player::Player(string fileName, string textureName, Modules *modules, 
 	Vector3<float> cam_pos, Vector3<float> cam_up, Vector3<float> cam_forw) 
    :  Object3d(), Flyer(), m_side(1,0,0), lastScreenX(0), lastScreenY(0), m_sideVelocity(0,0,0), m_upVelocity(0,0,0)
@@ -54,15 +55,11 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    m_up = cam_up.Normalized();
    calculateSide();
 
-<<<<<<< HEAD
-   tempPos = cam_position + (cam_forward * PLAYER_DISTANCE_FROM_CAMERA);
-   calculateSide();
-   m_sideVelocity = (((side * lastScreenX)) - (m_position - tempPos)) * X_SCALAR;
-=======
+
    tempPos = cam_position + (cam_forward * PLAYER_DISTANCE_FROM_CAMERA); 
    
    m_sideVelocity = (((m_side * lastScreenX)) - (m_position - tempPos)) * X_SCALAR;
->>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
+
    m_upVelocity = (((m_up * lastScreenY)) - (m_position - tempPos)) * Y_SCALAR;
    m_offsetPosition += (m_sideVelocity * time) + (m_upVelocity * time);
    m_position = m_offsetPosition + tempPos;

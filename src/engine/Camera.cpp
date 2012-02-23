@@ -80,26 +80,6 @@ void Camera::tic(uint64_t time) {
 
   // If we are turning our forward, but the angle between ourselves and
   // the intended is close enough, stop turning to allow for rotation
-<<<<<<< HEAD
-  if (m_turning && .5 >
-      angleBetween(m_head->getPosition() - m_tail->getPosition(),
-m_pathRef - m_pathPos)) {
-    m_turning = false;
-    m_pathPos = m_pathRef - ((m_head->getPosition()
-- m_tail->getPosition()).Normalized()
-* CAMERA_LOOK_AHEAD_DISTANCE);
-    m_pathUp = m_tail->getUp();
-  }
-  
-  // If we aren't turning, its safe to rotate
-  if (!m_turning) {
-     temp1 = m_tail->getUp() * (m_head->getPosition() - m_pathRef).Length() /
-(m_head->getPosition() - m_tail->getPosition()).Length();
-     temp2 = m_head->getUp() * (m_pathRef - m_tail->getPosition()).Length() /
-(m_head->getPosition() - m_tail->getPosition()).Length();
-     m_pathUp = (temp1 + temp2).Normalized();
-  }
-=======
   /*if (m_turning && .5 > 
       angleBetween(m_head->getPosition() - m_tail->getPosition(), 
 		   m_pathRef - m_pathPos)) {
@@ -118,7 +98,6 @@ m_pathRef - m_pathPos)) {
 	(m_head->getPosition() - m_tail->getPosition()).Length();
      m_pathUp = (temp1 + temp2).Normalized();
    //  }
->>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
 
   // Move our reference point down the path
   if (m_boosting) {
@@ -127,21 +106,7 @@ m_pathRef - m_pathPos)) {
 m_boostTime = 2000;
      }
 
-<<<<<<< HEAD
-     //if (m_boostTime > 500) {
-pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime);
-//}
-//else {
-//pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime * -0.8);
-//}
 
-     m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) *
-((time * CAMERA_DEF_VELOCITY) + pathAccOffset));
-  }
-  else {
-     m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) *
-(time * CAMERA_DEF_VELOCITY));
-=======
      pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime);
 
   }
@@ -150,7 +115,7 @@ pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime);
      if(m_boostTime < 0) {
 	m_boostTime = 0;
      }
->>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
+
   }
 
   m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
