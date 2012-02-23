@@ -340,14 +340,15 @@ void GameEngine::addAsteroids() {
    EnemyGunship* tempGunner;
    PathPoint current(vec3(0,0,0), vec3(0,0,0), vec3(0,0,0), vec3(0,0,0));
 
-   for (int pntIndex = 10; pntIndex < m_path->getSize(); pntIndex+=10) {
+   for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex+=1) {
       current = m_path->getAt(pntIndex);
 
       //ADD AN ASTEROID
-      if (pntIndex % 20 == 0) {
+      if (pntIndex % 2 == 0) {
 	tempShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", m_modules, *m_player);
 
 	tempShip->setPosition(current.getPosition());
+        tempShip->tic(0);
 	m_modules->renderingEngine->addObject3d(tempShip);
 	m_gameObjects.push_back(tempShip);
 	m_objects.push_back(tempShip);
@@ -356,6 +357,7 @@ void GameEngine::addAsteroids() {
       else {
 	tempGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj", "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp", m_modules, *m_player);
 	tempGunner->setPosition(current.getPosition());
+        tempGunner->tic(0);
 	m_modules->renderingEngine->addObject3d(tempGunner);
 	m_gameObjects.push_back(tempGunner);
 	m_objects.push_back(tempGunner);

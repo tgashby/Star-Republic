@@ -12,10 +12,10 @@
 #define TURRETFORWARDOFFSET -25
 #define TURRETUPOFFSET 0
 #define _ENEMY_GUNSHIP_EXPLOSION_RADIUS 60.0f
-#define UPDATEDISTANCE 1000.0
+#define UPDATEDISTANCE 800.0
 #define RADTODEG 180 / 3.1415
 const float PATHVELOCITY = 3.0f;
-const float AIMVELOCITY = 0.003f;
+const float AIMVELOCITY = 0.03f;
 const float x_SCALAR = 0.0005f; 
 const float y_SCALAR = 0.0005f; 
 const float mODEL_SCALE = 0.05f;
@@ -42,8 +42,6 @@ EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
   m_meshList.push_back(m_turretbasemesh2);
   m_turretheadmesh2 = new Mesh(turretFileName2, headTextureName, modules);
   m_meshList.push_back(m_turretheadmesh2);
-
-  srandom(99901);
  
   /** aim vector **/
   dpos = (m_playerRef.getPosition() - m_position).Normalized();
@@ -92,6 +90,26 @@ EnemyGunship::~EnemyGunship()
 //All Vectors are updated in here
 void EnemyGunship::tic(uint64_t time)
 {
+  if (time == 0)
+  {
+     mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
+     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1)) * mat4::Magic(-getForward(), getUp(), getPosition());
+  m_mesh->setModelMtx(modelMtx);
+
+  /** first turret **/
+  mat4 modelMtx2 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(90, vec3(0,0,1)) *
+     mat4::Translate(TURRETSIDEOFFSET + m_position.x, 
+       TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
+  m_turretbasemesh1->setModelMtx(modelMtx2);
+
+  /** second turret **/
+
+  mat4 modelMtx4 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *
+     mat4::Translate(-TURRETSIDEOFFSET + m_position.x, 
+       TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
+  m_turretbasemesh2->setModelMtx(modelMtx4);
+  }
+
   dpos = (m_playerRef.getPosition() - m_position);
   if (isAlive() && (dpos.Length() < UPDATEDISTANCE)) {
     /** the normalized vector between the player and the enemy **/
@@ -275,6 +293,10 @@ void EnemyGunship::doCollision(GameObject & other)
      {
        m_alive = false;
        m_mesh->setVisible(false);
+       m_turretbasemesh1->setVisible(false);
+       m_turretheadmesh1->setVisible(false);
+       m_turretbasemesh2->setVisible(false);
+       m_turretheadmesh2->setVisible(false);
        setExplosionPosition(m_position);
      }
 }
