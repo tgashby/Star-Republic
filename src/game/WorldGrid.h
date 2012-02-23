@@ -20,16 +20,24 @@
 #include "EnemyGunship.h"
 
 /**
- *
+ * Quadrant structure, representing the area between two points
  */
 struct Quadrant
 {
+   /**
+    * Quadrant constructor
+    * @param startPt the first point
+    * @param endPt the second point
+    */
    Quadrant(PathPointData startPt, PathPointData endPt)
    : m_startPt(startPt), m_endPt(endPt)
    {
       
    }
    
+   /**
+    * Cleans up the Cube*
+    */
    ~Quadrant()
    {
       delete m_bounds;
@@ -40,6 +48,10 @@ struct Quadrant
    PathPointData m_startPt;
    PathPointData m_endPt;
    
+   /**
+    * Cube representing the space between the two points.
+    * Used in calculating whether an object is in the quadrant or not.
+    */
    Cube* m_bounds;
 };
 
@@ -62,11 +74,6 @@ public:
    ~WorldGrid();
    
    /**
-    *
-    */
-   void makeGrid();
-   
-   /**
     * Set the player pointer in WorldGrid
     */
    void setPlayer(Player* player);
@@ -76,32 +83,38 @@ public:
     * This should only be needed for Enemy Ships, since they aren't 
     * currently exported.
     * @param gameObj the object to add to the world
-    * @param objPosition the object's position in the world
+    * @param obj3D the same object as the first, but needed to add to
+    * drawable objects    
     */
    void placeInGrid(GameObject* gameObj, Object3d* obj3D);
    
    /**
-    *
+    * Place a game object in the current quadrant.
+    * This will be used for bullets, missiles, etc.
+    * @param gameObj the game object to place
+    * @param obj3D the same object as the first, but needed to add to
+    * drawable objects
     */
    void placeInCurrQuadrant(GameObject* gameObj, Object3d* obj3D);
    
    /**
-    *
+    * Updates all objects that are in the current quadrants.
+    * @param dt the time passed since the last update.
     */
    void tic(uint64_t dt);
    
    /**
-    * 
+    * Checks all objects in the current quadrants for collisions.
     */
    void checkCollisions();
    
    /**
-    *
+    * Returns the current quadrant, used to get at starting and ending points
     */
    const Quadrant& getCurrentQuadrant();
    
    /**
-    *
+    * Returns the list of Object3Ds that will be needed
     */
    std::list<IObject3d*> getDrawableObjects();
    
@@ -110,20 +123,23 @@ private:
    std::vector<Quadrant*> m_quadrants;
    Player* m_player;
    Modules* m_modules;
-   bool m_shouldUpdate;
-   
-   
-   /**
-    * 
-    */
-   void updateObjects();
-   
+   bool m_shouldUpdate;   
    std::vector<Quadrant*>::size_type m_currentQuadrant;
    std::list<GameObject*> m_updateableObjs;
    std::list<IObject3d*> m_drawableObjs;
    
    /**
-    *
+    * Runs through the inital WorldData and creates all the Quadrants with and objects
+    */
+   void makeGrid();
+   
+   /**
+    * Updates the visible/updateable game objects if needed
+    */
+   void updateObjects();
+
+   /**
+    * Determines the quadrant number in the vector that the point is located in.
     */
    std::vector<Quadrant*>::size_type determineQuadrant(const Vector3<float> pos);
    

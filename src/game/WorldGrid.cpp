@@ -37,108 +37,6 @@ WorldGrid::~WorldGrid()
    
 }
 
-void WorldGrid::makeGrid()
-{
-   Plane lftPlane;
-   Plane rtPlane;
-   Plane downPlane;
-   Plane upPlane;
-   Plane nearPlane;
-   Plane farPlane;
-   
-   // Connect the points into quadrants
-   for (std::vector<PathPointData>::iterator i = m_world.path.begin(); i < m_world.path.end(); i += 2) 
-   {
-      PathPointData currPathPoint = *i;
-      
-      PathPointData nextPathPoint = 
-      i + 1 >= m_world.path.end() ? 
-      *(m_world.path.begin()) : 
-      *(i + 1);
-      
-      Quadrant* quad = new Quadrant(currPathPoint, nextPathPoint);
-      
-      // Determine planes for later determining where enemies go
-      vec3 avgUp = ((currPathPoint.up + nextPathPoint.up) / 2).Normalized();
-      vec3 avgForward = ((currPathPoint.fwd + nextPathPoint.fwd) / 2).Normalized();
-      vec3 sideVec = avgUp.Cross(avgForward).Normalized();
-      
-      vec3 leftPt  = quad->m_startPt.loc + (sideVec * VEC_OFFSET);
-      vec3 rightPt = quad->m_startPt.loc + ((-sideVec) * VEC_OFFSET);
-      vec3 downPt  = quad->m_startPt.loc + ((-avgUp) * VEC_OFFSET);
-      vec3 upPt    = quad->m_startPt.loc + (avgUp * VEC_OFFSET);
-      vec3 nearPt  = quad->m_startPt.loc;
-      vec3 farPt   = quad->m_endPt.loc;
-      
-      std::cout << "L: ";
-      leftPt.print();
-      std::cout << "R: "; 
-      rightPt.print();
-      std::cout << "D: ";
-      downPt.print();
-      std::cout << "U: ";
-      upPt.print();
-      std::cout << "N: ";
-      nearPt.print();
-      std::cout << "F: ";
-      farPt.print();
-      std::cout << "\n\n";
-      
-      lftPlane  = Plane::MakePlane(sideVec, leftPt);
-      rtPlane   = Plane::MakePlane(-sideVec, rightPt);
-      downPlane = Plane::MakePlane(-avgUp, downPt);
-      upPlane   = Plane::MakePlane(avgUp, upPt);
-      nearPlane = Plane::MakePlane(-avgForward, nearPt);
-      farPlane  = Plane::MakePlane(avgForward, farPt);
-      
-      quad->m_bounds = new Cube(lftPlane, rtPlane, upPlane, downPlane, nearPlane, farPlane);
-      
-      // For all the units in the quadrant
-      for (std::vector<UnitData>::iterator j = (*i).units.begin(); j != (*i).units.end(); j++) 
-      {
-         UnitData currUnit = *j;
-         
-         Vector3<float> position = currUnit.loc;
-         Vector3<float> forward = currUnit.fwd;
-         Vector3<float> up = currUnit.up;
-         
-         switch (currUnit.type) 
-         {
-            case UNIT_TURRET:
-               Turret* newTurret = new Turret(m_player, 
-                                              "models/turrethead.obj", "textures/test3.bmp", 
-                                              "models/turretmiddle.obj", "textures/test3.bmp", 
-                                              "models/turretbase.obj", "textures/test3.bmp", m_modules);
-               
-               newTurret->setPosition(position);
-               newTurret->setForward(forward);
-               newTurret->setUp(up);
-               
-               quad->m_gameObjects.push_back(newTurret);
-               quad->m_obj3Ds.push_back(newTurret);
-               break;
-         }
-      }
-      
-      // Scene Objects
-      for (std::vector<PropData>::iterator j = (*i).props.begin(); j != (*i).props.end(); j++) 
-      {
-         PropData currProp = *j;
-         
-         vec3 position = currProp.loc;
-         vec3 forward = currProp.fwd;
-         vec3 up = currProp.up;
-         
-         SceneObject* sceneObj = new SceneObject("models/" + currProp.name, "textures/test3.bmp", position, forward, up, m_modules);
-         
-         quad->m_obj3Ds.push_back(sceneObj);
-      }
-      
-      // Actually add the quadrant
-      m_quadrants.push_back(quad);
-   }
-}
-
 void WorldGrid::setPlayer(Player *player)
 {
    m_player = player;
@@ -314,6 +212,108 @@ std::list<IObject3d*> WorldGrid::getDrawableObjects()
    updateObjects();
    
    return m_drawableObjs;
+}
+
+void WorldGrid::makeGrid()
+{
+   Plane lftPlane;
+   Plane rtPlane;
+   Plane downPlane;
+   Plane upPlane;
+   Plane nearPlane;
+   Plane farPlane;
+   
+   // Connect the points into quadrants
+   for (std::vector<PathPointData>::iterator i = m_world.path.begin(); i < m_world.path.end(); i += 2) 
+   {
+      PathPointData currPathPoint = *i;
+      
+      PathPointData nextPathPoint = 
+      i + 1 >= m_world.path.end() ? 
+      *(m_world.path.begin()) : 
+      *(i + 1);
+      
+      Quadrant* quad = new Quadrant(currPathPoint, nextPathPoint);
+      
+      // Determine planes for later determining where enemies go
+      vec3 avgUp = ((currPathPoint.up + nextPathPoint.up) / 2).Normalized();
+      vec3 avgForward = ((currPathPoint.fwd + nextPathPoint.fwd) / 2).Normalized();
+      vec3 sideVec = avgUp.Cross(avgForward).Normalized();
+      
+      vec3 leftPt  = quad->m_startPt.loc + (sideVec * VEC_OFFSET);
+      vec3 rightPt = quad->m_startPt.loc + ((-sideVec) * VEC_OFFSET);
+      vec3 downPt  = quad->m_startPt.loc + ((-avgUp) * VEC_OFFSET);
+      vec3 upPt    = quad->m_startPt.loc + (avgUp * VEC_OFFSET);
+      vec3 nearPt  = quad->m_startPt.loc;
+      vec3 farPt   = quad->m_endPt.loc;
+      
+      std::cout << "L: ";
+      leftPt.print();
+      std::cout << "R: "; 
+      rightPt.print();
+      std::cout << "D: ";
+      downPt.print();
+      std::cout << "U: ";
+      upPt.print();
+      std::cout << "N: ";
+      nearPt.print();
+      std::cout << "F: ";
+      farPt.print();
+      std::cout << "\n\n";
+      
+      lftPlane  = Plane::MakePlane(sideVec, leftPt);
+      rtPlane   = Plane::MakePlane(-sideVec, rightPt);
+      downPlane = Plane::MakePlane(-avgUp, downPt);
+      upPlane   = Plane::MakePlane(avgUp, upPt);
+      nearPlane = Plane::MakePlane(-avgForward, nearPt);
+      farPlane  = Plane::MakePlane(avgForward, farPt);
+      
+      quad->m_bounds = new Cube(lftPlane, rtPlane, upPlane, downPlane, nearPlane, farPlane);
+      
+      // For all the units in the quadrant
+      for (std::vector<UnitData>::iterator j = (*i).units.begin(); j != (*i).units.end(); j++) 
+      {
+         UnitData currUnit = *j;
+         
+         Vector3<float> position = currUnit.loc;
+         Vector3<float> forward = currUnit.fwd;
+         Vector3<float> up = currUnit.up;
+         
+         switch (currUnit.type) 
+         {
+            case UNIT_TURRET:
+               Turret* newTurret = new Turret(m_player, 
+                                              "models/turrethead.obj", "textures/test3.bmp", 
+                                              "models/turretmiddle.obj", "textures/test3.bmp", 
+                                              "models/turretbase.obj", "textures/test3.bmp", m_modules);
+               
+               newTurret->setPosition(position);
+               newTurret->setForward(forward);
+               newTurret->setUp(up);
+               
+               quad->m_gameObjects.push_back(newTurret);
+               quad->m_obj3Ds.push_back(newTurret);
+               break;
+         }
+      }
+      
+      // Scene Objects
+      for (std::vector<PropData>::iterator j = (*i).props.begin(); j != (*i).props.end(); j++) 
+      {
+         PropData currProp = *j;
+         
+         vec3 position = currProp.loc;
+         vec3 forward = currProp.fwd;
+         vec3 up = currProp.up;
+         
+         SceneObject* sceneObj = new SceneObject("models/" + currProp.name, "textures/test3.bmp", position, forward, up, m_modules);
+         
+         quad->m_obj3Ds.push_back(sceneObj);
+      }
+      
+      // Actually add the quadrant
+      m_quadrants.push_back(quad);
+   }
 }
 
 void WorldGrid::updateObjects()
