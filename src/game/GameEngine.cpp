@@ -191,10 +191,10 @@ exit(0);
       {
          vec3 dirToPlayerNorm = dirToPlayer.Normalized();
          
-         Bullet* bullet =
-            new Bullet("models/cube.obj", "textures/test5.bmp",
-                       m_modules, (*i)->getHeadPosition(),
-                       -dirToPlayerNorm,
+         Bullet* bullet = 
+            new Bullet("models/lance.obj", "textures/test5.bmp", 
+                       m_modules, (*i)->getHeadPosition(), 
+                       -dirToPlayerNorm, 
                        dirToPlayerNorm.Cross((*i)->getPosition()), *(*i));
             
          m_modules->renderingEngine->addObject3d(bullet);
@@ -209,24 +209,23 @@ exit(0);
    {
       vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
       
-      Bullet* bullet =
-         new Bullet("models/cube.obj", "textures/test5.bmp",
-                    m_modules, m_enemyShip->getLeftCannonPos(),
-                    m_enemyShip->getAimForward(),
-                    dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()),
-*m_enemyShip, Bullet::defaultTimeToLive, 0.2f);
+      Bullet* bullet = 
+         new Bullet("models/lance.obj", "textures/test5.bmp", 
+                    m_modules, m_enemyShip->getLeftCannonPos(), 
+                    m_enemyShip->getAimForward(), 
+                    dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()), 
+		    *m_enemyShip, Bullet::defaultTimeToLive, 0.2f);
          
       m_modules->renderingEngine->addObject3d(bullet);
       m_gameObjects.push_back(bullet);
       m_objects.push_back(bullet);
       m_bulletList.push_back(bullet);
-
-      bullet =
-         new Bullet("models/cube.obj", "textures/test5.bmp",
-                    m_modules, m_enemyShip->getRightCannonPos(),
-                    m_enemyShip->getAimForward(),
-                    dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()),
-*m_enemyShip, Bullet::defaultTimeToLive, 0.2f);
+      bullet = 
+         new Bullet("models/lance.obj", "textures/test5.bmp", 
+                    m_modules, m_enemyShip->getRightCannonPos(), 
+                    m_enemyShip->getAimForward(), 
+                    dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()), 
+		    *m_enemyShip, Bullet::defaultTimeToLive, 0.2f);
          
       m_modules->renderingEngine->addObject3d(bullet);
       m_gameObjects.push_back(bullet);
@@ -242,12 +241,12 @@ exit(0);
       
       if (m_enemyGunner->shouldFire1())
       {
-        Bullet* bullet =
-           new Bullet("models/cube.obj", "textures/test5.bmp",
-                      m_modules, m_enemyGunner->getLeftCannonPos(),
-                      m_enemyGunner->getAimForward(),
-                      dirToPlayerNorm.Cross(m_enemyGunner->getLeftCannonPos()),
-*m_enemyGunner, Bullet::defaultTimeToLive, 0.5f);
+        Bullet* bullet = 
+           new Bullet("models/lance.obj", "textures/test5.bmp", 
+                      m_modules, m_enemyGunner->getLeftCannonPos(), 
+                      m_enemyGunner->getAimForward(), 
+                      dirToPlayerNorm.Cross(m_enemyGunner->getLeftCannonPos()), 
+		      *m_enemyGunner, Bullet::defaultTimeToLive, 0.5f);
            
         m_modules->renderingEngine->addObject3d(bullet);
         m_gameObjects.push_back(bullet);
@@ -256,12 +255,12 @@ exit(0);
       }
       if (m_enemyGunner->shouldFire2())
       {
-        Bullet* bullet =
-           new Bullet("models/cube.obj", "textures/test5.bmp",
-                      m_modules, m_enemyGunner->getRightCannonPos(),
-                      m_enemyGunner->getAimForward(),
-                      dirToPlayerNorm.Cross(m_enemyGunner->getRightCannonPos()),
-*m_enemyGunner, Bullet::defaultTimeToLive, 0.5f);
+        Bullet* bullet = 
+           new Bullet("models/lance.obj", "textures/test5.bmp", 
+                      m_modules, m_enemyGunner->getRightCannonPos(), 
+                      m_enemyGunner->getAimForward(), 
+                      dirToPlayerNorm.Cross(m_enemyGunner->getRightCannonPos()), 
+		      *m_enemyGunner, Bullet::defaultTimeToLive, 0.5f);
            
         m_modules->renderingEngine->addObject3d(bullet);
         m_gameObjects.push_back(bullet);
@@ -359,14 +358,15 @@ void GameEngine::addAsteroids() {
    EnemyGunship* tempGunner;
    PathPoint current(vec3(0,0,0), vec3(0,0,0), vec3(0,0,0), vec3(0,0,0));
 
-   for (int pntIndex = 10; pntIndex < m_path->getSize(); pntIndex+=10) {
+   for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex+=1) {
       current = m_path->getAt(pntIndex);
 
       //ADD AN ASTEROID
-      if (pntIndex % 20 == 0) {
+      if (pntIndex % 2 == 0) {
 	tempShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", m_modules, *m_player);
 
 	tempShip->setPosition(current.getPosition());
+        tempShip->tic(0);
 	m_modules->renderingEngine->addObject3d(tempShip);
 	m_gameObjects.push_back(tempShip);
 	m_objects.push_back(tempShip);
@@ -375,6 +375,7 @@ void GameEngine::addAsteroids() {
       else {
 	tempGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj", "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp", m_modules, *m_player);
 	tempGunner->setPosition(current.getPosition());
+        tempGunner->tic(0);
 	m_modules->renderingEngine->addObject3d(tempGunner);
 	m_gameObjects.push_back(tempGunner);
 	m_objects.push_back(tempGunner);
@@ -404,22 +405,22 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    if (key == SDLK_z)
    {
       if (!m_camera->isBoosting()) {
-Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp",
-m_modules, m_player->getPosition()
-+ (m_player->getSide() * 8),
-m_player->getAimForward(), m_player->getAimUp(),
-*m_player, Bullet::defaultTimeToLive, 1.0f);
-
-m_modules->renderingEngine->addObject3d(bullet);
-m_gameObjects.push_back(bullet);
-m_objects.push_back(bullet);
-m_bulletList.push_back(bullet);
-
-bullet = new Bullet("models/cube.obj", "textures/test4.bmp",
-m_modules, m_player->getPosition()
-- (m_player->getSide() * 8),
-m_player->getAimForward(), m_player->getAimUp(),
-*m_player, Bullet::defaultTimeToLive, 1.0f);
+	 Bullet *bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
+				     m_modules, m_player->getPosition() 
+				     + (m_player->getSide() * 8),
+				     m_player->getAimForward(), m_player->getAimUp(), 
+				     *m_player, Bullet::defaultTimeToLive, 1.0f);
+	 
+	 m_modules->renderingEngine->addObject3d(bullet);
+	 m_gameObjects.push_back(bullet);
+	 m_objects.push_back(bullet);
+	 m_bulletList.push_back(bullet);
+	 
+	 bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
+			     m_modules, m_player->getPosition() 
+			     - (m_player->getSide() * 8),
+			     m_player->getAimForward(), m_player->getAimUp(), 
+			     *m_player, Bullet::defaultTimeToLive, 1.0f);
       
       
       
@@ -586,8 +587,7 @@ void GameEngine::runCollisions()
    gameObjectIterator++)
    {
       
-      for(std::list<GameObject *>::iterator otherGameObjectIterator
-= m_gameObjects.begin();
+      for(std::list<GameObject *>::iterator otherGameObjectIterator= m_gameObjects.begin();
           otherGameObjectIterator != m_gameObjects.end();
           otherGameObjectIterator++)
       {
