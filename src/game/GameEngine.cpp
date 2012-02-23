@@ -578,9 +578,9 @@ void GameEngine::createTurrets()
       for (unit = point->units.begin(); unit != point->units.end(); ++unit) {
          if (unit->type == UNIT_TURRET) {
             Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", 
-                                           "textures/test3.bmp", "models/turretmiddle.obj", 
-                                           "textures/test3.bmp", "models/turretbase.obj", 
-                                           "textures/test3.bmp", m_modules);
+                                           "textures/turretHeadTex.bmp", "models/turretMid.obj", 
+                                           "textures/turretMidTex.bmp", "models/turretbase.obj", 
+                                           "textures/turretBaseTex.bmp", m_modules);
             newTurret->setPosition(unit->loc);
             newTurret->setForward(unit->fwd);
             newTurret->setUp(unit->up);
