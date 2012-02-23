@@ -127,10 +127,10 @@ void GameEngine::InitData()
    m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 1200));
    
    initSound();
-   m_bulletSound = loadSound("sound/arwingShot.ogg");
-   m_music = loadMusic("sound/venom.mp3");
+   m_bulletSound = loadSound("sound/weapon1.wav");
+   m_music = loadMusic("sound/ambient1.wav");
    //addAsteroids();
-   //m_music->play(1);
+   m_music->play(-1);
 }
 
 void GameEngine::tic(uint64_t td) {
@@ -394,7 +394,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 	 m_bulletList.push_back(bullet);
       
       
-	 //m_bulletSound->play(0);
+	 m_bulletSound->play(0);
       }
    }
    return running;
