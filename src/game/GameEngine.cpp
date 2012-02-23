@@ -37,7 +37,7 @@ GameEngine::~GameEngine() {
 
 void GameEngine::InitData()
 {
-   m_worldData = m_modules->resourceManager->readWorldData("maps/course3.wf");
+   m_worldData = m_modules->resourceManager->readWorldData("maps/Course1.wf");
    
    m_path = new Path(m_worldData);
    //m_world = new Path("maps/course.wf", m_modules);
@@ -127,10 +127,12 @@ void GameEngine::InitData()
    //m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 400));
    
    initSound();
-   m_bulletSound = loadSound("sound/arwingShot.ogg");
-   m_music = loadMusic("sound/venom.mp3");
+   m_bulletSound = loadSound("sound/weapon1.wav");
+   m_missileSound = loadSound("sound/missileLaunch.wav");;
+   m_music = loadMusic("sound/ambient1.wav");
+   m_boostSound = loadSound("sound/boost.wav");
    //addAsteroids();
-   //m_music->play(1);
+   m_music->play(-1);
 }
 
 void GameEngine::tic(uint64_t td) {
@@ -362,6 +364,9 @@ bool GameEngine::handleKeyDown(SDLKey key) {
       return running;
    }
    if (key == SDLK_SPACE) {
+      if(!m_camera->isBoosting()){
+         m_boostSound->play(-1);
+      }
       m_camera->setBoosting(true);
       m_reticle->setVisible(false);
    }
@@ -394,7 +399,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 	 m_bulletList.push_back(bullet);
       
       
-	 //m_bulletSound->play(0);
+	 m_bulletSound->play(0);
       }
    }
    return running;
@@ -486,7 +491,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
 	    
 	    bulletOrigin += (m_player->getAimForward() * 8.0f);
 	    
-	    Missile *missile = new Missile("models/cube.obj", "textures/test6.bmp",
+	    Missile *missile = new Missile("models/missile1.obj", "textures/test6.bmp",
 					   m_modules, 
 					   bulletOrigin, 
 					   m_player->getAimForward(), 
@@ -498,6 +503,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
 	    m_missileList.push_back(missile);
 	    m_objects.push_back(missile);
 	    m_gameObjects.push_back(missile);
+	    m_missileSound->play(0);
 	 }
       }
    }
@@ -520,6 +526,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
    
    if (key == SDLK_SPACE) {
       m_camera->setBoosting(false);
+      m_boostSound->stop();
       m_reticle->setVisible(true);
    }
    
@@ -577,10 +584,11 @@ void GameEngine::createTurrets()
    for (point = m_worldData->path.begin(); point != m_worldData->path.end(); ++point) {
       for (unit = point->units.begin(); unit != point->units.end(); ++unit) {
          if (unit->type == UNIT_TURRET) {
-            Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", 
-                                           "textures/turretHeadTex.bmp", "models/turretMid.obj", 
-                                           "textures/turretMidTex.bmp", "models/turretbase.obj", 
-                                           "textures/turretBaseTex.bmp", m_modules);
+            Turret* newTurret = new Turret(*m_player, m_modules);
+            //Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", 
+            //                               "textures/turretHeadTex.bmp", "models/turretMid.obj", 
+            //                               "textures/turretMidTex.bmp", "models/turretbase.obj", 
+            //                               "textures/turretBaseTex.bmp", m_modules);
             newTurret->setPosition(unit->loc);
             newTurret->setForward(unit->fwd);
             newTurret->setUp(unit->up);

@@ -20,6 +20,7 @@
 #include "Missile.h"
 
 #define _TURRET_DEFAULT_EXPLOSION_RADIUS 40.0f
+#define _TURRET_SCALE 150.0f
 
 /**
  * Turret class for turrets
@@ -40,7 +41,8 @@ public:
     * @footTexture path to file for foot texture
     * @param modules the Modules pointer
     */
-   Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules);
+   //Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules);
+   Turret(Player& player, Modules *modules);
    ~Turret();
    
    /**
