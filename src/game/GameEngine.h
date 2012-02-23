@@ -67,6 +67,7 @@ private:
    EnemyGunship* m_enemyGunner;
    
    Sound* m_bulletSound;
+   Sound* m_missileSound;
    Sound* m_music;
    
    Explodeable* explosion;

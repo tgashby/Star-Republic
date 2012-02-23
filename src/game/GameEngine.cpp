@@ -128,6 +128,7 @@ void GameEngine::InitData()
    
    initSound();
    m_bulletSound = loadSound("sound/weapon1.wav");
+   m_missileSound = loadSound("sound/missileLaunch.wav");;
    m_music = loadMusic("sound/ambient1.wav");
    //addAsteroids();
    m_music->play(-1);
@@ -486,7 +487,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
 	    
 	    bulletOrigin += (m_player->getAimForward() * 8.0f);
 	    
-	    Missile *missile = new Missile("models/cube.obj", "textures/test6.bmp",
+	    Missile *missile = new Missile("models/missile1.obj", "textures/test6.bmp",
 					   m_modules, 
 					   bulletOrigin, 
 					   m_player->getAimForward(), 
@@ -498,6 +499,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
 	    m_missileList.push_back(missile);
 	    m_objects.push_back(missile);
 	    m_gameObjects.push_back(missile);
+	    m_missileSound->play(0);
 	 }
       }
    }
