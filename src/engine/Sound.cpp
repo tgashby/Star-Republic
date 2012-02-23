@@ -65,3 +65,16 @@ void Sound::resume()
       Mix_ResumeMusic();
    }
 }
+
+void Sound::stop()
+{
+    if (m_chunk != NULL && m_channel != INVALID_CHANNEL) 
+   {
+      Mix_HaltChannel(m_channel);
+   }
+   else
+   {
+      Mix_HaltMusic();
+   }
+   m_channel = INVALID_CHANNEL;
+}

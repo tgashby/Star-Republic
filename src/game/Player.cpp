@@ -166,3 +166,8 @@ void Player::setVisible(bool visibility) {
 vec3 Player::getOffSet() {
   return m_offsetPosition;
 }
+
+vec3 Player::getMForward()
+{
+  return m_forward;
+}

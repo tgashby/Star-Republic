@@ -93,6 +93,11 @@ public:
     * Returns the vector off of the center of the ship
     */
    vec3 getOffSet();
+
+   /**
+    *  returns the m_forward of the player (used in enemies)
+   **/
+   vec3 getMForward();
    
 private:
    /**

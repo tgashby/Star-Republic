@@ -37,7 +37,7 @@ GameEngine::~GameEngine() {
 
 void GameEngine::InitData()
 {
-   m_worldData = m_modules->resourceManager->readWorldData("maps/course3.wf");
+   m_worldData = m_modules->resourceManager->readWorldData("maps/Course1.wf");
    
    m_path = new Path(m_worldData);
    //m_world = new Path("maps/course.wf", m_modules);
@@ -51,9 +51,11 @@ m_camera->getForward(), m_camera->getUp());
    m_enemyShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp",
 m_modules, *m_player);
    m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
-          "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", m_modules, *m_player);
-   m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp",
-m_modules, m_player);
+          "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", 
+          "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp",
+           m_modules, *m_player);
+   m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
+			 m_modules, m_player);
 
    createTurrets();
    createTerrain();
@@ -121,14 +123,16 @@ i != m_turrets.end(); i++)
       m_gameObjects.push_back(*i);
    }
 
-   m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 400));
-   m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 800));
+   m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 1000));
+   //m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 400));
    
    initSound();
-   m_bulletSound = loadSound("sound/arwingShot.ogg");
-   m_music = loadMusic("sound/venom.mp3");
-   //addAsteroids();
-   //m_music->play(1);
+   m_bulletSound = loadSound("sound/weapon1.wav");
+   m_missileSound = loadSound("sound/missileLaunch.wav");;
+   m_music = loadMusic("sound/ambient1.wav");
+   m_boostSound = loadSound("sound/boost.wav");
+   addAsteroids();
+   m_music->play(-1);
 }
 
 void GameEngine::tic(uint64_t td) {
@@ -332,29 +336,30 @@ running = handleKeyDown(evt.key.keysym.sym);
 }
 
 void GameEngine::addAsteroids() {
-   Asteroid* tempAst;
-   PathPoint* current;
-   PathPoint* prev;
-///DELETEDELETEDELETEDELETE
-///DELETEDELETEDELETEDELETE
-   for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex++) {
-///SAMISH
-      PathPoint currentStupid = (m_path->getAt(pntIndex));
-      PathPoint prevStupid = (m_path->getAt(pntIndex - 1));
-      current = &currentStupid;
-      prev = &prevStupid;
-///SAMISH
+   EnemyShip* tempShip;
+   EnemyGunship* tempGunner;
+   PathPoint current(vec3(0,0,0), vec3(0,0,0), vec3(0,0,0), vec3(0,0,0));
+
+   for (int pntIndex = 10; pntIndex < m_path->getSize(); pntIndex+=10) {
+      current = m_path->getAt(pntIndex);
+
       //ADD AN ASTEROID
-      tempAst = new Asteroid("models/sphere.obj", "textures/test4.bmp",
-m_modules, current->getPosition(), current->getUp(), prev->getPosition() - current->getPosition());
-      m_modules->renderingEngine->addObject3d(tempAst);
-      m_gameObjects.push_back(tempAst);
-      m_objects.push_back(tempAst);
-      tempAst = new Asteroid("models/cube.obj", "textures/test5.bmp",
-m_modules, current->getPosition() + (current->getUp() * 10.0f), current->getUp(), current->getForward());
-      m_modules->renderingEngine->addObject3d(tempAst);
-      m_gameObjects.push_back(tempAst);
-      m_objects.push_back(tempAst);
+      if (pntIndex % 20 == 0) {
+	tempShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", m_modules, *m_player);
+
+	tempShip->setPosition(current.getPosition());
+	m_modules->renderingEngine->addObject3d(tempShip);
+	m_gameObjects.push_back(tempShip);
+	m_objects.push_back(tempShip);
+
+      }
+      else {
+	tempGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj", "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp", m_modules, *m_player);
+	tempGunner->setPosition(current.getPosition());
+	m_modules->renderingEngine->addObject3d(tempGunner);
+	m_gameObjects.push_back(tempGunner);
+	m_objects.push_back(tempGunner);
+      }
    }
 }
 
@@ -369,6 +374,9 @@ bool GameEngine::handleKeyDown(SDLKey key) {
       return running;
    }
    if (key == SDLK_SPACE) {
+      if(!m_camera->isBoosting()){
+         m_boostSound->play(-1);
+      }
       m_camera->setBoosting(true);
       m_reticle->setVisible(false);
    }
@@ -401,7 +409,7 @@ m_objects.push_back(bullet);
 m_bulletList.push_back(bullet);
       
       
-//m_bulletSound->play(0);
+	 m_bulletSound->play(0);
       }
    }
    return running;
@@ -415,16 +423,16 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
   for (list<GameObject *>::iterator it = m_gameObjects.begin();
        it != m_gameObjects.end(); it++) {
      if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) && typeid(**it) != typeid(Missile)) {
-playerToObjVec = (*it)->getPosition() - m_player->getPosition();
-if (playerToObjVec.Length() > 350 &&
-playerToObjVec.Length() < 1500 &&
-angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) {
-temp.push_back(*it);
-count++;
-if (count == 6) {
-return temp;
-}
-}
+	playerToObjVec = (*it)->getPosition() - m_player->getPosition();
+	if (playerToObjVec.Length() > 500 && 
+	    playerToObjVec.Length() < 4000 && 
+	    angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) {
+	   temp.push_back(*it);
+	   count++;
+	   if (count == 6) {
+	      return temp;
+	   }
+	}
     }
   }
 
@@ -456,56 +464,57 @@ bool GameEngine::handleKeyUp(SDLKey key)
 
    if (key == SDLK_x) {
       if (!m_camera->isBoosting()) {
-targets = acquireMissileTargets();
+	 targets = acquireMissileTargets();
 
-//For each target
-for (int index = 0; index < targets.size(); index++) {
-switch (index) {
-case 0:
-//AIM UP OR CAMERA UP?
-curveDir = ((m_player->getSide() * .75)
-- (m_player->getAimUp() * .35)).Normalized();
-bulletOrigin = m_player->getSide() * 20;
-break;
-case 1:
-curveDir = ((m_player->getSide() * -.75)
-- (m_player->getAimUp() * .35)).Normalized();
-bulletOrigin = m_player->getSide() * -20;
-break;
-case 2:
-curveDir = ((m_player->getSide() * .75)
-+ (m_player->getAimUp() * .35)).Normalized();
-bulletOrigin = m_player->getSide() * 20;
-break;
-case 3:
-curveDir = ((m_player->getSide() * -.75)
-+ (m_player->getAimUp() * .35)).Normalized();
-bulletOrigin = m_player->getSide() * -20;
-break;
-case 4:
-curveDir = m_player->getSide();
-bulletOrigin = m_player->getSide() * 20;
-break;
-case 5:
-curveDir = m_player->getSide() * -1.0f;
-bulletOrigin = m_player->getSide() * -20;
-}
-
-bulletOrigin += (m_player->getAimForward() * 8.0f);
-
-Missile *missile = new Missile("models/cube.obj", "textures/test6.bmp",
-m_modules,
-bulletOrigin,
-m_player->getAimForward(),
-curveDir,
-m_player,
-targets.at(index));
-
-m_modules->renderingEngine->addObject3d(missile);
-m_missileList.push_back(missile);
-m_objects.push_back(missile);
-m_gameObjects.push_back(missile);
-}
+	 //For each target
+	 for (int index = 0; index < targets.size(); index++) {
+	    switch (index) {
+	    case 0:
+	       //AIM UP OR CAMERA UP?
+	       curveDir = ((m_player->getSide() * .75)
+			   - (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * 20;
+	       break;
+	    case 1:
+	       curveDir = ((m_player->getSide() * -.75) 
+			   - (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * -20;
+	       break;
+	    case 2:
+	       curveDir = ((m_player->getSide() * .75) 
+			   + (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * 20;
+	       break;
+	    case 3:
+	       curveDir = ((m_player->getSide() * -.75) 
+			   + (m_player->getAimUp() * .35)).Normalized();
+	       bulletOrigin = m_player->getSide() * -20;
+	       break;
+	    case 4:
+	       curveDir = m_player->getSide();
+	       bulletOrigin = m_player->getSide() * 20;
+	       break;
+	    case 5:
+	       curveDir = m_player->getSide() * -1.0f;
+	       bulletOrigin = m_player->getSide() * -20;
+	    }
+	    
+	    bulletOrigin += (m_player->getAimForward() * 8.0f);
+	    
+	    Missile *missile = new Missile("models/missile1.obj", "textures/test6.bmp",
+					   m_modules, 
+					   bulletOrigin, 
+					   m_player->getAimForward(), 
+					   curveDir,
+					   m_player, 
+					   targets.at(index));
+	    
+	    m_modules->renderingEngine->addObject3d(missile);
+	    m_missileList.push_back(missile);
+	    m_objects.push_back(missile);
+	    m_gameObjects.push_back(missile);
+	    m_missileSound->play(0);
+	 }
       }
    }
       
@@ -527,6 +536,7 @@ m_gameObjects.push_back(missile);
    
    if (key == SDLK_SPACE) {
       m_camera->setBoosting(false);
+      m_boostSound->stop();
       m_reticle->setVisible(true);
    }
    
@@ -584,10 +594,11 @@ void GameEngine::createTurrets()
    for (point = m_worldData->path.begin(); point != m_worldData->path.end(); ++point) {
       for (unit = point->units.begin(); unit != point->units.end(); ++unit) {
          if (unit->type == UNIT_TURRET) {
-            Turret* newTurret = new Turret(*m_player, "models/turrethead.obj",
-                                           "textures/test3.bmp", "models/turretmiddle.obj",
-                                           "textures/test3.bmp", "models/turretbase.obj",
-                                           "textures/test3.bmp", m_modules);
+            Turret* newTurret = new Turret(*m_player, m_modules);
+            //Turret* newTurret = new Turret(*m_player, "models/turrethead.obj", 
+            //                               "textures/turretHeadTex.bmp", "models/turretMid.obj", 
+            //                               "textures/turretMidTex.bmp", "models/turretbase.obj", 
+            //                               "textures/turretBaseTex.bmp", m_modules);
             newTurret->setPosition(unit->loc);
             newTurret->setForward(unit->fwd);
             newTurret->setUp(unit->up);

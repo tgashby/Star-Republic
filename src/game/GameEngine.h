@@ -68,7 +68,9 @@ private:
    EnemyGunship* m_enemyGunner;
    
    Sound* m_bulletSound;
+   Sound* m_missileSound;
    Sound* m_music;
+   Sound* m_boostSound;
    
    Explodeable* explosion;
    uint64_t gameOver;
