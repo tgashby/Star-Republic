@@ -328,7 +328,7 @@ void WorldGrid::updateObjects()
          
          for (std::list<IObject3d*>::iterator j = currQuad->m_obj3Ds.begin(); j != currQuad->m_obj3Ds.end(); j++) 
          {
-            m_modules->renderingEngine->removeObject3d(*j);
+            //m_modules->renderingEngine->removeObject3d(*j);
          }
       }
       
@@ -356,6 +356,10 @@ std::vector<Quadrant>::size_type WorldGrid::determineQuadrant(const Vector3<floa
 {
    // Checking for NaNs
    //assert(pos.x == pos.x && pos.y == pos.y && pos.z == pos.z);
+   if (!(pos.x == pos.x && pos.y == pos.y && pos.z == pos.z)) 
+   {
+      std::cerr << "NaN" << "\n";
+   }
    
    std::vector<Quadrant>::size_type i;
    for (i = 0; i < m_quadrants.size(); i++) 
