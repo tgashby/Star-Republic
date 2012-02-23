@@ -14,8 +14,12 @@ GameEngine::GameEngine(Modules *modules) {
    m_stateManager = new StateManager();
    m_menu = new MenuState();
    m_game = new GameState();
+   m_lose = new LoseState();
+   m_win = new WinState();
    m_game->initialize();
    m_menu->initialize();
+   m_lose->initialize();
+   m_win->initialize();
    m_stateManager->pushState(m_game);
    m_stateManager->pushState(m_menu);
 
@@ -287,6 +291,10 @@ missileIterator++) {
    }
 
    runCollisions();
+   if(m_player->getAlive() == false) {
+      m_stateManager->pushState(m_lose);
+      //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME.
+   }
    }
 }
 
@@ -302,6 +310,12 @@ void GameEngine::render() {
       m_modules->renderingEngine->clearScreen();
       m_modules->renderingEngine->drawText("STAR REPUBLIC", ivec2(-350,0), ivec2(800,100));
       m_modules->renderingEngine->drawText("Press Any Button To Begin", ivec2(-350, -100), ivec2(500,50));
+   }
+   if (m_stateManager->getCurrentState() == m_lose)
+   {
+      m_modules->renderingEngine->clearScreen();
+      m_modules->renderingEngine->drawText("YOU LOSE", ivec2(-350,0), ivec2(800,100));
+      m_modules->renderingEngine->drawText("Press Any Button To Retry", ivec2(-350, -100), ivec2(500,50));
    }
 }
 
@@ -373,7 +387,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    bool running = true;
 
    //Checks to see whether the current state is the menu, and pops the state if so. Will be revised later.
-   if (m_stateManager->getCurrentState() == m_menu)
+   if (m_stateManager->getCurrentState() == m_menu || m_stateManager->getCurrentState() == m_lose)
    {
       m_stateManager->popState();
       InitData();
@@ -457,7 +471,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
    vec3 curveDir, bulletOrigin;
 
    //Checks if the current state is the "menu", if so it closes the main menu to start the game state. Could be improved.
-   if (m_stateManager->getCurrentState() == m_menu)
+   if (m_stateManager->getCurrentState() == m_menu || m_stateManager->getCurrentState() == m_lose)
    {
       m_stateManager->popState();
       InitData();

@@ -36,7 +36,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_mesh->setModelMtx(modelMtx);
    
    // god mode much?
-   m_health = 200000;
+   m_health = 20;
 }
 
 Player::~Player()
@@ -157,6 +157,10 @@ void Player::doCollision(GameObject & other)
        m_mesh->setVisible(false);
    }
    //DO Collision stuff
+}
+
+bool Player::getAlive() {
+   return m_alive;
 }
 
 void Player::setVisible(bool visibility) {

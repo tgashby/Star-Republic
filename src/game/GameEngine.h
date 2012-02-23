@@ -22,6 +22,8 @@
 #include "Missile.h"
 #include "GameState.h"
 #include "MenuState.h"
+#include "WinState.h"
+#include "LoseState.h"
 #include "Asteroid.h"
 
 
@@ -54,6 +56,8 @@ private:
    StateManager *m_stateManager;
    MenuState* m_menu;
    GameState* m_game;
+   LoseState* m_lose;
+   WinState* m_win;
    Path *m_path;
    WorldData *m_worldData;
    PathPoint *m_currentPoint;
