@@ -114,6 +114,11 @@ void RenderingEngine::removeObject3d(IObject3d *obj) {
    // remove the object from objectList
 }
 
+void RenderingEngine::clearScreen() {
+   glClearColor(0,0,0,0);
+   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+}
+
 void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
    SDL_Surface *initial;
 	SDL_Surface *intermediary;
@@ -122,16 +127,14 @@ void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
    // get a font
    SDL_Color color = {255, 255, 255};
    SDL_Color color2 = {0, 0, 0};
-   glClearColor(0,0,0,0);
-   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
    
    
 	/* Use SDL_TTF to render our text */
 	initial = TTF_RenderText_Blended(font, text.c_str(), color);
 	assert(initial != NULL);
 	/* Convert the rendered text to a known format */
-	w = 256;
-	h = 32;
+	w = 512;
+	h = 35;
 	
 	intermediary = SDL_CreateRGBSurface(0, w, h, 32, 
                                        0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);

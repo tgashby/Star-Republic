@@ -39,6 +39,7 @@ public:
    void removeObject3d(IObject3d *obj);
    void render(list<IObject3d *> &objects);
    void drawText(string text, ivec2 loc, ivec2 size);
+   void clearScreen();
 private:
    GLuint buildShader(const char* source, GLenum shaderType) const;
    GLuint buildProgram(const char* vShader, const char* fShader) const;

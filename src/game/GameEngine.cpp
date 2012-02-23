@@ -298,7 +298,9 @@ void GameEngine::render() {
    }
    if (m_stateManager->getCurrentState() == m_menu)
    {
-      m_modules->renderingEngine->drawText("STAR REPUBLIC", ivec2(-20,0), ivec2(400,50));
+      m_modules->renderingEngine->clearScreen();
+      m_modules->renderingEngine->drawText("STAR REPUBLIC", ivec2(-350,0), ivec2(800,100));
+      m_modules->renderingEngine->drawText("Press Any Button To Begin", ivec2(-350, -100), ivec2(500,50));
    }
 }
 
