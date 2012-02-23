@@ -111,11 +111,11 @@ void GameEngine::tic(uint64_t td) {
       
       // Update functions go here
 
-      m_enemyShip->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
-      m_enemyShip->tic(td);
-
-      m_enemyGunner->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
-      m_enemyGunner->tic(td);
+//      m_enemyShip->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
+//      m_enemyShip->tic(td);
+//
+//      m_enemyGunner->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
+//      m_enemyGunner->tic(td);
       
       m_camera->checkPath(&m_currentPoint);
       m_camera->tic(td);
@@ -129,9 +129,13 @@ void GameEngine::tic(uint64_t td) {
 
 
 void GameEngine::render() {
-   list<IObject3d*> objs = m_worldGrid->getDrawableObjects();
+   if (m_stateManager->getCurrentState() == m_game) 
+   {
+      list<IObject3d*> objs = m_worldGrid->getDrawableObjects();
+      
+      m_modules->renderingEngine->render(objs);
+   }
    
-   m_modules->renderingEngine->render(objs);
 }
 
 

@@ -355,7 +355,7 @@ void WorldGrid::updateObjects()
 std::vector<Quadrant>::size_type WorldGrid::determineQuadrant(const Vector3<float> pos)
 {
    // Checking for NaNs
-   assert(pos.x == pos.x && pos.y == pos.y && pos.z == pos.z);
+   //assert(pos.x == pos.x && pos.y == pos.y && pos.z == pos.z);
    
    std::vector<Quadrant>::size_type i;
    for (i = 0; i < m_quadrants.size(); i++) 
