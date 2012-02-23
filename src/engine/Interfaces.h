@@ -197,6 +197,7 @@ struct IRenderingEngine {
    virtual void setCamera(ICamera *camera) = 0;
    virtual void addObject3d(IObject3d *obj) = 0;
    virtual void removeObject3d(IObject3d *obj) = 0;
+   virtual void drawText(string text, ivec2 loc, ivec2 size) = 0;
 };
 
 // Any resurces from the file system should be accessed

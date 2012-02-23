@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "StateManager.h"
 #include "ResourceManager.h"
+#include "RenderingEngine.h"
 
 #include "SDL_include.h"
 #include "Path.h"
