@@ -57,9 +57,10 @@ void EnemyShip::tic(uint64_t time)
   if (time == 0)
   {
      mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
-     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1)) *
-     mat4::Magic(-getForward(), getUp(), getPosition());
-  m_mesh->setModelMtx(modelMtx);
+                    mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
+     modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
+     m_mesh->setModelMtx(modelMtx);
+     m_mesh->setVisible(true);
   }
 
   dpos = (m_playerRef.getPosition() - m_position);

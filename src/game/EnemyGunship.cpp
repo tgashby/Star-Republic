@@ -78,7 +78,7 @@ EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
        TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
   m_turretbasemesh2->setModelMtx(modelMtx4);
 
-  m_health = 9001;
+  m_health = 900;
 }
 
 EnemyGunship::~EnemyGunship()
@@ -90,26 +90,6 @@ EnemyGunship::~EnemyGunship()
 //All Vectors are updated in here
 void EnemyGunship::tic(uint64_t time)
 {
-  if (time == 0)
-  {
-     mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
-     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1)) * mat4::Magic(-getForward(), getUp(), getPosition());
-  m_mesh->setModelMtx(modelMtx);
-
-  /** first turret **/
-  mat4 modelMtx2 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(90, vec3(0,0,1)) *
-     mat4::Translate(TURRETSIDEOFFSET + m_position.x, 
-       TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
-  m_turretbasemesh1->setModelMtx(modelMtx2);
-
-  /** second turret **/
-
-  mat4 modelMtx4 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *
-     mat4::Translate(-TURRETSIDEOFFSET + m_position.x, 
-       TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
-  m_turretbasemesh2->setModelMtx(modelMtx4);
-  }
-
   dpos = (m_playerRef.getPosition() - m_position);
   if (isAlive() && (dpos.Length() < UPDATEDISTANCE)) {
     /** the normalized vector between the player and the enemy **/
@@ -132,10 +112,6 @@ void EnemyGunship::tic(uint64_t time)
                     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
     modelMtx *= mat4::Magic(m_forward, m_up, m_position);
     m_mesh->setModelMtx(modelMtx);
-
-    float dx = (m_playerRef.getPosition().x - m_position.x) / (m_playerRef.getPosition() - m_position).Length();
-    float dy = (m_playerRef.getPosition().y - m_position.y) / (m_playerRef.getPosition() - m_position).Length();
-    float dz = (m_playerRef.getPosition().z - m_position.z) / (m_playerRef.getPosition() - m_position).Length();
 
     /** first turret **/
     mat4 modelMtx2 =  mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *
@@ -216,8 +192,56 @@ void EnemyGunship::tic(uint64_t time)
 	motionTimer = 0;
       }
   }
-  else {
+  else if (dpos.Length() < UPDATEDISTANCE) {
     explosionTic(time);
+  }
+  else if (isAlive())
+  {
+     dpos = dpos.Normalized();
+    
+    // moving based on the player's direction
+    m_forward = m_playerRef.getMForward();
+    m_up = m_playerRef.getAimUp();
+
+     mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
+                    mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
+    modelMtx *= mat4::Magic(m_forward, m_up, m_position);
+    m_mesh->setModelMtx(modelMtx);
+    m_mesh->setVisible(true);
+
+    /** first turret **/
+    mat4 modelMtx2 =  mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *
+       mat4::Translate(TURRETSIDEOFFSET, 0, TURRETFORWARDOFFSET) *
+       mat4::Magic(m_forward, m_up, m_position);
+    m_turretbasemesh1->setModelMtx(modelMtx2);
+    m_turretbasemesh1->setVisible(true);
+    
+    
+    vec3 tpos1 = vec3(m_position.x, m_position.y, m_position.z);
+    tpos1 += getMSide() * TURRETSIDEOFFSET;
+    tpos1 += m_forward * (TURRETFORWARDOFFSET + 10.0);
+    tpos1 += m_up * (TURRETUPOFFSET + 2.0);
+    mat4 modelMtx3 = mat4::Scale(TURRETHEAD_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *
+       mat4::Magic(-getAimForward(), getAimUp(), tpos1);
+    m_turretheadmesh1->setModelMtx(modelMtx3);
+    m_turretheadmesh1->setVisible(true);
+
+
+    /** second turret **/
+    mat4 modelMtx4 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(90, vec3(0,1,0)) *
+       mat4::Translate(-TURRETSIDEOFFSET, 0, TURRETFORWARDOFFSET) *
+       mat4::Magic(m_forward, m_up, m_position);
+    m_turretbasemesh2->setModelMtx(modelMtx4);
+    m_turretbasemesh2->setVisible(true);
+
+    vec3 tpos2 = vec3(m_position.x, m_position.y, m_position.z);
+    tpos2 -= getMSide() * TURRETSIDEOFFSET;
+    tpos2 += m_forward * (TURRETFORWARDOFFSET + 10.0);
+    tpos2 += m_up * (TURRETUPOFFSET + 2.0);
+    mat4 modelMtx5 = mat4::Scale(TURRETHEAD_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *
+       mat4::Magic(-getAimForward(), getAimUp(), tpos2);
+    m_turretheadmesh2->setModelMtx(modelMtx5);
+    m_turretheadmesh2->setVisible(true);
   }
 }
 

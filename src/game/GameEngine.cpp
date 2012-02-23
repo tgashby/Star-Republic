@@ -571,8 +571,7 @@ void GameEngine::runCollisions()
    gameObjectIterator++)
    {
       
-      for(std::list<GameObject *>::iterator otherGameObjectIterator
-= m_gameObjects.begin();
+      for(std::list<GameObject *>::iterator otherGameObjectIterator = m_gameObjects.begin();
           otherGameObjectIterator != m_gameObjects.end();
           otherGameObjectIterator++)
       {
