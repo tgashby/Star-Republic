@@ -9,35 +9,38 @@
 #define MOTIONTIME 1000
 #define FIRINGTIME 400
 #define TURRETSIDEOFFSET 20
-#define TURRETFORWARDOFFSET 20
-#define TURRETUPOFFSET -16
+#define TURRETFORWARDOFFSET -25
+#define TURRETUPOFFSET 0
 #define _ENEMY_GUNSHIP_EXPLOSION_RADIUS 60.0f
+#define UPDATEDISTANCE 1000.0
+#define RADTODEG 180 / 3.1415
 const float PATHVELOCITY = 3.0f;
 const float AIMVELOCITY = 0.003f;
 const float x_SCALAR = 0.0005f; 
 const float y_SCALAR = 0.0005f; 
 const float mODEL_SCALE = 0.05f;
 const float TURRETBASE_SCALE = 0.05f;
-const float TURRETHEAD_SCALE = 0.1f;
+const float TURRETHEAD_SCALE = 0.2f;
 const float ROTATE_CONSTANT = -90;
 
 /** Gunner Enemy: Takes in the mesh info and a reference to the player to aim at **/
 EnemyGunship::EnemyGunship(string fileName, string turretFileName1, 
-			   string turretFileName2, string textureName, 
+			   string turretFileName2, string bodyTextureName,
+                           string baseTextureName, string headTextureName, 
 			   Modules *modules, Player &p) 
   : Flyer(), Enemy(p), 
     Explodeable(vec3(0,0,0), _ENEMY_GUNSHIP_EXPLOSION_RADIUS, modules), 
     side(1,0,0), currentAngle(0), prevAngle(0)
 {
-  m_mesh = new Mesh(fileName, textureName, modules);
+  m_mesh = new Mesh(fileName, bodyTextureName, modules);
   m_meshList.push_back(m_mesh);
-  m_turretbasemesh1 = new Mesh(turretFileName1, textureName, modules);
+  m_turretbasemesh1 = new Mesh(turretFileName1, baseTextureName, modules);
   m_meshList.push_back(m_turretbasemesh1);
-  m_turretheadmesh1 = new Mesh(turretFileName2, textureName, modules);
+  m_turretheadmesh1 = new Mesh(turretFileName2, headTextureName, modules);
   m_meshList.push_back(m_turretheadmesh1);
-  m_turretbasemesh2 = new Mesh(turretFileName1, textureName, modules);
+  m_turretbasemesh2 = new Mesh(turretFileName1, baseTextureName, modules);
   m_meshList.push_back(m_turretbasemesh2);
-  m_turretheadmesh2 = new Mesh(turretFileName2, textureName, modules);
+  m_turretheadmesh2 = new Mesh(turretFileName2, headTextureName, modules);
   m_meshList.push_back(m_turretheadmesh2);
 
   srandom(99901);
@@ -70,14 +73,9 @@ EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
        TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
   m_turretbasemesh1->setModelMtx(modelMtx2);
 
-  /*mat4 modelMtx3 = mat4::Scale(TURRET_SCALE) * mat4::Rotate(90, vec3(0,0,1)) *
-     mat4::Translate(TURRETSIDEOFFSET, 0, TURRETFORWARDOFFSET) * 
-     mat4::Magic(-getAimForward(), getAimUp(), getPosition());
-  m_turretheadmesh1->setModelMtx(modelMtx3);*/
-
   /** second turret **/
 
-  mat4 modelMtx4 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,0,1)) *
+  mat4 modelMtx4 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *
      mat4::Translate(-TURRETSIDEOFFSET + m_position.x, 
        TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
   m_turretbasemesh2->setModelMtx(modelMtx4);
@@ -94,43 +92,60 @@ EnemyGunship::~EnemyGunship()
 //All Vectors are updated in here
 void EnemyGunship::tic(uint64_t time)
 {
-  if (isAlive()) {
+  dpos = (m_playerRef.getPosition() - m_position);
+  if (isAlive() && (dpos.Length() < UPDATEDISTANCE)) {
     /** the normalized vector between the player and the enemy **/
-    dpos = (m_playerRef.getPosition() - m_position).Normalized();
+    dpos = dpos.Normalized();
     
     // moving based on the player's direction
-    m_position += m_playerRef.getForward() * PATHVELOCITY; 
+    m_forward = m_playerRef.getMForward();
+    m_up = m_playerRef.getAimUp();
     
-    /** gunship AI -> movement first (the last term is there to simulate acceleration **/
-    m_position += getUp() * ydir * AIMVELOCITY * 
+    /** gunship AI -> movement first (the last term is there to simulate acceleration) **/
+    m_position += m_forward * PATHVELOCITY;
+    m_position += m_up * ydir * AIMVELOCITY * 
       ((1 + MOTIONTIME / 2 - abs((float)motionTimer - (MOTIONTIME / 2)))); 
-    m_position += getSide() * xdir * AIMVELOCITY * 
+    m_position += getMSide() * xdir * AIMVELOCITY * 
       ((1 + MOTIONTIME / 2 - abs((float)motionTimer - (MOTIONTIME / 2)))); 
 
     /** setting the modelmatrix based on a constant scale and rotation,
      *  and the forward, up and position (aka Magic) **/
     mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
                     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
-    modelMtx *= mat4::Magic(getForward(), getAimUp(), getPosition());
+    modelMtx *= mat4::Magic(m_forward, m_up, m_position);
     m_mesh->setModelMtx(modelMtx);
 
+    float dx = (m_playerRef.getPosition().x - m_position.x) / (m_playerRef.getPosition() - m_position).Length();
+    float dy = (m_playerRef.getPosition().y - m_position.y) / (m_playerRef.getPosition() - m_position).Length();
+    float dz = (m_playerRef.getPosition().z - m_position.z) / (m_playerRef.getPosition() - m_position).Length();
+
     /** first turret **/
-    mat4 modelMtx2 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(90, vec3(0,0,1)) *
-      mat4::Translate(TURRETSIDEOFFSET + m_position.x, 
-		      TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
+    mat4 modelMtx2 =  mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *
+       mat4::Translate(TURRETSIDEOFFSET, 0, TURRETFORWARDOFFSET) *
+       mat4::Magic(m_forward, m_up, m_position);
     m_turretbasemesh1->setModelMtx(modelMtx2);
     
-    /*mat4 modelMtx3 = mat4::Scale(TURRET_SCALE) * mat4::Rotate(90, vec3(0,0,1)) *
-      mat4::Translate(TURRETSIDEOFFSET, 0, -TURRETFORWARDOFFSET) * 
-      mat4::Magic(-getAimForward(), getAimUp(), getPosition());
-      m_turretheadmesh1->setModelMtx(modelMtx3);*/
-    
+    vec3 tpos1 = vec3(m_position.x, m_position.y, m_position.z);
+    tpos1 += getMSide() * TURRETSIDEOFFSET;
+    tpos1 += m_forward * (TURRETFORWARDOFFSET + 10.0);
+    tpos1 += m_up * (TURRETUPOFFSET + 2.0);
+    mat4 modelMtx3 = mat4::Scale(TURRETHEAD_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *
+       mat4::Magic(-getAimForward(), getAimUp(), tpos1);
+    m_turretheadmesh1->setModelMtx(modelMtx3);
 
     /** second turret **/
-    mat4 modelMtx4 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,0,1)) *
-      mat4::Translate(-TURRETSIDEOFFSET + m_position.x, 
-		      TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
+    mat4 modelMtx4 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(90, vec3(0,1,0)) *
+       mat4::Translate(-TURRETSIDEOFFSET, 0, TURRETFORWARDOFFSET) *
+       mat4::Magic(m_forward, m_up, m_position);
     m_turretbasemesh2->setModelMtx(modelMtx4);
+
+    vec3 tpos2 = vec3(m_position.x, m_position.y, m_position.z);
+    tpos2 -= getMSide() * TURRETSIDEOFFSET;
+    tpos2 += m_forward * (TURRETFORWARDOFFSET + 10.0);
+    tpos2 += m_up * (TURRETUPOFFSET + 2.0);
+    mat4 modelMtx5 = mat4::Scale(TURRETHEAD_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *
+       mat4::Magic(-getAimForward(), getAimUp(), tpos2);
+    m_turretheadmesh2->setModelMtx(modelMtx5);
     
     /** update the timer for shooting **/
     firingTimer1 += time;
@@ -229,12 +244,12 @@ Vector3<float> EnemyGunship::getSide()
 /** Return the location of the right-arm cannon for shooting purposes **/
 Vector3<float> EnemyGunship::getLeftCannonPos()
 {
-   return m_position + getAimForward().Cross(getAimUp()) * 10;
+   return m_position + getAimForward().Cross(getAimUp()) * 18;
 }
 /** Return the location of the left-arm cannon for shooting purposes **/
 Vector3<float> EnemyGunship::getRightCannonPos()
 {
-   return m_position - getAimForward().Cross(getAimUp()) * 10;
+   return m_position - getAimForward().Cross(getAimUp()) * 18;
 }
 
 /** computes (but does not return) the actual side vector **/
@@ -276,4 +291,9 @@ bool EnemyGunship::shouldFire2()
 
 vec3 EnemyGunship::getPosition() {
   return m_position;
+}
+
+vec3 EnemyGunship::getMSide()
+{
+  return m_forward.Cross(m_up);
 }

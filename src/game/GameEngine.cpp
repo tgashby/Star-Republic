@@ -51,7 +51,9 @@ void GameEngine::InitData()
    m_enemyShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", 
 			       m_modules, *m_player);
    m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
-          "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", m_modules, *m_player);
+          "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", 
+          "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp",
+           m_modules, *m_player);
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
 
@@ -121,8 +123,8 @@ void GameEngine::InitData()
       m_gameObjects.push_back(*i);
    }
 
-   m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 400));
-   m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 800));
+   m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 2000));
+   m_enemyGunner->setPosition(m_player->getPosition() + (m_player->getForward() * 1200));
    
    initSound();
    m_bulletSound = loadSound("sound/arwingShot.ogg");
@@ -333,7 +335,7 @@ void GameEngine::addAsteroids() {
    PathPoint* current;
    PathPoint* prev;
    for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex++) {
-      current = &(m_path->getAt(pntIndex));
+      /*current = &(m_path->getAt(pntIndex));
       prev = &(m_path->getAt(pntIndex - 1));
       //ADD AN ASTEROID
       tempAst = new Asteroid("models/sphere.obj", "textures/test4.bmp", 
@@ -345,7 +347,7 @@ void GameEngine::addAsteroids() {
 			     m_modules, current->getPosition() + (current->getUp() * 10.0f), current->getUp(), current->getForward());
       m_modules->renderingEngine->addObject3d(tempAst);
       m_gameObjects.push_back(tempAst);
-      m_objects.push_back(tempAst);
+      m_objects.push_back(tempAst);*/
    }
 }
 
