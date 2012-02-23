@@ -29,6 +29,8 @@ public:
    GameObject(vec3 startPos, vec3 startVelocity, 
               vec3 forwardVec, vec3 accelerationVec, 
               vec3 upVec,float collideRadius, int health);
+
+   GameObject(vec3 startPos, float radius);
    
    /**
     * Default constructor that sets all fields to default values

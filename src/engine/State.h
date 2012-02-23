@@ -7,7 +7,8 @@
 struct State
 {
    State() { m_initialized = false; }
-   
+ 
+   virtual ~State() {}
    /**
     * Initializes anything needed for the given state.
     * This could be meshes, textures, etc

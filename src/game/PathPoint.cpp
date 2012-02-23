@@ -1,7 +1,24 @@
 #include "PathPoint.h"
 
-PathPoint::PathPoint(Vector3<float> position, Vector3<float> up, Vector3<float> forward, Vector3<float> side)
-{
+PathPoint::PathPoint(PathPointData pointData) {
+   //PathPoint(pointData.loc, pointData.fwd, pointData.up, pointData.links);
+   position = pointData.loc;
+   up = pointData.up;
+   forward = pointData.fwd;
+   ivec4 links = pointData.links;
+   setFirstID(links.y);
+   setNumberOfIDs(1);
+   if (links.z != -1) {
+      setNumberOfIDs(2);
+      setSecondID(links.z);
+   }
+   if (links.w != -1) {
+      setNumberOfIDs(3);
+      setThirdID(links.w);
+   }
+}
+
+PathPoint::PathPoint(vec3 position, vec3 up, vec3 forward, vec3 side) {
    this->position = position;
    this->up = up.Normalized();
    this->forward = forward.Normalized();
@@ -24,12 +41,10 @@ PathPoint::PathPoint(vec3 position, vec3 forward, vec3 up, ivec4 links) {
   }
 }
 
-PathPoint::~PathPoint()
-{
+PathPoint::~PathPoint() {
 }
 
-void PathPoint::setPosition(float x, float y, float z)
-{
+void PathPoint::setPosition(float x, float y, float z) {
    position.x = x;
    position.y = y;
    position.z = z;
@@ -89,22 +104,22 @@ int PathPoint::getThirdID()
    return thirdID;
 }
 
-Vector3<float> PathPoint::getPosition() 
+vec3 PathPoint::getPosition() 
 {
   return position;
 }
 
-Vector3<float> PathPoint::getUp() 
+vec3 PathPoint::getUp() 
 {
   return up;
 }
 
-Vector3<float> PathPoint::getForward()
+vec3 PathPoint::getForward()
 {
   return forward;
 }
 
-Vector3<float> PathPoint::getSide()
+vec3 PathPoint::getSide()
 {
   return side;
 }

@@ -40,7 +40,7 @@ vec3 Camera::getPosition()
 mat4 Camera::getProjectionViewMtx() {
    // Set the projection matrix
    float h = 4.0f * 640 / 480;
-   mat4 projectionMatrix = mat4::Frustum(-h / 2, h / 2, -2, 2, 4, 2000);
+   mat4 projectionMatrix = mat4::Frustum(-h / 2, h / 2, -2, 2, 4, 6000);
    
    // Apply the view
    projectionMatrix = mat4::LookAt(projectionMatrix, m_eye, m_ref, m_up);
@@ -54,17 +54,17 @@ void Camera::checkPath(PathPoint* head) {
     m_head = head;
 
     //Shouldn't need to change, but might have to
-    m_pathUp = m_tail->getUp();
+    //m_pathUp = m_tail->getUp();
     calculateSide();
 
-    m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
+    //m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
     
-    m_turning = true;
+    //m_turning = true;
   }
 }
 
  void Camera::calculateSide() {
-  m_pathSide = m_pathUp.Cross(m_pathRef - m_pathPos).Normalized();
+    m_pathSide = m_pathUp.Cross(m_head->getPosition() - m_tail->getPosition()).Normalized();
 }
 
 void Camera::tic(uint64_t time) {
@@ -80,6 +80,7 @@ void Camera::tic(uint64_t time) {
 
   // If we are turning our forward, but the angle between ourselves and
   // the intended is close enough, stop turning to allow for rotation
+<<<<<<< HEAD
   if (m_turning && .5 >
       angleBetween(m_head->getPosition() - m_tail->getPosition(),
 m_pathRef - m_pathPos)) {
@@ -98,6 +99,26 @@ m_pathRef - m_pathPos)) {
 (m_head->getPosition() - m_tail->getPosition()).Length();
      m_pathUp = (temp1 + temp2).Normalized();
   }
+=======
+  /*if (m_turning && .5 > 
+      angleBetween(m_head->getPosition() - m_tail->getPosition(), 
+		   m_pathRef - m_pathPos)) {
+		   m_turning = false;
+    m_pathPos = m_pathRef - ((m_head->getPosition() 
+			      - m_tail->getPosition()).Normalized() 
+			     * CAMERA_LOOK_AHEAD_DISTANCE);
+    //  m_pathUp = m_tail->getUp();
+    //} 
+  
+  // If we aren't turning, its safe to rotate
+  //if (!m_turning) {*/
+     temp1 = m_tail->getUp() * (m_head->getPosition() - m_pathRef).Length() / 
+	(m_head->getPosition() - m_tail->getPosition()).Length();
+     temp2 = m_head->getUp() * (m_pathRef - m_tail->getPosition()).Length() / 
+	(m_head->getPosition() - m_tail->getPosition()).Length();
+     m_pathUp = (temp1 + temp2).Normalized();
+   //  }
+>>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
 
   // Move our reference point down the path
   if (m_boosting) {
@@ -106,6 +127,7 @@ m_pathRef - m_pathPos)) {
 m_boostTime = 2000;
      }
 
+<<<<<<< HEAD
      //if (m_boostTime > 500) {
 pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime);
 //}
@@ -119,7 +141,20 @@ pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime);
   else {
      m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) *
 (time * CAMERA_DEF_VELOCITY));
+=======
+     pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime);
+
   }
+  else {
+     m_boostTime -= time * 3;
+     if(m_boostTime < 0) {
+	m_boostTime = 0;
+     }
+>>>>>>> 49e052461c3284d1ff0de993da4a52136e70e505
+  }
+
+  m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
+		   ((time * CAMERA_DEF_VELOCITY) + pathAccOffset));
   
   calculateSide();
   tempVec = (m_pathRef - m_pathPos).Normalized();
@@ -138,7 +173,8 @@ void Camera::setLookAt() {
 
    if (cameraType == _MOTION_CAMERA) {
       //DOESNT'T WORK PERFECTLY NOW BECAUSE OF CHANGES TO CAMERA/PLAYER
-      m_eye = (m_player->getPosition() - (getForward() * CAMERA_DIST_FROM_PLAYER) + m_pathPos) / 2;
+      m_eye = (m_player->getPosition() - 
+	       (getForward() * CAMERA_DIST_FROM_PLAYER) + m_pathPos) / 2;
       //Pulls camera back for acceleration purposes
       //May want to make it be exponentially pulled back with time
       m_eye = m_eye - (getForward() * (.025 * m_boostTime));
@@ -175,6 +211,7 @@ vec3 Camera::getRef() {
 
 vec3 Camera::getForward() {
    return (m_pathRef - m_pathPos).Normalized();
+   //return (m_head->getPosition() - m_tail->getPosition()).Normalized();
 }
 
 vec3 Camera::getUp() {
@@ -191,9 +228,6 @@ void Camera::setPlayer(Player* player) {
 
 void Camera::setBoosting(bool boostStatus) {
    m_boosting = boostStatus;
-   if (boostStatus == false) {
-      m_boostTime = 0;
-   }
 }
 
 bool Camera::isBoosting() {

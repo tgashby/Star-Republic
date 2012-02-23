@@ -125,7 +125,7 @@ class uvcoord:
       self.u = uv[0]
       self.v = uv[1]
    def writetofile(self, out):
-      out.write('vt %f %f\n' % (self.u, self.v))
+      out.write('vt %f %f\n' % (self.u, 1 - self.v))
    def compare(self, other):
       return self.u == other.u and self.v == other.v
 

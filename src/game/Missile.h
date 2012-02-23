@@ -12,7 +12,7 @@
 //the time it takes for the missile to reach its destination
 #define _MISSILE_REACH_DEST_TIME 1500
 #define _MISSILE_ARC_HEIGHT 500
-#define _MISSILE_RADIUS .4f
+#define _MISSILE_RADIUS .5f
 #define _MISSILE_ARCH_VEC_1_TIME 500
 #define _MISSILE_ARCH_VEC_2_TIME 500
 #define _MISSILE_ARCH_VEC_3_TIME 500
@@ -96,8 +96,6 @@ class Missile : public Explodeable, public GameObject {
    vec3 m_archVecPos1;
    vec3 m_archVecPos2;
    vec3 m_archVecPos3;
-
-   /**
 
    /**
     * The current location between the m_archVecPos and the target that the

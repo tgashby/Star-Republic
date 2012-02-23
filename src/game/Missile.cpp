@@ -3,7 +3,9 @@
 Missile::Missile(string fileName, string textureName, Modules* modules,
 		vec3 pos_offset, vec3 forw, vec3 up,
 		 GameObject* parent, GameObject* target) 
-   : m_lifetime(0), Explodeable(pos_offset, modules) {
+  : m_lifetime(0), Explodeable(pos_offset, modules),
+    GameObject(parent->getPosition() + pos_offset, _MISSILE_RADIUS) {
+
    m_origPos = parent->getPosition() + pos_offset;
 
    m_position = m_origPos;
@@ -36,8 +38,11 @@ void Missile::tic(uint64_t time) {
 
    if (!m_detonated) {
       m_lifetime += time;
-      if (m_lifetime > _MISSILE_REACH_DEST_TIME) {
-	 m_lifetime = _MISSILE_REACH_DEST_TIME;    
+      if (m_lifetime >= _MISSILE_REACH_DEST_TIME) {
+	 m_lifetime = _MISSILE_REACH_DEST_TIME;
+	 m_detonated = true;
+	 m_mesh->setVisible(false);
+	 setExplosionPosition(m_position);
       }
       
       //CHANGE TO ACCOUNT FOR SIDES
@@ -65,8 +70,8 @@ void Missile::tic(uint64_t time) {
       else {
 	 //CHANGE
 	 m_position = m_archVecPos2 + ((m_aimPos - m_archVecPos2) 
-				       * ((m_lifetime - _MISSILE_ARCH_VEC_1_TIME - _MISSILE_ARCH_VEC_2_TIME)
-					  / _MISSILE_ARCH_VEC_3_TIME));
+	  * ((m_lifetime - _MISSILE_ARCH_VEC_1_TIME - _MISSILE_ARCH_VEC_2_TIME)
+	  / _MISSILE_ARCH_VEC_3_TIME));
       }
       
       //WILL BECOME NAN AFTER IT HITS, NOT GOOD BUT OK FOR NOW
@@ -85,6 +90,7 @@ void Missile::doCollision(GameObject &other) {
    if (typeid(other) != typeid(Player) && typeid(other) != typeid(Bullet)
        && typeid(other) != typeid(Missile)) {
       m_detonated = true;
+      m_mesh->setVisible(false);
       setExplosionPosition(m_position);
    }
 }

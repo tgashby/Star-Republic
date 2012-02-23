@@ -5,6 +5,21 @@
 #define MID_BUFFER_WIDTH 2
 #include <cmath>
 
+Path::Path(WorldData *data) {
+   worldData = data;
+   currentPoint = 1;
+   previousPoint = 0;
+   
+   vector<PathPointData>::iterator newPoint;
+   for (newPoint = data->path.begin(); newPoint != data->path.end(); ++newPoint) {
+      PathPoint point = PathPoint(*newPoint);
+      points.push_back(point);
+   }
+   
+   currentPoint = 1;
+   previousPoint = 0;
+}
+/*
 Path::Path(const string fileName)
 {
    string line;
@@ -79,17 +94,20 @@ PathPoint Path::parseLine(const string line)
    point.setNumberOfIDs(totalPaths);
    
    return point;
-}
+}*/
 
 PathPoint Path::getCurrent() {
   return points.at(currentPoint);
 }
+
 PathPoint* Path::getCurrentPointer() {
    return &points.at(currentPoint);
 }
+
 PathPoint Path::getPrevious() {
   return points.at(previousPoint);
 }
+
 PathPoint* Path::getPreviousPointer() {
   return &points.at(previousPoint);
 }
@@ -106,55 +124,54 @@ Path::~Path()
 
 PathPoint Path::getAt(int index) 
 {
-   //cout << "index: " << index << "\n";
-   //cout << "from vector size: " << points.size() << "\n";
   return points.at(index);
 }
 
-PathPoint Path::update(Vector3<float> playerPos)
+PathPoint Path::update(Vector3<float> refPos, Vector3<float> playerPos)
 {
   float D_val;
   PathPoint current = getCurrent();
   PathPoint previous = getPrevious();
-  float diffX = playerPos.x - current.getPosition().x;
-  float diffY = playerPos.y - current.getPosition().y;
-  float diffZ = playerPos.z - current.getPosition().z;
+  float diffX = refPos.x - current.getPosition().x;
+  float diffY = refPos.y - current.getPosition().y;
+  float diffZ = refPos.z - current.getPosition().z;
   float playerDistFromPlane = 0;
   float firstDistFromPlane = 0;
   Vector3<float> vect1 (current.getPosition().x - previous.getPosition().x,
 			current.getPosition().y - previous.getPosition().y,
 			current.getPosition().z - previous.getPosition().z);
-//   cout << "it worked1\n";
+
   Vector3<float> vect2 (current.getPosition().x + current.getUp().x,
 			current.getPosition().y + current.getUp().y,
 			current.getPosition().z + current.getUp().z);
-//   cout << "it worked2\n";
+
   Vector3<float> normal;
   float distance = sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
   PathPoint firstChoice = getAt(current.getFirstID());
 
   if (distance < RANGE_CHECK) {
     if (current.getNumberOfIDs() == 1) {
+
       setChoice(current.getFirstID());
       return getCurrent();
     }
-    normal = vect1.Cross(vect2);
+
+    normal = vect1.Cross(vect2).Normalized();
     D_val = (current.getPosition().x * normal.x + current.getPosition().y 
-	     * normal.y * current.getPosition().z * normal.z) * -1.0f;
+	     * normal.y + current.getPosition().z * normal.z) * -1.0f;
     
-    playerDistFromPlane = current.getPosition().x * playerPos.x + 
-      current.getPosition().y * playerPos.y + current.getPosition().z 
-      * playerPos.z + D_val;
+    playerDistFromPlane = (normal.x * playerPos.x) + 
+       (normal.y * playerPos.y) + (normal.z * playerPos.z) + D_val;
     
     if (abs(playerDistFromPlane) < MID_BUFFER_WIDTH && 
 	current.getNumberOfIDs() == 3) {
-      setChoice(current.getSecondID());
+      setChoice(current.getThirdID());
       return getCurrent();
     }
     
-    firstDistFromPlane = current.getPosition().x * firstChoice.getPosition().x 
-      + current.getPosition().y * firstChoice.getPosition().y + 
-      current.getPosition().z * firstChoice.getPosition().z + D_val;
+    firstDistFromPlane = normal.x * firstChoice.getPosition().x 
+       + normal.y * firstChoice.getPosition().y 
+       + normal.z * firstChoice.getPosition().z + D_val;
 
     if (playerDistFromPlane / abs(playerDistFromPlane) == 
 	firstDistFromPlane / abs(firstDistFromPlane)) {
@@ -162,10 +179,13 @@ PathPoint Path::update(Vector3<float> playerPos)
       return getCurrent();
     }
     else {
-      setChoice(current.getThirdID());
+      setChoice(current.getSecondID());
       return getCurrent();
     }
   }
   return getCurrent();
 }
 
+int Path::getSize() {
+  return points.size();
+}
