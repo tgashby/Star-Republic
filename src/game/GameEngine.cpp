@@ -414,8 +414,8 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
        it != m_gameObjects.end(); it++) {
      if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) && typeid(**it) != typeid(Missile)) {
 	playerToObjVec = (*it)->getPosition() - m_player->getPosition();
-	if (playerToObjVec.Length() > 350 && 
-	    playerToObjVec.Length() < 1500 && 
+	if (playerToObjVec.Length() > 500 && 
+	    playerToObjVec.Length() < 4000 && 
 	    angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) {
 	   temp.push_back(*it);
 	   count++;
