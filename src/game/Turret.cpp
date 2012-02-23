@@ -8,6 +8,8 @@
 
 #include "Turret.h"
 
+#define TURRETHEADHEIGHT 35
+
 /*
 Turret::Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules) 
   : Enemy(player), Explodeable(vec3(0,0,0), _TURRET_DEFAULT_EXPLOSION_RADIUS, modules)
@@ -50,7 +52,7 @@ Turret::Turret(Player& player, Modules *modules) : Enemy(player), Explodeable(ve
    modelMtx *= mat4::Translate(0, 1, 0);
    m_midMesh->setModelMtx(modelMtx);
    
-   m_headMesh = new Mesh("models/turrethead.obj", "textures/turretHeadTex.bmp", modules);
+   m_headMesh = new Mesh("models/turrethead.obj", "textures/turretheadtex.bmp", modules);
    m_headMesh->setScale(_TURRET_SCALE);
    m_meshList.push_back(m_headMesh);
    //modelMtx *= mat4::Translate(0, 13, 0);
@@ -83,8 +85,8 @@ void Turret::tic(uint64_t time)
     modelMtx = mat4::Rotate(90, vec3(1, 0, 0)) * mat4::Magic(-dirToPlayerFlat, m_up, m_position);
     m_midMesh->setModelMtx(modelMtx);
    
-    modelMtx = mat4::Rotate(90, vec3(1, 0, 0)) * mat4::Magic(-dirToPlayer, m_up, m_position);
-    //modelMtx *= mat4::Translate(0, 0, 60);
+    modelMtx = mat4::Rotate(90, vec3(1, 0, 0)) * 
+               mat4::Magic(-dirToPlayer, m_up, getHeadPosition());
     m_headMesh->setModelMtx(modelMtx);
    
     firingTimer += time;
@@ -106,7 +108,7 @@ void Turret::tic(uint64_t time)
 
 Vector3<float> Turret::getHeadPosition()
 {
-   vec3 toRet = m_position + (m_up.Normalized() * 13);
+   vec3 toRet = m_position + (m_up.Normalized() * TURRETHEADHEIGHT);
    
    return toRet;
 }

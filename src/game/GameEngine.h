@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "StateManager.h"
 #include "ResourceManager.h"
+#include "RenderingEngine.h"
 
 #include "SDL_include.h"
 #include "Path.h"
@@ -21,6 +22,8 @@
 #include "Missile.h"
 #include "GameState.h"
 #include "MenuState.h"
+#include "WinState.h"
+#include "LoseState.h"
 #include "Asteroid.h"
 
 
@@ -53,6 +56,8 @@ private:
    StateManager *m_stateManager;
    MenuState* m_menu;
    GameState* m_game;
+   LoseState* m_lose;
+   WinState* m_win;
    Path *m_path;
    WorldData *m_worldData;
    PathPoint *m_currentPoint;
@@ -62,9 +67,9 @@ private:
    std::vector<Bullet *> m_bulletList;
    std::vector<Turret *> m_turrets;
    std::vector<Missile *> m_missileList;
-   
-   EnemyShip* m_enemyShip;
-   EnemyGunship* m_enemyGunner;
+
+   std::vector<EnemyShip *> m_enemyShips;
+   std::vector<EnemyGunship*> m_enemyGunners;
    
    Sound* m_bulletSound;
    Sound* m_missileSound;

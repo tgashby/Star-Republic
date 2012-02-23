@@ -4,6 +4,18 @@
 #include "TexturedLighting.vert"
 #include "TexturedLighting.frag"
 
+float planeVertices[] = {
+   0, 0, -1,   0, 0, 1,   0, 0, 0,   0, 0,
+   0, 1, -1,   0, 0, 1,   0, 0, 0,   0, 1,
+   1, 1, -1,   0, 0, 1,   0, 0, 0,   1, 1,
+   1, 0, -1,   0, 0, 1,   0, 0, 0,   1, 0
+};
+
+unsigned short planeIndices[] = {
+   0, 1, 2,
+   0, 2, 3
+};
+
 RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
    m_screenSize = screenSize;
    m_modules = modules;
@@ -11,6 +23,7 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
    m_textureList = list<TextureRef>(0);
    //NOTE: WAS EQUAL TO NULL. SET TO SOMETHING USELESS SO CODE WOULD STOP SEGFAULTING
    m_camera = NULL;
+   TTF_Init();
    
 #ifdef _WIN32
    GLenum err = glewInit();
@@ -53,6 +66,22 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
    glEnableVertexAttribArray(m_attributes.normal);
    glEnableVertexAttribArray(m_attributes.textureCoord);
    glEnable(GL_DEPTH_TEST);
+
+   glGenBuffers(1, &m_planeVert);
+   glBindBuffer(GL_ARRAY_BUFFER, m_planeVert);
+   glBufferData(GL_ARRAY_BUFFER, 4 * VERTEX_STRIDE * sizeof(GLfloat), planeVertices, GL_STATIC_DRAW);
+   
+   glGenBuffers(1, &m_planeInt);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_planeInt);
+   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLushort), planeIndices, GL_STATIC_DRAW);
+
+   string fontPath = "fonts/SLEEP.TTF";
+   font = TTF_OpenFont(fontPath.c_str(), 40);
+   if (!font) {
+      cerr << "error reading font\n";
+   }
+
+   //glBlendFunc(GL_ONE, GL_ONE);
 }
 
 
@@ -85,6 +114,94 @@ void RenderingEngine::removeObject3d(IObject3d *obj) {
    // remove the object from objectList
 }
 
+void RenderingEngine::clearScreen() {
+   glClearColor(0,0,0,0);
+   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+}
+
+void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
+   SDL_Surface *initial;
+	SDL_Surface *intermediary;
+	int w,h;
+	
+   // get a font
+   SDL_Color color = {255, 255, 255};
+   SDL_Color color2 = {0, 0, 0};
+   
+   
+	/* Use SDL_TTF to render our text */
+	initial = TTF_RenderText_Blended(font, text.c_str(), color);
+	assert(initial != NULL);
+	/* Convert the rendered text to a known format */
+	w = 512;
+	h = 35;
+	
+	intermediary = SDL_CreateRGBSurface(0, w, h, 32, 
+                                       0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+        assert(intermediary != NULL);
+	SDL_BlitSurface(initial, NULL, intermediary, NULL);
+        assert(intermediary != NULL);
+   
+   // Load a new texture.
+   GLuint textureBuffer;
+   glGenTextures(1, &textureBuffer);
+   glBindTexture(GL_TEXTURE_2D, textureBuffer);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexImage2D(GL_TEXTURE_2D, 0, 4, w, h, 0,
+                GL_BGRA, GL_UNSIGNED_BYTE, intermediary->pixels);
+   
+   
+   // Draw the Text
+   glDisable(GL_DEPTH);
+   glEnable(GL_BLEND);
+   
+   mat4 projection = mat4::Parallel(-400, 400, -300, 300, 1, 10);
+   glUniformMatrix4fv(m_uniforms.projection, 1, 0, projection.Pointer());
+   
+   // Set the model view matrix
+   mat4 modelMtx = mat4::Scale(size.x, -size.y, 1);
+   modelMtx = modelMtx * mat4::Translate(loc.x, loc.y, 0);
+   glUniformMatrix4fv(m_uniforms.modelview, 1, 0, modelMtx.Pointer());
+   
+   // Set the normal matrix
+   mat3 normalMtx = modelMtx.ToMat3();
+   glUniformMatrix3fv(m_uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
+   
+   
+	int stride = 11 * sizeof(GLfloat);
+   const GLvoid* normalOffset = (const GLvoid*) (3 * sizeof(GLfloat));
+   const GLvoid* texCoordOffset = (const GLvoid*) (3 * sizeof(vec3));
+   GLint position = m_attributes.position;
+   GLint normal = m_attributes.normal;
+   GLint texCoord = m_attributes.textureCoord;
+   
+   glBindTexture(GL_TEXTURE_2D, textureBuffer);
+   glBindBuffer(GL_ARRAY_BUFFER, m_planeVert);
+   glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, 0);
+   glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, normalOffset);
+   glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, stride, texCoordOffset);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_planeInt);
+   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+	
+	/* Bad things happen if we delete the texture before it finishes */
+	glFinish();
+	
+	/* Clean up */
+	SDL_FreeSurface(initial);
+	SDL_FreeSurface(intermediary);
+	glDeleteTextures(1, &textureBuffer);
+   
+   
+   glEnable(GL_DEPTH);
+   glDisable(GL_BLEND);
+   
+   /*
+   TTF_Font* font = TTF_OpenFont("ARIAL.TTF", 12);
+   SDL_Color foregroundColor = { 255, 255, 255 }; 
+   SDL_Color backgroundColor = { 0, 255, 0 };
+   SDL_Surface *textSurface = TTF_RenderText_Solid(font, "test", backgroundColor);*/
+}
 
 void RenderingEngine::render(list<IObject3d *> &objects) {
    glClearColor(0,0,0,0);

@@ -6,6 +6,7 @@
 #include "SDL_include.h"
 
 #include "Interfaces.h"
+#include <cassert>
 
 #define VERTEX_STRIDE 11
 #define NORMAL_OFFSET 3
@@ -37,6 +38,8 @@ public:
    void addObject3d(IObject3d *obj);
    void removeObject3d(IObject3d *obj);
    void render(list<IObject3d *> &objects);
+   void drawText(string text, ivec2 loc, ivec2 size);
+   void clearScreen();
 private:
    GLuint buildShader(const char* source, GLenum shaderType) const;
    GLuint buildProgram(const char* vShader, const char* fShader) const;
@@ -49,6 +52,9 @@ private:
    ICamera *m_camera;
    list<MeshRef> m_meshList;
    list<TextureRef> m_textureList;
+   GLuint m_planeVert;
+   GLuint m_planeInt;
+   TTF_Font *font;
 };
 
 #endif
