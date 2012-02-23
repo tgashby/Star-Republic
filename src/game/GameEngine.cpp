@@ -130,6 +130,7 @@ void GameEngine::InitData()
    m_bulletSound = loadSound("sound/weapon1.wav");
    m_missileSound = loadSound("sound/missileLaunch.wav");;
    m_music = loadMusic("sound/ambient1.wav");
+   m_boostSound = loadSound("sound/boost.wav");
    //addAsteroids();
    m_music->play(-1);
 }
@@ -363,6 +364,9 @@ bool GameEngine::handleKeyDown(SDLKey key) {
       return running;
    }
    if (key == SDLK_SPACE) {
+      if(!m_camera->isBoosting()){
+         m_boostSound->play(-1);
+      }
       m_camera->setBoosting(true);
       m_reticle->setVisible(false);
    }
@@ -522,6 +526,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
    
    if (key == SDLK_SPACE) {
       m_camera->setBoosting(false);
+      m_boostSound->stop();
       m_reticle->setVisible(true);
    }
    
