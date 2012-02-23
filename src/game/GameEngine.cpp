@@ -171,7 +171,11 @@ exit(0);
    //explosion->setPosition(m_player->getPosition());
    //explosion->tic(td);
 
-   for (std::vector<Turret*>::iterator i = m_turrets.begin(); i != m_turrets.end(); i++)
+   for (std::vector<GameObject *>::iterator j = m_enemies.begin(); j != m_enemies.end(); j++) {
+     (*j)->tic(td);
+   }
+
+   for (std::vector<Turret*>::iterator i = m_turrets.begin(); i != m_turrets.end(); i++) 
    {
       (*i)->tic(td);
       
@@ -307,7 +311,6 @@ bool GameEngine::handleEvents()
    
    SDL_Event evt;
    
-   
    while (SDL_PollEvent(&evt))
    {
       if (evt.type == SDL_QUIT)
@@ -351,7 +354,7 @@ void GameEngine::addAsteroids() {
 	m_modules->renderingEngine->addObject3d(tempShip);
 	m_gameObjects.push_back(tempShip);
 	m_objects.push_back(tempShip);
-
+	m_enemies.push_back(tempShip);
       }
       else {
 	tempGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj", "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp", m_modules, *m_player);
@@ -359,6 +362,7 @@ void GameEngine::addAsteroids() {
 	m_modules->renderingEngine->addObject3d(tempGunner);
 	m_gameObjects.push_back(tempGunner);
 	m_objects.push_back(tempGunner);
+	m_enemies.push_back(tempGunner);
       }
    }
 }
