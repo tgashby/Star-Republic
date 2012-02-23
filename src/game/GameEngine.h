@@ -62,7 +62,8 @@ private:
    std::vector<Bullet *> m_bulletList;
    std::vector<Turret *> m_turrets;
    std::vector<Missile *> m_missileList;
-   
+   std::vector<GameObject *> m_enemies;
+
    EnemyShip* m_enemyShip;
    EnemyGunship* m_enemyGunner;
    
