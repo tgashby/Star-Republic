@@ -12,6 +12,7 @@
 
 /*
  TODO:
+ - Figure out why determineQuadrant isn't working...
  - Update moving objects
  - Move GameEngine stuff into here/integrate with GameEngine (Done?)
  - Prob lots more...
@@ -75,16 +76,16 @@ void WorldGrid::tic(uint64_t dt)
 {
    updateObjects();
    
+   Camera& camera = ((Camera&)m_modules->gameEngine->getCamera());
+   
+   m_player->tic(dt, camera.getPosition(), camera.getUp(), camera.getForward());
+   
    for (std::list<GameObject*>::iterator i = m_updateableObjs.begin(); i != m_updateableObjs.end(); i++) 
    {
       GameObject* currObj = *i;
       
       currObj->tic(dt);
    }
-   
-   Camera& camera = ((Camera&)m_modules->gameEngine->getCamera());
-   
-   m_player->tic(dt, camera.getPosition(), camera.getUp(), camera.getForward());
    
 //   for (std::vector<Turret*>::iterator i = m_turrets.begin(); i != m_turrets.end(); i++) 
 //   {
@@ -163,14 +164,9 @@ void WorldGrid::tic(uint64_t dt)
 //   }
    
    std::vector<GameObject*>::size_type quadrant = determineQuadrant(m_player->getPosition());
+   
    if (quadrant != m_currentQuadrant) 
    {
-      Quadrant* currQuad = m_quadrants.at(m_currentQuadrant);
-      for (std::list<IObject3d*>::iterator j = currQuad->m_obj3Ds.begin(); j != currQuad->m_obj3Ds.end(); j++) 
-      {
-         m_modules->renderingEngine->removeObject3d(*j);
-      }
-      
       m_currentQuadrant = quadrant;
       m_shouldUpdate = true;
    }
@@ -224,14 +220,12 @@ void WorldGrid::makeGrid()
    Plane farPlane;
    
    // Connect the points into quadrants
-   for (std::vector<PathPointData>::iterator i = m_world.path.begin(); i < m_world.path.end(); i += 2) 
+   for (std::vector<PathPointData>::iterator i = m_world.path.begin(); i < m_world.path.end(); i++) 
    {
       PathPointData currPathPoint = *i;
       
-      PathPointData nextPathPoint = 
-      i + 1 >= m_world.path.end() ? 
-      *(m_world.path.begin()) : 
-      *(i + 1);
+      PathPointData nextPathPoint = i + 1 >= m_world.path.end() ? 
+                                    *(m_world.path.begin()) : *(i + 1);
       
       Quadrant* quad = new Quadrant(currPathPoint, nextPathPoint);
       
@@ -240,9 +234,9 @@ void WorldGrid::makeGrid()
       vec3 avgForward = ((currPathPoint.fwd + nextPathPoint.fwd) / 2).Normalized();
       vec3 sideVec = avgUp.Cross(avgForward).Normalized();
       
-      vec3 leftPt  = quad->m_startPt.loc + (sideVec * VEC_OFFSET);
-      vec3 rightPt = quad->m_startPt.loc + ((-sideVec) * VEC_OFFSET);
-      vec3 downPt  = quad->m_startPt.loc + ((-avgUp) * VEC_OFFSET);
+      vec3 leftPt  = quad->m_startPt.loc + (-sideVec * VEC_OFFSET);
+      vec3 rightPt = quad->m_startPt.loc + (sideVec * VEC_OFFSET);
+      vec3 downPt  = quad->m_startPt.loc + (-avgUp * VEC_OFFSET);
       vec3 upPt    = quad->m_startPt.loc + (avgUp * VEC_OFFSET);
       vec3 nearPt  = quad->m_startPt.loc;
       vec3 farPt   = quad->m_endPt.loc;
@@ -261,8 +255,8 @@ void WorldGrid::makeGrid()
       farPt.print();
       std::cout << "\n\n";
       
-      lftPlane  = Plane::MakePlane(sideVec, leftPt);
-      rtPlane   = Plane::MakePlane(-sideVec, rightPt);
+      lftPlane  = Plane::MakePlane(-sideVec, leftPt);
+      rtPlane   = Plane::MakePlane(sideVec, rightPt);
       downPlane = Plane::MakePlane(-avgUp, downPt);
       upPlane   = Plane::MakePlane(avgUp, upPt);
       nearPlane = Plane::MakePlane(-avgForward, nearPt);
@@ -324,11 +318,25 @@ void WorldGrid::updateObjects()
       m_shouldUpdate = false;
       
       m_updateableObjs.clear();
+      
+      // Starting at the current quadrant, add all game objects in that and 
+      // the next few quadrants
+      for (std::vector<Quadrant*>::size_type i = m_currentQuadrant; 
+           i < m_currentQuadrant + QUADS_TO_CHECK && i < m_quadrants.size(); i++) 
+      {
+         Quadrant* currQuad = m_quadrants.at(i);
+         
+         for (std::list<IObject3d*>::iterator j = currQuad->m_obj3Ds.begin(); j != currQuad->m_obj3Ds.end(); j++) 
+         {
+            m_modules->renderingEngine->removeObject3d(*j);
+         }
+      }
+      
       m_drawableObjs.clear();
       
       // Starting at the current quadrant, add all game objects in that and 
       // the next few quadrants
-      for (std::vector<Quadrant>::size_type i = m_currentQuadrant; 
+      for (std::vector<Quadrant*>::size_type i = m_currentQuadrant; 
            i < m_currentQuadrant + QUADS_TO_CHECK && i < m_quadrants.size(); i++) 
       {
          Quadrant* currQuad = m_quadrants.at(i);
@@ -347,7 +355,7 @@ void WorldGrid::updateObjects()
 std::vector<Quadrant>::size_type WorldGrid::determineQuadrant(const Vector3<float> pos)
 {
    // Checking for NaNs
-   //assert(pos.x == pos.x && pos.y == pos.y && pos.z == pos.z);
+   assert(pos.x == pos.x && pos.y == pos.y && pos.z == pos.z);
    
    std::vector<Quadrant>::size_type i;
    for (i = 0; i < m_quadrants.size(); i++) 

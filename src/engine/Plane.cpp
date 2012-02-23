@@ -33,12 +33,12 @@ HalfSpace Plane::ClassifyPoint(const Plane &plane, const Vector3<float> &point)
    
    dist = Plane::DistanceToPoint(plane, point);
    
-   if (dist < 0) 
+   if (dist > 0) 
    {
       return OUTSIDE;
    }
    
-   if (dist > 0) 
+   if (dist < 0) 
    {
       return INSIDE;
    }

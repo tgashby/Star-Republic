@@ -77,16 +77,16 @@ void GameEngine::InitData()
 void GameEngine::tic(uint64_t td) {
    gameOver += td;
    
-   if (gameOver >= 40000) 
-   {
-      cout << "YOU WIN!\n";
-      exit(0);
-   }
-   
-   if (!m_player->isAlive()) {
-      cout << "YOU LOSE!\n";
-      exit(0);
-   }
+//   if (gameOver >= 40000) 
+//   {
+//      cout << "YOU WIN!\n";
+//      exit(0);
+//   }
+//   
+//   if (!m_player->isAlive()) {
+//      cout << "YOU LOSE!\n";
+//      exit(0);
+//   }
    
    PathPointData currPPD = m_worldGrid->getCurrentQuadrant().m_startPt;
    
