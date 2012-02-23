@@ -3,7 +3,7 @@
 #ifdef __APPLE__
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL_ttf/SDL_ttf.h>
 #include <SDL_mixer/SDL_mixer.h>
 #endif
 
