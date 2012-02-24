@@ -49,12 +49,16 @@ private:
    Modules *m_modules;
    UniformHandles m_uniforms;
    AttributeHandles m_attributes;
+   UniformHandles m_uniforms2;
+   AttributeHandles m_attributes2;
    ICamera *m_camera;
    list<MeshRef> m_meshList;
    list<TextureRef> m_textureList;
    GLuint m_planeVert;
    GLuint m_planeInt;
    TTF_Font *font;
+   GLuint lightShader;
+   GLuint textureShader;
 };
 
 #endif

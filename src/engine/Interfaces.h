@@ -142,6 +142,7 @@ struct IMesh {
    virtual bool isVisible() = 0;
    virtual void setVisible(bool visible) = 0;
    virtual MeshBounds getMeshBounds() = 0;
+   virtual bool useLights() = 0;
    
    // File name and Mesh type
    // Name used as a key by Rendering Engine for finding duplicate meshes.

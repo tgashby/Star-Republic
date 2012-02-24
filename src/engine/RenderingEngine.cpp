@@ -1,6 +1,8 @@
 #include "RenderingEngine.h"
 
 #define STRINGIFY(A)  #A
+#include "Texture.vert"
+#include "Texture.frag"
 #include "TexturedLighting.vert"
 #include "TexturedLighting.frag"
 
@@ -35,22 +37,23 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
 #endif
 
    // Create the GLSL program.
-   GLuint program = buildProgram(SimpleVertexShader, SimpleFragmentShader);
-   glUseProgram(program);
+   lightShader = buildProgram(SimpleVertexShader, SimpleFragmentShader);
+   textureShader = buildProgram(TextureVertexShader, TextrueFragmentShader);
+   glUseProgram(lightShader);
    
    // Extract the handles to attributes and uniforms.
-   m_attributes.position = glGetAttribLocation(program, "Position");
-   m_attributes.normal = glGetAttribLocation(program, "Normal");
-   m_attributes.diffuseMaterial = glGetAttribLocation(program, "DiffuseMaterial");
-   m_attributes.textureCoord = glGetAttribLocation(program, "TextureCoord");
-   m_uniforms.projection = glGetUniformLocation(program, "Projection");
-   m_uniforms.modelview = glGetUniformLocation(program, "Modelview");
-   m_uniforms.normalMatrix = glGetUniformLocation(program, "NormalMatrix");
-   m_uniforms.lightPosition = glGetUniformLocation(program, "LightPosition");
-   m_uniforms.ambientMaterial = glGetUniformLocation(program, "AmbientMaterial");
-   m_uniforms.specularMaterial = glGetUniformLocation(program, "SpecularMaterial");
-   m_uniforms.shininess = glGetUniformLocation(program, "Shininess"); 
-   m_uniforms.sampler = glGetUniformLocation(program, "Sampler");
+   m_attributes.position = glGetAttribLocation(lightShader, "Position");
+   m_attributes.normal = glGetAttribLocation(lightShader, "Normal");
+   m_attributes.diffuseMaterial = glGetAttribLocation(lightShader, "DiffuseMaterial");
+   m_attributes.textureCoord = glGetAttribLocation(lightShader, "TextureCoord");
+   m_uniforms.projection = glGetUniformLocation(lightShader, "Projection");
+   m_uniforms.modelview = glGetUniformLocation(lightShader, "Modelview");
+   m_uniforms.normalMatrix = glGetUniformLocation(lightShader, "NormalMatrix");
+   m_uniforms.lightPosition = glGetUniformLocation(lightShader, "LightPosition");
+   m_uniforms.ambientMaterial = glGetUniformLocation(lightShader, "AmbientMaterial");
+   m_uniforms.specularMaterial = glGetUniformLocation(lightShader, "SpecularMaterial");
+   m_uniforms.shininess = glGetUniformLocation(lightShader, "Shininess"); 
+   m_uniforms.sampler = glGetUniformLocation(lightShader, "Sampler");
    
    // set a texture
    glActiveTexture(GL_TEXTURE0);

@@ -187,7 +187,7 @@ exit(0);
       
       // Turret not currently firing, but I think it's because
       // the player starts too close to the turret
-      if ((*i)->isAlive() && dirToPlayer.Length() < 1000 && (*i)->shouldFire())
+      if ((*i)->isAlive() && dirToPlayer.Length() < 1500 && (*i)->shouldFire())
       {
          vec3 dirToPlayerNorm = dirToPlayer.Normalized();
          
@@ -451,7 +451,8 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
 	playerToObjVec = (*it)->getPosition() - m_player->getPosition();
 	if (playerToObjVec.Length() > 500 && 
 	    playerToObjVec.Length() < 4000 && 
-	    angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) {
+	    angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f &&
+       (*it)->isAlive()) {
 	   temp.push_back(*it);
 	   count++;
 	   if (count == 6) {
@@ -655,8 +656,9 @@ void GameEngine::createTerrain()
    
    for (point = m_worldData->path.begin(); point != m_worldData->path.end(); ++point) {
       for (prop = point->props.begin(); prop != point->props.end(); ++prop) {
-         string fileName = "models/" + prop->name;
-         SceneObject *obj = new SceneObject(fileName, "textures/test3.bmp", prop->loc, prop->fwd, prop->up, m_modules);
+         string fileName = "models/" + prop->name + ".obj";
+         string texture = "textures/" + prop->name + ".bmp";
+         SceneObject *obj = new SceneObject(fileName, texture, prop->loc, prop->fwd, prop->up, m_modules);
          m_modules->renderingEngine->addObject3d(obj);
          m_objects.push_back(obj);
       }

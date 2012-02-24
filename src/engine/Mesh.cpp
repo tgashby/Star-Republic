@@ -12,6 +12,7 @@ Mesh::Mesh(string meshName, string textureName, Modules *modules) {
    m_color = vec4(0.8f, 0.8f, 0.8f, 1.0f);
    m_visible = true;
    m_scale = DEFAULT_SCALE;
+   m_useLight = true;
 }
 
 Mesh::Mesh(string meshName, string textureName, float scale, Modules *modules) {
@@ -100,4 +101,12 @@ MeshData* Mesh::getMeshData() {
 
 TextureData* Mesh::getTextureData() {
    return m_modules->resourceManager->loadBMPImage(m_textureRef.name);
+}
+
+bool Mesh::useLights() {
+   return m_useLight;
+}
+
+void Mesh::setUseTexture() {
+   m_useLight = false;
 }
