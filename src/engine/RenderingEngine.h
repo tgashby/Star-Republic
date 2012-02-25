@@ -60,8 +60,10 @@ private:
    ivec2 m_screenSize;
    Modules *m_modules;
    ICamera *m_camera;
-   list<MeshRef> m_meshList;
-   list<TextureRef> m_textureList;
+   //list<MeshRef> m_meshList;
+   //list<TextureRef> m_textureList;
+   map<string, MeshRef> m_meshMap;
+   map<string, TextureRef> m_textureMap;
    GLuint m_planeVert;
    GLuint m_planeInt;
    TTF_Font *font;

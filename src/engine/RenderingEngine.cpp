@@ -15,8 +15,8 @@ unsigned short planeIndices[] = {
 RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
    m_screenSize = screenSize;
    m_modules = modules;
-   m_meshList = list<MeshRef>(0);
-   m_textureList = list<TextureRef>(0);
+   //m_meshList = list<MeshRef>(0);
+   //m_textureList = list<TextureRef>(0);
    m_camera = NULL;
    TTF_Init();
    
@@ -91,7 +91,6 @@ void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
 	
    // get a font
    SDL_Color color = {255, 255, 255};
-   SDL_Color color2 = {0, 0, 0};
    
    
 	/* Use SDL_TTF to render our text */
@@ -312,7 +311,83 @@ void RenderingEngine::useProgram(SHADER_TYPE type) {
    glUniform1i(m_curShaderProgram->uniforms.sampler, 0);
 }
 
+void RenderingEngine::loadMesh(IMesh *newMesh) {
+   // Check if the mesh was already loaded
+   string meshName = newMesh->getMeshName();
+   map<string, MeshRef>::iterator meshIter = m_meshMap.find(meshName);
+   if (meshIter != m_meshMap.end()) {
+      // Found a MeshRef for newMesh to reference
+      newMesh->setMeshRef(m_meshMap[meshName]);
+      m_meshMap[meshName].count += 1;
+   }
+   else {
+      // Get the meshData.
+      MeshData *meshData = newMesh->getMeshData();
+      
+      // Add the mesh VBO
+      GLuint vertexBuffer;
+      glGenBuffers(1, &vertexBuffer);
+      glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+      glBufferData(GL_ARRAY_BUFFER, meshData->vertexCount * VERTEX_STRIDE * sizeof(GLfloat),
+                   meshData->vertices, GL_STATIC_DRAW);
+      
+      GLuint indexBuffer;
+      glGenBuffers(1, &indexBuffer);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshData->indexCount * sizeof(GLushort),
+                   meshData->indices, GL_STATIC_DRAW);
+      
+      MeshRef newMeshRef;
+      // Setup a new mesh reference for the render engine
+      newMeshRef.name = meshName;
+      newMeshRef.vertexBuffer = vertexBuffer;
+      newMeshRef.indexBuffer = indexBuffer;
+      newMeshRef.indexCount = meshData->indexCount;
+      newMeshRef.bounds = meshData->bounds;
+      newMesh->setMeshRef(newMeshRef);
+      m_meshMap[meshName] = newMeshRef;
+      
+      // Clean up the mesh data
+      delete[] meshData->vertices;
+      delete[] meshData->indices;
+      delete meshData;
+   }
+   
+   // Need to change this to a list of textures in the future
+   string textureName = newMesh->getTextureName();
+   map<string, TextureRef>::iterator textrueIter = m_textureMap.find(textureName);
+   if (textrueIter != m_textureMap.end()) {
+      newMesh->setTextureRef(m_textureMap[textureName]);
+      m_textureMap[textureName].count += 1;
+   }
+   else {
+      // Get the texture
+      TextureData *textureData = newMesh->getTextureData();
+      
+      // Load a new texture.
+      GLuint textureBuffer;
+      glGenTextures(1, &textureBuffer);
+      glBindTexture(GL_TEXTURE_2D, textureBuffer);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureData->size.x, textureData->size.y, 0,
+                   GL_BGR, GL_UNSIGNED_BYTE, textureData->pixels);
+      delete textureData;
+      glGenerateMipmapEXT(GL_TEXTURE_2D);
+      
+      // Setup a new texture reference
+      TextureRef newTextureRef;
+      newTextureRef.name = textureName;
+      newTextureRef.textureBuffer = textureBuffer;
+      newMesh->setTextureRef(newTextureRef);
+      m_textureMap[textureName] = newTextureRef;
+   }
+}
 
+void RenderingEngine::unLoadMesh(IMesh* rmvMesh) {
+   
+}
+/*
 void RenderingEngine::loadMesh(IMesh *newMesh) {
    // Get the MeshRef and TextureRef from the new mesh.
    MeshRef newMeshRef = newMesh->getMeshRef();
@@ -424,4 +499,4 @@ void RenderingEngine::unLoadMesh(IMesh* rmvMesh) {
          m_textureList.erase(textureRef);
       }
    }
-}
+}*/
