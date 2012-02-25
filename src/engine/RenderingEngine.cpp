@@ -1,11 +1,5 @@
 #include "RenderingEngine.h"
 
-#define STRINGIFY(A)  #A
-#include "Texture.vert"
-#include "Texture.frag"
-#include "TexturedLighting.vert"
-#include "TexturedLighting.frag"
-
 float planeVertices[] = {
    0, 0, -1,   0, 0, 1,   0, 0, 0,   0, 0,
    0, 1, -1,   0, 0, 1,   0, 0, 0,   0, 1,
@@ -23,7 +17,6 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
    m_modules = modules;
    m_meshList = list<MeshRef>(0);
    m_textureList = list<TextureRef>(0);
-   //NOTE: WAS EQUAL TO NULL. SET TO SOMETHING USELESS SO CODE WOULD STOP SEGFAULTING
    m_camera = NULL;
    TTF_Init();
    
@@ -35,39 +28,10 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
       fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
    }
 #endif
-
-   // Create the GLSL program.
-   lightShader = buildProgram(SimpleVertexShader, SimpleFragmentShader);
-   textureShader = buildProgram(TextureVertexShader, TextrueFragmentShader);
-   glUseProgram(lightShader);
    
-   // Extract the handles to attributes and uniforms.
-   m_attributes.position = glGetAttribLocation(lightShader, "Position");
-   m_attributes.normal = glGetAttribLocation(lightShader, "Normal");
-   m_attributes.diffuseMaterial = glGetAttribLocation(lightShader, "DiffuseMaterial");
-   m_attributes.textureCoord = glGetAttribLocation(lightShader, "TextureCoord");
-   m_uniforms.projection = glGetUniformLocation(lightShader, "Projection");
-   m_uniforms.modelview = glGetUniformLocation(lightShader, "Modelview");
-   m_uniforms.normalMatrix = glGetUniformLocation(lightShader, "NormalMatrix");
-   m_uniforms.lightPosition = glGetUniformLocation(lightShader, "LightPosition");
-   m_uniforms.ambientMaterial = glGetUniformLocation(lightShader, "AmbientMaterial");
-   m_uniforms.specularMaterial = glGetUniformLocation(lightShader, "SpecularMaterial");
-   m_uniforms.shininess = glGetUniformLocation(lightShader, "Shininess"); 
-   m_uniforms.sampler = glGetUniformLocation(lightShader, "Sampler");
-   
-   // set a texture
-   glActiveTexture(GL_TEXTURE0);
-   glUniform1i(m_uniforms.sampler, 0);
+   createShaders();
+   useProgram(SHADER_VERTEX_LIGHT);
 	
-   // Set up some default material parameters.
-   glUniform3f(m_uniforms.ambientMaterial, 0.4f, 0.4f, 0.4f);
-   glUniform3f(m_uniforms.specularMaterial, 0.5, 0.5, 0.5);
-   glUniform1f(m_uniforms.shininess, 50);
-   
-   // Initialize various state.
-   glEnableVertexAttribArray(m_attributes.position);
-   glEnableVertexAttribArray(m_attributes.normal);
-   glEnableVertexAttribArray(m_attributes.textureCoord);
    glEnable(GL_DEPTH_TEST);
 
    glGenBuffers(1, &m_planeVert);
@@ -84,7 +48,7 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
       cerr << "error reading font\n";
    }
 
-   //glBlendFunc(GL_ONE, GL_ONE);
+   glBlendFunc(GL_ONE, GL_ONE);
 }
 
 
@@ -103,7 +67,6 @@ void RenderingEngine::addObject3d(IObject3d *obj) {
    for (mesh = objMeshes->begin(); mesh != objMeshes->end(); ++mesh) {
       loadMesh(*mesh);
    }
-   //m_objectList.push_back(obj);
 }
 
 
@@ -114,7 +77,6 @@ void RenderingEngine::removeObject3d(IObject3d *obj) {
    for (mesh = objMeshes->begin(); mesh != objMeshes->end(); ++mesh) {
       unLoadMesh(*mesh);
    }
-   // remove the object from objectList
 }
 
 void RenderingEngine::clearScreen() {
@@ -160,24 +122,24 @@ void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
    glEnable(GL_BLEND);
    
    mat4 projection = mat4::Parallel(-400, 400, -300, 300, 1, 10);
-   glUniformMatrix4fv(m_uniforms.projection, 1, 0, projection.Pointer());
+   glUniformMatrix4fv(m_curShaderProgram->uniforms.projection, 1, 0, projection.Pointer());
    
    // Set the model view matrix
    mat4 modelMtx = mat4::Scale(size.x, -size.y, 1);
    modelMtx = modelMtx * mat4::Translate(loc.x, loc.y, 0);
-   glUniformMatrix4fv(m_uniforms.modelview, 1, 0, modelMtx.Pointer());
+   glUniformMatrix4fv(m_curShaderProgram->uniforms.modelview, 1, 0, modelMtx.Pointer());
    
    // Set the normal matrix
    mat3 normalMtx = modelMtx.ToMat3();
-   glUniformMatrix3fv(m_uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
+   glUniformMatrix3fv(m_curShaderProgram->uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
    
    
 	int stride = 11 * sizeof(GLfloat);
    const GLvoid* normalOffset = (const GLvoid*) (3 * sizeof(GLfloat));
    const GLvoid* texCoordOffset = (const GLvoid*) (3 * sizeof(vec3));
-   GLint position = m_attributes.position;
-   GLint normal = m_attributes.normal;
-   GLint texCoord = m_attributes.textureCoord;
+   GLint position = m_curShaderProgram->attributes.position;
+   GLint normal = m_curShaderProgram->attributes.normal;
+   GLint texCoord = m_curShaderProgram->attributes.textureCoord;
    
    glBindTexture(GL_TEXTURE_2D, textureBuffer);
    glBindBuffer(GL_ARRAY_BUFFER, m_planeVert);
@@ -198,12 +160,6 @@ void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
    
    glEnable(GL_DEPTH);
    glDisable(GL_BLEND);
-   
-   /*
-   TTF_Font* font = TTF_OpenFont("ARIAL.TTF", 12);
-   SDL_Color foregroundColor = { 255, 255, 255 }; 
-   SDL_Color backgroundColor = { 0, 255, 0 };
-   SDL_Surface *textSurface = TTF_RenderText_Solid(font, "test", backgroundColor);*/
 }
 
 void RenderingEngine::render(list<IObject3d *> &objects) {
@@ -212,11 +168,9 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    
    // Get the projection * view matrix from the camera.
    mat4 projectionViewMatrix = m_camera->getProjectionViewMtx();
-   glUniformMatrix4fv(m_uniforms.projection, 1, 0, projectionViewMatrix.Pointer());
    
    // Set the light position.
    vec4 lightPosition(1, 1, 1, 0);
-   glUniform3fv(m_uniforms.lightPosition, 1, lightPosition.Pointer());
    
    list<IObject3d *>::iterator obj;
    list<IMesh *> *objMeshes;
@@ -229,20 +183,25 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
          if (!(*mesh)->isVisible())
             continue;
          
-         // Start with a scale matrix from the mesh scale
-         mat4 modelMtx = mat4::Scale((*mesh)->getScale());
+         // Change the shading program when needed
+         if ((*mesh)->getShaderType() != m_curShaderProgram->type) {
+            useProgram((*mesh)->getShaderType());
+         }
+         glUniformMatrix4fv(m_curShaderProgram->uniforms.projection, 1, 0, projectionViewMatrix.Pointer());
+         glUniform3fv(m_curShaderProgram->uniforms.lightPosition, 1, lightPosition.Pointer());
          
          // Set the model view matrix
+         mat4 modelMtx = mat4::Scale((*mesh)->getScale());
          modelMtx = modelMtx * (*mesh)->getModelMtx() ;
-         glUniformMatrix4fv(m_uniforms.modelview, 1, 0, modelMtx.Pointer());
+         glUniformMatrix4fv(m_curShaderProgram->uniforms.modelview, 1, 0, modelMtx.Pointer());
          
          // Set the normal matrix
          mat3 normalMtx = (*mesh)->getModelMtx().ToMat3();
-         glUniformMatrix3fv(m_uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
+         glUniformMatrix3fv(m_curShaderProgram->uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
          
          // Set the diffuse color.
          vec4 color =(*mesh)->getColor();
-         glVertexAttrib4f(m_attributes.diffuseMaterial, color.x, color.y, color.z, color.w);
+         glVertexAttrib4f(m_curShaderProgram->attributes.diffuseMaterial, color.x, color.y, color.z, color.w);
          
          // Draw the surface.
          MeshRef meshRef = (*mesh)->getMeshRef();
@@ -250,9 +209,9 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
          int stride = 11 * sizeof(GLfloat);
          const GLvoid* normalOffset = (const GLvoid*) (3 * sizeof(GLfloat));
          const GLvoid* texCoordOffset = (const GLvoid*) (3 * sizeof(vec3));
-         GLint position = m_attributes.position;
-         GLint normal = m_attributes.normal;
-         GLint texCoord = m_attributes.textureCoord;
+         GLint position = m_curShaderProgram->attributes.position;
+         GLint normal = m_curShaderProgram->attributes.normal;
+         GLint texCoord = m_curShaderProgram->attributes.textureCoord;
          
          glBindTexture(GL_TEXTURE_2D, textureRef.textureBuffer);
          glBindBuffer(GL_ARRAY_BUFFER, meshRef.vertexBuffer);
@@ -284,26 +243,73 @@ GLuint RenderingEngine::buildShader(const char* source, GLenum shaderType) const
    return shaderHandle;
 }
 
-GLuint RenderingEngine::buildProgram(const char* vertexShaderSource,
-                                     const char* fragmentShaderSource) const {
-   GLuint vertexShader = buildShader(vertexShaderSource, GL_VERTEX_SHADER);
-   GLuint fragmentShader = buildShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
+ShaderProgram RenderingEngine::buildProgram(const char* vertexShaderSource, const char* fragmentShaderSource, SHADER_TYPE type) {
+   ShaderProgram program;
+   program.vertexShader = buildShader(vertexShaderSource, GL_VERTEX_SHADER);
+   program.fragmentShader = buildShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
    
-   GLuint programHandle = glCreateProgram();
-   glAttachShader(programHandle, vertexShader);
-   glAttachShader(programHandle, fragmentShader);
-   glLinkProgram(programHandle);
+   program.program = glCreateProgram();
+   glAttachShader(program.program, program.vertexShader);
+   glAttachShader(program.program, program.fragmentShader);
+   glLinkProgram(program.program);
    
    GLint linkSuccess;
-   glGetProgramiv(programHandle, GL_LINK_STATUS, &linkSuccess);
+   glGetProgramiv(program.program, GL_LINK_STATUS, &linkSuccess);
    if (linkSuccess == GL_FALSE) {
       GLchar messages[256];
-      glGetProgramInfoLog(programHandle, sizeof(messages), 0, &messages[0]);
+      glGetProgramInfoLog(program.program, sizeof(messages), 0, &messages[0]);
       std::cout << messages;
       exit(1);
    }
    
-   return programHandle;
+   program.attributes.position = glGetAttribLocation(program.program, "Position");
+   program.attributes.normal = glGetAttribLocation(program.program, "Normal");
+   program.attributes.diffuseMaterial = glGetAttribLocation(program.program, "DiffuseMaterial");
+   program.attributes.textureCoord = glGetAttribLocation(program.program, "TextureCoord");
+   program.uniforms.projection = glGetUniformLocation(program.program, "Projection");
+   program.uniforms.modelview = glGetUniformLocation(program.program, "Modelview");
+   program.uniforms.normalMatrix = glGetUniformLocation(program.program, "NormalMatrix");
+   program.uniforms.lightPosition = glGetUniformLocation(program.program, "LightPosition");
+   program.uniforms.ambientMaterial = glGetUniformLocation(program.program, "AmbientMaterial");
+   program.uniforms.specularMaterial = glGetUniformLocation(program.program, "SpecularMaterial");
+   program.uniforms.shininess = glGetUniformLocation(program.program, "Shininess"); 
+   program.uniforms.sampler = glGetUniformLocation(program.program, "Sampler");
+   
+   return program;
+}
+
+void RenderingEngine::createShaders() {
+   ShaderProgram newShader;
+   string vertexShader, fragmentShader;
+   
+   vertexShader = m_modules->resourceManager->readShader("shaders/VertexLighting.vert");
+   fragmentShader = m_modules->resourceManager->readShader("shaders/VertexLighting.frag");
+   newShader = buildProgram(vertexShader.c_str(), fragmentShader.c_str(), SHADER_VERTEX_LIGHT);
+   m_shaderPrograms[SHADER_VERTEX_LIGHT] = newShader;
+   
+   vertexShader = m_modules->resourceManager->readShader("shaders/NoLighting.vert");
+   fragmentShader = m_modules->resourceManager->readShader("shaders/NoLighting.frag");
+   newShader = buildProgram(vertexShader.c_str(), fragmentShader.c_str(), SHADER_NO_LIGHT);
+   m_shaderPrograms[SHADER_NO_LIGHT] = newShader;
+}
+
+void RenderingEngine::useProgram(SHADER_TYPE type) {
+   m_curShaderProgram = &m_shaderPrograms[type];
+   glUseProgram(m_curShaderProgram->program);
+   
+   // Set up some default material properties 
+   glUniform3f(m_curShaderProgram->uniforms.ambientMaterial, 0.4f, 0.4f, 0.4f);
+   glUniform3f(m_curShaderProgram->uniforms.specularMaterial, 0.5, 0.5, 0.5);
+   glUniform1f(m_curShaderProgram->uniforms.shininess, 50);
+   
+   // setup vertex attributes for current program.
+   glEnableVertexAttribArray(m_curShaderProgram->attributes.position);
+   glEnableVertexAttribArray(m_curShaderProgram->attributes.normal);
+   glEnableVertexAttribArray(m_curShaderProgram->attributes.textureCoord);
+   
+   // set a texture
+   glActiveTexture(GL_TEXTURE0);
+   glUniform1i(m_curShaderProgram->uniforms.sampler, 0);
 }
 
 

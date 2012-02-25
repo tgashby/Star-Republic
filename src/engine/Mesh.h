@@ -27,8 +27,8 @@ public:
    string getTextureName();
    MeshData* getMeshData();
    TextureData* getTextureData();
-   bool useLights();
-   void setUseTexture();
+   SHADER_TYPE getShaderType();
+   void setShaderType(SHADER_TYPE type);
    
 private:
    MeshRef m_meshRef;
@@ -39,7 +39,7 @@ private:
    Modules *m_modules;
    bool m_visible;
    float m_scale;
-   bool m_useLight;
+   SHADER_TYPE m_shaderType;
 };
 
 #endif
