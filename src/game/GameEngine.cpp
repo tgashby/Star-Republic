@@ -288,9 +288,49 @@ void GameEngine::tic(uint64_t td) {
    }
 
    runCollisions();
+   cullObjects();
    }
 }
 
+void GameEngine::cullObjects() {
+  for (std::vector<Bullet *>::iterator bulletIter = m_bulletList.begin(); bulletIter != m_bulletList.end(); bulletIter++) {
+    if (isCullable(*bulletIter)) {
+      cullObject(*bulletIter);
+    }
+  }
+
+  //Add missile as well
+}
+
+bool GameEngine::isCullable(GameObject* obj) {
+  if (typeid(*obj) == typeid(Bullet)) {
+    return true;
+  }
+
+  if (typeid(*obj) == typeid(Missile)) {
+    return true;
+  }
+
+  return false;
+}
+
+void GameEngine::cullObject(GameObject* obj) {
+  if (typeid(*obj) == typeid(Bullet)) {
+    m_bulletList.erase(find(m_bulletList.begin(), 
+			    m_bulletList.end(), obj));
+  }
+  
+  if (typeid(*obj) == typeid(Missile)) {
+    m_missileList.erase(find(m_missileList.begin(), 
+			     m_missileList.end(), obj));
+  }
+
+  m_objects.erase(find(m_objects.begin(), m_objects.end(), (Object3d*) obj));
+  m_gameObjects.erase(find(m_gameObjects.begin(),
+			   m_gameObjects.end(), obj));
+  
+  delete obj;
+}
 
 void GameEngine::render() {
    //Checks if the current state is the game state. This could be made more elegant.

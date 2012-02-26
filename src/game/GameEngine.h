@@ -43,9 +43,10 @@ private:
    void createTurrets();
    void createTerrain();
    void addAsteroids();
+   void cullObjects();
+   void cullObject(GameObject* obj);
+   bool isCullable(GameObject* obj);
    
-   list<IObject3d *> m_objects;
-   list<GameObject *> m_gameObjects;
    Player *m_player;
    Reticle *m_reticle;
    Camera *m_camera;
@@ -63,6 +64,8 @@ private:
    std::vector<Turret *> m_turrets;
    std::vector<Missile *> m_missileList;
    std::vector<GameObject *> m_enemies;
+   list<IObject3d *> m_objects;
+   list<GameObject *> m_gameObjects;
 
    EnemyShip* m_enemyShip;
    EnemyGunship* m_enemyGunner;
