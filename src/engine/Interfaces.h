@@ -32,6 +32,11 @@ enum LOAD_NORMAL_TYPE {
    LOAD_NORMAL_FACE,
 };
 
+enum SHADER_TYPE {
+   SHADER_VERTEX_LIGHT,
+   SHADER_NO_LIGHT,
+};
+
 struct MeshBounds {
    vec3 mean;
    vec3 min;
@@ -118,27 +123,13 @@ struct TextureData {
    ivec2 size;
 };
 
-/*
-// holds world data for loading a map.
-// locations in the world are described by a sequence of three vectors.
-// 0: point in the world
-// 1: fowrward vector
-// 2: up vector
-struct WorldData {
-   vector<vec3> path; // locations for a path.
-   vector<ivec4> links; // should be a 1/3rd the size of path.
-   vector<vec3> turrets; // locations of turrets.
-   vector<vec3> worldLocs; // locations of the world meshes
-   vector<string> worldMeshes; // names of the world meshes
-};*/
-
 // An abstract class for the 
 struct IMesh {
    virtual ~IMesh() {}
-   virtual MeshRef getMeshRef() = 0;
-   virtual void setMeshRef(MeshRef meshRef) = 0;
-   virtual TextureRef getTextureRef() = 0;
-   virtual void setTextureRef(TextureRef textureRef) = 0;
+   virtual MeshRef* getMeshRef() = 0;
+   virtual void setMeshRef(MeshRef *meshRef) = 0;
+   virtual TextureRef* getTextureRef() = 0;
+   virtual void setTextureRef(TextureRef *textureRef) = 0;
    virtual void setModelMtx(mat4 modelMtx) = 0;
    virtual mat4 getModelMtx() = 0;
    virtual void setScale(float scale) = 0;
@@ -148,6 +139,8 @@ struct IMesh {
    virtual bool isVisible() = 0;
    virtual void setVisible(bool visible) = 0;
    virtual MeshBounds getMeshBounds() = 0;
+   virtual SHADER_TYPE getShaderType() = 0;
+   virtual void setShaderType(SHADER_TYPE type) = 0;
    
    // File name and Mesh type
    // Name used as a key by Rendering Engine for finding duplicate meshes.
@@ -204,6 +197,8 @@ struct IRenderingEngine {
    virtual void setCamera(ICamera *camera) = 0;
    virtual void addObject3d(IObject3d *obj) = 0;
    virtual void removeObject3d(IObject3d *obj) = 0;
+   virtual void drawText(string text, ivec2 loc, ivec2 size) = 0;
+   virtual void clearScreen() = 0;
 };
 
 // Any resurces from the file system should be accessed
@@ -214,6 +209,7 @@ struct IResourceManager {
    virtual TextureData *loadBMPImage(string fileName) = 0;
    //virtual ImageData *loadPngImage(string fileName) = 0;
    virtual WorldData *readWorldData(string fileName) = 0;
+   virtual string readShader(string name) = 0;
 };
 
 

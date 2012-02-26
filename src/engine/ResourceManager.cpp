@@ -339,6 +339,10 @@ WorldData* ResourceManager::readWorldData(string fileName) {
    return world;
 }
 
+string ResourceManager::readShader(string name) {
+   return readTextFile(name);
+}
+
 float parseFloat(const std::string line) {
    
    float f;
@@ -511,4 +515,43 @@ Sound* loadMusic(string fileName)
    }
    
    return sound;
+}
+
+string readTextFile(string fileName) {
+   cout << fileName << "\n";
+   
+   const char *fn = fileName.c_str();
+   char *data;
+   int fileSize;
+	
+	if (fn != NULL) {
+		ifstream input(fn);
+      if (!input) {
+         cerr << "error reading textfile: " << fileName << "\n";
+         exit(1);
+      }
+      
+      int stf = (int) input.tellg();
+      input.seekg(0, ios::end);
+      
+      int endf = (int) input.tellg();
+      
+      fileSize = endf - stf;
+      
+      if(fileSize <= 0)
+         return "";
+      
+      data = new char[fileSize+50];//50 added to just have buffer
+      memset(data, '\0',fileSize+10);
+      input.seekg(0, ios::beg);
+      
+      input.read(data,fileSize);
+      input.close();
+      data[fileSize]= '\0';	//appending the zero as the read does not append that      
+	}
+   
+   string retStr = string(data);
+   cout << retStr << "\n";
+   
+	return retStr;
 }

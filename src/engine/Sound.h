@@ -54,6 +54,11 @@ public:
     */
    void resume();
    
+   /**
+    * stops the sound and frees the channel
+    */
+   void stop();
+   
 private:
 };
 

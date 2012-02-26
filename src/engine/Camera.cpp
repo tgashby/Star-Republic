@@ -2,7 +2,7 @@
 
 Camera::Camera(PathPoint* head, PathPoint* tail)
    : m_pathPos(0,0,0), m_pathRef(0,0,1), m_pathUp(0,1,0), m_pathSide (1, 0, 0),
-     m_eye(0,0,0), m_ref(0,0,1), m_up(0,1,0), cameraType(_MOTION_CAMERA), 
+     m_eye(0,0,0), m_ref(0,0,1), m_up(0,1,0), cameraType(_MOTION_CAMERA),
      m_turning(false), m_boosting(false), m_boostTime(0) {
 
    //Save the tail and head
@@ -12,17 +12,17 @@ Camera::Camera(PathPoint* head, PathPoint* tail)
    //Set the current up, position, reference, side, and forward vectors
    m_pathUp = m_tail->getUp();
    m_pathPos = tail->getPosition();
-   m_pathRef = m_pathPos + ((head->getPosition() 
-			     - tail->getPosition()).Normalized() 
-			    * CAMERA_LOOK_AHEAD_DISTANCE);
-   m_pathForw = (m_head->getPosition() - 
-		 m_tail->getPosition()).Normalized();
+   m_pathRef = m_pathPos + ((head->getPosition()
+- tail->getPosition()).Normalized()
+* CAMERA_LOOK_AHEAD_DISTANCE);
+   m_pathForw = (m_head->getPosition() -
+m_tail->getPosition()).Normalized();
    calculateSide();
 
    //Calculate the angle between them
    m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
    
-   //Initialize the real look at vectors  
+   //Initialize the real look at vectors
    m_eye = m_pathPos;
    m_ref = m_pathRef;
    m_up = m_pathUp;
@@ -40,7 +40,7 @@ vec3 Camera::getPosition()
 mat4 Camera::getProjectionViewMtx() {
    // Set the projection matrix
    float h = 4.0f * 640 / 480;
-   mat4 projectionMatrix = mat4::Frustum(-h / 2, h / 2, -2, 2, 4, 6000);
+   mat4 projectionMatrix = mat4::Frustum(-h / 2, h / 2, -2, 2, 4, 8000);
    
    // Apply the view
    projectionMatrix = mat4::LookAt(projectionMatrix, m_eye, m_ref, m_up);
@@ -74,11 +74,11 @@ void Camera::tic(uint64_t time) {
    float pathAccOffset = 0.0;
 
   // Find the angle between the two paths
-//  float rotAngle = m_pathAngle * (m_head->getPosition() - m_pathPos).Length() 
-//     / ((m_head->getPosition() - m_tail->getPosition()).Length() 
-//     - CAMERA_LOOK_AHEAD_DISTANCE);
+// float rotAngle = m_pathAngle * (m_head->getPosition() - m_pathPos).Length()
+// / ((m_head->getPosition() - m_tail->getPosition()).Length()
+// - CAMERA_LOOK_AHEAD_DISTANCE);
 
-  // If we are turning our forward, but the angle between ourselves and 
+  // If we are turning our forward, but the angle between ourselves and
   // the intended is close enough, stop turning to allow for rotation
   /*if (m_turning && .5 > 
       angleBetween(m_head->getPosition() - m_tail->getPosition(), 
@@ -103,8 +103,9 @@ void Camera::tic(uint64_t time) {
   if (m_boosting) {
      m_boostTime += time;
      if (m_boostTime > 2000) {
-	m_boostTime = 2000;
+m_boostTime = 2000;
      }
+
 
      pathAccOffset = (CAMERA_BOOST_ACC * m_boostTime);
 
@@ -114,6 +115,7 @@ void Camera::tic(uint64_t time) {
      if(m_boostTime < 0) {
 	m_boostTime = 0;
      }
+
   }
 
   m_pathRef += (((m_head->getPosition() - m_pathRef).Normalized()) * 
@@ -147,9 +149,9 @@ void Camera::setLookAt() {
    }
    
    if (cameraType == _SHIP_CAMERA) {
-      m_eye = (m_player->getPosition() 
-	       - (m_player->getAimForward() * CAMERA_DIST_FROM_PLAYER) 
-	       + (m_player->getAimUp() * SHIP_CAMERA_ABOVE_SCALAR));
+      m_eye = (m_player->getPosition()
+- (m_player->getAimForward() * CAMERA_DIST_FROM_PLAYER)
++ (m_player->getAimUp() * SHIP_CAMERA_ABOVE_SCALAR));
       m_ref = m_player->getAimForward() + m_player->getPosition();
       m_up = m_player->getAimUp();
       m_player->setVisible(true);

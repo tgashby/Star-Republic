@@ -5,6 +5,7 @@
 #define VINTENS 0.5
 #define SCREENX 400
 #define SCREENY 300
+#define MAXDISTANCE 1200
 #define MAXSCAREDANGLE 20
 #define MAXSCAREDSPEED 0.35
 #define DISTANCESCALE 100
@@ -53,12 +54,29 @@ EnemyShip::~EnemyShip()
 //All Vectors are updated in here
 void EnemyShip::tic(uint64_t time)
 {
-  if (isAlive()) {
+  if (time == 0)
+  {
+     mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
+                    mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
+     modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
+     m_mesh->setModelMtx(modelMtx);
+     m_mesh->setVisible(true);
+  }
+
+  dpos = (m_playerRef.getPosition() - m_position);
+  if (isAlive() && dpos.Length() < MAXDISTANCE) {
     /** the normalized vector between the player and the enemy **/
+<<<<<<< HEAD
     dpos = (m_playerRef->getPosition() - m_position).Normalized();
   
     // moving based on the player's direction and it's aiming direction
     m_position += m_playerRef->getForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
+=======
+    dpos = dpos.Normalized();
+  
+    // moving based on the player's direction and it's aiming direction
+    m_position += m_playerRef.getMForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
+>>>>>>> 6f97755cbb180aa2f235d770d0b1473696d1c8bd
     
     /** 'scared ship' AI **/
     float aimAngle;
