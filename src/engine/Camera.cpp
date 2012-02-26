@@ -193,6 +193,13 @@ void Camera::setBoosting(bool boostStatus) {
    m_boosting = boostStatus;
 }
 
+#ifdef GAME_DEBUG
+   void Camera::setPosition(vec3 newPos)
+   {
+      m_pathPos = newPos;
+   }
+#endif
+
 bool Camera::isBoosting() {
    return m_boosting;
 }

@@ -29,6 +29,8 @@ PathPoint::PathPoint(vec3 position, vec3 forward, vec3 up, ivec4 links) {
   this->position = position;
   this->up = up.Normalized();
   this->forward = forward.Normalized();
+  this->side = vec3(0,0,0);
+   
   setFirstID(links.y);
    setNumberOfIDs(1);
   if (links.z != -1) {
