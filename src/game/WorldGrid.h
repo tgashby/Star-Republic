@@ -19,6 +19,8 @@
 #include "EnemyShip.h"
 #include "EnemyGunship.h"
 
+#define WORLDGRID_DEBUG
+
 /**
  * Quadrant structure, representing the area between two points
  */
@@ -118,7 +120,9 @@ public:
     */
    std::list<IObject3d*> getDrawableObjects();
    
+#ifndef WORLDGRID_DEBUG
 private:
+#endif
    WorldData& m_world;
    std::vector<Quadrant*> m_quadrants;
    Player* m_player;

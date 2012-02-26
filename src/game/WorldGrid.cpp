@@ -35,7 +35,17 @@ WorldGrid::WorldGrid(WorldData& world, Modules* modules)
 
 WorldGrid::~WorldGrid()
 {
-   
+   for (std::vector<Quadrant*>::iterator i = m_quadrants.begin(); i != m_quadrants.end(); i++) 
+   {
+      Quadrant* currQuad = *i;
+      
+      for (std::list<GameObject*>::iterator j = currQuad->m_gameObjects.begin(); j != currQuad->m_gameObjects.end(); j++) 
+      {
+         delete *j;
+      }
+      
+      delete currQuad;
+   }
 }
 
 void WorldGrid::setPlayer(Player *player)

@@ -150,6 +150,12 @@ struct Vector3 {
     {
         return x == v.x && y == v.y && z == v.z;
     }
+   
+   friend std::ostream& operator<<(std::ostream& output, const Vector3& v) 
+   {
+      output << "(" <<  v.x << ", " << v.y << ", " << v.z << ")";
+      return output;  // for multiple << operators.
+   }
     Vector3 Lerp(float t, const Vector3& v) const
     {
         return Vector3(x * (1 - t) + v.x * t,

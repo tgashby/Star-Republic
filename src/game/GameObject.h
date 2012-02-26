@@ -38,7 +38,7 @@ public:
    GameObject();
    
    // Destructors
-   ~GameObject();
+   virtual ~GameObject();
    
    /**
     * tic - Runs once per game loop to update the game object's location and
