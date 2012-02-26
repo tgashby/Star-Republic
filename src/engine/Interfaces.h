@@ -120,10 +120,10 @@ struct TextureData {
 // An abstract class for the 
 struct IMesh {
    virtual ~IMesh() {}
-   virtual MeshRef getMeshRef() = 0;
-   virtual void setMeshRef(MeshRef meshRef) = 0;
-   virtual TextureRef getTextureRef() = 0;
-   virtual void setTextureRef(TextureRef textureRef) = 0;
+   virtual MeshRef* getMeshRef() = 0;
+   virtual void setMeshRef(MeshRef *meshRef) = 0;
+   virtual TextureRef* getTextureRef() = 0;
+   virtual void setTextureRef(TextureRef *textureRef) = 0;
    virtual void setModelMtx(mat4 modelMtx) = 0;
    virtual mat4 getModelMtx() = 0;
    virtual void setScale(float scale) = 0;

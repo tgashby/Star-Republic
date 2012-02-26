@@ -1,13 +1,12 @@
 #include "Mesh.h"
 
 Mesh::Mesh(string meshName, string textureName, Modules *modules) {
-   m_meshRef = MeshRef();
-   m_meshRef.name = meshName;
+   m_meshName = meshName;
+   m_textureName = textureName;
+   m_meshRef = NULL;
+   m_textureRef = NULL;
+   
    m_modules = modules;
-   
-   m_textureRef = TextureRef();
-   m_textureRef.name = textureName;
-   
    m_modelMatrix = mat4::Identity();
    m_color = vec4(0.8f, 0.8f, 0.8f, 1.0f);
    m_visible = true;
@@ -16,36 +15,36 @@ Mesh::Mesh(string meshName, string textureName, Modules *modules) {
 }
 
 Mesh::Mesh(string meshName, string textureName, float scale, Modules *modules) {
-   m_meshRef = MeshRef();
-   m_meshRef.name = meshName;
+   m_meshName = meshName;
+   m_textureName = textureName;
+   m_meshRef = NULL;
+   m_textureRef = NULL;
+   
    m_modules = modules;
-   
-   m_textureRef = TextureRef();
-   m_textureRef.name = textureName;
-   
    m_modelMatrix = mat4::Identity();
    m_color = vec4(0.8f, 0.8f, 0.8f, 1.0f);
    m_visible = true;
    m_scale = scale;
+   m_shaderType = SHADER_VERTEX_LIGHT;
 }
 
 Mesh::~Mesh() {
    
 }
 
-MeshRef Mesh::getMeshRef() {
+MeshRef* Mesh::getMeshRef() {
    return m_meshRef;
 }
 
-void Mesh::setMeshRef(MeshRef meshRef) {
+void Mesh::setMeshRef(MeshRef *meshRef) {
    m_meshRef = meshRef;
 }
 
-TextureRef Mesh::getTextureRef() {
+TextureRef* Mesh::getTextureRef() {
    return m_textureRef;
 }
 
-void Mesh::setTextureRef(TextureRef textureRef) {
+void Mesh::setTextureRef(TextureRef *textureRef) {
    m_textureRef = textureRef;
 }
 
@@ -82,25 +81,26 @@ void Mesh::setVisible(bool visible) {
 }
 
 MeshBounds Mesh::getMeshBounds() {
-   return m_meshRef.bounds;
+   if (m_meshRef == NULL) {
+      return MeshBounds();
+   }
+   return m_meshRef->bounds;
 }
 
 string Mesh::getMeshName() {
-   return m_meshRef.name;
+   return m_meshName;
 }
 
 string Mesh::getTextureName() {
-   return m_textureRef.name;
+   return m_textureName;
 }
 
 MeshData* Mesh::getMeshData() {
-   return m_modules->resourceManager->readMeshData(m_meshRef.name,
-                                                   LOAD_NORMAL_VERTEX,
-                                                   1.0);
+   return m_modules->resourceManager->readMeshData(m_meshName, LOAD_NORMAL_VERTEX, 1.0);
 }
 
 TextureData* Mesh::getTextureData() {
-   return m_modules->resourceManager->loadBMPImage(m_textureRef.name);
+   return m_modules->resourceManager->loadBMPImage(m_textureName);
 }
 
 SHADER_TYPE Mesh::getShaderType() {
