@@ -349,15 +349,12 @@ exit(0);
        bulletIterator++){
       (*bulletIterator)->tic(td);
       //Cull the bullet!
-      if(!(*bulletIterator)->isAlive()){
-         //m_bulletList.erase(bulletIterator);
-      }
          
    }
 
    for (std::vector<Missile *>::iterator missileIterator = m_missileList.begin();
-missileIterator != m_missileList.end();
-missileIterator++) {
+	missileIterator != m_missileList.end();
+	missileIterator++) {
       (*missileIterator)->tic(td);
       //Cull the missile!
    }
@@ -373,7 +370,8 @@ missileIterator++) {
 }
 
 void GameEngine::cullObjects() {
-  for (std::vector<Bullet *>::iterator bulletIter = m_bulletList.begin(); bulletIter != m_bulletList.end(); bulletIter++) {
+  for (std::vector<Bullet *>::iterator bulletIter = m_bulletList.begin(); 
+       bulletIter != m_bulletList.end(); bulletIter++) {
     if (isCullable(*bulletIter)) {
       cullObject(*bulletIter);
     }
@@ -434,7 +432,6 @@ void GameEngine::render() {
 bool GameEngine::handleEvents()
 {
    bool running = true;
-   
    SDL_Event evt;
    
    while (SDL_PollEvent(&evt))
