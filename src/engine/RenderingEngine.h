@@ -40,6 +40,33 @@ struct ShaderProgram {
    AttributeHandles attributes;
 };
 
+struct MeshRef: public IRef {
+   MeshRef(string n, GLuint vb, GLuint ib, int iCount, MeshBounds b) {
+      fileName = n;
+      vertexBuffer = vb;
+      indexBuffer = ib;
+      indexCount = iCount;
+      bounds = b;
+      count = 1;
+      loaded = true;
+   }
+   GLuint vertexBuffer;
+   GLuint indexBuffer;
+   int indexCount;
+   int count;
+};
+
+struct TextureRef: public IRef {
+   TextureRef(string n, GLuint tb) {
+      fileName = n;
+      textureBuffer = tb;
+      count = 1;
+      loaded = true;
+   }
+   GLuint textureBuffer;
+   int count;
+};
+
 class RenderingEngine : public IRenderingEngine {
 public:
    RenderingEngine(ivec2 screenSize, Modules *modules);
@@ -60,16 +87,12 @@ private:
    ivec2 m_screenSize;
    Modules *m_modules;
    ICamera *m_camera;
-   //list<MeshRef> m_meshList;
-   //list<TextureRef> m_textureList;
    map<string, MeshRef*> m_meshMap;
    map<string, TextureRef*> m_textureMap;
    GLuint m_planeVert;
    GLuint m_planeInt;
    TTF_Font *font;
    map<SHADER_TYPE, ShaderProgram> m_shaderPrograms;
-   //ShaderProgram m_vertexLightShader;
-   //ShaderProgram m_noLightShader;
    ShaderProgram *m_curShaderProgram;
 };
 

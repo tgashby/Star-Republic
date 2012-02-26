@@ -37,6 +37,7 @@ struct MeshBounds {
    vec3 max;
 };
 
+/*
 // Used by the RenderingEngine to keep track of mesh VBOs.
 struct MeshRef {
    MeshRef() {
@@ -73,8 +74,22 @@ struct MeshRef {
    int indexCount;
    int count;
    MeshBounds bounds;
-};
+};*/
 
+// Extended by the Rendering Engine for referencing Meshes and Textures
+struct IRef {
+   IRef() {
+      fileName = "";
+      loaded = false;
+   }
+   IRef(string name) {
+      fileName = name;
+      loaded = false;
+   }
+   string fileName;
+   bool loaded;
+   MeshBounds bounds;
+};
 
 // Holds data for creating Mesh VBOs
 struct MeshData {
@@ -85,45 +100,21 @@ struct MeshData {
    MeshBounds bounds;
 };
 
-// Used by the RenderingEngine to keep track of mesh VBOs.
-struct TextureRef {
-public:
-   TextureRef() {
-      name = "";
-      count = 0;
-   }
-   TextureRef(string n, unsigned int tb) {
-      name = n;
-      textureBuffer = tb;
-      count = 1;
-   }
-   TextureRef(const TextureRef &other) {
-      name = other.name;
-      textureBuffer = other.textureBuffer;
-      count = other.count;
-   }
-   int operator==(const TextureRef &rhs) {
-      if (name == rhs.name) return 1;
-      return 0;
-   }
-   string name;
-   unsigned int textureBuffer;
-   int count;
-};
-
 // holds date for textures
 struct TextureData {
    void* pixels;
+   void* data;
    ivec2 size;
 };
 
 // An abstract class for the 
 struct IMesh {
    virtual ~IMesh() {}
-   virtual MeshRef* getMeshRef() = 0;
-   virtual void setMeshRef(MeshRef *meshRef) = 0;
-   virtual TextureRef* getTextureRef() = 0;
-   virtual void setTextureRef(TextureRef *textureRef) = 0;
+   virtual IRef* getMeshRef() = 0;
+   virtual void setMeshRef(IRef *meshRef) = 0;
+   virtual vector<IRef*>* getTextureRefs() = 0;
+   virtual int getNumTextureRefs() = 0;
+   virtual IRef* getTextureRef(int index) = 0;
    virtual void setModelMtx(mat4 modelMtx) = 0;
    virtual mat4 getModelMtx() = 0;
    virtual void setScale(float scale) = 0;
@@ -135,14 +126,6 @@ struct IMesh {
    virtual MeshBounds getMeshBounds() = 0;
    virtual SHADER_TYPE getShaderType() = 0;
    virtual void setShaderType(SHADER_TYPE type) = 0;
-   
-   // File name and Mesh type
-   // Name used as a key by Rendering Engine for finding duplicate meshes.
-   virtual string getMeshName() = 0;
-   virtual string getTextureName() = 0;
-   
-   virtual MeshData* getMeshData() = 0;
-   virtual TextureData* getTextureData() = 0;
 };
 
 // Accessed by the RenderingEngine for a combined projection and view matrix.

@@ -48,6 +48,7 @@ TextureData* ResourceManager::loadBMPImage(string fileName) {
    TextureData *textureData = new TextureData();
    textureData->size = ivec2(m_image->w, m_image->h);
    textureData->pixels = m_image->pixels;
+   textureData->data = m_image;
    
    return textureData;
 }

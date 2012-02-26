@@ -180,6 +180,21 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
          if (!(*mesh)->isVisible())
             continue;
          
+         // Check if the mesh was loaded.
+         IRef *ref;
+         ref = (*mesh)->getMeshRef();
+         if (!ref->loaded) {
+            continue;
+         }
+         MeshRef *meshRef = (MeshRef *) ref;
+         
+         // Check if the texture was loaded.
+         ref = (*mesh)->getTextureRef(0);
+         if (!ref->loaded) {
+            continue;
+         }
+         TextureRef *textureRef = (TextureRef *) ref;
+         
          // Change the shading program when needed
          if ((*mesh)->getShaderType() != m_curShaderProgram->type) {
             useProgram((*mesh)->getShaderType());
@@ -201,8 +216,6 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
          glVertexAttrib4f(m_curShaderProgram->attributes.diffuseMaterial, color.x, color.y, color.z, color.w);
          
          // Draw the surface.
-         MeshRef *meshRef = (*mesh)->getMeshRef();
-         TextureRef *textureRef = (*mesh)->getTextureRef();
          int stride = 11 * sizeof(GLfloat);
          const GLvoid* normalOffset = (const GLvoid*) (3 * sizeof(GLfloat));
          const GLvoid* texCoordOffset = (const GLvoid*) (3 * sizeof(vec3));
@@ -311,80 +324,90 @@ void RenderingEngine::useProgram(SHADER_TYPE type) {
 
 void RenderingEngine::loadMesh(IMesh *newMesh) {
    // Check if the mesh was already loaded
-   string meshName = newMesh->getMeshName();
-   map<string, MeshRef*>::iterator meshIter = m_meshMap.find(meshName);
-   if (meshIter != m_meshMap.end()) {
-      // Found a MeshRef for newMesh to reference
-      newMesh->setMeshRef(meshIter->second);
-      meshIter->second->count += 1;
-   }
-   else {
-      // Get the meshData.
-      MeshData *meshData = newMesh->getMeshData();
-      
-      // Add the mesh VBO
-      GLuint vertexBuffer;
-      glGenBuffers(1, &vertexBuffer);
-      glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-      glBufferData(GL_ARRAY_BUFFER, meshData->vertexCount * VERTEX_STRIDE * sizeof(GLfloat),
-                   meshData->vertices, GL_STATIC_DRAW);
-      
-      GLuint indexBuffer;
-      glGenBuffers(1, &indexBuffer);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshData->indexCount * sizeof(GLushort),
-                   meshData->indices, GL_STATIC_DRAW);
-      
-      MeshRef *newMeshRef = new MeshRef();
-      // Setup a new mesh reference for the render engine
-      newMeshRef->name = meshName;
-      newMeshRef->vertexBuffer = vertexBuffer;
-      newMeshRef->indexBuffer = indexBuffer;
-      newMeshRef->indexCount = meshData->indexCount;
-      newMeshRef->bounds = meshData->bounds;
-      newMesh->setMeshRef(newMeshRef);
-      m_meshMap[meshName] = newMeshRef;
-      
-      // Clean up the mesh data
-      delete[] meshData->vertices;
-      delete[] meshData->indices;
-      delete meshData;
+   IRef *ref = newMesh->getMeshRef();
+   if (!ref->loaded) {
+      map<string, MeshRef*>::iterator meshIter = m_meshMap.find(ref->fileName);
+      if (meshIter != m_meshMap.end()) {
+         // Found a MeshRef for newMesh to reference
+         newMesh->setMeshRef(meshIter->second);
+         meshIter->second->count += 1;
+      }
+      else {
+         // Get the meshData.
+         MeshData *meshData = m_modules->resourceManager->readMeshData(ref->fileName, LOAD_NORMAL_VERTEX, 1.0);;
+         
+         // Add the mesh VBO
+         GLuint vertexBuffer;
+         glGenBuffers(1, &vertexBuffer);
+         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+         glBufferData(GL_ARRAY_BUFFER, meshData->vertexCount * VERTEX_STRIDE * sizeof(GLfloat),
+                      meshData->vertices, GL_STATIC_DRAW);
+         
+         GLuint indexBuffer;
+         glGenBuffers(1, &indexBuffer);
+         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+         glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshData->indexCount * sizeof(GLushort),
+                      meshData->indices, GL_STATIC_DRAW);
+         
+         MeshRef *newMeshRef = new MeshRef(ref->fileName, vertexBuffer, indexBuffer, meshData->indexCount, meshData->bounds);
+         newMesh->setMeshRef(newMeshRef);
+         m_meshMap[ref->fileName] = newMeshRef;
+         
+         // Clean up the mesh data
+         delete[] meshData->vertices;
+         delete[] meshData->indices;
+         delete meshData;
+      }
+      delete ref;
    }
    
-   // Need to change this to a list of textures in the future
-   string textureName = newMesh->getTextureName();
-   map<string, TextureRef*>::iterator textureIter = m_textureMap.find(textureName);
-   if (textureIter != m_textureMap.end()) {
-      newMesh->setTextureRef(textureIter->second);
-      textureIter->second->count += 1;
-   }
-   else {
-      // Get the texture
-      TextureData *textureData = newMesh->getTextureData();
+   vector<IRef*> *refs = newMesh->getTextureRefs();
+   vector<IRef*>::iterator refIter = refs->begin();
+   while (refIter != refs->end()) {
+      ref = *refIter;
       
-      // Load a new texture.
-      GLuint textureBuffer;
-      glGenTextures(1, &textureBuffer);
-      glBindTexture(GL_TEXTURE_2D, textureBuffer);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureData->size.x, textureData->size.y, 0,
-                   GL_BGR, GL_UNSIGNED_BYTE, textureData->pixels);
-      delete textureData;
-      glGenerateMipmapEXT(GL_TEXTURE_2D);
+      if (!ref->loaded) {
+         map<string, TextureRef*>::iterator textureIter = m_textureMap.find(ref->fileName);
+         if (textureIter != m_textureMap.end()) {
+            *refIter = textureIter->second;
+            textureIter->second->count += 1;
+         }
+         else {
+            // Get the texture
+            TextureData *textureData = m_modules->resourceManager->loadBMPImage(ref->fileName);
+            SDL_Surface *surface = (SDL_Surface *) textureData->data;
+            
+            // Load a new texture.
+            GLuint textureBuffer;
+            glGenTextures(1, &textureBuffer);
+            glBindTexture(GL_TEXTURE_2D, textureBuffer);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, surface->w, surface->h, 0,
+                         GL_BGR, GL_UNSIGNED_BYTE, surface->pixels);
+            //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureData->size.x, textureData->size.y, 0,
+            //               GL_BGR, GL_UNSIGNED_BYTE, textureData->pixels);
+            delete textureData;
+            glGenerateMipmapEXT(GL_TEXTURE_2D);
+            
+            // Setup a new texture reference
+            TextureRef *newTextureRef = new TextureRef(ref->fileName, textureBuffer);
+            *refIter = newTextureRef;
+            m_textureMap[ref->fileName] = newTextureRef;
+         }
+         delete ref;
+      }
       
-      // Setup a new texture reference
-      TextureRef *newTextureRef = new TextureRef();
-      newTextureRef->name = textureName;
-      newTextureRef->textureBuffer = textureBuffer;
-      newMesh->setTextureRef(newTextureRef);
-      m_textureMap[textureName] = newTextureRef;
+      ++refIter;
    }
 }
 
 void RenderingEngine::unLoadMesh(IMesh* rmvMesh) {
-   string meshName = rmvMesh->getMeshName();
-   map<string, MeshRef*>::iterator meshIter = m_meshMap.find(meshName);
+   //string meshName = rmvMesh->getMeshName();
+   IRef *ref = rmvMesh->getMeshRef();
+   rmvMesh->setMeshRef(new IRef(ref->fileName));
+   
+   map<string, MeshRef*>::iterator meshIter = m_meshMap.find(ref->fileName);
    if (meshIter != m_meshMap.end()) {
       meshIter->second->count -= 1;
       if (meshIter->second->count < 1) {
@@ -395,20 +418,31 @@ void RenderingEngine::unLoadMesh(IMesh* rmvMesh) {
       }
    }
    else {
-      cout << "Mesh " << meshName << " was already unloaded from the RenderingEngine\n";
+      cout << "Mesh " << ref->fileName << " was already unloaded from the RenderingEngine\n";
+      delete ref;
    }
    
-   string textureName = rmvMesh->getTextureName();
-   map<string, TextureRef*>::iterator textureIter = m_textureMap.find(textureName);
-   if (textureIter != m_textureMap.end()) {
-      textureIter->second->count -= 1;
-      if (textureIter->second->count < 1) {
-         glDeleteTextures(1, &textureIter->second->textureBuffer);
-         delete textureIter->second;
-         m_textureMap.erase(textureIter);
+   
+   vector<IRef*> *refs = rmvMesh->getTextureRefs();
+   vector<IRef*>::iterator refIter = refs->begin();
+   while (refIter != refs->end()) {
+      ref = *refIter;
+      *refIter = new IRef(ref->fileName);
+      
+      map<string, TextureRef*>::iterator textureIter = m_textureMap.find(ref->fileName);
+      if (textureIter != m_textureMap.end()) {
+         textureIter->second->count -= 1;
+         if (textureIter->second->count < 1) {
+            glDeleteTextures(1, &textureIter->second->textureBuffer);
+            delete textureIter->second;
+            m_textureMap.erase(textureIter);
+         }
       }
-   }
-   else {
-      cout << "textrue " << textureName << " was already unloaded from the RenderingEngine\n";
+      else {
+         cout << "textrue " << ref->fileName << " was already unloaded from the RenderingEngine\n";
+         delete ref;
+      }
+      
+      ++refIter;
    }
 }
