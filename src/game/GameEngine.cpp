@@ -377,10 +377,10 @@ void GameEngine::cullObjects() {
     }
   }
 
-  for (std::vector<Missile *>::iteratore missileIter = m_missileList.begin();
+  for (std::vector<Missile *>::iterator missileIter = m_missileList.begin();
        missileIter != m_missileList.end(); missileIter++) {
     if (isCullable(*missileIter)) {
-      cullObject(*missileIter);x
+      cullObject(*missileIter);
     }
   }
 
