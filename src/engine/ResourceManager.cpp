@@ -444,9 +444,15 @@ void combineVertex(float *vertices, vec3 *vertex, vec3 *normal, vec3 *tangent, v
    vertices[10] = texture->y;
 }
 
+/**
+ * Initalizes the sound system
+ */
 void initSound()
 {
    // load support for the OGG and MOD sample/music formats
+   //This is commented out to maintain compatibility with SDL_mixer 1.2.8  
+   //As of SDL_mixer 1.2.10 or so, this should work, although we have not 
+   // tested it extensively
    //int flags=MIX_INIT_OGG|MIX_INIT_MP3|MIX_INIT_MOD|MIX_INIT_FLAC;
    
    //int initted=Mix_Init(flags);
@@ -463,10 +469,17 @@ void initSound()
    //      stereo audio, using 1024 byte chunks
    if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 1024)==-1)
    {
-      printf("Mix_OpenAudio: %s\n", Mix_GetError());
+      cerr << "Mix_OpenAudio: "<< Mix_GetError() << "\n";
    }
 }
 
+/**
+ * Loads a sound for SDL_mixer to use. This is intended for short sounds that 
+ * need low latency, since the sound is loaded into memory by this function. 
+ * @param fileName name of the sound file to load. Note that extension matters,
+ * the file must have the file extension of .wav, .aiff, .aif, .aifc, .ogg or 
+ * .voc
+ */
 Sound* loadSound(string fileName)
 {
    Sound* sound = new Sound();
@@ -491,6 +504,15 @@ Sound* loadSound(string fileName)
    return sound;
 }
 
+
+/**
+ * Loads a sound for SDL_mixer to use. Note that this is intended for background
+ * music, thus might have some latency in starting a sound. Addtaionally,
+ * SDL_mixer can only play a single music track at a time. 
+ * @param fileName name of the sound file to load. Note that extension matters,
+ * the file must have the file extension of .wav, .aiff, .aif, .aifc, .ogg or 
+ * .voc
+ */
 Sound* loadMusic(string fileName)
 {
    Sound* sound = new Sound();
