@@ -349,20 +349,19 @@ exit(0);
        bulletIterator++){
       (*bulletIterator)->tic(td);
       //Cull the bullet!
-      if(!(*bulletIterator)->isAlive()){
-         //m_bulletList.erase(bulletIterator);
-      }
          
    }
 
    for (std::vector<Missile *>::iterator missileIterator = m_missileList.begin();
-missileIterator != m_missileList.end();
-missileIterator++) {
+	missileIterator != m_missileList.end();
+	missileIterator++) {
       (*missileIterator)->tic(td);
       //Cull the missile!
    }
 
    runCollisions();
+   cullObjects();
+
    if(m_player->getAlive() == false) {
       m_stateManager->pushState(m_lose);
       //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME.
@@ -370,6 +369,50 @@ missileIterator++) {
    }
 }
 
+void GameEngine::cullObjects() {
+  /*for (std::vector<Bullet *>::iterator bulletIter = m_bulletList.begin(); 
+       bulletIter != m_bulletList.end(); bulletIter++) {
+    if (isCullable(*bulletIter)) {
+      cullObject(*bulletIter);
+    }
+    }*/
+
+  for (std::vector<Missile *>::iterator missileIter = m_missileList.begin();
+       missileIter != m_missileList.end(); missileIter++) {
+    if (isCullable(*missileIter)) {
+      cullObject(*missileIter);
+    }
+  }
+
+  //Add missile as well
+}
+
+bool GameEngine::isCullable(GameObject* obj) {
+  if (typeid(*obj) == typeid(Bullet)) {
+    return true;
+  }
+
+  if (typeid(*obj) == typeid(Missile)) {
+    return true;
+  }
+
+  return false;
+}
+
+void GameEngine::cullObject(GameObject* obj) {
+  if (typeid(*obj) == typeid(Bullet)) {
+    remove(m_bulletList.begin(), m_bulletList.end(), obj);
+  }
+  
+  if (typeid(*obj) == typeid(Missile)) {
+    remove(m_missileList.begin(), m_missileList.end(), obj);
+  }
+
+  remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
+  remove(m_gameObjects.begin(), m_gameObjects.end(), obj);
+  
+  delete obj;
+}
 
 void GameEngine::render() {
    //Checks if the current state is the game state. This could be made more elegant.
@@ -396,7 +439,6 @@ void GameEngine::render() {
 bool GameEngine::handleEvents()
 {
    bool running = true;
-   
    SDL_Event evt;
    
    while (SDL_PollEvent(&evt))
