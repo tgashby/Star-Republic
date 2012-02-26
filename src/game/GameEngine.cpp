@@ -404,7 +404,7 @@ void GameEngine::cullObject(GameObject* obj) {
   remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
   remove(m_gameObjects.begin(), m_gameObjects.end(), obj);
   
-  delete obj;
+//  delete obj;
 }
 
 void GameEngine::render() {
