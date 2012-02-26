@@ -41,7 +41,7 @@ Bullet::Bullet(string fileName, string textureName, Modules *modules,
 
 Bullet::~Bullet() 
 {
-   delete m_mesh;
+   
 }
 
 void Bullet::tic(uint64_t time)
