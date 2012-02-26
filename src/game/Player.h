@@ -99,6 +99,7 @@ public:
    **/
    vec3 getMForward();
    
+   bool getAlive();
 private:
    /**
     * The velocity in the left-right direction of the ship

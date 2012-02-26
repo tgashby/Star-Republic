@@ -154,7 +154,7 @@ bool Turret::shouldFire() {
 
 void Turret::collideWith(Bullet& bullet) {
    if (&bullet.getParent() != this) {
-      m_health -= 25;
+      m_health -= 100;
    }
 }
 

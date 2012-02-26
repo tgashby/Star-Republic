@@ -12,6 +12,7 @@ public:
    TextureData* loadBMPImage(string fileName);
    //ImageData* loadPngImage(string fileName);
    WorldData *readWorldData(string fileName);
+   string readShader(string name);
    ~ResourceManager();
 private:
    SDL_Surface *m_image;
@@ -53,5 +54,7 @@ void combineVertex(float *vertices, vec3 *vertex, vec3 *normal, vec3 *tangent, v
 void initSound();
 Sound* loadSound(string fileName);
 Sound* loadMusic(string fileName);
+
+string readTextFile(string fileName);
 
 #endif

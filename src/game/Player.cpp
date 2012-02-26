@@ -8,6 +8,7 @@
 #define SCREENY 300
 
 /** Constructor **/
+
 Player::Player(string fileName, string textureName, Modules *modules, 
 	Vector3<float> cam_pos, Vector3<float> cam_up, Vector3<float> cam_forw) 
    :  Object3d(), Flyer(), m_side(1,0,0), lastScreenX(0), lastScreenY(0), m_sideVelocity(0,0,0), m_upVelocity(0,0,0)
@@ -24,18 +25,18 @@ Player::Player(string fileName, string textureName, Modules *modules,
    x = SCREENX;
    y = SCREENY;
 
-   SDL_WarpMouse( x, y ); 
+   SDL_WarpMouse( x, y );
    vx = 0;
    vy = 0;
 
    /** set the model matrix based on a constant scale and rotate and
-    *  the forward, up and position (aka magic) **/
+* the forward, up and position (aka magic) **/
    mat4 modelMtx = mat4::Scale(MODEL_SCALE) * mat4::Rotate(180, vec3(0,1,0)) *
       mat4::Magic(getForward(), getUp(), getPosition());
    m_mesh->setModelMtx(modelMtx);
    
    // god mode much?
-   m_health = 200000;
+   m_health = 2000;
 }
 
 Player::~Player()
@@ -54,15 +55,17 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    m_up = cam_up.Normalized();
    calculateSide();
 
+
    tempPos = cam_position + (cam_forward * PLAYER_DISTANCE_FROM_CAMERA); 
    
    m_sideVelocity = (((m_side * lastScreenX)) - (m_position - tempPos)) * X_SCALAR;
+
    m_upVelocity = (((m_up * lastScreenY)) - (m_position - tempPos)) * Y_SCALAR;
    m_offsetPosition += (m_sideVelocity * time) + (m_upVelocity * time);
    m_position = m_offsetPosition + tempPos;
 
    /** set the model matrix based on a constant scale and rotate and
-    *  the forward, up and position (aka magic) **/
+* the forward, up and position (aka magic) **/
    modelMtx = mat4::Scale(MODEL_SCALE) * mat4::Rotate(180, vec3(0,1,0)) *
       mat4::Magic(getAimForward(), getAimUp(), m_position);
    m_mesh->setModelMtx(modelMtx);
@@ -85,8 +88,8 @@ void Player::updateVelocity(float diffX, float diffY)
 Vector3<float> Player::getAimForward()
 {
    /** make sure the velocity in X and Y aren't to great -
-    *  this will translate into not having the player rotate to far
-    *  in any direction, and not move too fast in 'screen coordinates' **/
+* this will translate into not having the player rotate to far
+* in any direction, and not move too fast in 'screen coordinates' **/
    if (vx > VCHANGE)
       vx = VCHANGE;
    if (vy > VCHANGE)
@@ -95,20 +98,20 @@ Vector3<float> Player::getAimForward()
       vx = -VCHANGE;
    if (vy < -VCHANGE)
       vy = -VCHANGE;
-   /** Multiply the velocity in X and Y by a scalar - 
-    *  this gives us control over how fast the player can move and rotate **/
+   /** Multiply the velocity in X and Y by a scalar -
+* this gives us control over how fast the player can move and rotate **/
    float tvx = -vx * VINTENS;
    float tvy = -vy * VINTENS;
-   /** Return a vector interpolated from the actual forward, the 
-    *  up (velocity in Y) and the side (velocity in X) **/ 
-   return (m_forward * (1 - abs(tvx)) * (1 - abs(tvy)) 
+   /** Return a vector interpolated from the actual forward, the
+* up (velocity in Y) and the side (velocity in X) **/
+   return (m_forward * (1 - abs(tvx)) * (1 - abs(tvy))
       + getSide() * tvx + m_up * tvy).Normalized();
 }
 Vector3<float> Player::getAimUp()
 {
    /** make sure the velocity in Y isn't to great -
-    *  this will translate into not having the player rotate to far
-    *  in any direction, and not move too fast in 'screen coordinates' **/
+* this will translate into not having the player rotate to far
+* in any direction, and not move too fast in 'screen coordinates' **/
    if (vx > VCHANGE)
       vx = VCHANGE;
    if (vy > VCHANGE)
@@ -117,10 +120,10 @@ Vector3<float> Player::getAimUp()
       vx = -VCHANGE;
    if (vy < -VCHANGE)
       vy = -VCHANGE;
-   /** Multiply the velocity in Y by a scalar - 
-    *  this gives us control over how fast the player can move and rotate **/
+   /** Multiply the velocity in Y by a scalar -
+* this gives us control over how fast the player can move and rotate **/
    float tvy = -vy * VINTENS;
-   /** Return a vector interpolated from the actual up and the forward **/ 
+   /** Return a vector interpolated from the actual up and the forward **/
    return (m_up * (1 - abs(tvy)) + m_forward * tvy).Normalized();
 }
 
@@ -138,7 +141,7 @@ void Player::doCollision(GameObject & other)
 {
    if (typeid(other) == typeid(Bullet))
    {
-      if (&((Bullet&)other).getParent() != this) 
+      if (&((Bullet&)other).getParent() != this)
       {
          m_health -= 2;
       }
@@ -154,6 +157,10 @@ void Player::doCollision(GameObject & other)
        m_mesh->setVisible(false);
    }
    //DO Collision stuff
+}
+
+bool Player::getAlive() {
+   return m_alive;
 }
 
 void Player::setVisible(bool visibility) {
