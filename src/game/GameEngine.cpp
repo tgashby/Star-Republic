@@ -55,8 +55,8 @@ void GameEngine::InitData()
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
                            m_modules, m_player);
    
-   m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", 
-			       m_modules, m_player);
+//   m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", 
+//			       m_modules, m_player);
    /*m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
           "models/enemy2turrethead.obj", "textures/test3.bmp", m_modules, *m_player);*/
 
@@ -262,10 +262,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 				     m_player->getAimForward(), m_player->getAimUp(), 
 				     *m_player, Bullet::defaultTimeToLive, 1.0f);
 	 
-	 m_modules->renderingEngine->addObject3d(bullet);
-	 m_gameObjects.push_back(bullet);
-	 m_objects.push_back(bullet);
-	 m_bulletList.push_back(bullet);
+         m_worldGrid->placeInGrid(bullet, bullet);
 	 
 	 bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
 			     m_modules, m_player->getPosition() 
@@ -274,11 +271,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 			     *m_player, Bullet::defaultTimeToLive, 1.0f);
       
       
-      
-m_modules->renderingEngine->addObject3d(bullet);
-m_gameObjects.push_back(bullet);
-m_objects.push_back(bullet);
-m_bulletList.push_back(bullet);
+         m_worldGrid->placeInGrid(bullet, bullet);
       
       
 	 m_bulletSound->play(0);

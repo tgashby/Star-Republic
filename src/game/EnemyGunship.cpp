@@ -96,8 +96,8 @@ void EnemyGunship::tic(uint64_t time)
     dpos = dpos.Normalized();
     
     // moving based on the player's direction
-    m_forward = m_playerRef.getMForward();
-    m_up = m_playerRef.getAimUp();
+    m_forward = m_playerRef->getMForward();
+    m_up = m_playerRef->getAimUp();
     
     /** gunship AI -> movement first (the last term is there to simulate acceleration) **/
     m_position += m_forward * PATHVELOCITY;

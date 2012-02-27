@@ -47,6 +47,7 @@ private:
    void runCollisions();
 //   void addAsteroids();
    
+   Camera* m_camera;
    Player *m_player;
    Reticle *m_reticle;
    Modules *m_modules;
