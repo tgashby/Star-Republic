@@ -33,12 +33,9 @@ class EnemyGunship : public Flyer, public Enemy, public Explodeable {
     * @param p the player reference to pass to Enemy
     */
    EnemyGunship(string fileName, string turretFileName1, string turretFileName2,
-<<<<<<< HEAD
-      string textureName, Modules *modules, Player *p);
-=======
       string bodyTextureName, string baseTextureName, 
-      string headTextureName,  Modules *modules, Player &p);
->>>>>>> 6f97755cbb180aa2f235d770d0b1473696d1c8bd
+      string headTextureName,  Modules *modules, Player *p);
+   
    ~EnemyGunship();
    
    /**

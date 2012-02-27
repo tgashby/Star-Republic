@@ -8,9 +8,6 @@
 
 #include "Turret.h"
 
-<<<<<<< HEAD
-Turret::Turret(Player* player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules) 
-=======
 #define TURRETHEADHEIGHT 35
 
 /*
@@ -43,7 +40,7 @@ Turret::Turret(Player& player, string headName, string headTexture, string midNa
 "textures/turretMidTex.bmp", "models/turretbase.obj", 
 "textures/turretBaseTex.bmp"*/
 
-Turret::Turret(Player& player, Modules *modules) : Enemy(player), Explodeable(vec3(0,0,0), _TURRET_DEFAULT_EXPLOSION_RADIUS, modules) {
+Turret::Turret(Player* player, Modules *modules) : Enemy(player), Explodeable(vec3(0,0,0), _TURRET_DEFAULT_EXPLOSION_RADIUS, modules) {
    m_footMesh = new Mesh("models/turretbase.obj", "textures/turretBaseTex.bmp", modules);
    m_footMesh->setScale(_TURRET_SCALE);
    m_meshList.push_back(m_footMesh);
@@ -81,8 +78,7 @@ void Turret::tic(uint64_t time)
   if (isAlive()) {
      mat4 modelMtx = mat4::Rotate(90, vec3(1, 0, 0)) * mat4::Magic(m_forward, m_up, m_position);
     m_footMesh->setModelMtx(modelMtx);
-   
-<<<<<<< HEAD
+     
     modelMtx *= mat4::Translate(0, 1, 0);
     m_midMesh->setModelMtx(modelMtx);
    
@@ -90,9 +86,7 @@ void Turret::tic(uint64_t time)
     m_headMesh->setModelMtx(modelMtx);
    
     vec3 dirToPlayer = (m_playerRef->getPosition() - m_position).Normalized();
-=======
-    vec3 dirToPlayer = (m_playerRef.getPosition() - m_position).Normalized();
->>>>>>> 6f97755cbb180aa2f235d770d0b1473696d1c8bd
+     
     vec3 intermed = dirToPlayer.Cross(m_up);
     vec3 dirToPlayerFlat = intermed.Cross(m_up);
    

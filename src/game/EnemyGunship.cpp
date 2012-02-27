@@ -24,15 +24,10 @@ const float TURRETHEAD_SCALE = 0.2f;
 const float ROTATE_CONSTANT = -90;
 
 /** Gunner Enemy: Takes in the mesh info and a reference to the player to aim at **/
-EnemyGunship::EnemyGunship(string fileName, string turretFileName1, 
-<<<<<<< HEAD
-			   string turretFileName2, string textureName, 
-			   Modules *modules, Player *p) 
-=======
+EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
 			   string turretFileName2, string bodyTextureName,
                            string baseTextureName, string headTextureName, 
-			   Modules *modules, Player &p) 
->>>>>>> 6f97755cbb180aa2f235d770d0b1473696d1c8bd
+			   Modules *modules, Player *p) 
   : Flyer(), Enemy(p), 
     Explodeable(vec3(0,0,0), _ENEMY_GUNSHIP_EXPLOSION_RADIUS, modules), 
     side(1,0,0), currentAngle(0), prevAngle(0)
@@ -95,21 +90,18 @@ EnemyGunship::~EnemyGunship()
 //All Vectors are updated in here
 void EnemyGunship::tic(uint64_t time)
 {
-  dpos = (m_playerRef.getPosition() - m_position);
+  dpos = (m_playerRef->getPosition() - m_position);
   if (isAlive() && (dpos.Length() < UPDATEDISTANCE)) {
     /** the normalized vector between the player and the enemy **/
-<<<<<<< HEAD
     dpos = (m_playerRef->getPosition() - m_position).Normalized();
     
     // moving based on the player's direction
     m_position += m_playerRef->getForward() * PATHVELOCITY; 
-=======
     dpos = dpos.Normalized();
     
     // moving based on the player's direction
-    m_forward = m_playerRef.getMForward();
-    m_up = m_playerRef.getAimUp();
->>>>>>> 6f97755cbb180aa2f235d770d0b1473696d1c8bd
+    m_forward = m_playerRef->getMForward();
+    m_up = m_playerRef->getAimUp();
     
     /** gunship AI -> movement first (the last term is there to simulate acceleration) **/
     m_position += m_forward * PATHVELOCITY;
@@ -212,8 +204,8 @@ void EnemyGunship::tic(uint64_t time)
      dpos = dpos.Normalized();
     
     // moving based on the player's direction
-    m_forward = m_playerRef.getMForward();
-    m_up = m_playerRef.getAimUp();
+    m_forward = m_playerRef->getMForward();
+    m_up = m_playerRef->getAimUp();
 
      mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
                     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));

@@ -41,12 +41,8 @@ public:
     * @footTexture path to file for foot texture
     * @param modules the Modules pointer
     */
-<<<<<<< HEAD
-   Turret(Player* player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules);
-=======
-   //Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules);
-   Turret(Player& player, Modules *modules);
->>>>>>> 6f97755cbb180aa2f235d770d0b1473696d1c8bd
+   Turret(Player* player, Modules *modules);
+   
    ~Turret();
    
    /**

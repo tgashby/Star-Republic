@@ -63,20 +63,13 @@ void EnemyShip::tic(uint64_t time)
      m_mesh->setVisible(true);
   }
 
-  dpos = (m_playerRef.getPosition() - m_position);
+  dpos = (m_playerRef->getPosition() - m_position);
   if (isAlive() && dpos.Length() < MAXDISTANCE) {
     /** the normalized vector between the player and the enemy **/
-<<<<<<< HEAD
-    dpos = (m_playerRef->getPosition() - m_position).Normalized();
-  
-    // moving based on the player's direction and it's aiming direction
-    m_position += m_playerRef->getForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
-=======
     dpos = dpos.Normalized();
   
     // moving based on the player's direction and it's aiming direction
-    m_position += m_playerRef.getMForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
->>>>>>> 6f97755cbb180aa2f235d770d0b1473696d1c8bd
+    m_position += m_playerRef->getMForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
     
     /** 'scared ship' AI **/
     float aimAngle;
