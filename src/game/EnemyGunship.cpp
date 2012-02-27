@@ -93,15 +93,11 @@ void EnemyGunship::tic(uint64_t time)
   dpos = (m_playerRef->getPosition() - m_position);
   if (isAlive() && (dpos.Length() < UPDATEDISTANCE)) {
     /** the normalized vector between the player and the enemy **/
-    dpos = (m_playerRef->getPosition() - m_position).Normalized();
-    
-    // moving based on the player's direction
-    m_position += m_playerRef->getForward() * PATHVELOCITY; 
     dpos = dpos.Normalized();
     
     // moving based on the player's direction
-    m_forward = m_playerRef->getMForward();
-    m_up = m_playerRef->getAimUp();
+    m_forward = m_playerRef.getMForward();
+    m_up = m_playerRef.getAimUp();
     
     /** gunship AI -> movement first (the last term is there to simulate acceleration) **/
     m_position += m_forward * PATHVELOCITY;

@@ -68,25 +68,29 @@ void GameEngine::InitData()
 		      prevPath.getUp());
    m_player->calculateSide();
    
-   m_enemyShip->setProgress(prevPath.getPosition());
-   m_enemyShip->setPosition(prevPath.getPosition());
-   m_enemyShip->setUp(prevPath.getUp());
-   m_enemyShip->setHeads(currPath.getPosition(), 
-			 currPath.getUp(), prevPath.getPosition(), 
-			 prevPath.getUp());
+   /*m_enemyShip->setProgress(m_previousPoint->getPosition());
+   m_enemyShip->setPosition(m_previousPoint->getPosition());
+   m_enemyShip->setUp(m_previousPoint->getUp());
+   m_enemyShip->setHeads(m_currentPoint->getPosition(),
+m_currentPoint->getUp(), m_previousPoint->getPosition(),
+m_previousPoint->getUp());
    m_enemyShip->calculateSide();
 
-   m_enemyGunner->setProgress(prevPath.getPosition());
-   m_enemyGunner->setPosition(prevPath.getPosition());
-   m_enemyGunner->setUp(prevPath.getUp());
-   m_enemyGunner->setHeads(currPath.getPosition(), 
-			 currPath.getUp(), prevPath.getPosition(), 
-			 prevPath.getUp());
-   m_enemyGunner->calculateSide();
+   m_enemyGunner->setProgress(m_previousPoint->getPosition());
+   m_enemyGunner->setPosition(m_previousPoint->getPosition());
+   m_enemyGunner->setUp(m_previousPoint->getUp());
+   m_enemyGunner->setHeads(m_currentPoint->getPosition(),
+m_currentPoint->getUp(), m_previousPoint->getPosition(),
+m_previousPoint->getUp());
+   m_enemyGunner->calculateSide();*/
    
    m_modules->renderingEngine->setCamera(m_camera);
 
-   m_enemyShip->setPosition(m_player->getPosition() + (m_player->getForward() * 10000));
+   m_modules->renderingEngine->addObject3d(m_player);
+   m_modules->renderingEngine->addObject3d(m_reticle);
+   /*m_modules->renderingEngine->addObject3d(m_enemyShip);
+   m_modules->renderingEngine->addObject3d(m_enemyGunner);*/
+   //m_modules->renderingEngine->addObject3d(explosion);
    
    m_worldGrid->placeInCurrQuadrant(m_player, m_player);
 //   m_worldGrid->placeInGrid(m_enemyShip, m_enemyShip);
@@ -139,13 +143,13 @@ void GameEngine::tic(uint64_t td) {
 
 
 void GameEngine::render() {
-   if (m_stateManager->getCurrentState() == m_game) 
+   //Checks if the current state is the game state. This could be made more elegant.
+   if (m_stateManager->getCurrentState() == m_game)
    {
       list<IObject3d*> objs = m_worldGrid->getDrawableObjects();
       
       m_modules->renderingEngine->render(objs);
    }
-
    if (m_stateManager->getCurrentState() == m_menu)
    {
       m_modules->renderingEngine->clearScreen();
@@ -165,7 +169,6 @@ void GameEngine::render() {
 bool GameEngine::handleEvents()
 {
    bool running = true;
-   
    SDL_Event evt;
    
    while (SDL_PollEvent(&evt))
@@ -253,25 +256,32 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    if (key == SDLK_z)
    {
       if (!m_camera->isBoosting()) {
-         Bullet *bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
-           m_modules, m_player->getPosition() 
-           + (m_player->getSide() * 8),
-           m_player->getAimForward(), m_player->getAimUp(), 
-           *m_player, Bullet::defaultTimeToLive, 1.0f);
-          
-         // HACK so that I can use it as both a GameObject and an Object3d
-         m_worldGrid->placeInCurrQuadrant(bullet, bullet);
-          
-         bullet = new Bullet("models/cube.obj", "textures/test4.bmp", 
-                    m_modules, m_player->getPosition() 
-                    - (m_player->getSide() * 8),
-                    m_player->getAimForward(), m_player->getAimUp(), 
-                    *m_player, Bullet::defaultTimeToLive, 1.0f);
-            
-         // HACK so that I can use it as both a GameObject and an Object3d
-         m_worldGrid->placeInCurrQuadrant(bullet, bullet);
-         
-	 //m_bulletSound->play(0);
+	 Bullet *bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
+				     m_modules, m_player->getPosition() 
+				     + (m_player->getSide() * 8),
+				     m_player->getAimForward(), m_player->getAimUp(), 
+				     *m_player, Bullet::defaultTimeToLive, 1.0f);
+	 
+	 m_modules->renderingEngine->addObject3d(bullet);
+	 m_gameObjects.push_back(bullet);
+	 m_objects.push_back(bullet);
+	 m_bulletList.push_back(bullet);
+	 
+	 bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
+			     m_modules, m_player->getPosition() 
+			     - (m_player->getSide() * 8),
+			     m_player->getAimForward(), m_player->getAimUp(), 
+			     *m_player, Bullet::defaultTimeToLive, 1.0f);
+      
+      
+      
+m_modules->renderingEngine->addObject3d(bullet);
+m_gameObjects.push_back(bullet);
+m_objects.push_back(bullet);
+m_bulletList.push_back(bullet);
+      
+      
+	 m_bulletSound->play(0);
       }
    }
    return running;
@@ -330,7 +340,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
    {
       running = false;
    }
-   
+
    if (key == SDLK_x) {
       if (!m_camera->isBoosting()) {
 	 targets = acquireMissileTargets();

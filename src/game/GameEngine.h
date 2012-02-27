@@ -47,7 +47,6 @@ private:
    void runCollisions();
 //   void addAsteroids();
    
-   Camera *m_camera;
    Player *m_player;
    Reticle *m_reticle;
    Modules *m_modules;
@@ -61,9 +60,7 @@ private:
    WorldGrid *m_worldGrid;
    Vector3<float> currentDirection;
    void InitData();
-   
-   EnemyShip* m_enemyShip;
-   EnemyGunship* m_enemyGunner;
+
    std::vector<Bullet *> m_bulletList;
    std::vector<Turret *> m_turrets;
    std::vector<Missile *> m_missileList;
