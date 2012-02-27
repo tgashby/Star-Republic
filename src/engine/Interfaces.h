@@ -1,13 +1,12 @@
 #ifndef StarRepub_Interfaces_h
 #define StarRepub_Interfaces_h
 
-#include "SDL_include.h"
-
 /*
  this file should contain includes, namespaces, structs, and abstract classes
  shared by all objects in the program
  */
 
+#include "SDL_include.h"
 #include "Vector.h"
 #include "Matrix.h"
 #include "Quaternion.h"
@@ -37,57 +36,21 @@ struct MeshBounds {
    vec3 max;
 };
 
-/*
-// Used by the RenderingEngine to keep track of mesh VBOs.
-struct MeshRef {
-   MeshRef() {
-      name = "";
-      vertexBuffer = 0;
-      indexBuffer = 0;
-      indexCount = 0;
-      count = 0;
-      bounds = MeshBounds();
-   }
-   MeshRef(string n, unsigned int vb, unsigned int ib, int idxCount) {
-      name = n;
-      vertexBuffer = vb;
-      indexBuffer = ib;
-      indexCount = idxCount;
-      count = 1;
-   }
-   MeshRef(const MeshRef &other) {
-      name = other.name;
-      vertexBuffer = other.vertexBuffer;
-      indexBuffer = other.indexBuffer;
-      indexCount = other.indexCount;
-      count = other.count;
-      bounds = other.bounds;
-   }
-   // Used to find duplicate VBOs.
-   int operator==(const MeshRef &rhs) {
-      if (name == rhs.name) return 1;
-      return 0;
-   }
-   string name;
-   unsigned int vertexBuffer;
-   unsigned int indexBuffer;
-   int indexCount;
-   int count;
-   MeshBounds bounds;
-};*/
-
 // Extended by the Rendering Engine for referencing Meshes and Textures
 struct IRef {
    IRef() {
       fileName = "";
       loaded = false;
+      loading = false;
    }
    IRef(string name) {
       fileName = name;
       loaded = false;
+      loading = false;
    }
    string fileName;
    bool loaded;
+   bool loading;
    MeshBounds bounds;
 };
 
@@ -121,6 +84,7 @@ struct IMesh {
    virtual float getScale() = 0;
    virtual vec4 getColor() = 0;
    virtual void setColor(vec4 color) = 0;
+   virtual bool checkLoaded() = 0;
    virtual bool isVisible() = 0;
    virtual void setVisible(bool visible) = 0;
    virtual MeshBounds getMeshBounds() = 0;

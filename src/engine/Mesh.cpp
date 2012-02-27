@@ -73,6 +73,16 @@ void Mesh::setColor(vec4 color) {
    m_color = color;
 }
 
+bool Mesh::checkLoaded() {
+   bool loaded = m_meshRef->loaded;
+   vector<IRef*>::iterator refIter = m_textureRefs.begin();
+   while (refIter != m_textureRefs.end()) {
+      loaded = loaded && (*refIter)->loaded;
+      ++refIter;
+   }
+   return loaded;
+}
+
 bool Mesh::isVisible() {
    return m_visible;
 }

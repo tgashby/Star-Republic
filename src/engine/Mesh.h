@@ -21,13 +21,10 @@ public:
    float getScale();
    vec4 getColor();
    void setColor(vec4 color);
+   bool checkLoaded();
    bool isVisible();
    void setVisible(bool visible);
    MeshBounds getMeshBounds();
-   //string getMeshName();
-   //string getTextureName();
-   //MeshData* getMeshData();
-   //TextureData* getTextureData();
    SHADER_TYPE getShaderType();
    void setShaderType(SHADER_TYPE type);
    
@@ -40,8 +37,6 @@ private:
    Modules *m_modules;
    bool m_visible;
    float m_scale;
-   //string m_meshName;
-   //string m_textureName;
    SHADER_TYPE m_shaderType;
 };
 

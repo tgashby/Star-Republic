@@ -17,6 +17,7 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
    m_modules = modules;
    m_camera = NULL;
    TTF_Init();
+   m_jobs = new LoadingJobs(m_modules->resourceManager);
    
 #ifdef _WIN32
    GLenum err = glewInit();
@@ -160,6 +161,8 @@ void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
 }
 
 void RenderingEngine::render(list<IObject3d *> &objects) {
+   processJobs();
+   
    glClearColor(0,0,0,0);
    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
    
@@ -176,8 +179,8 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    for (obj = objects.begin(); obj != objects.end(); ++obj) {
       objMeshes = (*obj)->getMeshes();
       for (mesh = objMeshes->begin(); mesh != objMeshes->end(); ++mesh) {
-         // Skip the mesh if it is not visible.
-         if (!(*mesh)->isVisible())
+         // Skip the mesh if it is not visible or is not loaded yet.
+         if (!(*mesh)->isVisible() || !(*mesh)->checkLoaded())
             continue;
          
          // Check if the mesh was loaded.
@@ -234,6 +237,78 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    }
 }
 
+void RenderingEngine::processJobs() {
+   LoadingJob *curJob = m_jobs->GetJob();
+   if (curJob == NULL) {
+      return;
+   }
+   
+   //cout << "add: " << curJob->ref->fileName << "\n";
+   
+   switch (curJob->type) {
+      case LOAD_JOB_MESH:
+         addMesh((MeshData*) curJob->data, (MeshRef*) curJob->ref);
+         break;
+         
+      case LOAD_JOB_TEXTURE:
+         addTexture((TextureData*) curJob->data, (TextureRef*) curJob->ref);
+         break;
+         
+      default:
+         cerr << "Unknown load job\n";
+         exit(1);
+         break;
+   }
+   delete curJob;
+}
+
+void RenderingEngine::addMesh(MeshData *meshData, MeshRef *meshRef) {
+   // Add the mesh VBO
+   GLuint vertexBuffer;
+   glGenBuffers(1, &vertexBuffer);
+   glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+   glBufferData(GL_ARRAY_BUFFER, meshData->vertexCount * VERTEX_STRIDE * sizeof(GLfloat),
+                meshData->vertices, GL_STATIC_DRAW);
+   
+   GLuint indexBuffer;
+   glGenBuffers(1, &indexBuffer);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+   glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshData->indexCount * sizeof(GLushort),
+                meshData->indices, GL_STATIC_DRAW);
+   
+   // Update the mesh reference
+   meshRef->vertexBuffer = vertexBuffer;
+   meshRef->indexBuffer = indexBuffer;
+   meshRef->indexCount = meshData->indexCount;
+   meshRef->loaded = true;
+   meshRef->loading = false;
+   
+   delete[] meshData->vertices;
+   delete[] meshData->indices;
+   delete meshData;
+}
+
+void RenderingEngine::addTexture(TextureData *textureData, TextureRef *textureRef) {
+   SDL_Surface *surface = (SDL_Surface *) textureData->data;
+   
+   // add a new texture. (update for RGBA)
+   GLuint textureBuffer;
+   glGenTextures(1, &textureBuffer);
+   glBindTexture(GL_TEXTURE_2D, textureBuffer);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, surface->w, surface->h, 0,
+                GL_BGR, GL_UNSIGNED_BYTE, surface->pixels);
+   glGenerateMipmapEXT(GL_TEXTURE_2D);
+   
+   // Update the texture reference
+   textureRef->textureBuffer = textureBuffer;
+   textureRef->loaded = true;
+   textureRef->loading = false;
+   
+   delete surface;
+   delete textureData;
+}
 
 GLuint RenderingEngine::buildShader(const char* source, GLenum shaderType) const {
    GLuint shaderHandle = glCreateShader(shaderType);
@@ -325,7 +400,7 @@ void RenderingEngine::useProgram(SHADER_TYPE type) {
 void RenderingEngine::loadMesh(IMesh *newMesh) {
    // Check if the mesh was already loaded
    IRef *ref = newMesh->getMeshRef();
-   if (!ref->loaded) {
+   if (!ref->loaded && !ref->loading) {
       map<string, MeshRef*>::iterator meshIter = m_meshMap.find(ref->fileName);
       if (meshIter != m_meshMap.end()) {
          // Found a MeshRef for newMesh to reference
@@ -333,6 +408,12 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
          meshIter->second->count += 1;
       }
       else {
+         cout << "load: " << ref->fileName << "\n";
+         MeshRef *newMeshRef = new MeshRef(ref->fileName);
+         m_meshMap[ref->fileName] = newMeshRef;
+         newMesh->setMeshRef(newMeshRef);
+         m_jobs->AddJob(new LoadingJob(LOAD_JOB_MESH, newMeshRef));
+         /*
          // Get the meshData.
          MeshData *meshData = m_modules->resourceManager->readMeshData(ref->fileName, LOAD_NORMAL_VERTEX, 1.0);;
          
@@ -357,6 +438,7 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
          delete[] meshData->vertices;
          delete[] meshData->indices;
          delete meshData;
+          */
       }
       delete ref;
    }
@@ -366,13 +448,18 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
    while (refIter != refs->end()) {
       ref = *refIter;
       
-      if (!ref->loaded) {
+      if (!ref->loaded && !ref->loading) {
          map<string, TextureRef*>::iterator textureIter = m_textureMap.find(ref->fileName);
          if (textureIter != m_textureMap.end()) {
             *refIter = textureIter->second;
             textureIter->second->count += 1;
          }
          else {
+            TextureRef *newTextureRef = new TextureRef(ref->fileName);
+            m_textureMap[ref->fileName] = newTextureRef;
+            *refIter = newTextureRef;
+            m_jobs->AddJob(new LoadingJob(LOAD_JOB_TEXTURE, newTextureRef));
+            /*
             // Get the texture
             TextureData *textureData = m_modules->resourceManager->loadBMPImage(ref->fileName);
             SDL_Surface *surface = (SDL_Surface *) textureData->data;
@@ -393,7 +480,7 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
             // Setup a new texture reference
             TextureRef *newTextureRef = new TextureRef(ref->fileName, textureBuffer);
             *refIter = newTextureRef;
-            m_textureMap[ref->fileName] = newTextureRef;
+            m_textureMap[ref->fileName] = newTextureRef;*/
          }
          delete ref;
       }
@@ -403,7 +490,6 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
 }
 
 void RenderingEngine::unLoadMesh(IMesh* rmvMesh) {
-   //string meshName = rmvMesh->getMeshName();
    IRef *ref = rmvMesh->getMeshRef();
    rmvMesh->setMeshRef(new IRef(ref->fileName));
    
@@ -445,4 +531,100 @@ void RenderingEngine::unLoadMesh(IMesh* rmvMesh) {
       
       ++refIter;
    }
+}
+
+
+
+LoadingJobs::LoadingJobs(IResourceManager *resourceManager) {
+   m_resourceManager = resourceManager;
+   lockIn = SDL_CreateMutex();
+   lockOut = SDL_CreateMutex();
+   newJob = SDL_CreateCond();
+   in = list<LoadingJob*>(0);
+   out = list<LoadingJob*>(0);
+   m_loaderThread = SDL_CreateThread(loader_thread, this);
+   if (m_loaderThread == NULL) {
+      cerr << "Problem starting loader thread";
+      exit(1);
+   }
+}
+
+IResourceManager* LoadingJobs::GetResourceManager() {
+   return m_resourceManager;
+}
+
+LoadingJobs::~LoadingJobs() {
+   SDL_KillThread(m_loaderThread);
+   SDL_DestroyMutex(lockIn);
+   SDL_DestroyMutex(lockOut);
+   SDL_DestroyCond(newJob);
+}
+
+void LoadingJobs::AddJob(LoadingJob *job) {
+   SDL_mutexP(lockIn);
+   in.push_back(job);
+   SDL_mutexV(lockIn);
+   SDL_CondSignal(newJob);
+}
+
+LoadingJob* LoadingJobs::GetJob() {
+   SDL_mutexP(lockOut);
+   LoadingJob *job = NULL;
+   if (out.size() != 0) {
+      job = out.front();
+      out.pop_front();
+   }
+   SDL_mutexV(lockOut);
+   return job;
+}
+
+LoadingJob* LoadingJobs::GetJobIn() {
+   SDL_mutexP(lockIn);
+   if (in.size() == 0) {
+      cout << "stop loading thread\n";
+      SDL_CondWait(newJob, lockIn);
+      cout << "start loading thread\n";
+   }
+   LoadingJob *job = in.front();
+   in.pop_front();
+   SDL_mutexV(lockIn);
+   return job;
+}
+
+void LoadingJobs::AddJobOut(LoadingJob *job) {
+   SDL_mutexP(lockOut);
+   out.push_back(job);
+   SDL_mutexV(lockOut);
+}
+
+int loader_thread(void *jobs) {
+   LoadingJobs *loadingJobs = (LoadingJobs *) jobs;
+   IResourceManager *resourceManager = loadingJobs->GetResourceManager();
+   LoadingJob *curJob;
+   while (true) {
+      // get a new job from the in list.
+      curJob = loadingJobs->GetJobIn();
+      
+      // process the job
+      switch (curJob->type) {
+         case LOAD_JOB_MESH:
+            // load a mesh
+            curJob->data = resourceManager->readMeshData(curJob->ref->fileName, LOAD_NORMAL_VERTEX, 1.0);
+            break;
+            
+         case LOAD_JOB_TEXTURE:
+            // load a texture
+            curJob->data = resourceManager->loadBMPImage(curJob->ref->fileName);
+            break;
+            
+         default:
+            cerr << "Unknown load job\n";
+            exit(1);
+            break;
+      }
+      
+      // put the finished job in the out list.
+      loadingJobs->AddJobOut(curJob);
+   }
+   return 0;
 }
