@@ -17,12 +17,6 @@
 #include <string>
 #include <iostream>
 
-// Use this to expose private/protected members to UnitTest++
-#define GAME_DEBUG
-
-// Uncomment this for release
-//#undef GAME_DEBUG
-
 using namespace std;
 
 

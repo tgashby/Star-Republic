@@ -26,9 +26,7 @@ public:
    
    void setPlayer(Player* player);
    
-#ifndef GAME_DEBUG
 protected:
-#endif
    Player* m_playerRef;
 };
 

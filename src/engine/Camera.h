@@ -56,10 +56,6 @@ class Camera: public ICamera {
    * Sets the boosting status - this stops/begins the acceleration process
    */
   void setBoosting(bool boostStatus);
-   
-#ifdef GAME_DEBUG
-   void setPosition(vec3 newPos);
-#endif
   
   /**
    * Builds the projection view matrix for the RenderingEngine based on the given vectors.

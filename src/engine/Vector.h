@@ -80,10 +80,6 @@ struct Vector3 {
     void Normalize()
     {
         float s = 1.0f / Length();
-        if (Length() == 0.0) 
-        {
-           s = 0.0;
-        }
         x *= s;
         y *= s;
         z *= s;

@@ -18,7 +18,7 @@
  - Prob lots more...
  */
 
-const float VEC_OFFSET = 499.0f;//1000.0f;
+const float VEC_OFFSET = 1000.0f;
 const int QUADS_TO_CHECK = 4;
 
 WorldGrid::WorldGrid(WorldData& world, Modules* modules)
@@ -38,6 +38,12 @@ WorldGrid::~WorldGrid()
    for (std::vector<Quadrant*>::iterator i = m_quadrants.begin(); i != m_quadrants.end(); i++) 
    {
       Quadrant* currQuad = *i;
+      
+      for (std::list<GameObject*>::iterator j = currQuad->m_gameObjects.begin(); j != currQuad->m_gameObjects.end(); j++) 
+      {
+         delete *j;
+      }
+      
       delete currQuad;
    }
 }
@@ -245,19 +251,19 @@ void WorldGrid::makeGrid()
       vec3 nearPt  = quad->m_startPt.loc;
       vec3 farPt   = quad->m_endPt.loc;
       
-//      std::cout << "L: ";
-//      leftPt.print();
-//      std::cout << "R: "; 
-//      rightPt.print();
-//      std::cout << "D: ";
-//      downPt.print();
-//      std::cout << "U: ";
-//      upPt.print();
-//      std::cout << "N: ";
-//      nearPt.print();
-//      std::cout << "F: ";
-//      farPt.print();
-//      std::cout << "\n\n";
+      std::cout << "L: ";
+      leftPt.print();
+      std::cout << "R: "; 
+      rightPt.print();
+      std::cout << "D: ";
+      downPt.print();
+      std::cout << "U: ";
+      upPt.print();
+      std::cout << "N: ";
+      nearPt.print();
+      std::cout << "F: ";
+      farPt.print();
+      std::cout << "\n\n";
       
       lftPlane  = Plane::MakePlane(-sideVec, leftPt);
       rtPlane   = Plane::MakePlane(sideVec, rightPt);
@@ -375,30 +381,7 @@ std::vector<Quadrant>::size_type WorldGrid::determineQuadrant(const Vector3<floa
    }
    
    // If this triggers, we didn't find any quadrant that can house the object
-   if(i == m_quadrants.size())
-   {
-      i = m_currentQuadrant;
-   }
+   assert(i < m_quadrants.size());
    
    return i;
 }
-
-#ifdef GAME_DEBUG
-int WorldGrid::placeInGridDEBUG(GameObject* gameObj, Object3d* obj3D)
-{
-   std::vector<Quadrant>::size_type ndx = determineQuadrant(gameObj->getPosition());
-   
-   m_quadrants.at(ndx)->m_gameObjects.push_back(gameObj);
-   m_quadrants.at(ndx)->m_obj3Ds.push_back(obj3D);
-   
-   return ndx;
-}
-
-int WorldGrid::placeInCurrQuadrantDEBUG(GameObject* gameObj, Object3d* obj3D)
-{
-   m_quadrants.at(m_currentQuadrant)->m_gameObjects.push_back(gameObj);
-   m_quadrants.at(m_currentQuadrant)->m_obj3Ds.push_back(obj3D);
-   
-   return m_currentQuadrant;
-}
-#endif

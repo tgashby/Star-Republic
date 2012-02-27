@@ -19,6 +19,8 @@
 #include "EnemyShip.h"
 #include "EnemyGunship.h"
 
+#define WORLDGRID_DEBUG
+
 /**
  * Quadrant structure, representing the area between two points
  */
@@ -88,10 +90,6 @@ public:
     */
    void placeInGrid(GameObject* gameObj, Object3d* obj3D);
    
-#ifdef GAME_DEBUG
-   int placeInGridDEBUG(GameObject* gameObj, Object3d* obj3D);
-#endif
-   
    /**
     * Place a game object in the current quadrant.
     * This will be used for bullets, missiles, etc.
@@ -100,10 +98,6 @@ public:
     * drawable objects
     */
    void placeInCurrQuadrant(GameObject* gameObj, Object3d* obj3D);
-   
-#ifdef GAME_DEBUG
-   int placeInCurrQuadrantDEBUG(GameObject* gameObj, Object3d* obj3D);
-#endif
    
    /**
     * Updates all objects that are in the current quadrants.
@@ -126,7 +120,7 @@ public:
     */
    std::list<IObject3d*> getDrawableObjects();
    
-#ifndef GAME_DEBUG
+#ifndef WORLDGRID_DEBUG
 private:
 #endif
    WorldData& m_world;
