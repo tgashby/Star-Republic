@@ -30,7 +30,7 @@ Missile::Missile(string fileName, string textureName, Modules* modules,
 }
 
 Missile::~Missile() {
-   delete m_mesh;
+   
 }
 
 void Missile::tic(uint64_t time) {
