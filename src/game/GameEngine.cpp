@@ -54,7 +54,7 @@ m_camera->getForward(), m_camera->getUp());
 
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
-   m_skybox = new SkyBox("models/box.obj", "textures/box.bmp", m_modules, m_player->getPosition());
+   m_skybox = new SkyBox("models/box3.obj", "textures/box3.bmp", m_modules, m_player->getPosition());
 
    createTurrets();
    createTerrain();
