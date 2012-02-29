@@ -54,7 +54,7 @@ m_camera->getForward(), m_camera->getUp());
 
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
-   //m_skybox = new SkyBox("models/box3.obj", "textures/box3.bmp", m_modules, m_player->getPosition());
+   m_skybox = new SkyBox("models/box3.obj", "textures/box3.bmp", m_modules, m_player->getPosition());
 
    createTurrets();
    createTerrain();
@@ -73,7 +73,7 @@ m_previousPoint->getUp());
    m_modules->renderingEngine->setCamera(m_camera);
 
    m_modules->renderingEngine->addObject3d(m_player);
-   //m_modules->renderingEngine->addObject3d(m_skybox);
+   m_modules->renderingEngine->addObject3d(m_skybox);
    m_modules->renderingEngine->addObject3d(m_reticle);
    //m_modules->renderingEngine->addObject3d(explosion);
    
@@ -84,7 +84,7 @@ i != m_turrets.end(); i++)
    }
    
    m_objects.push_back(m_player);
-   //m_objects.push_back(m_skybox);
+   m_objects.push_back(m_skybox);
    m_objects.push_back(m_reticle);
    //m_objects.push_back(explosion);
    
@@ -139,7 +139,7 @@ exit(0);
    m_player->tic(td, m_camera->getPosition(), m_camera->getUp(), m_camera->getForward());
    m_reticle->tic(td);
 
-   //m_skybox->tic(td, m_player->getPosition());
+   m_skybox->tic(td, m_player->getPosition());
    
    //explosion->setPosition(m_player->getPosition());
    //explosion->tic(td);
