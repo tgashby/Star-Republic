@@ -105,6 +105,20 @@ struct IObject3d {
 };
 
 // Sound
+const int numSoundEvents = 4; 
+enum SoundEvent {
+   Explosion = 0,
+   PlayerGun,
+   PlayerHit,
+   PlayerMissile,
+};
+
+class ISoundManager {
+public:
+   virtual ~ISoundManager(){}; 
+   virtual void playSound(SoundEvent event) = 0;
+};
+
 const int INVALID_CHANNEL = -2;
 class ISound 
 {
@@ -153,18 +167,23 @@ struct IResourceManager {
 };
 
 
-// This should be created in Main.cpp to be passed as a reference to any
-// object needing to accesss these instances.
+/**
+ * Modules - Keeps track of the various major components of the program
+ * This should be created in Main.cpp to be passed as a reference to any
+ * object needing to accesss these instances.
+ */
 struct Modules {
    IGameEngine *gameEngine;
    IRenderingEngine *renderingEngine;
    IResourceManager *resourceManager;
+   ISoundManager *soundManager;
    
    ~Modules()
    {
       delete gameEngine;
       delete renderingEngine;
       delete resourceManager;
+      delete soundManager;
    }
 };
 
