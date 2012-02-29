@@ -241,8 +241,8 @@ void WorldGrid::makeGrid()
       
       // Determine planes for later determining where enemies go
       vec3 avgUp = ((currPathPoint.up + nextPathPoint.up) / 2).Normalized();
-      vec3 avgForward = ((currPathPoint.fwd + nextPathPoint.fwd) / 2).Normalized();
-      vec3 sideVec = avgUp.Cross(avgForward).Normalized();
+      vec3 direction = (currPathPoint.loc - nextPathPoint.fwd).Normalized();
+      vec3 sideVec = avgUp.Cross(direction).Normalized();
       
       vec3 leftPt  = quad->m_startPt.loc + (-sideVec * VEC_OFFSET);
       vec3 rightPt = quad->m_startPt.loc + (sideVec * VEC_OFFSET);
@@ -255,15 +255,15 @@ void WorldGrid::makeGrid()
       rtPlane   = Plane::MakePlane(sideVec, rightPt);
       downPlane = Plane::MakePlane(-avgUp, downPt);
       upPlane   = Plane::MakePlane(avgUp, upPt);
-      nearPlane = Plane::MakePlane(-avgForward, nearPt);
-      farPlane  = Plane::MakePlane(avgForward, farPt);
+      nearPlane = Plane::MakePlane(-direction, nearPt);
+      farPlane  = Plane::MakePlane(direction, farPt);
       
-      std::cout << "L: " << leftPt << "\n";
-      std::cout << "R: " << rightPt << "\n";
-      std::cout << "D: " << downPt << "\n";
-      std::cout << "U: " << upPt << "\n";
-      std::cout << "N: " << nearPt << "\n";
-      std::cout << "F: " << farPt << "\n";
+//      std::cout << "L: " << leftPt << "\n";
+//      std::cout << "R: " << rightPt << "\n";
+//      std::cout << "D: " << downPt << "\n";
+//      std::cout << "U: " << upPt << "\n";
+//      std::cout << "N: " << nearPt << "\n";
+//      std::cout << "F: " << farPt << "\n";
       
       quad->m_bounds = new Cube(lftPlane, rtPlane, upPlane, downPlane, nearPlane, farPlane);
       
