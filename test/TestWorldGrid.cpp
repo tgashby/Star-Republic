@@ -193,12 +193,12 @@ SUITE(SimpleCourse)
     */
    TEST_FIXTURE(swgf, simpleDetQuadCurrent)
    {   
-      CHECK_EQUAL(0, m_worldGrid->determineQuadrant(vec3(1,0,0)));
+      CHECK_EQUAL(0, m_worldGrid->determineQuadrant(vec3(250,0,0)));
    }
    
    TEST_FIXTURE(swgf, simpleDetQuadNext)
    {
-      CHECK_EQUAL(1, m_worldGrid->determineQuadrant(vec3(501,0,0)));
+      CHECK_EQUAL(1, m_worldGrid->determineQuadrant(vec3(750,0,0)));
    }
    
    TEST_FIXTURE(swgf, simpleDetQuadLast)

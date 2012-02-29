@@ -18,7 +18,7 @@
  - Prob lots more...
  */
 
-const float VEC_OFFSET = 1000.0f;
+const float VEC_OFFSET = 500.0f;
 const int QUADS_TO_CHECK = 4;
 
 WorldGrid::WorldGrid(WorldData& world, Modules* modules)
@@ -257,6 +257,13 @@ void WorldGrid::makeGrid()
       upPlane   = Plane::MakePlane(avgUp, upPt);
       nearPlane = Plane::MakePlane(-avgForward, nearPt);
       farPlane  = Plane::MakePlane(avgForward, farPt);
+      
+      std::cout << "L: " << leftPt << "\n";
+      std::cout << "R: " << rightPt << "\n";
+      std::cout << "D: " << downPt << "\n";
+      std::cout << "U: " << upPt << "\n";
+      std::cout << "N: " << nearPt << "\n";
+      std::cout << "F: " << farPt << "\n";
       
       quad->m_bounds = new Cube(lftPlane, rtPlane, upPlane, downPlane, nearPlane, farPlane);
       
