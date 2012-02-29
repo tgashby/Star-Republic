@@ -201,11 +201,6 @@ SUITE(SimpleCourse)
       CHECK_EQUAL(1, m_worldGrid->determineQuadrant(vec3(750,0,0)));
    }
    
-   TEST_FIXTURE(swgf, simpleDetQuadLast)
-   {
-      CHECK_EQUAL(2, m_worldGrid->determineQuadrant(vec3(1000,0,0)));
-   }
-   
    /*
     setPlayer() tests
     */
@@ -245,15 +240,6 @@ SUITE(SimpleCourse)
       CHECK(std::find(m_worldGrid->m_quadrants.at(1)->m_gameObjects.begin(),  
                       m_worldGrid->m_quadrants.at(1)->m_gameObjects.end(), &obj) 
             != m_worldGrid->m_quadrants.at(1)->m_gameObjects.end());
-      
-      obj.setPosition(vec3(1001, 0, 0));
-      
-      quad = m_worldGrid->placeInGridDEBUG(&obj, &obj);
-      
-      CHECK_EQUAL(2, quad);
-      CHECK(std::find(m_worldGrid->m_quadrants.at(2)->m_gameObjects.begin(),  
-                      m_worldGrid->m_quadrants.at(2)->m_gameObjects.end(), &obj) 
-            != m_worldGrid->m_quadrants.at(2)->m_gameObjects.end());
    }
    
    /*
