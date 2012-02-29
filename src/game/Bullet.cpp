@@ -31,6 +31,7 @@ Bullet::Bullet(string fileName, string textureName, Modules *modules,
    //We should have a better way of doing this. We don't need to load the
    //bullet mesh for every bullet. And, there are going to be a lot of a bullets
    m_mesh = new Mesh(fileName, textureName, modules);
+   m_mesh->setShaderType(SHADER_BLOOM);
    m_meshList.push_back(m_mesh);
 
    mat4 modelMtx = mat4::Scale(SCALE) * mat4::Rotate(ROTATE, vec3(0,1,0)) * mat4::Magic(m_forward, m_up, m_position);
