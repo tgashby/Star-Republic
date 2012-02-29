@@ -16,6 +16,13 @@
 #include <string>
 #include <iostream>
 
+// Used for unit testing
+#define GAME_DEBUG
+
+// Uncomment this line for production
+// #undef GAME_DEBUG
+
+
 using namespace std;
 
 

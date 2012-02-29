@@ -41,7 +41,7 @@ WorldGrid::~WorldGrid()
       
       for (std::list<GameObject*>::iterator j = currQuad->m_gameObjects.begin(); j != currQuad->m_gameObjects.end(); j++) 
       {
-         delete *j;
+         //delete *j;
       }
       
       delete currQuad;
@@ -251,20 +251,6 @@ void WorldGrid::makeGrid()
       vec3 nearPt  = quad->m_startPt.loc;
       vec3 farPt   = quad->m_endPt.loc;
       
-      std::cout << "L: ";
-      leftPt.print();
-      std::cout << "R: "; 
-      rightPt.print();
-      std::cout << "D: ";
-      downPt.print();
-      std::cout << "U: ";
-      upPt.print();
-      std::cout << "N: ";
-      nearPt.print();
-      std::cout << "F: ";
-      farPt.print();
-      std::cout << "\n\n";
-      
       lftPlane  = Plane::MakePlane(-sideVec, leftPt);
       rtPlane   = Plane::MakePlane(sideVec, rightPt);
       downPlane = Plane::MakePlane(-avgUp, downPt);
@@ -378,7 +364,31 @@ std::vector<Quadrant>::size_type WorldGrid::determineQuadrant(const Vector3<floa
    }
    
    // If this triggers, we didn't find any quadrant that can house the object
-   assert(i < m_quadrants.size());
+   if (i == m_quadrants.size())
+   {
+      i = m_currentQuadrant;
+   }
    
    return i;
 }
+
+#ifdef GAME_DEBUG
+int WorldGrid::placeInGridDEBUG(GameObject* gameObj, Object3d* obj3D)
+{
+   std::vector<Quadrant>::size_type ndx = determineQuadrant(gameObj->getPosition());
+   
+   m_quadrants.at(ndx)->m_gameObjects.push_back(gameObj);
+   m_quadrants.at(ndx)->m_obj3Ds.push_back(obj3D);
+   
+   return ndx;
+}
+
+int WorldGrid::placeInCurrQuadrantDEBUG(GameObject* gameObj, Object3d* obj3D)
+{
+   m_quadrants.at(m_currentQuadrant)->m_gameObjects.push_back(gameObj);
+   m_quadrants.at(m_currentQuadrant)->m_obj3Ds.push_back(obj3D);
+   
+   return m_currentQuadrant;
+}
+
+#endif

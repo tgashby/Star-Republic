@@ -10,6 +10,8 @@
 #include <UnitTest++/UnitTest++.h>
 #include "WorldGrid.h"
 #include "ResourceManager.h"
+#include "FakeGameEngine.h"
+#include "FakeRenderingEngine.h"
 
 struct SimpleWorldGridFixture
 {
@@ -36,6 +38,32 @@ struct SimpleWorldGridFixture
 int SimpleWorldGridFixture::quadrants = 3;
 int SimpleWorldGridFixture::units = 1;
 int SimpleWorldGridFixture::obj3Ds = 1;
+
+struct SimpleWorldGridFixtureWithPlayer
+{
+   SimpleWorldGridFixtureWithPlayer()
+   {
+      m_modules = new Modules();
+      m_modules->resourceManager = new ResourceManager();
+      m_worldData = m_modules->resourceManager->readWorldData("test/testCourse.wf");
+      m_worldGrid = new WorldGrid(*m_worldData, m_modules);
+   }
+   
+   ~SimpleWorldGridFixtureWithPlayer()
+   {
+      delete m_modules;
+      delete m_worldData;
+      delete m_worldGrid;
+   }
+   
+   WorldGrid* m_worldGrid;
+   WorldData* m_worldData;
+   Modules* m_modules;
+   static int quadrants, units, obj3Ds;
+};
+int SimpleWorldGridFixtureWithPlayer::quadrants = 3;
+int SimpleWorldGridFixtureWithPlayer::units = 1;
+int SimpleWorldGridFixtureWithPlayer::obj3Ds = 1;
 
 struct ComplexWorldGridFixture
 {
@@ -96,6 +124,8 @@ int ComplexWorldGridFixtureWithPlayer::units = 12;
 int ComplexWorldGridFixtureWithPlayer::obj3Ds = 15;
 
 typedef SimpleWorldGridFixture swgf;
+typedef SimpleWorldGridFixtureWithPlayer swgfwp;
+
 typedef ComplexWorldGridFixture cwgf;
 typedef ComplexWorldGridFixtureWithPlayer cwgfwp;
 

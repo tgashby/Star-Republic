@@ -19,8 +19,6 @@
 #include "EnemyShip.h"
 #include "EnemyGunship.h"
 
-#define WORLDGRID_DEBUG
-
 /**
  * Quadrant structure, representing the area between two points
  */
@@ -34,7 +32,6 @@ struct Quadrant
    Quadrant(PathPointData startPt, PathPointData endPt)
    : m_startPt(startPt), m_endPt(endPt)
    {
-      
    }
    
    /**
@@ -99,6 +96,12 @@ public:
     */
    void placeInCurrQuadrant(GameObject* gameObj, Object3d* obj3D);
    
+#ifdef GAME_DEBUG
+   int placeInGridDEBUG(GameObject* gameObj, Object3d* obj3D);
+
+   int placeInCurrQuadrantDEBUG(GameObject* gameObj, Object3d* obj3D);
+#endif
+   
    /**
     * Updates all objects that are in the current quadrants.
     * @param dt the time passed since the last update.
@@ -120,7 +123,7 @@ public:
     */
    std::list<IObject3d*> getDrawableObjects();
    
-#ifndef WORLDGRID_DEBUG
+#ifndef GAME_DEBUG
 private:
 #endif
    WorldData& m_world;
