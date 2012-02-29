@@ -458,7 +458,8 @@ m_objects.push_back(bullet);
 m_bulletList.push_back(bullet);
       
       
-	 m_bulletSound->play(0);
+      m_modules->soundManager->playSound(PlayerGun); 
+	   //m_bulletSound->play(0);
       }
    }
    return running;
