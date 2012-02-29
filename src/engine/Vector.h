@@ -79,6 +79,10 @@ struct Vector3 {
     Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
     void Normalize()
     {
+       if (x != x) x = 0;
+       if (y != y) y = 0;
+       if (z != z) z = 0;
+       
         float s = 1.0f / Length();
         x *= s;
         y *= s;

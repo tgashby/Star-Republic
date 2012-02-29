@@ -334,7 +334,7 @@ void WorldGrid::updateObjects()
       {
          Quadrant* currQuad = m_quadrants.at(i);
          
-         for (std::list<IObject3d*>::iterator j = currQuad->m_obj3Ds.begin(); j != currQuad->m_obj3Ds.end(); j++) 
+         for (std::list<IObject3d*>::iterator j = currQuad->m_obj3Ds.begin(); j != currQuad->m_obj3Ds.end(); j++)
          {
             m_modules->renderingEngine->addObject3d(*j);
          }

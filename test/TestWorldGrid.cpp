@@ -20,6 +20,9 @@ struct SimpleWorldGridFixture
       m_modules = new Modules();
       m_modules->resourceManager = new ResourceManager();
       m_worldData = m_modules->resourceManager->readWorldData("test/testCourse.wf");
+      m_modules->gameEngine = new FakeGameEngine(m_worldData->path.at(0), m_worldData->path.at(1));
+      m_modules->renderingEngine = new FakeRenderingEngine();
+      
       m_worldGrid = new WorldGrid(*m_worldData, m_modules);
    }
    
@@ -46,7 +49,14 @@ struct SimpleWorldGridFixtureWithPlayer
       m_modules = new Modules();
       m_modules->resourceManager = new ResourceManager();
       m_worldData = m_modules->resourceManager->readWorldData("test/testCourse.wf");
+      m_modules->gameEngine = new FakeGameEngine(m_worldData->path.at(0), m_worldData->path.at(1));
+      m_modules->renderingEngine = new FakeRenderingEngine();
+      
       m_worldGrid = new WorldGrid(*m_worldData, m_modules);
+      
+      Player* p = new Player("models/spaceship.obj", "textures/test3.bmp", m_modules, vec3(0,0,0), vec3(0,0,1), vec3(1,0,0));
+      
+      m_worldGrid->setPlayer(p);
    }
    
    ~SimpleWorldGridFixtureWithPlayer()
@@ -72,6 +82,9 @@ struct ComplexWorldGridFixture
       m_modules = new Modules();
       m_modules->resourceManager = new ResourceManager();
       m_worldData = m_modules->resourceManager->readWorldData("test/testCourse2.wf");
+      m_modules->gameEngine = new FakeGameEngine(m_worldData->path.at(0), m_worldData->path.at(1));
+      m_modules->renderingEngine = new FakeRenderingEngine();
+      
       m_worldGrid = new WorldGrid(*m_worldData, m_modules);
    }
    
@@ -97,9 +110,10 @@ struct ComplexWorldGridFixtureWithPlayer
    {
       m_modules = new Modules();
       m_modules->resourceManager = new ResourceManager();
-      m_modules->gameEngine = new FakeGameEngine();
-      m_modules->renderingEngine = new FakeRenderingEngine();
       m_worldData = m_modules->resourceManager->readWorldData("test/testCourse2.wf");
+      m_modules->gameEngine = new FakeGameEngine(m_worldData->path.at(0), m_worldData->path.at(1));
+      m_modules->renderingEngine = new FakeRenderingEngine();
+      
       m_worldGrid = new WorldGrid(*m_worldData, m_modules);
       
       Player* p = new Player("models/spaceship.obj", "textures/test3.bmp", m_modules, vec3(0,0,0), vec3(0,0,1), vec3(1,0,0));
