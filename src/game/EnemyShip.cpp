@@ -42,7 +42,7 @@ EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Play
      mat4::Magic(-getForward(), getUp(), getPosition());
   m_mesh->setModelMtx(modelMtx);
 
-  m_health = 500;
+  m_health = 50;
 
 }
 
