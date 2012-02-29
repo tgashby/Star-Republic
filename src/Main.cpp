@@ -5,6 +5,7 @@
 #include "ResourceManager.h"
 #include "GameEngine.h"
 #include "RenderingEngine.h"
+#include "SoundManager.cpp"
 
 bool handleEvents(float dt, SDL_Event& evt);
 bool handleKeyUp(SDLKey key);
@@ -51,6 +52,7 @@ int main(int argc, char** argv)
    // Setup the modules
    Modules *modules = new Modules();
    modules->resourceManager = new ResourceManager();
+   modules->soundManager = new SoundManager();
    modules->renderingEngine = new RenderingEngine(screenSize, modules);
    modules->gameEngine = new GameEngine(modules);
    
