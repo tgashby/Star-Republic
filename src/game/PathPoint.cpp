@@ -149,5 +149,4 @@ void PathPoint::addToQuadrant(GameObject* gameObj, Object3d* obj3D) {
    }
    
   m_quadrant.m_obj3Ds.push_back(obj3D);
-   std::cerr << "Added an object!~\n";
 }

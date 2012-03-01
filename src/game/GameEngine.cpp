@@ -260,8 +260,9 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 				     m_player->getAimForward(), m_player->getAimUp(), 
 				     *m_player, Bullet::defaultTimeToLive, 1.0f);
 	 
-         //m_worldGrid->placeInGrid(bullet, bullet);
-	 
+         m_path->addToQuadrants(bullet->getPosition(), bullet, bullet);
+         m_modules->renderingEngine->addObject3d(bullet);
+         
 	 bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
 			     m_modules, m_player->getPosition() 
 			     - (m_player->getSide() * 8),
@@ -270,7 +271,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
       
       
          m_path->addToQuadrants(bullet->getPosition(), bullet, bullet);
-      
+         m_modules->renderingEngine->addObject3d(bullet);
       
       
       m_modules->soundManager->playSound(PlayerGun); 
@@ -383,6 +384,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
 	    
 	    // HACK so that I can use it as both a GameObject and an Object3d
        m_path->addToQuadrants(bulletOrigin, missile, missile);
+       m_modules->renderingEngine->addObject3d(missile);
 	 }
       }
    }

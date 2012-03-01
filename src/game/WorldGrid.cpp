@@ -202,6 +202,7 @@ void WorldGrid::makeGrid()
                newTurret->setUp(up);
                
                m_path.addToQuadrants(position, newTurret, newTurret);
+               m_modules->renderingEngine->addObject3d(newTurret);
                break;
          }
       }
@@ -218,6 +219,7 @@ void WorldGrid::makeGrid()
          SceneObject* sceneObj = new SceneObject("models/" + currProp.name + ".obj", "textures/" + currProp.name + ".bmp", position, forward, up, m_modules);
          
          m_path.addToQuadrants(position, NULL, sceneObj);
+         m_modules->renderingEngine->addObject3d(sceneObj);
       }
    }
 }
