@@ -53,7 +53,7 @@ m_modules, m_camera->getPosition(),
 m_camera->getForward(), m_camera->getUp());
    m_camera->setPlayer(m_player);
 
-   m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
+   m_reticle = new Reticle("models/reticle2.obj", "textures/white.bmp", 
 			 m_modules, m_player);
 
    createTurrets();
@@ -109,7 +109,7 @@ i != m_turrets.end(); i++)
    m_music = loadMusic("sound/ambient1.wav");
    m_boostSound = loadSound("sound/boost.wav");
    addAsteroids();
-   m_music->play(-1);
+   //m_music->play(-1);
 }
 
 void GameEngine::tic(uint64_t td) {
@@ -258,9 +258,7 @@ exit(0);
       //Cull the bullet!
       i++;   
    }
-   printf("%d\n", i);
-
-
+   
    for (std::vector<Missile *>::iterator missileIterator = m_missileList.begin();
 	missileIterator != m_missileList.end();
 	missileIterator++) {
@@ -275,34 +273,60 @@ exit(0);
       m_stateManager->pushState(m_lose);
       //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME.
    }
+   int deathCount = 0;
+   for (std::vector<EnemyShip *>::iterator j = m_enemyShips.begin();
+          j != m_enemyShips.end(); j++) {
+      if ((*j)->isAlive() == false)
+         deathCount++;
+   }
+   for (std::vector<EnemyGunship *>::iterator j = m_enemyGunners.begin();
+          j != m_enemyGunners.end(); j++) {
+      if ((*j)->isAlive() == false)
+         deathCount++;
+   }
+   if (deathCount == 1) {
+      m_stateManager->pushState(m_win);
+      //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME AS WELL.
+   }   
    }
 }
 
 void GameEngine::cullObjects() {
-  /*for (std::vector<Bullet *>::iterator bulletIter = m_bulletList.begin(); 
-       bulletIter != m_bulletList.end(); bulletIter++) {
-    if (isCullable(*bulletIter)) {
-      cullObject(*bulletIter);
-    }
-    }*/
+  /**/
+  
+  vector<GameObject *> toCull;
 
   for (std::vector<Missile *>::iterator missileIter = m_missileList.begin();
        missileIter != m_missileList.end(); missileIter++) {
     if (isCullable(*missileIter)) {
-      cullObject(*missileIter);
+      toCull.push_back(*missileIter);
     }
   }
 
-  //Add missile as well
+  for (std::vector<Bullet *>::iterator bulletIter = m_bulletList.begin(); 
+       bulletIter != m_bulletList.end(); bulletIter++) {
+    if (isCullable(*bulletIter)) {
+      toCull.push_back(*bulletIter);
+    }
+  }
+
+  for (vector<GameObject *>::iterator cullIter = toCull.begin();
+       cullIter != toCull.end(); cullIter++) {
+    cullObject(*cullIter);
+  }
 }
 
 bool GameEngine::isCullable(GameObject* obj) {
   if (typeid(*obj) == typeid(Bullet)) {
-    return true;
+    if ((m_player->getPosition() - obj->getPosition()).Length() > 2000) {
+      return true;
+    }
   }
 
   if (typeid(*obj) == typeid(Missile)) {
-    return true;
+    if (((Missile *)obj)->getTotalTime() > 2000) {
+      return true;
+    }
   }
 
   return false;
@@ -310,17 +334,34 @@ bool GameEngine::isCullable(GameObject* obj) {
 
 void GameEngine::cullObject(GameObject* obj) {
   if (typeid(*obj) == typeid(Bullet)) {
-    remove(m_bulletList.begin(), m_bulletList.end(), obj);
+    //remove(m_bulletList.begin(), m_bulletList.end(), obj);
+    m_bulletList.erase(find(m_bulletList.begin(), m_bulletList.end(), obj));
   }
   
   if (typeid(*obj) == typeid(Missile)) {
-    remove(m_missileList.begin(), m_missileList.end(), obj);
+    //remove(m_missileList.begin(), m_missileList.end(), obj);
+    cerr << "Before the first erase :" << m_missileList.size() << "\n";
+    //m_missileList.resize(m_missileList.size() - 1);
+    m_missileList.erase(find(m_missileList.begin(), m_missileList.end(), obj));
+    cerr << "After the first erase :" << m_missileList.size() << "\n";
   }
 
+//cerr << "Before the second erase :" << m_objects.size() << "\n";
   remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
-  remove(m_gameObjects.begin(), m_gameObjects.end(), obj);
+  m_objects.resize(m_objects.size() - 1);
+  //cerr << "After the second erase :" << m_objects.size() << "\n";
   
-//  delete obj;
+  //m_objects.erase(find(m_objects.begin(), m_objects.end(), (Object3d*) obj));
+
+
+  //remove(m_gameObjects.begin(), m_gameObjects.end(), obj);
+  //m_
+  cerr << "Before the third erase :" << m_gameObjects.size() << "\n";
+  m_gameObjects.erase(find(m_gameObjects.begin(), m_gameObjects.end(), obj));
+  cerr << "After the third erase :" << m_gameObjects.size() << "\n";
+
+  //delete obj;
+  //cerr << "deleted the object\n";
 }
 
 void GameEngine::render() {
@@ -340,6 +381,12 @@ void GameEngine::render() {
       m_modules->renderingEngine->clearScreen();
       m_modules->renderingEngine->drawText("YOU LOSE", ivec2(-350,0), ivec2(800,100));
       m_modules->renderingEngine->drawText("Close The Window", ivec2(-350, -100), ivec2(500,50));
+   }
+   if (m_stateManager->getCurrentState() == m_win)
+   {
+      m_modules->renderingEngine->clearScreen();
+      m_modules->renderingEngine->drawText("CONGRAGULATIONS", ivec2(-350,0), ivec2(800,100));
+      m_modules->renderingEngine->drawText("You've Won!", ivec2(-350, -100), ivec2(500,50));
    }
 }
 
@@ -414,7 +461,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    bool running = true;
 
    //Checks to see whether the current state is the menu, and pops the state if so. Will be revised later.
-   if (m_stateManager->getCurrentState() == m_lose)
+   if (m_stateManager->getCurrentState() == m_lose || m_stateManager->getCurrentState() == m_win)
    {
       return running;
    }
@@ -510,7 +557,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       InitData();
       return running;
    }
-   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() == m_lose)
+   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() != m_game)
    {
       running = false;
    }
@@ -554,7 +601,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
 	    
 	    bulletOrigin += (m_player->getAimForward() * 8.0f);
 	    
-	    Missile *missile = new Missile("models/missile1.obj", "textures/test6.bmp",
+	    Missile *missile = new Missile("models/missile1.obj", "textures/missileTex.bmp",
 					   m_modules, 
 					   bulletOrigin, 
 					   m_player->getAimForward(), 

@@ -78,6 +78,11 @@ class Missile : public Explodeable, public GameObject {
     */
    void doCollision(GameObject &other);
 
+   /**
+    * Returns the missile's total time
+    */
+   int getTotalTime();
+
  private:
    
    /**
@@ -123,6 +128,11 @@ class Missile : public Explodeable, public GameObject {
     * Whether or not the missile has detonated
     */
    bool m_detonated;
+
+   /**
+    * The totaltime since creation
+    */
+   int m_tottime;
 };
 
 #endif

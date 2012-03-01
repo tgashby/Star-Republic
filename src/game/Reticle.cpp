@@ -3,9 +3,9 @@
 #define SCALE1 4
 #define SCALE2 5
 #define SCALE3 8
-#define TRANS1 -100
-#define TRANS2 -70 
-#define TRANS3 -40
+#define TRANS1 -120
+#define TRANS2 -90 
+#define TRANS3 -50
 
 Reticle::Reticle(string fileName, string textureName, Modules *modules, Player *p) 
    :  Object3d()
@@ -22,6 +22,7 @@ Reticle::Reticle(string fileName, string textureName, Modules *modules, Player *
       mat4::Magic(-(p->getAimForward()), p->getAimUp(), p->getPosition() - p->getAimForward() * TRANS1);
    m_mesh1->setModelMtx(modelMtx1);
    m_mesh1->setScale(SCALE1);
+   m_mesh1->setShaderType(SHADER_NO_LIGHT);
 
    /** Load the Mesh **/
    m_mesh2 = new Mesh(fileName, textureName, modules);
@@ -33,6 +34,7 @@ Reticle::Reticle(string fileName, string textureName, Modules *modules, Player *
       mat4::Magic(-(p->getAimForward()), p->getAimUp(), p->getPosition() - p->getAimForward() * TRANS2);
    m_mesh2->setModelMtx(modelMtx2);
    m_mesh2->setScale(SCALE2);
+   m_mesh2->setShaderType(SHADER_NO_LIGHT);
 
    /** Load the Mesh **/
    m_mesh3 = new Mesh(fileName, textureName, modules);
@@ -44,6 +46,7 @@ Reticle::Reticle(string fileName, string textureName, Modules *modules, Player *
       mat4::Magic(-(p->getAimForward()), p->getAimUp(), p->getPosition() - p->getAimForward() * TRANS3);
    m_mesh3->setModelMtx(modelMtx3);
    m_mesh3->setScale(SCALE3);
+   m_mesh3->setShaderType(SHADER_NO_LIGHT);
 }
 
 Reticle::~Reticle()
