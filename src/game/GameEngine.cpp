@@ -324,7 +324,7 @@ bool GameEngine::isCullable(GameObject* obj) {
   }
 
   if (typeid(*obj) == typeid(Missile)) {
-    if (((Missile *)obj)->getTotalTime() > 2000) {
+    if (((Missile *)obj)->getTotalTime() > 3500) {
       return true;
     }
   }
