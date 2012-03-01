@@ -91,10 +91,22 @@ public:
     */
    Vector3<float> getAimUp();
 
+   /** returns the direction to the nearest enemy **/
+   Vector3<float> getMagneticForward();
+
+   /** sets the direction to the nearest enemy
+    *  @param dir the direction to the enemy **/
+   void setMagneticForward(vec3 dir);
+
    /**
     * Returns the vector off of the center of the ship
     */
    vec3 getOffSet();
+
+   /**
+    *  turns the magnetic aiming off
+    **/
+   void toggleMagnetic();
 
    /**
     *  returns the m_forward of the player (used in enemies)
@@ -173,6 +185,12 @@ private:
     * NEEDED?
     */
    Vector3<float> futureProgress;
+
+   /** the direction to aim at the nearest enemy **/
+   Vector3<float> magnetic;
+
+   /** whether you're using the magnetism **/
+   bool magnet;
 
    /**
     * The last known horizontal screen coordinate

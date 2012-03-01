@@ -44,6 +44,8 @@ Player::Player(string fileName, string textureName, Modules *modules,
    
    // god mode much?
    m_health = 200;
+
+   magnet = true;
 }
 
 Player::~Player()
@@ -108,6 +110,24 @@ void Player::updateVelocity(float diffX, float diffY)
 
    lastScreenX = diffX;
    lastScreenY = diffY;
+}
+
+Vector3<float> Player::getMagneticForward()
+{
+   if (magnet)
+      return magnetic;
+   else
+      return getAimForward();
+}
+
+void Player::setMagneticForward(vec3 dir)
+{
+   magnetic = dir;
+}
+
+void Player::toggleMagnetic()
+{
+   magnet = !magnet;
 }
 
 Vector3<float> Player::getAimForward()

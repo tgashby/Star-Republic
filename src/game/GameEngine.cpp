@@ -148,12 +148,19 @@ exit(0);
      (*j)->tic(td);
    }*/
 
+   vec3 closestdir = vec3(10000, 10000, 10000);
+
    for (std::vector<Turret*>::iterator i = m_turrets.begin(); i != m_turrets.end(); i++) 
    {
       (*i)->tic(td);
       
       vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
       
+      if (closestdir.Length() > dirToPlayer.Length() 
+          && dirToPlayer.Dot(m_player->getAimForward()) > 150
+          && (*i)->isAlive())
+         closestdir = dirToPlayer;
+
       // Turret not currently firing, but I think it's because
       // the player starts too close to the turret
       if ((*i)->isAlive() && dirToPlayer.Length() < 1500 && (*i)->shouldFire())
@@ -179,6 +186,12 @@ exit(0);
      (*j)->tic(td);
 
      vec3 dirEnemyToPlayer = (*j)->getPosition() - m_player->getPosition();
+
+     if (closestdir.Length() > dirEnemyToPlayer.Length()
+          && dirEnemyToPlayer.Dot(m_player->getAimForward()) > 150
+          && (*j)->isAlive())
+         closestdir = dirEnemyToPlayer;
+
      if (dirEnemyToPlayer.Length() < 700 && (*j)->shouldFire())
      {
         vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
@@ -213,6 +226,12 @@ exit(0);
      (*j)->tic(td);
 
      vec3 dirEnemyToPlayer = (*j)->getPosition() - m_player->getPosition();
+
+     if (closestdir.Length() > dirEnemyToPlayer.Length()
+          && dirEnemyToPlayer.Dot(m_player->getAimForward()) > 150
+          && (*j)->isAlive())
+         closestdir = dirEnemyToPlayer;
+
      if (dirEnemyToPlayer.Length() < 1600 &&
         ((*j)->shouldFire1() || (*j)->shouldFire2()))
      {
@@ -248,6 +267,12 @@ exit(0);
         }
       }
    }
+
+   if (closestdir.x != 10000 && closestdir.y != 10000 && closestdir.z != 10000)
+      m_player->setMagneticForward(closestdir.Normalized());
+   else
+      m_player->setMagneticForward(m_player->getAimForward());
+
 
    int i = 0;
    //Use Iterators!
@@ -507,13 +532,16 @@ bool GameEngine::handleKeyDown(SDLKey key) {
       m_reticle->setVisible(false);
    }
    
+   if (key ==  SDLK_LSHIFT)
+      m_player->toggleMagnetic();
+
    if (key == SDLK_z)
    {
       if (!m_camera->isBoosting()) {
 	 Bullet *bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
 				     m_modules, m_player->getPosition() 
 				     + (m_player->getSide() * 8),
-				     m_player->getAimForward(), m_player->getAimUp(), 
+				     m_player->getMagneticForward(), m_player->getAimUp(), 
 				     *m_player, Bullet::defaultTimeToLive, 1.0f);
 	 
 	 m_modules->renderingEngine->addObject3d(bullet);
@@ -524,7 +552,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 	 bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
 			     m_modules, m_player->getPosition() 
 			     - (m_player->getSide() * 8),
-			     m_player->getAimForward(), m_player->getAimUp(), 
+			     m_player->getMagneticForward(), m_player->getAimUp(), 
 			     *m_player, Bullet::defaultTimeToLive, 1.0f);
       
       
