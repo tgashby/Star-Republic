@@ -47,7 +47,12 @@ public:
    
 private:
    void runCollisions();
-//   void addAsteroids();
+   void createTurrets();
+   void createTerrain();
+   void addAsteroids();
+   void cullObjects();
+   void cullObject(GameObject* obj, Object3d* second);
+   bool isCullable(GameObject* obj);
    
    Player *m_player;
    Reticle *m_reticle;

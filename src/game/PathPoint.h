@@ -35,8 +35,8 @@ struct Quadrant
 class PathPoint {
  public:
    PathPoint(PathPointData pointData);
-   /*PathPoint(vec3 position, vec3 up, vec3 forward, vec3 side);
-     PathPoint(vec3 position, vec3 forward, vec3 up, ivec4 links);*/
+   PathPoint(vec3 position, vec3 up, vec3 forward, vec3 side);
+   /*  PathPoint(vec3 position, vec3 forward, vec3 up, ivec4 links);*/
    ~PathPoint();
    void setPosition(float x, float y, float z);
    void setUp(float x, float y, float z);

@@ -44,7 +44,7 @@ void GameEngine::InitData()
    
    m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
    m_skybox = new SkyBox("models/box3.obj", "textures/box3.bmp", m_modules, m_camera->getPosition());
-   m_player = new Player("models/spaceship.obj", "textures/spaceship_pp.bmp",
+   m_player = new Player("models/spaceship.obj", "textures/spaceship2.bmp",
 m_modules, m_camera->getPosition(),
 m_camera->getForward(), m_camera->getUp());
    
@@ -84,7 +84,7 @@ m_camera->getForward(), m_camera->getUp());
    m_missileSound = loadSound("sound/missileLaunch.wav");;
    m_music = loadMusic("sound/ambient1.wav");
    m_boostSound = loadSound("sound/boost.wav");
-   //addAsteroids();
+   addAsteroids();
    m_music->play(-1);
 }
 
@@ -127,6 +127,103 @@ void GameEngine::tic(uint64_t td) {
    }
 }
 
+void GameEngine::cullObjects() {
+  /**/
+  
+  vector<GameObject *> toCull;
+  vector<Object3d *> toCullD;
+
+  for (std::vector<Missile *>::iterator missileIter = m_missileList.begin();
+       missileIter != m_missileList.end(); missileIter++) {
+    if (isCullable(*missileIter)) {
+      toCull.push_back(*missileIter);
+      toCullD.push_back(*missileIter);
+    }
+  }
+
+  for (std::vector<Bullet *>::iterator bulletIter = m_bulletList.begin(); 
+       bulletIter != m_bulletList.end(); bulletIter++) {
+    if (isCullable(*bulletIter)) {
+      toCull.push_back(*bulletIter);
+      toCullD.push_back(*bulletIter);
+    }
+  }
+
+  std::vector<Object3d *>::iterator cullIterD = toCullD.begin();
+  for (std::vector<GameObject *>::iterator cullIter = toCull.begin();
+       cullIter != toCull.end(), cullIterD != toCullD.end(); cullIter++, cullIterD++) {
+    cullObject(*cullIter, *cullIterD);
+  }
+}
+
+bool GameEngine::isCullable(GameObject* obj) {
+  if (typeid(*obj) == typeid(Bullet)) {
+    if ((m_player->getPosition() - obj->getPosition()).Length() > 2000) {
+      return true;
+    }
+  }
+
+  if (typeid(*obj) == typeid(Missile)) {
+    if (((Missile *)obj)->getTotalTime() > 4000) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+void GameEngine::cullObject(GameObject* obj, Object3d* second) {
+  if (typeid(*obj) == typeid(Bullet)) {
+    //remove(m_bulletList.begin(), m_bulletList.end(), obj);
+    m_bulletList.erase(find(m_bulletList.begin(), m_bulletList.end(), obj));
+  }
+  
+  if (typeid(*obj) == typeid(Missile)) {
+    //remove(m_missileList.begin(), m_missileList.end(), obj);
+    //cerr << "Before the first erase :" << m_missileList.size() << "\n";
+    //m_missileList.resize(m_missileList.size() - 1);
+    m_missileList.erase(find(m_missileList.begin(), m_missileList.end(), obj));
+    //remove(find(m_missileList.begin(), m_missileList.end(), obj));
+  }
+
+  //remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
+  //m_objects.resize(m_objects.size() - 1);
+  
+  //cerr << "Before the second erase :" << m_objects.size() << "\n";
+  /*for (list<IObject3d *>::iterator objIter = m_objects.begin();
+	 objIter != m_objects.end(); objIter++) {
+    if (((GameObject *)(*objIter))->getPosition() == obj->getPosition()) {
+      assert(false);
+      m_objects.erase(objIter);
+      break;
+    }
+  }*/
+  /*ARE YOU RRRRREAAAAADY TO SUDOCODE
+  FIRST! YOU ADD A NEW LAST OBJECT3D  TO THE LIST THAT HAS NOTHING OF VALUE
+  THEN! YOU RUN FIND ON THE LIST FOR THE THINGY!
+  SECOND! YOU COMPARE THE RESULT OF THE FIND WITH THE LAST VALUE IN THE THINGY!
+  FINALLY! IF THEY ARE EQUAL, NOTHING OF VALUE WAS FOUND!
+  */
+//  IObject3d* dummy = NULL;
+//  std::_List_iterator<IObject3d *> temp;
+//  m_objects.push_back(dummy);
+//  temp = find(m_objects.begin(), m_objects.end(), second);
+//  assert(temp != m_objects.end());
+//  m_objects.pop_back();
+//  m_objects.erase(find(m_objects.begin(), m_objects.end(), second));
+  
+  //cerr << "After the second erase :" << m_objects.size() << "\n";
+  
+  //m_objects.erase(myfind(m_objects.begin(), m_objects.end(), obj));
+
+
+  //remove(m_gameObjects.begin(), m_gameObjects.end(), obj);
+  //m_
+//  m_gameObjects.erase(find(m_gameObjects.begin(), m_gameObjects.end(), obj));
+
+   //delete obj;
+  //cerr << "deleted the object\n";
+}
 
 void GameEngine::render() {
    //Checks if the current state is the game state. This could be made more elegant.
@@ -158,7 +255,7 @@ void GameEngine::render() {
    {
       m_modules->renderingEngine->clearScreen();
       m_modules->renderingEngine->drawText("CONGRAGULATIONS", ivec2(-350,0), ivec2(800,100));
-      m_modules->renderingEngine->drawText("You've Won!", ivec2(-350, -100), ivec2(500,50));
+      m_modules->renderingEngine->drawText("You've Won", ivec2(-350, -100), ivec2(500,50));
    }
 }
 
@@ -196,38 +293,40 @@ running = handleKeyDown(evt.key.keysym.sym);
    return running;
 }
 
-//void GameEngine::addAsteroids() {
-//   EnemyShip* tempShip;
-//   EnemyGunship* tempGunner;
-//   PathPoint current(vec3(0,0,0), vec3(0,0,0), vec3(0,0,0), vec3(0,0,0));
-//
-//   for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex+=1) {
-//      current = m_path->getAt(pntIndex);
-//
-//      //ADD AN ASTEROID
-//      if (pntIndex % 2 == 0) {
-//	tempShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", m_modules, *m_player);
-//
-//	tempShip->setPosition(current.getPosition());
-//        tempShip->tic(0);
-//	m_modules->renderingEngine->addObject3d(tempShip);
-//	m_gameObjects.push_back(tempShip);
-//	m_objects.push_back(tempShip);
-//	//m_enemies.push_back(tempShip);
-//    m_enemyShips.push_back(tempShip);
-//      }
-//      else {
-//	tempGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj", "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp", m_modules, *m_player);
-//	tempGunner->setPosition(current.getPosition());
-//        tempGunner->tic(0);
-//	m_modules->renderingEngine->addObject3d(tempGunner);
-//	m_gameObjects.push_back(tempGunner);
-//	m_objects.push_back(tempGunner);
-//	//m_enemies.push_back(tempGunner);
-//    m_enemyGunners.push_back(tempGunner);
-//      }
-//   }
-//}
+void GameEngine::addAsteroids() {
+   EnemyShip* tempShip;
+   EnemyGunship* tempGunner;
+   PathPoint current(vec3(0,0,0), vec3(0,0,0), vec3(0,0,0), vec3(0,0,0));
+
+   for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex+=1) {
+      current = m_path->getAt(pntIndex);
+
+      //ADD AN ASTEROID
+      if (pntIndex % 2 == 0) {
+	tempShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", m_modules, m_player);
+
+	tempShip->setSpawnPosition(current.getPosition());
+        tempShip->tic(0);
+         
+         m_path->addToQuadrants(current.getPosition(), tempShip, tempShip);
+	m_modules->renderingEngine->addObject3d(tempShip);
+         
+	//m_enemies.push_back(tempShip);
+    m_enemyShips.push_back(tempShip);
+      }
+      else {
+	tempGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj", "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp", m_modules, m_player);
+	tempGunner->setSpawnPosition(current.getPosition());
+        tempGunner->tic(0);
+         
+         m_path->addToQuadrants(current.getPosition(), tempGunner, tempGunner);
+	m_modules->renderingEngine->addObject3d(tempGunner);
+         
+	//m_enemies.push_back(tempGunner);
+    m_enemyGunners.push_back(tempGunner);
+      }
+   }
+}
 
 bool GameEngine::handleKeyDown(SDLKey key) {
    bool running = true;
@@ -251,13 +350,16 @@ bool GameEngine::handleKeyDown(SDLKey key) {
       m_reticle->setVisible(false);
    }
    
+   if (key ==  SDLK_LSHIFT)
+      m_player->toggleMagnetic();
+
    if (key == SDLK_z)
    {
       if (!m_camera->isBoosting()) {
 	 Bullet *bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
 				     m_modules, m_player->getPosition() 
 				     + (m_player->getSide() * 8),
-				     m_player->getAimForward(), m_player->getAimUp(), 
+				     m_player->getMagneticForward(), m_player->getAimUp(), 
 				     *m_player, Bullet::defaultTimeToLive, 1.0f);
 	 
          m_path->addToQuadrants(bullet->getPosition(), bullet, bullet);
@@ -266,7 +368,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 	 bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
 			     m_modules, m_player->getPosition() 
 			     - (m_player->getSide() * 8),
-			     m_player->getAimForward(), m_player->getAimUp(), 
+			     m_player->getMagneticForward(), m_player->getAimUp(), 
 			     *m_player, Bullet::defaultTimeToLive, 1.0f);
       
       
@@ -274,8 +376,9 @@ bool GameEngine::handleKeyDown(SDLKey key) {
          m_modules->renderingEngine->addObject3d(bullet);
       
       
-      m_modules->soundManager->playSound(PlayerGun); 
-	   //m_bulletSound->play(0);
+      
+      //m_modules->soundManager->playSound(PlayerGun); 
+	   m_bulletSound->play(0);
       }
    }
    return running;
@@ -330,7 +433,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       InitData();
       return running;
    }
-   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() != m_game)
+   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() == m_lose || m_stateManager->getCurrentState() == m_win)
    {
       running = false;
    }

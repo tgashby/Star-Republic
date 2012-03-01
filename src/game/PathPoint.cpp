@@ -22,14 +22,16 @@ PathPoint::PathPoint(PathPointData pointData)
    }
 }
 
-/*PathPoint::PathPoint(vec3 position, vec3 up, vec3 forward, vec3 side) {
+PathPoint::PathPoint(vec3 position, vec3 up, vec3 forward, vec3 side) 
+: m_quadrant(PathPointData(ivec4(), vec3(), vec3(), vec3()))
+{
    this->position = position;
    this->up = up.Normalized();
    this->forward = forward.Normalized();
    this->side = side.Normalized();
 }
 
-PathPoint::PathPoint(vec3 position, vec3 forward, vec3 up, ivec4 links) {
+/*PathPoint::PathPoint(vec3 position, vec3 forward, vec3 up, ivec4 links) {
   this->position = position;
   this->up = up.Normalized();
   this->forward = forward.Normalized();

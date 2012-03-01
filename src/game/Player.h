@@ -13,6 +13,8 @@
 #define Y_SCALAR 0.0005f
 #define MODEL_SCALE 0.8f
 #define PLAYER_DISTANCE_FROM_CAMERA 170
+#define FLASH_DURATION 30
+#define TOTAL_FLASH_DURATION 120
 
 /**
  * Player class to handle the player
@@ -89,10 +91,22 @@ public:
     */
    Vector3<float> getAimUp();
 
+   /** returns the direction to the nearest enemy **/
+   Vector3<float> getMagneticForward();
+
+   /** sets the direction to the nearest enemy
+    *  @param dir the direction to the enemy **/
+   void setMagneticForward(vec3 dir);
+
    /**
     * Returns the vector off of the center of the ship
     */
    vec3 getOffSet();
+
+   /**
+    *  turns the magnetic aiming off
+    **/
+   void toggleMagnetic();
 
    /**
     *  returns the m_forward of the player (used in enemies)
@@ -137,6 +151,10 @@ private:
    Mesh *m_shipMesh;
    Mesh *m_exhaustMesh;
 
+   //LOOK AT ME AND MY FANCY SHMANCY COMMENTS
+   int m_count;
+   bool m_isFlashing;
+
    /**
     * The forward velocity of the ship
     */
@@ -167,6 +185,12 @@ private:
     * NEEDED?
     */
    Vector3<float> futureProgress;
+
+   /** the direction to aim at the nearest enemy **/
+   Vector3<float> magnetic;
+
+   /** whether you're using the magnetism **/
+   bool magnet;
 
    /**
     * The last known horizontal screen coordinate

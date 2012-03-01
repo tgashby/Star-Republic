@@ -13,8 +13,8 @@
 #include "Explodeable.h"
 #include "Missile.h"
 
-const float PATHVELOCITY = 3.2f;
-const float AIMVELOCITY = 1.3f;
+const float PATHVELOCITY = 1.2f;
+const float AIMVELOCITY = 3.3f;
 const float x_SCALAR = 0.0005f; 
 const float y_SCALAR = 0.0005f; 
 const float mODEL_SCALE = 0.05f;
@@ -72,6 +72,12 @@ public:
    void updateVelocity(float diffX, float diffY);
    
    /**
+    * setSpawnPosition sets the position and spawn location of the enemy
+    * @param position the new position to set it to
+    */ 
+   void setSpawnPosition(vec3 position);
+
+   /**
     * getAimForward returns the direction the ship is aiming
     */ 
    Vector3<float> getAimForward();
@@ -114,6 +120,7 @@ private:
    Mesh *m_mesh;
    Vector3<float> side;
    Vector3<float> dpos;
+   Vector3<float> spawnpos;
    float prevAngle;
    float currentAngle;
    bool dodging;

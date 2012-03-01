@@ -116,6 +116,12 @@ class EnemyGunship : public Flyer, public Enemy, public Explodeable {
    vec3 getPosition();
 
    /**
+    * setSpawnPosition sets the position and spawn location of the enemy
+    * @param position the new position to set it to
+    */ 
+   void setSpawnPosition(vec3 position);
+
+   /**
     * returns the cross of the m_forward and m_up vectors
     */
    vec3 getMSide();
@@ -127,6 +133,7 @@ private:
    Mesh *m_turretheadmesh1, *m_turretheadmesh2;
    Vector3<float> side;
    Vector3<float> dpos;
+   Vector3<float> spawnpos;
    float prevAngle;
    float currentAngle;
 
