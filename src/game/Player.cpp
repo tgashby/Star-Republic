@@ -18,8 +18,14 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_position = cam_pos;
    calculateSide();
 
-   m_mesh = new Mesh(fileName, textureName, modules);
-   m_meshList.push_back(m_mesh);
+   m_shipMesh = new Mesh(fileName, textureName, modules);
+   m_meshList.push_back(m_shipMesh);
+   
+   m_exhaustMesh = new Mesh("models/spaceship_exhaust.obj", "textures/test4.bmp", modules);
+   m_exhaustMesh->setShaderType(SHADER_BLOOM);
+   m_meshList.push_back(m_exhaustMesh);
+   
+   
 
    // these are relative to the 'forward' vector
    x = SCREENX;
@@ -33,7 +39,8 @@ Player::Player(string fileName, string textureName, Modules *modules,
 * the forward, up and position (aka magic) **/
    mat4 modelMtx = mat4::Scale(MODEL_SCALE) * mat4::Rotate(180, vec3(0,1,0)) *
       mat4::Magic(getForward(), getUp(), getPosition());
-   m_mesh->setModelMtx(modelMtx);
+   m_shipMesh->setModelMtx(modelMtx);
+   m_exhaustMesh->setModelMtx(modelMtx);
    
    // god mode much?
    m_health = 2000;
@@ -68,7 +75,8 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
 * the forward, up and position (aka magic) **/
    modelMtx = mat4::Scale(MODEL_SCALE) * mat4::Rotate(180, vec3(0,1,0)) *
       mat4::Magic(getAimForward(), getAimUp(), m_position);
-   m_mesh->setModelMtx(modelMtx);
+   m_shipMesh->setModelMtx(modelMtx);
+   m_exhaustMesh->setModelMtx(modelMtx);
 
    x += vx * time;
    y += vy * time;
@@ -154,7 +162,8 @@ void Player::doCollision(GameObject & other)
    
    if (m_health <= 0) {
        m_alive = false;
-       m_mesh->setVisible(false);
+       m_shipMesh->setVisible(false);
+       m_exhaustMesh->setVisible(false);
    }
    //DO Collision stuff
 }
@@ -164,7 +173,8 @@ bool Player::getAlive() {
 }
 
 void Player::setVisible(bool visibility) {
-   m_mesh->setVisible(visibility);
+   m_shipMesh->setVisible(visibility);
+   m_exhaustMesh->setVisible(visibility);
 }
 
 vec3 Player::getOffSet() {

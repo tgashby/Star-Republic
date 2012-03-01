@@ -48,9 +48,9 @@ LoadingJob* LoadingJobs::GetJob() {
 LoadingJob* LoadingJobs::GetJobIn() {
    SDL_mutexP(lockIn);
    if (in.size() == 0) {
-      cout << "stop loading thread\n";
+      //cout << "stop loading thread\n";
       SDL_CondWait(newJob, lockIn);
-      cout << "start loading thread\n";
+      //cout << "start loading thread\n";
    }
    LoadingJob *job = in.front();
    in.pop_front();

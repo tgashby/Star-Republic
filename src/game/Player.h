@@ -132,9 +132,10 @@ private:
    vec3 yPosition;
 
    /**
-    * The mesh of the ship
+    * The mesh of the ship and exhaust flames
     */
-   Mesh *m_mesh;
+   Mesh *m_shipMesh;
+   Mesh *m_exhaustMesh;
 
    /**
     * The forward velocity of the ship
