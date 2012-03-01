@@ -78,12 +78,10 @@ void Bullet::doCollision(GameObject & other) {
    
    if (m_mesh->isVisible())
    {
-      if (&other != &m_parent) 
+     if (&other != &m_parent && typeid(other) != typeid(Bullet)) 
       {
-	if (other.isAlive()) {
          m_alive = false;
          m_mesh->setVisible(false);
-	}
       }
    }
 }
