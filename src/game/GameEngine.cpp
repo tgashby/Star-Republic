@@ -597,7 +597,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
 	    
 	    bulletOrigin += (m_player->getAimForward() * 8.0f);
 	    
-	    Missile *missile = new Missile("models/missile1.obj", "textures/test6.bmp",
+	    Missile *missile = new Missile("models/missile1.obj", "textures/missileTex.bmp",
 					   m_modules, 
 					   bulletOrigin, 
 					   m_player->getAimForward(), 
