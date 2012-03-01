@@ -26,6 +26,7 @@
 #include "LoseState.h"
 #include "Asteroid.h"
 #include "SkyBox.h"
+#include <vector>
 
 
 class GameEngine : public IGameEngine {

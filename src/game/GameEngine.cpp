@@ -311,7 +311,7 @@ bool GameEngine::isCullable(GameObject* obj) {
 void GameEngine::cullObject(GameObject* obj) {
   if (typeid(*obj) == typeid(Bullet)) {
     //remove(m_bulletList.begin(), m_bulletList.end(), obj);
-    m_missileList.erase(find(m_bulletList.begin(), m_bulletList.end(), obj));
+    m_bulletList.erase(find(m_bulletList.begin(), m_bulletList.end(), obj));
   }
   
   if (typeid(*obj) == typeid(Missile)) {
@@ -322,7 +322,7 @@ void GameEngine::cullObject(GameObject* obj) {
 
   //remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
   //m_objects.resize(m_objects.size() - 1);
-  m_objects.erase(find(m_objects.begin(), m_objects.end(), obj));
+  m_objects.erase(find(m_objects.begin(), m_objects.end(), (Object3d*) obj));
   //remove(m_gameObjects.begin(), m_gameObjects.end(), obj);
   //m_
   m_gameObjects.erase(find(m_gameObjects.begin(), m_gameObjects.end(), obj));
