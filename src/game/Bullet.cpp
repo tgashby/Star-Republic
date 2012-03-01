@@ -80,8 +80,10 @@ void Bullet::doCollision(GameObject & other) {
    {
       if (&other != &m_parent) 
       {
+	if (other.isAlive()) {
          m_alive = false;
          m_mesh->setVisible(false);
+	}
       }
    }
 }

@@ -100,8 +100,10 @@ void Missile::doCollision(GameObject &other) {
    //ADD COLLISION CODE HERE
    if (typeid(other) != typeid(Player) && typeid(other) != typeid(Bullet)
        && typeid(other) != typeid(Missile)) {
-      m_detonated = true;
-      m_mesh->setVisible(false);
-      setExplosionPosition(m_position);
+     if (other.isAlive()) {
+       m_detonated = true;
+       m_mesh->setVisible(false);
+       setExplosionPosition(m_position);
+     }
    }
 }
