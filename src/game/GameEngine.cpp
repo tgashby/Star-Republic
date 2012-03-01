@@ -168,7 +168,7 @@ exit(0);
          vec3 dirToPlayerNorm = dirToPlayer.Normalized();
          
          Bullet* bullet = 
-            new Bullet("models/lance.obj", "textures/test5.bmp", 
+            new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                        m_modules, (*i)->getHeadPosition(), 
                        -dirToPlayerNorm, 
                        dirToPlayerNorm.Cross((*i)->getPosition()), *(*i),
@@ -197,7 +197,7 @@ exit(0);
         vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
       
         Bullet* bullet = 
-          new Bullet("models/lance.obj", "textures/test5.bmp", 
+          new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                     m_modules, (*j)->getLeftCannonPos(), 
                     (*j)->getAimForward(), 
                     dirToPlayerNorm.Cross((*j)->getLeftCannonPos()), 
@@ -208,7 +208,7 @@ exit(0);
         m_objects.push_back(bullet);
         m_bulletList.push_back(bullet);
         bullet = 
-          new Bullet("models/lance.obj", "textures/test5.bmp", 
+          new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                     m_modules, (*j)->getRightCannonPos(), 
                     (*j)->getAimForward(), 
                     dirToPlayerNorm.Cross((*j)->getRightCannonPos()), 
@@ -240,7 +240,7 @@ exit(0);
         if ((*j)->shouldFire1())
         {
            Bullet* bullet = 
-              new Bullet("models/lance.obj", "textures/test5.bmp", 
+              new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                       m_modules, (*j)->getLeftCannonPos(), 
                       (*j)->getAimForward(), 
                       dirToPlayerNorm.Cross((*j)->getLeftCannonPos()), 
@@ -254,7 +254,7 @@ exit(0);
         if ((*j)->shouldFire2())
         {
            Bullet* bullet = 
-               new Bullet("models/lance.obj", "textures/test5.bmp", 
+               new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                       m_modules, (*j)->getRightCannonPos(), 
                       (*j)->getAimForward(), 
                       dirToPlayerNorm.Cross((*j)->getRightCannonPos()), 
@@ -372,7 +372,7 @@ void GameEngine::cullObject(GameObject* obj, Object3d* second) {
   
   if (typeid(*obj) == typeid(Missile)) {
     //remove(m_missileList.begin(), m_missileList.end(), obj);
-    cerr << "Before the first erase :" << m_missileList.size() << "\n";
+    //cerr << "Before the first erase :" << m_missileList.size() << "\n";
     //m_missileList.resize(m_missileList.size() - 1);
     m_missileList.erase(find(m_missileList.begin(), m_missileList.end(), obj));
     //remove(find(m_missileList.begin(), m_missileList.end(), obj));
@@ -381,7 +381,7 @@ void GameEngine::cullObject(GameObject* obj, Object3d* second) {
   //remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
   //m_objects.resize(m_objects.size() - 1);
   
-  cerr << "Before the second erase :" << m_objects.size() << "\n";
+  //cerr << "Before the second erase :" << m_objects.size() << "\n";
   /*for (list<IObject3d *>::iterator objIter = m_objects.begin();
 	 objIter != m_objects.end(); objIter++) {
     if (((GameObject *)(*objIter))->getPosition() == obj->getPosition()) {
@@ -404,7 +404,7 @@ void GameEngine::cullObject(GameObject* obj, Object3d* second) {
   m_objects.pop_back();
   m_objects.erase(find(m_objects.begin(), m_objects.end(), second));
   
-  cerr << "After the second erase :" << m_objects.size() << "\n";
+  //cerr << "After the second erase :" << m_objects.size() << "\n";
   
   //m_objects.erase(myfind(m_objects.begin(), m_objects.end(), obj));
 
