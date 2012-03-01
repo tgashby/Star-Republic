@@ -69,6 +69,9 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
 
    glBlendFunc(GL_ONE, GL_ONE);
    
+   //glEnable(GL_CULL_FACE);
+   //glCullFace(GL_BACK);
+   
    ivec2 size = m_screenSize;
    // create the frambuffers
    pass0.size = size;
@@ -158,7 +161,7 @@ void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
 	/* Convert the rendered text to a known format */
 	w = 512;
 	h = 35;
-	
+   
 	intermediary = SDL_CreateRGBSurface(0, w, h, 32, 
                                        0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
         assert(intermediary != NULL);
@@ -174,6 +177,7 @@ void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
    glTexImage2D(GL_TEXTURE_2D, 0, 4, w, h, 0,
                 GL_BGRA, GL_UNSIGNED_BYTE, intermediary->pixels);
    
+   useProgram(SHADER_NO_LIGHT);
    
    // Draw the Text
    glDisable(GL_DEPTH);
