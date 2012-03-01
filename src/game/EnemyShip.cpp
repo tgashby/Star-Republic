@@ -64,8 +64,10 @@ void EnemyShip::tic(uint64_t time)
      m_mesh->setVisible(true);
   }
 
+  //printf("WT");
+
   dpos = (m_playerRef.getPosition() - m_position);
-  if (firing && isAlive() && dpos.Length() < MAXDISTANCE) {
+  if (isAlive() && dpos.Length() < MAXDISTANCE) {
     /** the normalized vector between the player and the enemy **/
     dpos = dpos.Normalized();
 
@@ -137,7 +139,17 @@ void EnemyShip::tic(uint64_t time)
     
     firing = firing && isAlive();
   }
-  else {
+  else if (isAlive())
+  {
+     m_up = m_playerRef.getAimUp();
+
+     mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
+                    mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
+     modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
+     m_mesh->setModelMtx(modelMtx);
+  }
+  else
+  {
     explosionTic(time);
   }
 }

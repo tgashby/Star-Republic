@@ -164,7 +164,8 @@ exit(0);
             new Bullet("models/lance.obj", "textures/test5.bmp", 
                        m_modules, (*i)->getHeadPosition(), 
                        -dirToPlayerNorm, 
-                       dirToPlayerNorm.Cross((*i)->getPosition()), *(*i));
+                       dirToPlayerNorm.Cross((*i)->getPosition()), *(*i),
+                         Bullet::defaultTimeToLive, 0.7f);
             
          m_modules->renderingEngine->addObject3d(bullet);
          m_gameObjects.push_back(bullet);
@@ -187,7 +188,7 @@ exit(0);
                     m_modules, (*j)->getLeftCannonPos(), 
                     (*j)->getAimForward(), 
                     dirToPlayerNorm.Cross((*j)->getLeftCannonPos()), 
-		            *(*j), Bullet::defaultTimeToLive, 0.3f);
+		            *(*j), Bullet::defaultTimeToLive, 0.6f);
          
         m_modules->renderingEngine->addObject3d(bullet);
         m_gameObjects.push_back(bullet);
@@ -198,7 +199,7 @@ exit(0);
                     m_modules, (*j)->getRightCannonPos(), 
                     (*j)->getAimForward(), 
                     dirToPlayerNorm.Cross((*j)->getRightCannonPos()), 
-		            *(*j), Bullet::defaultTimeToLive, 0.3f);
+		            *(*j), Bullet::defaultTimeToLive, 0.6f);
          
         m_modules->renderingEngine->addObject3d(bullet);
         m_gameObjects.push_back(bullet);
@@ -224,7 +225,7 @@ exit(0);
                       m_modules, (*j)->getLeftCannonPos(), 
                       (*j)->getAimForward(), 
                       dirToPlayerNorm.Cross((*j)->getLeftCannonPos()), 
-		              *(*j), Bullet::defaultTimeToLive, 0.5f);
+		              *(*j), Bullet::defaultTimeToLive, 0.6f);
            
            m_modules->renderingEngine->addObject3d(bullet);
            m_gameObjects.push_back(bullet);
@@ -273,7 +274,6 @@ exit(0);
       m_stateManager->pushState(m_lose);
       //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME.
    }
-<<<<<<< HEAD
    int deathCount = 0;
    for (std::vector<EnemyShip *>::iterator j = m_enemyShips.begin();
           j != m_enemyShips.end(); j++) {
@@ -289,9 +289,8 @@ exit(0);
       m_stateManager->pushState(m_win);
       //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME AS WELL.
    }   
-=======
->>>>>>> f47ef3c6e088643fabf8aaec5611ed1b62ae4ede
-   }
+
+}
 }
 
 void GameEngine::cullObjects() {
@@ -734,6 +733,7 @@ void GameEngine::createTerrain()
          m_objects.push_back(obj);
       }
    }
+}
    
    /*
 vector<string>::iterator name = m_world->worldData->worldMeshes.begin();
@@ -751,4 +751,3 @@ SceneObject *obj = new SceneObject(file, "textures/test3.bmp", pos, fwd, up, m_m
 m_modules->renderingEngine->addObject3d(obj);
 m_objects.push_back(obj);
 }*/
-}
