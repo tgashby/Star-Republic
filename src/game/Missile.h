@@ -86,9 +86,10 @@ class Missile : public Explodeable, public GameObject {
  private:
    
    /**
-    * The missile's mesh
+    * The missile's mesh and exhaust
     */
    Mesh* m_mesh;
+   Mesh *m_exhaustMesh;
 
    /**
     * How long the missile has been active

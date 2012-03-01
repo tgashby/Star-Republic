@@ -25,7 +25,6 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_exhaustMesh->setShaderType(SHADER_BLOOM);
    m_meshList.push_back(m_exhaustMesh);
    
-   
 
    // these are relative to the 'forward' vector
    x = SCREENX;
@@ -43,7 +42,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_exhaustMesh->setModelMtx(modelMtx);
    
    // god mode much?
-   m_health = 20;
+   m_health = 200;
 }
 
 Player::~Player()

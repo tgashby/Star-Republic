@@ -15,8 +15,13 @@ Missile::Missile(string fileName, string textureName, Modules* modules,
    m_mesh = new Mesh(fileName, textureName, modules);
    m_meshList.push_back(m_mesh);
 
+   m_exhaustMesh = new Mesh("models/missileexhaust.obj", "textures/test4.bmp", modules);
+   m_exhaustMesh->setShaderType(SHADER_BLOOM);
+   m_meshList.push_back(m_exhaustMesh);
+
    mat4 modelMtx = mat4::Magic(m_forward, m_up, m_position);
    m_mesh->setModelMtx(modelMtx);
+   m_exhaustMesh->setModelMtx(modelMtx);
 
    m_parent = parent;
    m_target = target;
@@ -84,6 +89,7 @@ void Missile::tic(uint64_t time) {
       
       modelMtx = mat4::Magic(m_forward, m_up, m_position);
       m_mesh->setModelMtx(modelMtx);
+      m_exhaustMesh->setModelMtx(modelMtx);
    }
    else {
       explosionTic(time);

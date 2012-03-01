@@ -164,7 +164,8 @@ exit(0);
             new Bullet("models/lance.obj", "textures/test5.bmp", 
                        m_modules, (*i)->getHeadPosition(), 
                        -dirToPlayerNorm, 
-                       dirToPlayerNorm.Cross((*i)->getPosition()), *(*i));
+                       dirToPlayerNorm.Cross((*i)->getPosition()), *(*i),
+                         Bullet::defaultTimeToLive, 0.7f);
             
          m_modules->renderingEngine->addObject3d(bullet);
          m_gameObjects.push_back(bullet);
@@ -187,7 +188,7 @@ exit(0);
                     m_modules, (*j)->getLeftCannonPos(), 
                     (*j)->getAimForward(), 
                     dirToPlayerNorm.Cross((*j)->getLeftCannonPos()), 
-		            *(*j), Bullet::defaultTimeToLive, 0.3f);
+		            *(*j), Bullet::defaultTimeToLive, 0.6f);
          
         m_modules->renderingEngine->addObject3d(bullet);
         m_gameObjects.push_back(bullet);
@@ -198,7 +199,7 @@ exit(0);
                     m_modules, (*j)->getRightCannonPos(), 
                     (*j)->getAimForward(), 
                     dirToPlayerNorm.Cross((*j)->getRightCannonPos()), 
-		            *(*j), Bullet::defaultTimeToLive, 0.3f);
+		            *(*j), Bullet::defaultTimeToLive, 0.6f);
          
         m_modules->renderingEngine->addObject3d(bullet);
         m_gameObjects.push_back(bullet);
@@ -224,7 +225,7 @@ exit(0);
                       m_modules, (*j)->getLeftCannonPos(), 
                       (*j)->getAimForward(), 
                       dirToPlayerNorm.Cross((*j)->getLeftCannonPos()), 
-		              *(*j), Bullet::defaultTimeToLive, 0.5f);
+		              *(*j), Bullet::defaultTimeToLive, 0.6f);
            
            m_modules->renderingEngine->addObject3d(bullet);
            m_gameObjects.push_back(bullet);
@@ -284,7 +285,7 @@ exit(0);
       if ((*j)->isAlive() == false)
          deathCount++;
    }
-   if (deathCount == 1) {
+   if (deathCount == 100) {
       m_stateManager->pushState(m_win);
       //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME AS WELL.
    }   
