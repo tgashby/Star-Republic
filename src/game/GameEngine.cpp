@@ -273,6 +273,21 @@ exit(0);
       m_stateManager->pushState(m_lose);
       //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME.
    }
+   int deathCount = 0;
+   for (std::vector<EnemyShip *>::iterator j = m_enemyShips.begin();
+          j != m_enemyShips.end(); j++) {
+      if ((*j)->isAlive() == false)
+         deathCount++;
+   }
+   for (std::vector<EnemyGunship *>::iterator j = m_enemyGunners.begin();
+          j != m_enemyGunners.end(); j++) {
+      if ((*j)->isAlive() == false)
+         deathCount++;
+   }
+   if (deathCount == 1) {
+      m_stateManager->pushState(m_win);
+      //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME AS WELL.
+   }   
    }
 }
 
@@ -351,6 +366,12 @@ void GameEngine::render() {
       m_modules->renderingEngine->drawText("YOU LOSE", ivec2(-350,0), ivec2(800,100));
       m_modules->renderingEngine->drawText("Close The Window", ivec2(-350, -100), ivec2(500,50));
    }
+   if (m_stateManager->getCurrentState() == m_win)
+   {
+      m_modules->renderingEngine->clearScreen();
+      m_modules->renderingEngine->drawText("CONGRAGULATIONS", ivec2(-350,0), ivec2(800,100));
+      m_modules->renderingEngine->drawText("You've Won!", ivec2(-350, -100), ivec2(500,50));
+   }
 }
 
 
@@ -424,7 +445,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    bool running = true;
 
    //Checks to see whether the current state is the menu, and pops the state if so. Will be revised later.
-   if (m_stateManager->getCurrentState() == m_lose)
+   if (m_stateManager->getCurrentState() == m_lose || m_stateManager->getCurrentState() == m_win)
    {
       return running;
    }
@@ -520,7 +541,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       InitData();
       return running;
    }
-   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() == m_lose)
+   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() != m_game)
    {
       running = false;
    }
