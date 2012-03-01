@@ -18,7 +18,7 @@
  - Prob lots more...
  */
 
-const float VEC_OFFSET = 500.0f;
+const float VEC_OFFSET = 200.0f;
 const int QUADS_TO_CHECK = 4;
 
 WorldGrid::WorldGrid(WorldData& world, Modules* modules)
@@ -373,6 +373,7 @@ std::vector<Quadrant>::size_type WorldGrid::determineQuadrant(const Vector3<floa
    // If this triggers, we didn't find any quadrant that can house the object
    if (i == m_quadrants.size())
    {
+      std::cerr << "Outside all\n";
       i = m_currentQuadrant;
    }
    
