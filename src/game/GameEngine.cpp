@@ -146,6 +146,12 @@ void GameEngine::render() {
       m_modules->renderingEngine->drawText("YOU LOSE", ivec2(-350,0), ivec2(800,100));
       m_modules->renderingEngine->drawText("Close The Window", ivec2(-350, -100), ivec2(500,50));
    }
+   if (m_stateManager->getCurrentState() == m_win)
+   {
+      m_modules->renderingEngine->clearScreen();
+      m_modules->renderingEngine->drawText("CONGRAGULATIONS", ivec2(-350,0), ivec2(800,100));
+      m_modules->renderingEngine->drawText("You've Won!", ivec2(-350, -100), ivec2(500,50));
+   }
 }
 
 
@@ -219,7 +225,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    bool running = true;
 
    //Checks to see whether the current state is the menu, and pops the state if so. Will be revised later.
-   if (m_stateManager->getCurrentState() == m_lose)
+   if (m_stateManager->getCurrentState() == m_lose || m_stateManager->getCurrentState() == m_win)
    {
       return running;
    }
@@ -315,7 +321,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       InitData();
       return running;
    }
-   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() == m_lose)
+   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() != m_game)
    {
       running = false;
    }
@@ -359,7 +365,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
 	    
 	    bulletOrigin += (m_player->getAimForward() * 8.0f);
 	    
-	    Missile *missile = new Missile("models/missile1.obj", "textures/test6.bmp",
+	    Missile *missile = new Missile("models/missile1.obj", "textures/missileTex.bmp",
 					   m_modules, 
 					   bulletOrigin, 
 					   m_player->getAimForward(), 

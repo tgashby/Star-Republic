@@ -33,8 +33,13 @@ Missile::~Missile() {
    
 }
 
+int Missile::getTotalTime() {
+  return m_tottime;
+}
+
 void Missile::tic(uint64_t time) {
    mat4 modelMtx;
+   m_tottime += time;
 
    if (!m_detonated) {
       m_lifetime += time;
