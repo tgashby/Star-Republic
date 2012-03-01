@@ -15,7 +15,7 @@
 #define UPDATEDISTANCE 2000.0
 #define RADTODEG 180 / 3.1415
 const float PATHVELOCITY = 5.0f;
-const float AIMVELOCITY = 0.005f;
+const float AIMVELOCITY = 0.003f;
 const float x_SCALAR = 0.0005f; 
 const float y_SCALAR = 0.0005f; 
 const float mODEL_SCALE = 0.05f;
@@ -241,6 +241,9 @@ void EnemyGunship::tic(uint64_t time)
        mat4::Magic(-getAimForward(), getAimUp(), tpos2);
     m_turretheadmesh2->setModelMtx(modelMtx5);
     m_turretheadmesh2->setVisible(true);
+
+    
+    m_position = spawnpos;
   }
 }
 
@@ -296,6 +299,12 @@ Vector3<float> EnemyGunship::getRightCannonPos()
 /** computes (but does not return) the actual side vector **/
 void EnemyGunship::calculateSide() {
    side = m_up.Cross(m_currentHeadPos - m_previousHeadPos).Normalized();
+}
+
+void EnemyGunship::setSpawnPosition(vec3 position)
+{
+   m_position = position;
+   spawnpos = getPosition();
 }
 
 /** Oh shiiiiii... do the collision! You lose 25 health. You may die. **/

@@ -53,7 +53,7 @@ m_modules, m_camera->getPosition(),
 m_camera->getForward(), m_camera->getUp());
    m_camera->setPlayer(m_player);
 
-   m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
+   m_reticle = new Reticle("models/reticle2.obj", "textures/white.bmp", 
 			 m_modules, m_player);
 
    createTurrets();
@@ -326,7 +326,7 @@ bool GameEngine::isCullable(GameObject* obj) {
   }
 
   if (typeid(*obj) == typeid(Missile)) {
-    if (((Missile *)obj)->getTotalTime() > 3500) {
+    if (((Missile *)obj)->getTotalTime() > 4000) {
       return true;
     }
   }
@@ -345,15 +345,25 @@ void GameEngine::cullObject(GameObject* obj) {
     cerr << "Before the first erase :" << m_missileList.size() << "\n";
     //m_missileList.resize(m_missileList.size() - 1);
     m_missileList.erase(find(m_missileList.begin(), m_missileList.end(), obj));
+    //remove(find(m_missileList.begin(), m_missileList.end(), obj));
     cerr << "After the first erase :" << m_missileList.size() << "\n";
   }
 
-//cerr << "Before the second erase :" << m_objects.size() << "\n";
-  remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
-  m_objects.resize(m_objects.size() - 1);
-  //cerr << "After the second erase :" << m_objects.size() << "\n";
+
+  //remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
+  //m_objects.resize(m_objects.size() - 1);
   
-  //m_objects.erase(find(m_objects.begin(), m_objects.end(), (Object3d*) obj));
+  cerr << "Before the second erase :" << m_objects.size() << "\n";
+  for (list<IObject3d *>::iterator objIter = m_objects.begin();
+	 objIter != m_objects.end(); objIter++) {
+    if (((GameObject *)(*objIter))->getPosition() == obj->getPosition()) {
+      m_objects.erase(objIter);
+      break;
+    }
+  }
+  cerr << "After the second erase :" << m_objects.size() << "\n";
+  
+  //m_objects.erase(myfind(m_objects.begin(), m_objects.end(), obj));
 
 
   //remove(m_gameObjects.begin(), m_gameObjects.end(), obj);
@@ -383,6 +393,12 @@ void GameEngine::render() {
       m_modules->renderingEngine->clearScreen();
       m_modules->renderingEngine->drawText("YOU LOSE", ivec2(-350,0), ivec2(800,100));
       m_modules->renderingEngine->drawText("Close The Window", ivec2(-350, -100), ivec2(500,50));
+   }
+   if (m_stateManager->getCurrentState() == m_win)
+   {
+      m_modules->renderingEngine->clearScreen();
+      m_modules->renderingEngine->drawText("CONGRAGULATIONS", ivec2(-350,0), ivec2(800,100));
+      m_modules->renderingEngine->drawText("You've Won", ivec2(-350, -100), ivec2(500,50));
    }
 }
 
@@ -432,7 +448,7 @@ void GameEngine::addAsteroids() {
       if (pntIndex % 2 == 0) {
 	tempShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", m_modules, *m_player);
 
-	tempShip->setPosition(current.getPosition());
+	tempShip->setSpawnPosition(current.getPosition());
         tempShip->tic(0);
 	m_modules->renderingEngine->addObject3d(tempShip);
 	m_gameObjects.push_back(tempShip);
@@ -442,7 +458,7 @@ void GameEngine::addAsteroids() {
       }
       else {
 	tempGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj", "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp", m_modules, *m_player);
-	tempGunner->setPosition(current.getPosition());
+	tempGunner->setSpawnPosition(current.getPosition());
         tempGunner->tic(0);
 	m_modules->renderingEngine->addObject3d(tempGunner);
 	m_gameObjects.push_back(tempGunner);
@@ -457,7 +473,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    bool running = true;
 
    //Checks to see whether the current state is the menu, and pops the state if so. Will be revised later.
-   if (m_stateManager->getCurrentState() == m_lose)
+   if (m_stateManager->getCurrentState() == m_lose || m_stateManager->getCurrentState() == m_win)
    {
       return running;
    }
@@ -553,7 +569,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
       InitData();
       return running;
    }
-   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() == m_lose)
+   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() == m_lose || m_stateManager->getCurrentState() == m_win)
    {
       running = false;
    }
@@ -597,7 +613,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
 	    
 	    bulletOrigin += (m_player->getAimForward() * 8.0f);
 	    
-	    Missile *missile = new Missile("models/missile1.obj", "textures/test6.bmp",
+	    Missile *missile = new Missile("models/missile1.obj", "textures/missileTex.bmp",
 					   m_modules, 
 					   bulletOrigin, 
 					   m_player->getAimForward(), 
