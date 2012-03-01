@@ -580,7 +580,7 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
 	playerToObjVec = (*it)->getPosition() - m_player->getPosition();
 	if (playerToObjVec.Length() > 500 && 
 	    playerToObjVec.Length() < 4000 && 
-	    angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f &&
+	    angleBetween(m_player->getAimForward(), playerToObjVec) < 45.0f &&
        (*it)->isAlive()) {
 	   temp.push_back(*it);
 	   count++;
