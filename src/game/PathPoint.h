@@ -12,11 +12,6 @@ struct Quadrant
     * @param startPt the first point
     * @param endPt the second point
     */
-   Quadrant(PathPointData startPt, PathPointData endPt)
-   : m_Point(startPt), m_bounds(SPHERE_RADIUS)
-   {
-      
-   }
 
   Quadrant (PathPointData point)
   : m_Point(point), m_bounds(SPHERE_RADIUS)
@@ -61,7 +56,7 @@ class PathPoint {
    vec3 getSide();
 
    Quadrant getQuadrant();
-   bool fitsQuadrant(GameObject* gameObj);
+   bool fitsQuadrant(vec3 gameObjPos);
    void addToQuadrant(GameObject* gameObj, Object3d* obj3D);
 
 private:

@@ -18,105 +18,56 @@
  - Prob lots more...
  */
 
-const float Quadrant::SPHERE_RADIUS = 15000.0f;
-
-WorldGrid::WorldGrid(WorldData& world, Modules* modules)
-   : m_world(world)
+WorldGrid::WorldGrid(Path& path, WorldData& world, Modules* modules, Player* player)
+   : m_path(path), m_world(world), m_modules(modules), m_player(player)
 {
-   m_modules = modules;
-   
    m_currentQuadrant = 0;
    m_shouldUpdate = true;
-   m_player = NULL;
    
    makeGrid();
 }
 
 WorldGrid::~WorldGrid()
 {
-   for (std::vector<Quadrant*>::iterator i = m_quadrants.begin(); i != m_quadrants.end(); i++) 
-   {
-      Quadrant* currQuad = *i;
-      
-      for (std::list<GameObject*>::iterator j = currQuad->m_gameObjects.begin(); j != currQuad->m_gameObjects.end(); j++) 
-      {
-         //delete *j;
-      }
-      
-      delete currQuad;
-   }
+   
 }
 
-void WorldGrid::setPlayer(Player *player)
+Quadrant WorldGrid::getCurrentQuadrant()
 {
-   m_player = player;
-   
-   for (std::vector<Quadrant*>::iterator i = m_quadrants.begin(); i != m_quadrants.end(); i++) 
-   {
-      Quadrant* currQuad = *i;
-      
-      for (std::list<GameObject*>::iterator j = currQuad->m_gameObjects.begin(); j != currQuad->m_gameObjects.end(); j++) 
-      {
-         if (typeid(**j) == typeid(Turret)) 
-         {
-            Turret* enemy = ((Turret*)*j);
-            
-            enemy->setPlayer(m_player);
-         }
-      }
-   }
-}
-
-void WorldGrid::placeInGrid(GameObject* gameObj, Object3d* obj3D)
-{
-   std::vector<Quadrant>::size_type ndx = determineQuadrant(gameObj->getPosition());
-   
-   m_quadrants.at(ndx)->m_gameObjects.push_back(gameObj);
-   m_quadrants.at(ndx)->m_obj3Ds.push_back(obj3D);
-   
-   m_shouldUpdate = true;
-}
-
-void WorldGrid::placeInCurrQuadrant(GameObject* gameObj, Object3d* obj3D)
-{
-   m_quadrants.at(m_currentQuadrant)->m_gameObjects.push_back(gameObj);
-   m_quadrants.at(m_currentQuadrant)->m_obj3Ds.push_back(obj3D);
-   
-   m_shouldUpdate = true;
+   return m_path.getCurrentQuadrant();
 }
 
 void WorldGrid::tic(uint64_t dt, Path* path)
 {
-   updateObjects();
+   Quadrant quad = m_path.getCurrentQuadrant();
    
-   for (std::list<GameObject*>::iterator i = m_updateableObjs.begin(); i != m_updateableObjs.end(); i++) 
+   for (std::list<GameObject*>::iterator i = quad.m_gameObjects.begin(); i != quad.m_gameObjects.end(); i++) 
    {
       GameObject* currObj = *i;
       
       currObj->tic(dt);
       
-      vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
-      
-      if (typeid(**i) == typeid(Turret)) 
-      {
-         Turret* turret = ((Turret*)*i);
-         
-         // Turret not currently firing, but I think it's because
-         // the player starts too close to the turret
-         if (turret->isAlive() && dirToPlayer.Length() < 1500 && turret->shouldFire())
-         {
-            vec3 dirToPlayerNorm = dirToPlayer.Normalized();
-            
-            Bullet* bullet = 
-            new Bullet("models/lance.obj", "textures/test5.bmp", 
-                       m_modules, turret->getHeadPosition(), 
-                       -dirToPlayerNorm, 
-                       dirToPlayerNorm.Cross(turret->getPosition()), *(turret));
-            
-            //placeInGrid(bullet, bullet);
-         }
-      }
-      
+//      vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
+//      
+//      if (typeid(**i) == typeid(Turret)) 
+//      {
+//         Turret* turret = ((Turret*)*i);
+//         
+//         // Turret not currently firing, but I think it's because
+//         // the player starts too close to the turret
+//         if (turret->isAlive() && dirToPlayer.Length() < 1500 && turret->shouldFire())
+//         {
+//            vec3 dirToPlayerNorm = dirToPlayer.Normalized();
+//            
+//            Bullet* bullet = 
+//            new Bullet("models/lance.obj", "textures/test5.bmp", 
+//                       m_modules, turret->getHeadPosition(), 
+//                       -dirToPlayerNorm, 
+//                       dirToPlayerNorm.Cross(turret->getPosition()), *(turret));
+//            
+//            m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
+//         }
+//      }
    }
    
 //   for (std::vector<Turret*>::iterator i = m_turrets.begin(); i != m_turrets.end(); i++) 
@@ -194,26 +145,17 @@ void WorldGrid::tic(uint64_t dt, Path* path)
 //      (*missileIterator)->tic(td);
 //      //Cull the missile!
 //   }
-   
-   std::vector<GameObject*>::size_type quadrant = determineQuadrant(m_player->getPosition());
-   
-   if (quadrant != m_currentQuadrant) 
-   {
-      std::cerr << "UPDATING LIKE A BAWS\n";
-      m_currentQuadrant = quadrant;
-      m_shouldUpdate = true;
-   }
 }
 
 void WorldGrid::checkCollisions()
 {
-   updateObjects();
+   Quadrant quad = m_path.getCurrentQuadrant();
    
-   for (std::list<GameObject*>::iterator i = m_updateableObjs.begin(); i != m_updateableObjs.end(); i++) 
+   for (std::list<GameObject*>::iterator i = quad.m_gameObjects.begin(); i != quad.m_gameObjects.end(); i++) 
    {
       GameObject* currObj = *i;
       
-      for (std::list<GameObject*>::iterator j = i; j != m_updateableObjs.end(); j++) 
+      for (std::list<GameObject*>::iterator j = i; j != quad.m_gameObjects.end(); j++) 
       {
          // HACK to get iterators to work
          if (j != i) 
@@ -231,21 +173,9 @@ void WorldGrid::checkCollisions()
    }
 }
 
-const Quadrant& WorldGrid::getCurrentQuadrant()
-{
-   return *m_quadrants.at(m_currentQuadrant);
-}
-
-const Quadrant& WorldGrid::getNextQuadrant()
-{
-   return *m_quadrants.at(m_currentQuadrant + 1);
-}
-
 std::list<IObject3d*> WorldGrid::getDrawableObjects()
 {
-   updateObjects();
-   
-   return m_drawableObjs;
+   return m_path.getCurrentQuadrant().m_obj3Ds;
 }
 
 void WorldGrid::makeGrid()
@@ -253,13 +183,6 @@ void WorldGrid::makeGrid()
    // Connect the points into quadrants
    for (std::vector<PathPointData>::iterator i = m_world.path.begin(); i < m_world.path.end(); i++) 
    {
-      PathPointData currPathPoint = *i;
-      
-      PathPointData nextPathPoint = i + 1 >= m_world.path.end() ? 
-                                    *(m_world.path.begin()) : *(i + 1);
-      
-      Quadrant* quad = new Quadrant(currPathPoint, nextPathPoint);
-      
       // For all the units in the quadrant
       for (std::vector<UnitData>::iterator j = (*i).units.begin(); j != (*i).units.end(); j++) 
       {
@@ -278,8 +201,7 @@ void WorldGrid::makeGrid()
                newTurret->setForward(forward);
                newTurret->setUp(up);
                
-               quad->m_gameObjects.push_back(newTurret);
-               quad->m_obj3Ds.push_back(newTurret);
+               m_path.addToQuadrants(position, newTurret, newTurret);
                break;
          }
       }
@@ -295,121 +217,7 @@ void WorldGrid::makeGrid()
          
          SceneObject* sceneObj = new SceneObject("models/" + currProp.name + ".obj", "textures/" + currProp.name + ".bmp", position, forward, up, m_modules);
          
-         quad->m_obj3Ds.push_back(sceneObj);
-      }
-      
-      // Actually add the quadrant
-      m_quadrants.push_back(quad);
-   }
-}
-
-void WorldGrid::updateObjects()
-{
-   // If the information isn't 'cached'
-   if (m_shouldUpdate) 
-   {
-      m_shouldUpdate = false;
-      
-      m_updateableObjs.clear();
-      
-      // Starting at the current quadrant, add all game objects in that and 
-      // the next few quadrants
-      for (std::vector<Quadrant*>::size_type i = m_currentQuadrant; i < m_quadrants.size(); i++) 
-      {
-         float dist = abs((m_quadrants.at(i)->m_Point.loc - getCurrentQuadrant().m_Point.loc).Length());
-         
-         if (dist < Quadrant::SPHERE_RADIUS) 
-         {
-            Quadrant* currQuad = m_quadrants.at(i);
-            
-            for (std::list<IObject3d*>::iterator j = currQuad->m_obj3Ds.begin(); j != currQuad->m_obj3Ds.end(); j++) 
-            {
-               //m_modules->renderingEngine->removeObject3d(*j);
-            }
-         }
-         else 
-         {
-            // No longer in the sphere we're rendering
-            break;
-         }
-      }
-      
-      m_drawableObjs.clear();
-      
-      // Starting at the current quadrant, add all game objects in that and 
-      // the next few quadrants
-      for (std::vector<Quadrant*>::size_type i = m_currentQuadrant; i < m_quadrants.size(); i++) 
-      {
-         float dist = abs((m_quadrants.at(i)->m_Point.loc - getCurrentQuadrant().m_Point.loc).Length());
-         
-         if (dist < Quadrant::SPHERE_RADIUS) 
-         {
-            Quadrant* currQuad = m_quadrants.at(i);
-            
-            for (std::list<IObject3d*>::iterator j = currQuad->m_obj3Ds.begin(); j != currQuad->m_obj3Ds.end(); j++)
-            {
-               m_modules->renderingEngine->addObject3d(*j);
-            }
-            
-            m_updateableObjs.merge(m_quadrants.at(i)->m_gameObjects);
-            m_drawableObjs.merge(m_quadrants.at(i)->m_obj3Ds);
-         }
-         else 
-         {
-            // No longer in the sphere we're rendering
-            break;
-         }
+         m_path.addToQuadrants(position, NULL, sceneObj);
       }
    }
 }
-
-std::vector<Quadrant>::size_type WorldGrid::determineQuadrant(const Vector3<float> pos)
-{
-   // Checking for NaNs
-   //assert(pos.x == pos.x && pos.y == pos.y && pos.z == pos.z);
-   if (pos.x != pos.x || pos.y != pos.y || pos.z != pos.z)
-   {
-      std::cerr << "NaN" << "\n";
-   }
-   
-   std::vector<Quadrant>::size_type i;
-   for (i = 0; i < m_quadrants.size(); i++) 
-   {
-      float dist = abs((m_quadrants.at(i)->m_Point.loc - pos).Length());
-      
-      if (dist < Quadrant::SPHERE_RADIUS)
-      {
-         break;
-      }
-   }
-   
-   // If this triggers, we didn't find any quadrant that can house the object
-   if (i == m_quadrants.size())
-   {
-      std::cerr << "Outside all\n";
-      i = m_currentQuadrant;
-   }
-   
-   return i;
-}
-
-#ifdef GAME_DEBUG
-int WorldGrid::placeInGridDEBUG(GameObject* gameObj, Object3d* obj3D)
-{
-   std::vector<Quadrant>::size_type ndx = determineQuadrant(gameObj->getPosition());
-   
-   m_quadrants.at(ndx)->m_gameObjects.push_back(gameObj);
-   m_quadrants.at(ndx)->m_obj3Ds.push_back(obj3D);
-   
-   return ndx;
-}
-
-int WorldGrid::placeInCurrQuadrantDEBUG(GameObject* gameObj, Object3d* obj3D)
-{
-   m_quadrants.at(m_currentQuadrant)->m_gameObjects.push_back(gameObj);
-   m_quadrants.at(m_currentQuadrant)->m_obj3Ds.push_back(obj3D);
-   
-   return m_currentQuadrant;
-}
-
-#endif

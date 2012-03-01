@@ -26,7 +26,7 @@ public:
    int getSize();
    int getNdx();
 
-   void addToQuadrants(GameObject* gameObj, Object3d* obj3D);
+   void addToQuadrants(vec3 position, GameObject* gameObj, Object3d* obj3D);
    Quadrant getCurrentQuadrant();
 
    WorldData* worldData;

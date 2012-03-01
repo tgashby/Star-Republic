@@ -42,16 +42,15 @@ void GameEngine::InitData()
    
    m_path = new Path(m_worldData);
    
-   m_worldGrid = new WorldGrid(*m_worldData, m_modules);
-   
    m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
    m_skybox = new SkyBox("models/box3.obj", "textures/box3.bmp", m_modules, m_camera->getPosition());
    m_player = new Player("models/spaceship.obj", "textures/spaceship_pp.bmp",
 m_modules, m_camera->getPosition(),
 m_camera->getForward(), m_camera->getUp());
+   
    m_camera->setPlayer(m_player);
    
-   m_worldGrid->setPlayer(m_player);
+   m_worldGrid = new WorldGrid(*m_path, *m_worldData, m_modules, m_player);
 
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
                            m_modules, m_player);
@@ -76,7 +75,6 @@ m_camera->getForward(), m_camera->getUp());
    m_modules->renderingEngine->addObject3d(m_reticle);
    //m_modules->renderingEngine->addObject3d(explosion);
    
-   m_worldGrid->placeInCurrQuadrant(m_player, m_player);
 //   m_worldGrid->placeInGrid(m_enemyShip, m_enemyShip);
 //   m_worldGrid->placeInGrid(m_enemyGunner, m_enemyGunner);
    //m_objects.push_back(explosion);
@@ -135,8 +133,12 @@ void GameEngine::render() {
    if (m_stateManager->getCurrentState() == m_game)
    {
       list<IObject3d*> objs = m_worldGrid->getDrawableObjects();
+      
+//      std::cerr << "List Size: " << objs.size() << "\n";
+      
       objs.push_back(m_skybox);
       objs.push_back(m_reticle);
+      objs.push_back(m_player);
       
       m_modules->renderingEngine->render(objs);
    }
@@ -258,7 +260,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 				     m_player->getAimForward(), m_player->getAimUp(), 
 				     *m_player, Bullet::defaultTimeToLive, 1.0f);
 	 
-         m_worldGrid->placeInGrid(bullet, bullet);
+         //m_worldGrid->placeInGrid(bullet, bullet);
 	 
 	 bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
 			     m_modules, m_player->getPosition() 
@@ -267,7 +269,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 			     *m_player, Bullet::defaultTimeToLive, 1.0f);
       
       
-         m_worldGrid->placeInGrid(bullet, bullet);
+         m_path->addToQuadrants(bullet->getPosition(), bullet, bullet);
       
       
       
@@ -380,7 +382,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
 					   targets.at(index));
 	    
 	    // HACK so that I can use it as both a GameObject and an Object3d
-       m_worldGrid->placeInCurrQuadrant(missile, missile);
+       m_path->addToQuadrants(bulletOrigin, missile, missile);
 	 }
       }
    }

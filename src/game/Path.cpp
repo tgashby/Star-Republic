@@ -195,9 +195,10 @@ int Path::getNdx()
    return currentPoint;
 }
 
-void Path::addToQuadrants(GameObject* gameObj, Object3d* obj3D) {
+void Path::addToQuadrants(vec3 position, GameObject* gameObj, Object3d* obj3D) 
+{
   for (vector<PathPoint>::iterator pointIter = points.begin(); pointIter != points.end(); pointIter++) {
-    if ((*pointIter).fitsQuadrant(gameObj)) {
+    if ((*pointIter).fitsQuadrant(position)) {
       (*pointIter).addToQuadrant(gameObj, obj3D);
     }
   }

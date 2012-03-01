@@ -20,36 +20,6 @@
 #include "EnemyGunship.h"
 
 /**
- * Quadrant structure, representing the area between two points
- */
-/*struct Quadrant
-{
-   /**
-    * Quadrant constructor
-    * @param startPt the first point
-    * @param endPt the second point
-    *//*
-   Quadrant(PathPointData startPt, PathPointData endPt)
-   : m_Point(startPt), m_bounds(SPHERE_RADIUS)
-   {
-      
-   }
-   
-   PathPointData m_Point;
-   std::list<GameObject*> m_gameObjects;
-   std::list<IObject3d*> m_obj3Ds;
-   
-   /**
-    * BoundingSphere representing the space around a single point we wish to draw.
-    * Used in calculating whether an object is in the quadrant or not.
-    *//*
-   BoundingSphere m_bounds;
-   
-   static const float SPHERE_RADIUS;
-};*/
-
-
-/**
  * WorldGrid represents the world as a uniform spatial subdivision.
  * It is a list of cubes encompassing the path and all its objects.
  */
@@ -60,7 +30,7 @@ public:
     * Constructs a WorldGrid with the given side length.
     * This will be used for all dimensions of the grid.
     */
-   WorldGrid(WorldData& world, Modules* modules);
+   WorldGrid(Path& path, WorldData& world, Modules* modules, Player* player);
    
    /**
     * Frees the grid in memory.
@@ -72,30 +42,7 @@ public:
     */
    void setPlayer(Player* player);
    
-   /**
-    * Place a game object in the WorldGrid.
-    * This should only be needed for Enemy Ships, since they aren't 
-    * currently exported.
-    * @param gameObj the object to add to the world
-    * @param obj3D the same object as the first, but needed to add to
-    * drawable objects    
-    */
-   void placeInGrid(GameObject* gameObj, Object3d* obj3D);
-   
-   /**
-    * Place a game object in the current quadrant.
-    * This will be used for bullets, missiles, etc.
-    * @param gameObj the game object to place
-    * @param obj3D the same object as the first, but needed to add to
-    * drawable objects
-    */
-   void placeInCurrQuadrant(GameObject* gameObj, Object3d* obj3D);
-   
-#ifdef GAME_DEBUG
-   int placeInGridDEBUG(GameObject* gameObj, Object3d* obj3D);
-
-   int placeInCurrQuadrantDEBUG(GameObject* gameObj, Object3d* obj3D);
-#endif
+   Quadrant getCurrentQuadrant();
    
    /**
     * Updates all objects that are in the current quadrants.
@@ -109,16 +56,6 @@ public:
    void checkCollisions();
    
    /**
-    * Returns the current quadrant, used to get at starting and ending points
-    */
-   const Quadrant& getCurrentQuadrant();
-   
-   /**
-    * Returns the next quadrant, really only used for Camera initialization
-    */
-   const Quadrant& getNextQuadrant();
-   
-   /**
     * Returns the list of Object3Ds that will be needed
     */
    std::list<IObject3d*> getDrawableObjects();
@@ -127,29 +64,16 @@ public:
 private:
 #endif
    WorldData& m_world;
-   std::vector<Quadrant*> m_quadrants;
+   Path& m_path;
    Player* m_player;
    Modules* m_modules;
    bool m_shouldUpdate;   
    std::vector<Quadrant*>::size_type m_currentQuadrant;
-   std::list<GameObject*> m_updateableObjs;
-   std::list<IObject3d*> m_drawableObjs;
    
    /**
     * Runs through the inital WorldData and creates all the Quadrants with and objects
     */
    void makeGrid();
-   
-   /**
-    * Updates the visible/updateable game objects if needed
-    */
-   void updateObjects();
-
-   /**
-    * Determines the quadrant number in the vector that the point is located in.
-    */
-   std::vector<Quadrant*>::size_type determineQuadrant(const Vector3<float> pos);
-   
 };
 
 #endif

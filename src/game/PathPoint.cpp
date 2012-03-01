@@ -1,6 +1,6 @@
 #include "PathPoint.h"
 
-#define SPHERE_RADIUS 10000.0f
+const float Quadrant::SPHERE_RADIUS = 15000.0f;
 
 PathPoint::PathPoint(PathPointData pointData) 
   : m_quadrant(pointData)
@@ -133,8 +133,8 @@ Quadrant PathPoint::getQuadrant()
   return m_quadrant;
 }
 
-bool PathPoint::fitsQuadrant(GameObject* gameObj) {
-  if ((gameObj->getPosition() - position).Length() < SPHERE_RADIUS) {
+bool PathPoint::fitsQuadrant(vec3 gameObjPos) {
+   if (abs((gameObjPos - position).Length()) < Quadrant::SPHERE_RADIUS) {
     return true;
   }
   else {
@@ -143,6 +143,11 @@ bool PathPoint::fitsQuadrant(GameObject* gameObj) {
 }
 
 void PathPoint::addToQuadrant(GameObject* gameObj, Object3d* obj3D) {
-  m_quadrant.m_gameObjects.push_back(gameObj);
+   if (gameObj != NULL) 
+   {
+        m_quadrant.m_gameObjects.push_back(gameObj);
+   }
+   
   m_quadrant.m_obj3Ds.push_back(obj3D);
+   std::cerr << "Added an object!~\n";
 }
