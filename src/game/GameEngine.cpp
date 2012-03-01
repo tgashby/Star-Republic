@@ -48,7 +48,7 @@ void GameEngine::InitData()
    
    m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
    m_skybox = new SkyBox("models/box3.obj", "textures/box3.bmp", m_modules, m_camera->getPosition());
-   m_player = new Player("models/spaceship.obj", "textures/spaceship_pp.bmp",
+   m_player = new Player("models/spaceship.obj", "textures/spaceship2.bmp",
 m_modules, m_camera->getPosition(),
 m_camera->getForward(), m_camera->getUp());
    m_camera->setPlayer(m_player);
@@ -346,14 +346,12 @@ void GameEngine::cullObject(GameObject* obj) {
     //m_missileList.resize(m_missileList.size() - 1);
     m_missileList.erase(find(m_missileList.begin(), m_missileList.end(), obj));
     //remove(find(m_missileList.begin(), m_missileList.end(), obj));
-    cerr << "After the first erase :" << m_missileList.size() << "\n";
   }
 
 
   //remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
   //m_objects.resize(m_objects.size() - 1);
   
-  cerr << "Before the second erase :" << m_objects.size() << "\n";
   for (list<IObject3d *>::iterator objIter = m_objects.begin();
 	 objIter != m_objects.end(); objIter++) {
     if (((GameObject *)(*objIter))->getPosition() == obj->getPosition()) {
@@ -361,16 +359,13 @@ void GameEngine::cullObject(GameObject* obj) {
       break;
     }
   }
-  cerr << "After the second erase :" << m_objects.size() << "\n";
   
   //m_objects.erase(myfind(m_objects.begin(), m_objects.end(), obj));
 
 
   //remove(m_gameObjects.begin(), m_gameObjects.end(), obj);
   //m_
-  cerr << "Before the third erase :" << m_gameObjects.size() << "\n";
   m_gameObjects.erase(find(m_gameObjects.begin(), m_gameObjects.end(), obj));
-  cerr << "After the third erase :" << m_gameObjects.size() << "\n";
 
   //delete obj;
   //cerr << "deleted the object\n";
