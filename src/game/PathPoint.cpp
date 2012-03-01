@@ -1,6 +1,10 @@
 #include "PathPoint.h"
 
-PathPoint::PathPoint(PathPointData pointData) {
+#define SPHERE_RADIUS 10000.0f
+
+PathPoint::PathPoint(PathPointData pointData) 
+  : m_quadrant(pointData)
+{
    //PathPoint(pointData.loc, pointData.fwd, pointData.up, pointData.links);
    position = pointData.loc;
    up = pointData.up;
@@ -18,7 +22,7 @@ PathPoint::PathPoint(PathPointData pointData) {
    }
 }
 
-PathPoint::PathPoint(vec3 position, vec3 up, vec3 forward, vec3 side) {
+/*PathPoint::PathPoint(vec3 position, vec3 up, vec3 forward, vec3 side) {
    this->position = position;
    this->up = up.Normalized();
    this->forward = forward.Normalized();
@@ -39,7 +43,7 @@ PathPoint::PathPoint(vec3 position, vec3 forward, vec3 up, ivec4 links) {
      setNumberOfIDs(3);
     setThirdID(links.w);
   }
-}
+  }*/
 
 PathPoint::~PathPoint() {
 }
@@ -122,4 +126,23 @@ vec3 PathPoint::getForward()
 vec3 PathPoint::getSide()
 {
   return side;
+}
+
+Quadrant PathPoint::getQuadrant()
+{
+  return m_quadrant;
+}
+
+bool PathPoint::fitsQuadrant(GameObject* gameObj) {
+  if ((gameObj->getPosition() - position).Length() < SPHERE_RADIUS) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+void PathPoint::addToQuadrant(GameObject* gameObj, Object3d* obj3D) {
+  m_quadrant.m_gameObjects.push_back(gameObj);
+  m_quadrant.m_obj3Ds.push_back(obj3D);
 }

@@ -22,13 +22,13 @@
 /**
  * Quadrant structure, representing the area between two points
  */
-struct Quadrant
+/*struct Quadrant
 {
    /**
     * Quadrant constructor
     * @param startPt the first point
     * @param endPt the second point
-    */
+    *//*
    Quadrant(PathPointData startPt, PathPointData endPt)
    : m_Point(startPt), m_bounds(SPHERE_RADIUS)
    {
@@ -42,11 +42,11 @@ struct Quadrant
    /**
     * BoundingSphere representing the space around a single point we wish to draw.
     * Used in calculating whether an object is in the quadrant or not.
-    */
+    *//*
    BoundingSphere m_bounds;
    
    static const float SPHERE_RADIUS;
-};
+};*/
 
 
 /**
