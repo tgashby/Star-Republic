@@ -6,16 +6,16 @@
 #define VCHANGE 0.8
 #define VINTENS 0.5
 #define SIZE 40
-#define MOTIONTIME 1000
+#define MOTIONTIME 2000
 #define FIRINGTIME 400
 #define TURRETSIDEOFFSET 20
 #define TURRETFORWARDOFFSET -25
 #define TURRETUPOFFSET 0
 #define _ENEMY_GUNSHIP_EXPLOSION_RADIUS 60.0f
-#define UPDATEDISTANCE 800.0
+#define UPDATEDISTANCE 2000.0
 #define RADTODEG 180 / 3.1415
-const float PATHVELOCITY = 3.0f;
-const float AIMVELOCITY = 0.03f;
+const float PATHVELOCITY = 5.0f;
+const float AIMVELOCITY = 0.005f;
 const float x_SCALAR = 0.0005f; 
 const float y_SCALAR = 0.0005f; 
 const float mODEL_SCALE = 0.05f;
@@ -72,13 +72,12 @@ EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
   m_turretbasemesh1->setModelMtx(modelMtx2);
 
   /** second turret **/
-
   mat4 modelMtx4 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *
      mat4::Translate(-TURRETSIDEOFFSET + m_position.x, 
        TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
   m_turretbasemesh2->setModelMtx(modelMtx4);
 
-  m_health = 900;
+  m_health = 90;
 }
 
 EnemyGunship::~EnemyGunship()

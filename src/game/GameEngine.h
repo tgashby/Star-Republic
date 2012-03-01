@@ -26,6 +26,8 @@
 #include "WinState.h"
 #include "LoseState.h"
 #include "Asteroid.h"
+#include "SkyBox.h"
+#include <vector>
 
 
 class GameEngine : public IGameEngine {
@@ -47,9 +49,10 @@ private:
    void runCollisions();
 //   void addAsteroids();
    
-   Camera* m_camera;
    Player *m_player;
    Reticle *m_reticle;
+   Camera *m_camera;
+   SkyBox *m_skybox;
    Modules *m_modules;
    StateManager *m_stateManager;
    MenuState* m_menu;

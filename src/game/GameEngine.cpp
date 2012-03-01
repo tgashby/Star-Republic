@@ -44,10 +44,11 @@ void GameEngine::InitData()
    PathPoint currPath = m_worldGrid->getCurrentQuadrant().m_Point;
    PathPoint prevPath = m_worldGrid->getNextQuadrant().m_Point;
    
-   m_camera = new Camera(&currPath, &prevPath);
-   m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
-                         m_modules, m_camera->getPosition(), 
-                         m_camera->getForward(), m_camera->getUp());
+   m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
+   m_skybox = new SkyBox("models/box3.obj", "textures/box3.bmp", m_modules, m_camera->getPosition());
+   m_player = new Player("models/spaceship.obj", "textures/spaceship_pp.bmp",
+m_modules, m_camera->getPosition(),
+m_camera->getForward(), m_camera->getUp());
    m_camera->setPlayer(m_player);
    
    m_worldGrid->setPlayer(m_player);
@@ -68,33 +69,17 @@ void GameEngine::InitData()
 		      prevPath.getUp());
    m_player->calculateSide();
    
-   /*m_enemyShip->setProgress(m_previousPoint->getPosition());
-   m_enemyShip->setPosition(m_previousPoint->getPosition());
-   m_enemyShip->setUp(m_previousPoint->getUp());
-   m_enemyShip->setHeads(m_currentPoint->getPosition(),
-m_currentPoint->getUp(), m_previousPoint->getPosition(),
-m_previousPoint->getUp());
-   m_enemyShip->calculateSide();
-
-   m_enemyGunner->setProgress(m_previousPoint->getPosition());
-   m_enemyGunner->setPosition(m_previousPoint->getPosition());
-   m_enemyGunner->setUp(m_previousPoint->getUp());
-   m_enemyGunner->setHeads(m_currentPoint->getPosition(),
-m_currentPoint->getUp(), m_previousPoint->getPosition(),
-m_previousPoint->getUp());
-   m_enemyGunner->calculateSide();*/
-   
    m_modules->renderingEngine->setCamera(m_camera);
 
    m_modules->renderingEngine->addObject3d(m_player);
+   m_modules->renderingEngine->addObject3d(m_skybox);
    m_modules->renderingEngine->addObject3d(m_reticle);
-   /*m_modules->renderingEngine->addObject3d(m_enemyShip);
-   m_modules->renderingEngine->addObject3d(m_enemyGunner);*/
    //m_modules->renderingEngine->addObject3d(explosion);
    
    m_worldGrid->placeInCurrQuadrant(m_player, m_player);
 //   m_worldGrid->placeInGrid(m_enemyShip, m_enemyShip);
 //   m_worldGrid->placeInGrid(m_enemyGunner, m_enemyGunner);
+   //m_objects.push_back(explosion);
    
    initSound();
    m_bulletSound = loadSound("sound/weapon1.wav");
@@ -112,24 +97,31 @@ void GameEngine::tic(uint64_t td) {
       gameOver += td;
       
       /*
-      if (gameOver >= 40000) 
-      {
-         cout << "YOU WIN!\n";
-         exit(0);
-      }
-       */
+   if (gameOver >= 40000)
+   {
+   cout << "YOU WIN!\n";
+   exit(0);
+   }
+   if (!m_player->isAlive()) {
+   cout << "YOU LOSE!\n";
+   exit(0);
+   }*/
+      m_reticle->tic(td);
+
+      m_skybox->tic(td, m_player->getPosition());
       
+         
       PathPointData currPPD = m_worldGrid->getCurrentQuadrant().m_Point;
       
       PathPoint m_currentPoint(currPPD);
       
       // Update functions go here
 
-//      m_enemyShip->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
-//      m_enemyShip->tic(td);
-//
-//      m_enemyGunner->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
-//      m_enemyGunner->tic(td);
+   //      m_enemyShip->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
+   //      m_enemyShip->tic(td);
+   //
+   //      m_enemyGunner->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
+   //      m_enemyGunner->tic(td);
       
       m_camera->checkPath(&m_currentPoint);
       m_camera->tic(td);
@@ -274,7 +266,9 @@ bool GameEngine::handleKeyDown(SDLKey key) {
          m_worldGrid->placeInGrid(bullet, bullet);
       
       
-	 m_bulletSound->play(0);
+      
+      m_modules->soundManager->playSound(PlayerGun); 
+	   //m_bulletSound->play(0);
       }
    }
    return running;
@@ -423,7 +417,6 @@ void GameEngine::handleMouseMotion(Uint16 x, Uint16 y)
    //setVelocity(vec3((400 - x), (300 - y), m_player->getPosition().z));
    }
 }
-
 
 /**
 * This runs the collision functions on all objects upon which collide with the

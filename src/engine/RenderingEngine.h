@@ -2,100 +2,16 @@
 #define StarRepub_RenderingEngine_h
 
 #define GL_GLEXT_PROTOTYPES
-
-#include "SDL_include.h"
-#include "SDL_thread.h"
+#define FILTER_COUNT 4
+#define PROCESS_TIME 20
 
 #include "Interfaces.h"
+#include "RenderingUtils.h"
+#include "SDL_include.h"
+#include "SDL_thread.h"
+#include "Mesh.h"
 #include <cassert>
 #include <map>
-
-#define VERTEX_STRIDE 11
-#define NORMAL_OFFSET 3
-#define TEXTURE_OFFSET 9
-
-struct UniformHandles {
-   GLuint modelview;
-   GLuint projection;
-   GLuint normalMatrix;
-   GLuint lightPosition;
-   GLuint ambientMaterial;
-   GLuint specularMaterial;
-   GLuint shininess;
-   GLuint sampler;
-};
-
-struct AttributeHandles {
-   GLuint position;
-   GLuint normal;
-   GLuint diffuseMaterial;
-   GLuint textureCoord;
-};
-
-struct ShaderProgram {
-   SHADER_TYPE type;
-   GLuint program;
-   GLuint vertexShader;
-   GLuint fragmentShader;
-   UniformHandles uniforms;
-   AttributeHandles attributes;
-};
-
-struct MeshRef: public IRef {
-   MeshRef(string name): IRef(name) {
-      count = 1;
-      loading = true;
-   }
-   GLuint vertexBuffer;
-   GLuint indexBuffer;
-   int indexCount;
-   int count;
-};
-
-struct TextureRef: public IRef {
-   TextureRef(string name): IRef(name) {
-      count = 1;
-      loading = true;
-   }
-   GLuint textureBuffer;
-   int count;
-};
-
-// used by the loading thread
-enum LOAD_JOB_TYPE {
-   LOAD_JOB_MESH,
-   LOAD_JOB_TEXTURE,
-};
-
-struct LoadingJob {
-   LoadingJob(LOAD_JOB_TYPE t, IRef *r) {
-      data = NULL;
-      type = t;
-      ref = r;
-   }
-   void *data;
-   LOAD_JOB_TYPE type;
-   IRef *ref;
-};
-
-class LoadingJobs {
-public:
-   LoadingJobs(IResourceManager *resourceManager);
-   ~LoadingJobs();
-   IResourceManager* GetResourceManager();
-   void AddJob(LoadingJob *job);
-   LoadingJob* GetJob();
-   LoadingJob* GetJobIn();
-   void AddJobOut(LoadingJob *job);
-private:
-   SDL_mutex *lockIn;
-   SDL_mutex *lockOut;
-   SDL_cond *newJob;
-   list<LoadingJob*> in;
-   list<LoadingJob*> out;
-   SDL_Thread *m_loaderThread;
-   IResourceManager *m_resourceManager;
-};
 
 class RenderingEngine : public IRenderingEngine {
 public:
@@ -108,6 +24,7 @@ public:
    void drawText(string text, ivec2 loc, ivec2 size);
    void clearScreen();
 private:
+   void drawMesh(IMesh *mesh, mat4 projection);
    void processJobs();
    void addMesh(MeshData *meshData, MeshRef *meshRef);
    void addTexture(TextureData *textureData, TextureRef *textureRef);
@@ -117,6 +34,17 @@ private:
    void useProgram(SHADER_TYPE type);
    void loadMesh(IMesh *newMesh);
    void unLoadMesh(IMesh *rmvMesh);
+   
+   Surface pass0;
+   Surface pass1;
+   Surface reduce0;
+   Surface reduce1;
+   Surface reduce2;
+   Surface reduce3;
+   
+   Mesh *m_planeMesh;
+   vector<IRef*> *m_planeTextures;
+   
    ivec2 m_screenSize;
    Modules *m_modules;
    ICamera *m_camera;
@@ -129,7 +57,5 @@ private:
    ShaderProgram *m_curShaderProgram;
    LoadingJobs *m_jobs;
 };
-
-int loader_thread(void *jobs);
 
 #endif

@@ -42,7 +42,8 @@ EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Play
      mat4::Magic(-getForward(), getUp(), getPosition());
   m_mesh->setModelMtx(modelMtx);
 
-  m_health = 500;
+  m_health = 50;
+
 }
 
 EnemyShip::~EnemyShip()
@@ -64,10 +65,10 @@ void EnemyShip::tic(uint64_t time)
   }
 
   dpos = (m_playerRef->getPosition() - m_position);
-  if (isAlive() && dpos.Length() < MAXDISTANCE) {
+  if (firing && isAlive() && dpos.Length() < MAXDISTANCE) {
     /** the normalized vector between the player and the enemy **/
     dpos = dpos.Normalized();
-  
+
     // moving based on the player's direction and it's aiming direction
     m_position += m_playerRef->getMForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
     

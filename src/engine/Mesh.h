@@ -18,7 +18,8 @@ public:
    void setModelMtx(mat4 modelMtx);
    mat4 getModelMtx();
    void setScale(float scale);
-   float getScale();
+   void setScale3v(vec3 scale);
+   vec3 getScale();
    vec4 getColor();
    void setColor(vec4 color);
    bool checkLoaded();
@@ -36,7 +37,7 @@ private:
    MeshBounds m_bounds;
    Modules *m_modules;
    bool m_visible;
-   float m_scale;
+   vec3 m_scale;
    SHADER_TYPE m_shaderType;
 };
 

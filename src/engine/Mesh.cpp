@@ -8,7 +8,7 @@ Mesh::Mesh(string meshName, string textureName, Modules *modules) {
    m_modelMatrix = mat4::Identity();
    m_color = vec4(0.8f, 0.8f, 0.8f, 1.0f);
    m_visible = true;
-   m_scale = DEFAULT_SCALE;
+   m_scale = vec3(DEFAULT_SCALE, DEFAULT_SCALE, DEFAULT_SCALE);
    m_shaderType = SHADER_VERTEX_LIGHT;
 }
 
@@ -20,7 +20,7 @@ Mesh::Mesh(string meshName, string textureName, float scale, Modules *modules) {
    m_modelMatrix = mat4::Identity();
    m_color = vec4(0.8f, 0.8f, 0.8f, 1.0f);
    m_visible = true;
-   m_scale = scale;
+   m_scale = vec3(scale, scale, scale);
    m_shaderType = SHADER_VERTEX_LIGHT;
 }
 
@@ -58,10 +58,14 @@ mat4 Mesh::getModelMtx() {
 }
 
 void Mesh::setScale(float scale) {
+   m_scale = vec3(scale, scale, scale);
+}
+
+void Mesh::setScale3v(vec3 scale) {
    m_scale = scale;
 }
 
-float Mesh::getScale() {
+vec3 Mesh::getScale() {
    return m_scale;
 }
 
@@ -97,23 +101,6 @@ MeshBounds Mesh::getMeshBounds() {
    }
    return m_meshRef->bounds;
 }
-
-/*
-string Mesh::getMeshName() {
-   return m_meshName;
-}
-
-string Mesh::getTextureName() {
-   return m_textureName;
-}
-
-MeshData* Mesh::getMeshData() {
-   return m_modules->resourceManager->readMeshData(m_meshName, LOAD_NORMAL_VERTEX, 1.0);
-}
-
-TextureData* Mesh::getTextureData() {
-   return m_modules->resourceManager->loadBMPImage(m_textureName);
-}*/
 
 SHADER_TYPE Mesh::getShaderType() {
    return m_shaderType;

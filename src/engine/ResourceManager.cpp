@@ -541,7 +541,7 @@ Sound* loadMusic(string fileName)
 }
 
 string readTextFile(string fileName) {
-   cout << fileName << "\n";
+   //cout << fileName << "\n";
    
    const char *fn = fileName.c_str();
    char *data;

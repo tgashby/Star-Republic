@@ -35,6 +35,9 @@ enum LOAD_NORMAL_TYPE {
 enum SHADER_TYPE {
    SHADER_VERTEX_LIGHT,
    SHADER_NO_LIGHT,
+   SHADER_BLOOM,
+   SHADER_BLOOM_CULL,
+   SHADER_COMBINE,
 };
 
 struct MeshBounds {
@@ -88,7 +91,8 @@ struct IMesh {
    virtual void setModelMtx(mat4 modelMtx) = 0;
    virtual mat4 getModelMtx() = 0;
    virtual void setScale(float scale) = 0;
-   virtual float getScale() = 0;
+   virtual void setScale3v(vec3 scale) = 0;
+   virtual vec3 getScale() = 0;
    virtual vec4 getColor() = 0;
    virtual void setColor(vec4 color) = 0;
    virtual bool checkLoaded() = 0;
@@ -112,6 +116,20 @@ struct IObject3d {
 };
 
 // Sound
+const int numSoundEvents = 4; 
+enum SoundEvent {
+   Explosion = 0,
+   PlayerGun,
+   PlayerHit,
+   PlayerMissile,
+};
+
+class ISoundManager {
+public:
+   virtual ~ISoundManager(){}; 
+   virtual void playSound(SoundEvent event) = 0;
+};
+
 const int INVALID_CHANNEL = -2;
 class ISound 
 {
@@ -161,18 +179,23 @@ struct IResourceManager {
 };
 
 
-// This should be created in Main.cpp to be passed as a reference to any
-// object needing to accesss these instances.
+/**
+ * Modules - Keeps track of the various major components of the program
+ * This should be created in Main.cpp to be passed as a reference to any
+ * object needing to accesss these instances.
+ */
 struct Modules {
    IGameEngine *gameEngine;
    IRenderingEngine *renderingEngine;
    IResourceManager *resourceManager;
+   ISoundManager *soundManager;
    
    ~Modules()
    {
       delete gameEngine;
       delete renderingEngine;
       delete resourceManager;
+      delete soundManager;
    }
 };
 

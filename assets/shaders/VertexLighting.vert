@@ -16,7 +16,8 @@ varying vec2 TextureCoordOut;
 
 void main(void)
 {
-   vec3 N = NormalMatrix * Normal;
+   vec3 normal = normalize(Normal);
+   vec3 N = normalize(NormalMatrix * normal);
    vec3 L = normalize(LightPosition);
    vec3 E = vec3(0, 0, 1);
    vec3 H = normalize(L + E);
@@ -25,7 +26,7 @@ void main(void)
    float sf = max(0.0, dot(N, H));
    sf = pow(sf, Shininess);
    
-   vec3 color = AmbientMaterial + df * DiffuseMaterial + sf * SpecularMaterial;
+   vec3 color = AmbientMaterial /*+ df * DiffuseMaterial*/ + sf * SpecularMaterial;
    
    DestinationColor = vec4(color, 1);
    gl_Position = Projection * Modelview * Position;

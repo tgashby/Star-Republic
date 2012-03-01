@@ -29,10 +29,12 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
 #endif
    
    createShaders();
+   m_curShaderProgram = NULL;
    useProgram(SHADER_VERTEX_LIGHT);
 	
    glEnable(GL_DEPTH_TEST);
 
+   // Create a plane
    glGenBuffers(1, &m_planeVert);
    glBindBuffer(GL_ARRAY_BUFFER, m_planeVert);
    glBufferData(GL_ARRAY_BUFFER, 4 * VERTEX_STRIDE * sizeof(GLfloat), planeVertices, GL_STATIC_DRAW);
@@ -40,6 +42,24 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
    glGenBuffers(1, &m_planeInt);
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_planeInt);
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLushort), planeIndices, GL_STATIC_DRAW);
+   
+   // Setup the plane
+   m_planeMesh = new Mesh("plane", "planeTexture", m_modules);
+   m_planeMesh->setScale3v(vec3(800, 600, 1));
+   m_planeMesh->setModelMtx(mat4::Translate(-400, -300, 0));
+   MeshRef *meshRef = new MeshRef("plane");
+   meshRef->vertexBuffer = m_planeVert;
+   meshRef->indexBuffer = m_planeInt;
+   meshRef->indexCount = 6;
+   m_planeMesh->setMeshRef(meshRef);
+   m_planeTextures = m_planeMesh->getTextureRefs();
+   (*m_planeTextures)[0] = (IRef*) new TextureRef("texture0");
+   m_planeTextures->push_back(new TextureRef("texture1"));
+   m_planeTextures->push_back(new TextureRef("texture2"));
+   m_planeTextures->push_back(new TextureRef("texture3"));
+   m_planeTextures->push_back(new TextureRef("texture4"));
+   
+   
 
    string fontPath = "fonts/SLEEP.TTF";
    font = TTF_OpenFont(fontPath.c_str(), 40);
@@ -48,6 +68,47 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
    }
 
    glBlendFunc(GL_ONE, GL_ONE);
+   
+   ivec2 size = m_screenSize;
+   // create the frambuffers
+   pass0.size = size;
+   pass0.clearColor = vec4(0.0, 0.0, 0.0, 1.0);
+   pass0.viewport.loc = ivec2(0, 0);
+   pass0.viewport.size = size;
+   CreateSurface(&pass0, true);
+   pass1.size = size;
+   pass1.clearColor = vec4(0.0, 0.0, 0.0, 1.0);
+   pass1.viewport.loc = ivec2(0, 0);
+   pass1.viewport.size = size;
+   CreateSurface(&pass1, true);
+   
+   size = size / 2;
+   reduce0.size = size;
+   reduce0.clearColor = vec4(0.0, 0.0, 0.0, 1.0);
+   reduce0.viewport.loc = ivec2(0, 0);
+   reduce0.viewport.size = size;
+   CreateSurface(&reduce0, true);
+   
+   size = size / 2;
+   reduce1.size = size;
+   reduce1.clearColor = vec4(0.0, 0.0, 0.0, 1.0);
+   reduce1.viewport.loc = ivec2(0, 0);
+   reduce1.viewport.size = size;
+   CreateSurface(&reduce1, true);
+   
+   size = size / 2;
+   reduce2.size = size;
+   reduce2.clearColor = vec4(0.0, 0.0, 0.0, 1.0);
+   reduce2.viewport.loc = ivec2(0, 0);
+   reduce2.viewport.size = size;
+   CreateSurface(&reduce2, true);
+   
+   size = size / 2;
+   reduce3.size = size;
+   reduce3.clearColor = vec4(0.0, 0.0, 0.0, 1.0);
+   reduce3.viewport.loc = ivec2(0, 0);
+   reduce3.viewport.size = size;
+   CreateSurface(&reduce3, true);
 }
 
 
@@ -90,7 +151,6 @@ void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
 	
    // get a font
    SDL_Color color = {255, 255, 255};
-   
    
 	/* Use SDL_TTF to render our text */
 	initial = TTF_RenderText_Blended(font, text.c_str(), color);
@@ -155,13 +215,14 @@ void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
 	SDL_FreeSurface(intermediary);
 	glDeleteTextures(1, &textureBuffer);
    
-   
    glEnable(GL_DEPTH);
    glDisable(GL_BLEND);
 }
 
 void RenderingEngine::render(list<IObject3d *> &objects) {
    processJobs();
+   
+   BindSurface(&pass0);
    
    glClearColor(0,0,0,0);
    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -176,6 +237,8 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    list<IMesh *> *objMeshes;
    list<IMesh *>::iterator mesh;
    
+   vec3 scale;
+   
    for (obj = objects.begin(); obj != objects.end(); ++obj) {
       objMeshes = (*obj)->getMeshes();
       for (mesh = objMeshes->begin(); mesh != objMeshes->end(); ++mesh) {
@@ -183,83 +246,167 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
          if (!(*mesh)->isVisible() || !(*mesh)->checkLoaded())
             continue;
          
-         // Check if the mesh was loaded.
-         IRef *ref;
-         ref = (*mesh)->getMeshRef();
-         if (!ref->loaded) {
-            continue;
-         }
-         MeshRef *meshRef = (MeshRef *) ref;
-         
-         // Check if the texture was loaded.
-         ref = (*mesh)->getTextureRef(0);
-         if (!ref->loaded) {
-            continue;
-         }
-         TextureRef *textureRef = (TextureRef *) ref;
-         
-         // Change the shading program when needed
-         if ((*mesh)->getShaderType() != m_curShaderProgram->type) {
-            useProgram((*mesh)->getShaderType());
-         }
-         glUniformMatrix4fv(m_curShaderProgram->uniforms.projection, 1, 0, projectionViewMatrix.Pointer());
-         glUniform3fv(m_curShaderProgram->uniforms.lightPosition, 1, lightPosition.Pointer());
-         
-         // Set the model view matrix
-         mat4 modelMtx = mat4::Scale((*mesh)->getScale());
-         modelMtx = modelMtx * (*mesh)->getModelMtx() ;
-         glUniformMatrix4fv(m_curShaderProgram->uniforms.modelview, 1, 0, modelMtx.Pointer());
-         
-         // Set the normal matrix
-         mat3 normalMtx = (*mesh)->getModelMtx().ToMat3();
-         glUniformMatrix3fv(m_curShaderProgram->uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
-         
-         // Set the diffuse color.
-         vec4 color =(*mesh)->getColor();
-         glVertexAttrib4f(m_curShaderProgram->attributes.diffuseMaterial, color.x, color.y, color.z, color.w);
-         
-         // Draw the surface.
-         int stride = 11 * sizeof(GLfloat);
-         const GLvoid* normalOffset = (const GLvoid*) (3 * sizeof(GLfloat));
-         const GLvoid* texCoordOffset = (const GLvoid*) (3 * sizeof(vec3));
-         GLint position = m_curShaderProgram->attributes.position;
-         GLint normal = m_curShaderProgram->attributes.normal;
-         GLint texCoord = m_curShaderProgram->attributes.textureCoord;
-         
-         glBindTexture(GL_TEXTURE_2D, textureRef->textureBuffer);
-         glBindBuffer(GL_ARRAY_BUFFER, meshRef->vertexBuffer);
-         glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, 0);
-         glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, normalOffset);
-         glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, stride, texCoordOffset);
-         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshRef->indexBuffer);
-         glDrawElements(GL_TRIANGLES, meshRef->indexCount, GL_UNSIGNED_SHORT, 0);
+         // Draw the mesh
+         drawMesh((*mesh), projectionViewMatrix);
       }
    }
+   
+   glDisable(GL_DEPTH);
+   glEnable(GL_BLEND);
+   
+   projectionViewMatrix = mat4::Parallel(-400, 400, -300, 300, 1, 10);
+   TextureRef *texture0 = (TextureRef*)(*m_planeTextures)[0];
+   TextureRef *texture1 = (TextureRef*)(*m_planeTextures)[1];
+   TextureRef *texture2 = (TextureRef*)(*m_planeTextures)[2];
+   TextureRef *texture3 = (TextureRef*)(*m_planeTextures)[3];
+   TextureRef *texture4 = (TextureRef*)(*m_planeTextures)[4];
+   
+   BindSurface(&pass1);
+   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+   m_planeMesh->setShaderType(SHADER_BLOOM_CULL);
+   texture0->textureBuffer = pass0.texture;
+   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix);
+   
+   BindSurface(&reduce0);
+   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+   m_planeMesh->setShaderType(SHADER_NO_LIGHT);
+   texture0->textureBuffer = pass1.texture;
+   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix);
+   
+   BindSurface(&reduce1);
+   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+   m_planeMesh->setShaderType(SHADER_NO_LIGHT);
+   texture0->textureBuffer = reduce0.texture;
+   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix);
+   
+   BindSurface(&reduce2);
+   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+   m_planeMesh->setShaderType(SHADER_NO_LIGHT);
+   texture0->textureBuffer = reduce1.texture;
+   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix);
+   
+   BindSurface(&reduce3);
+   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+   m_planeMesh->setShaderType(SHADER_NO_LIGHT);
+   texture0->textureBuffer = reduce2.texture;
+   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix);
+   
+   glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+   glViewport(0, 0, m_screenSize.x, m_screenSize.y);
+   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+   m_planeMesh->setShaderType(SHADER_COMBINE);
+   //m_planeMesh->setShaderType(SHADER_NO_LIGHT);
+   //texture0->textureBuffer = reduce3.texture;
+   texture0->textureBuffer = pass0.texture;
+   texture1->textureBuffer = reduce0.texture;
+   texture2->textureBuffer = reduce1.texture;
+   texture3->textureBuffer = reduce2.texture;
+   texture4->textureBuffer = reduce3.texture;
+   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix);
+   
+   glEnable(GL_DEPTH);
+   glDisable(GL_BLEND);
+}
+
+void RenderingEngine::drawMesh(IMesh *mesh, mat4 projection) {
+   
+   // Change the shading program when needed
+   if (mesh->getShaderType() != m_curShaderProgram->type) {
+      useProgram(mesh->getShaderType());
+   }
+   
+   glUniformMatrix4fv(m_curShaderProgram->uniforms.projection, 1, 0, projection.Pointer());
+   glUniform3fv(m_curShaderProgram->uniforms.lightPosition, 1, vec4(1, 1, 1, 0).Pointer());
+   
+   MeshRef *meshRef = (MeshRef*) mesh->getMeshRef();
+   TextureRef *textureRef = (TextureRef*) mesh->getTextureRef(0);
+   
+   // Set the model view matrix
+   vec3 scale = mesh->getScale();
+   mat4 modelMtx = mat4::Scale(scale.x, scale.y, scale.z);
+   modelMtx = modelMtx * mesh->getModelMtx();
+   glUniformMatrix4fv(m_curShaderProgram->uniforms.modelview, 1, 0, modelMtx.Pointer());
+   
+   // Set the normal matrix
+   mat3 normalMtx = mesh->getModelMtx().ToMat3();
+   glUniformMatrix3fv(m_curShaderProgram->uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
+   
+   // Set the diffuse color.
+   vec4 color = vec4(0.8, 0.8, 0.8, 1.0);
+   glVertexAttrib4f(m_curShaderProgram->attributes.diffuseMaterial, color.x, color.y, color.z, color.w);
+   
+   // Draw the surface.
+   int stride = 11 * sizeof(GLfloat);
+   const GLvoid* normalOffset = (const GLvoid*) (3 * sizeof(GLfloat));
+   const GLvoid* texCoordOffset = (const GLvoid*) (3 * sizeof(vec3));
+   GLint position = m_curShaderProgram->attributes.position;
+   GLint normal = m_curShaderProgram->attributes.normal;
+   GLint texCoord = m_curShaderProgram->attributes.textureCoord;
+   
+   glActiveTexture(GL_TEXTURE0);
+   glBindTexture(GL_TEXTURE_2D, textureRef->textureBuffer);
+   glEnable(GL_TEXTURE_2D);
+   
+   if (mesh->getShaderType() == SHADER_COMBINE) {
+      glActiveTexture(GL_TEXTURE1);
+      textureRef = (TextureRef*) mesh->getTextureRef(1);
+      glBindTexture(GL_TEXTURE_2D, textureRef->textureBuffer);
+      glEnable(GL_TEXTURE_2D);
+      
+      glActiveTexture(GL_TEXTURE2);
+      textureRef = (TextureRef*) mesh->getTextureRef(2);
+      glBindTexture(GL_TEXTURE_2D, textureRef->textureBuffer);
+      glEnable(GL_TEXTURE_2D);
+      
+      glActiveTexture(GL_TEXTURE3);
+      textureRef = (TextureRef*) mesh->getTextureRef(3);
+      glBindTexture(GL_TEXTURE_2D, textureRef->textureBuffer);
+      glEnable(GL_TEXTURE_2D);
+      
+      glActiveTexture(GL_TEXTURE4);
+      textureRef = (TextureRef*) mesh->getTextureRef(4);
+      glBindTexture(GL_TEXTURE_2D, textureRef->textureBuffer);
+      glEnable(GL_TEXTURE_2D);
+   }
+   
+   
+   glBindBuffer(GL_ARRAY_BUFFER, meshRef->vertexBuffer);
+   glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, 0);
+   glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, normalOffset);
+   glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, stride, texCoordOffset);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshRef->indexBuffer);
+   glDrawElements(GL_TRIANGLES, meshRef->indexCount, GL_UNSIGNED_SHORT, 0);
 }
 
 void RenderingEngine::processJobs() {
-   LoadingJob *curJob = m_jobs->GetJob();
-   if (curJob == NULL) {
-      return;
-   }
+   int startTime = SDL_GetTicks();
+   LoadingJob *curJob;
    
-   //cout << "add: " << curJob->ref->fileName << "\n";
-   
-   switch (curJob->type) {
-      case LOAD_JOB_MESH:
-         addMesh((MeshData*) curJob->data, (MeshRef*) curJob->ref);
-         break;
-         
-      case LOAD_JOB_TEXTURE:
-         addTexture((TextureData*) curJob->data, (TextureRef*) curJob->ref);
-         break;
-         
-      default:
-         cerr << "Unknown load job\n";
-         exit(1);
-         break;
-   }
-   delete curJob;
+   do {
+      // Get a job.
+      curJob = m_jobs->GetJob();
+      if (curJob == NULL) {
+         return; // If no job leave.
+      }
+      
+      // Process the job and cleanup.
+      switch (curJob->type) {
+         case LOAD_JOB_MESH:
+            addMesh((MeshData*) curJob->data, (MeshRef*) curJob->ref);
+            break;
+            
+         case LOAD_JOB_TEXTURE:
+            addTexture((TextureData*) curJob->data, (TextureRef*) curJob->ref);
+            break;
+            
+         default:
+            cerr << "Unknown load job\n";
+            exit(1);
+            break;
+      }
+      delete curJob;
+      
+   } while (PROCESS_TIME > SDL_GetTicks() - startTime);
 }
 
 void RenderingEngine::addMesh(MeshData *meshData, MeshRef *meshRef) {
@@ -330,6 +477,7 @@ GLuint RenderingEngine::buildShader(const char* source, GLenum shaderType) const
 
 ShaderProgram RenderingEngine::buildProgram(const char* vertexShaderSource, const char* fragmentShaderSource, SHADER_TYPE type) {
    ShaderProgram program;
+   program.type = type;
    program.vertexShader = buildShader(vertexShaderSource, GL_VERTEX_SHADER);
    program.fragmentShader = buildShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
    
@@ -358,7 +506,13 @@ ShaderProgram RenderingEngine::buildProgram(const char* vertexShaderSource, cons
    program.uniforms.ambientMaterial = glGetUniformLocation(program.program, "AmbientMaterial");
    program.uniforms.specularMaterial = glGetUniformLocation(program.program, "SpecularMaterial");
    program.uniforms.shininess = glGetUniformLocation(program.program, "Shininess"); 
-   program.uniforms.sampler = glGetUniformLocation(program.program, "Sampler");
+   program.uniforms.sampler0 = glGetUniformLocation(program.program, "Sampler");
+   if (type == SHADER_COMBINE) {
+      program.uniforms.sampler1 = glGetUniformLocation(program.program, "Sampler1");
+      program.uniforms.sampler2 = glGetUniformLocation(program.program, "Sampler2");
+      program.uniforms.sampler3 = glGetUniformLocation(program.program, "Sampler3");
+      program.uniforms.sampler4 = glGetUniformLocation(program.program, "Sampler4");
+   }
    
    return program;
 }
@@ -376,9 +530,27 @@ void RenderingEngine::createShaders() {
    fragmentShader = m_modules->resourceManager->readShader("shaders/NoLighting.frag");
    newShader = buildProgram(vertexShader.c_str(), fragmentShader.c_str(), SHADER_NO_LIGHT);
    m_shaderPrograms[SHADER_NO_LIGHT] = newShader;
+   
+   vertexShader = m_modules->resourceManager->readShader("shaders/Bloom.vert");
+   fragmentShader = m_modules->resourceManager->readShader("shaders/Bloom.frag");
+   newShader = buildProgram(vertexShader.c_str(), fragmentShader.c_str(), SHADER_BLOOM);
+   m_shaderPrograms[SHADER_BLOOM] = newShader;
+   
+   vertexShader = m_modules->resourceManager->readShader("shaders/BloomCull.vert");
+   fragmentShader = m_modules->resourceManager->readShader("shaders/BloomCull.frag");
+   newShader = buildProgram(vertexShader.c_str(), fragmentShader.c_str(), SHADER_BLOOM_CULL);
+   m_shaderPrograms[SHADER_BLOOM_CULL] = newShader;
+   
+   vertexShader = m_modules->resourceManager->readShader("shaders/Combine.vert");
+   fragmentShader = m_modules->resourceManager->readShader("shaders/Combine.frag");
+   newShader = buildProgram(vertexShader.c_str(), fragmentShader.c_str(), SHADER_COMBINE);
+   m_shaderPrograms[SHADER_COMBINE] = newShader;
 }
 
 void RenderingEngine::useProgram(SHADER_TYPE type) {
+   if (m_curShaderProgram != NULL && type == m_curShaderProgram->type) {
+      return;
+   }
    m_curShaderProgram = &m_shaderPrograms[type];
    glUseProgram(m_curShaderProgram->program);
    
@@ -394,12 +566,25 @@ void RenderingEngine::useProgram(SHADER_TYPE type) {
    
    // set a texture
    glActiveTexture(GL_TEXTURE0);
-   glUniform1i(m_curShaderProgram->uniforms.sampler, 0);
+   glUniform1i(m_curShaderProgram->uniforms.sampler0, 0);
+   
+   // set up extra textures for combine
+   if (type == SHADER_COMBINE) {
+      glActiveTexture(GL_TEXTURE1);
+      glUniform1i(m_curShaderProgram->uniforms.sampler1, 1);
+      glActiveTexture(GL_TEXTURE2);
+      glUniform1i(m_curShaderProgram->uniforms.sampler2, 2);
+      glActiveTexture(GL_TEXTURE3);
+      glUniform1i(m_curShaderProgram->uniforms.sampler3, 3);
+      glActiveTexture(GL_TEXTURE4);
+      glUniform1i(m_curShaderProgram->uniforms.sampler4, 4);
+   }
 }
 
 void RenderingEngine::loadMesh(IMesh *newMesh) {
    // Check if the mesh was already loaded
    IRef *ref = newMesh->getMeshRef();
+   //cout << "load: " << ref->fileName << "\n";
    if (!ref->loaded && !ref->loading) {
       map<string, MeshRef*>::iterator meshIter = m_meshMap.find(ref->fileName);
       if (meshIter != m_meshMap.end()) {
@@ -408,37 +593,11 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
          meshIter->second->count += 1;
       }
       else {
-         cout << "load: " << ref->fileName << "\n";
+         //cout << "load: " << ref->fileName << "\n";
          MeshRef *newMeshRef = new MeshRef(ref->fileName);
          m_meshMap[ref->fileName] = newMeshRef;
          newMesh->setMeshRef(newMeshRef);
          m_jobs->AddJob(new LoadingJob(LOAD_JOB_MESH, newMeshRef));
-         /*
-         // Get the meshData.
-         MeshData *meshData = m_modules->resourceManager->readMeshData(ref->fileName, LOAD_NORMAL_VERTEX, 1.0);;
-         
-         // Add the mesh VBO
-         GLuint vertexBuffer;
-         glGenBuffers(1, &vertexBuffer);
-         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-         glBufferData(GL_ARRAY_BUFFER, meshData->vertexCount * VERTEX_STRIDE * sizeof(GLfloat),
-                      meshData->vertices, GL_STATIC_DRAW);
-         
-         GLuint indexBuffer;
-         glGenBuffers(1, &indexBuffer);
-         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-         glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshData->indexCount * sizeof(GLushort),
-                      meshData->indices, GL_STATIC_DRAW);
-         
-         MeshRef *newMeshRef = new MeshRef(ref->fileName, vertexBuffer, indexBuffer, meshData->indexCount, meshData->bounds);
-         newMesh->setMeshRef(newMeshRef);
-         m_meshMap[ref->fileName] = newMeshRef;
-         
-         // Clean up the mesh data
-         delete[] meshData->vertices;
-         delete[] meshData->indices;
-         delete meshData;
-          */
       }
       delete ref;
    }
@@ -459,28 +618,6 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
             m_textureMap[ref->fileName] = newTextureRef;
             *refIter = newTextureRef;
             m_jobs->AddJob(new LoadingJob(LOAD_JOB_TEXTURE, newTextureRef));
-            /*
-            // Get the texture
-            TextureData *textureData = m_modules->resourceManager->loadBMPImage(ref->fileName);
-            SDL_Surface *surface = (SDL_Surface *) textureData->data;
-            
-            // Load a new texture.
-            GLuint textureBuffer;
-            glGenTextures(1, &textureBuffer);
-            glBindTexture(GL_TEXTURE_2D, textureBuffer);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, surface->w, surface->h, 0,
-                         GL_BGR, GL_UNSIGNED_BYTE, surface->pixels);
-            //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureData->size.x, textureData->size.y, 0,
-            //               GL_BGR, GL_UNSIGNED_BYTE, textureData->pixels);
-            delete textureData;
-            glGenerateMipmapEXT(GL_TEXTURE_2D);
-            
-            // Setup a new texture reference
-            TextureRef *newTextureRef = new TextureRef(ref->fileName, textureBuffer);
-            *refIter = newTextureRef;
-            m_textureMap[ref->fileName] = newTextureRef;*/
          }
          delete ref;
       }
@@ -531,100 +668,4 @@ void RenderingEngine::unLoadMesh(IMesh* rmvMesh) {
       
       ++refIter;
    }
-}
-
-
-
-LoadingJobs::LoadingJobs(IResourceManager *resourceManager) {
-   m_resourceManager = resourceManager;
-   lockIn = SDL_CreateMutex();
-   lockOut = SDL_CreateMutex();
-   newJob = SDL_CreateCond();
-   in = list<LoadingJob*>(0);
-   out = list<LoadingJob*>(0);
-   m_loaderThread = SDL_CreateThread(loader_thread, this);
-   if (m_loaderThread == NULL) {
-      cerr << "Problem starting loader thread";
-      exit(1);
-   }
-}
-
-IResourceManager* LoadingJobs::GetResourceManager() {
-   return m_resourceManager;
-}
-
-LoadingJobs::~LoadingJobs() {
-   SDL_KillThread(m_loaderThread);
-   SDL_DestroyMutex(lockIn);
-   SDL_DestroyMutex(lockOut);
-   SDL_DestroyCond(newJob);
-}
-
-void LoadingJobs::AddJob(LoadingJob *job) {
-   SDL_mutexP(lockIn);
-   in.push_back(job);
-   SDL_mutexV(lockIn);
-   SDL_CondSignal(newJob);
-}
-
-LoadingJob* LoadingJobs::GetJob() {
-   SDL_mutexP(lockOut);
-   LoadingJob *job = NULL;
-   if (out.size() != 0) {
-      job = out.front();
-      out.pop_front();
-   }
-   SDL_mutexV(lockOut);
-   return job;
-}
-
-LoadingJob* LoadingJobs::GetJobIn() {
-   SDL_mutexP(lockIn);
-   if (in.size() == 0) {
-      cout << "stop loading thread\n";
-      SDL_CondWait(newJob, lockIn);
-      cout << "start loading thread\n";
-   }
-   LoadingJob *job = in.front();
-   in.pop_front();
-   SDL_mutexV(lockIn);
-   return job;
-}
-
-void LoadingJobs::AddJobOut(LoadingJob *job) {
-   SDL_mutexP(lockOut);
-   out.push_back(job);
-   SDL_mutexV(lockOut);
-}
-
-int loader_thread(void *jobs) {
-   LoadingJobs *loadingJobs = (LoadingJobs *) jobs;
-   IResourceManager *resourceManager = loadingJobs->GetResourceManager();
-   LoadingJob *curJob;
-   while (true) {
-      // get a new job from the in list.
-      curJob = loadingJobs->GetJobIn();
-      
-      // process the job
-      switch (curJob->type) {
-         case LOAD_JOB_MESH:
-            // load a mesh
-            curJob->data = resourceManager->readMeshData(curJob->ref->fileName, LOAD_NORMAL_VERTEX, 1.0);
-            break;
-            
-         case LOAD_JOB_TEXTURE:
-            // load a texture
-            curJob->data = resourceManager->loadBMPImage(curJob->ref->fileName);
-            break;
-            
-         default:
-            cerr << "Unknown load job\n";
-            exit(1);
-            break;
-      }
-      
-      // put the finished job in the out list.
-      loadingJobs->AddJobOut(curJob);
-   }
-   return 0;
 }
