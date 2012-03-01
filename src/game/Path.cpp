@@ -189,3 +189,8 @@ PathPoint Path::update(Vector3<float> refPos, Vector3<float> playerPos)
 int Path::getSize() {
   return points.size();
 }
+
+int Path::getNdx()
+{
+   return currentPoint;
+}

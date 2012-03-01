@@ -40,11 +40,11 @@ void GameEngine::InitData()
 {
    m_worldData = m_modules->resourceManager->readWorldData("maps/Course1.wf");
    
-   m_worldGrid = new WorldGrid(*m_worldData, m_modules);
-   PathPoint currPath = m_worldGrid->getCurrentQuadrant().m_Point;
-   PathPoint prevPath = m_worldGrid->getNextQuadrant().m_Point;
+   m_path = new Path(m_worldData);
    
-   m_camera = new Camera(&currPath, &prevPath);
+   m_worldGrid = new WorldGrid(*m_worldData, m_modules);
+   
+   m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
    m_skybox = new SkyBox("models/box3.obj", "textures/box3.bmp", m_modules, m_camera->getPosition());
    m_player = new Player("models/spaceship.obj", "textures/spaceship_pp.bmp",
 m_modules, m_camera->getPosition(),
@@ -61,12 +61,12 @@ m_camera->getForward(), m_camera->getUp());
    /*m_enemyGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj",
           "models/enemy2turrethead.obj", "textures/test3.bmp", m_modules, *m_player);*/
 
-   m_player->setProgress(prevPath.getPosition());
-   m_player->setPosition(prevPath.getPosition());
-   m_player->setUp(prevPath.getUp());
-   m_player->setHeads(currPath.getPosition(), 
-		      currPath.getUp(), prevPath.getPosition(), 
-		      prevPath.getUp());
+   m_player->setProgress(m_path->getPreviousPointer()->getPosition());
+   m_player->setPosition(m_path->getPreviousPointer()->getPosition());
+   m_player->setUp(m_path->getPreviousPointer()->getUp());
+   m_player->setHeads(m_path->getCurrentPointer()->getPosition(), 
+		      m_path->getCurrentPointer()->getUp(), m_path->getPreviousPointer()->getPosition(), 
+		      m_path->getPreviousPointer()->getUp());
    m_player->calculateSide();
    
    m_modules->renderingEngine->setCamera(m_camera);
@@ -107,21 +107,25 @@ void GameEngine::tic(uint64_t td) {
       exit(0);
       }*/
       
-      m_worldGrid->tic(td);
+      // Update functions go here
+      m_path->update(m_camera->getRef(), m_player->getPosition());
       
-      PathPointData currPPD = m_worldGrid->getCurrentQuadrant().m_Point;
-      
-      PathPoint m_currentPoint(currPPD);
-      
-      m_camera->checkPath(&m_currentPoint);
-      
+      m_camera->checkPath(m_path->getCurrentPointer());
       m_camera->tic(td);
-
+      
+      m_player->tic(td, m_camera->getPosition(), m_camera->getUp(), m_camera->getForward());
       m_reticle->tic(td);
       
       m_skybox->tic(td, m_player->getPosition());
+      
+      m_worldGrid->tic(td, m_path);
 
       m_worldGrid->checkCollisions();
+      
+      if(m_player->getAlive() == false) {
+         m_stateManager->pushState(m_lose);
+         //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME.
+      }
    }
 }
 
@@ -131,6 +135,8 @@ void GameEngine::render() {
    if (m_stateManager->getCurrentState() == m_game)
    {
       list<IObject3d*> objs = m_worldGrid->getDrawableObjects();
+      objs.push_back(m_skybox);
+      objs.push_back(m_reticle);
       
       m_modules->renderingEngine->render(objs);
    }

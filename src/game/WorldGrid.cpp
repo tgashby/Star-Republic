@@ -18,7 +18,7 @@
  - Prob lots more...
  */
 
-const float Quadrant::SPHERE_RADIUS = 25000.0f;
+const float Quadrant::SPHERE_RADIUS = 15000.0f;
 
 WorldGrid::WorldGrid(WorldData& world, Modules* modules)
    : m_world(world)
@@ -73,27 +73,50 @@ void WorldGrid::placeInGrid(GameObject* gameObj, Object3d* obj3D)
    
    m_quadrants.at(ndx)->m_gameObjects.push_back(gameObj);
    m_quadrants.at(ndx)->m_obj3Ds.push_back(obj3D);
+   
+   m_shouldUpdate = true;
 }
 
 void WorldGrid::placeInCurrQuadrant(GameObject* gameObj, Object3d* obj3D)
 {
    m_quadrants.at(m_currentQuadrant)->m_gameObjects.push_back(gameObj);
    m_quadrants.at(m_currentQuadrant)->m_obj3Ds.push_back(obj3D);
+   
+   m_shouldUpdate = true;
 }
 
-void WorldGrid::tic(uint64_t dt)
+void WorldGrid::tic(uint64_t dt, Path* path)
 {
    updateObjects();
-   
-   Camera& camera = ((Camera&)m_modules->gameEngine->getCamera());
-   
-   m_player->tic(dt, camera.getPosition(), camera.getUp(), camera.getForward());
    
    for (std::list<GameObject*>::iterator i = m_updateableObjs.begin(); i != m_updateableObjs.end(); i++) 
    {
       GameObject* currObj = *i;
       
       currObj->tic(dt);
+      
+      vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
+      
+      if (typeid(**i) == typeid(Turret)) 
+      {
+         Turret* turret = ((Turret*)*i);
+         
+         // Turret not currently firing, but I think it's because
+         // the player starts too close to the turret
+         if (turret->isAlive() && dirToPlayer.Length() < 1500 && turret->shouldFire())
+         {
+            vec3 dirToPlayerNorm = dirToPlayer.Normalized();
+            
+            Bullet* bullet = 
+            new Bullet("models/lance.obj", "textures/test5.bmp", 
+                       m_modules, turret->getHeadPosition(), 
+                       -dirToPlayerNorm, 
+                       dirToPlayerNorm.Cross(turret->getPosition()), *(turret));
+            
+            //placeInGrid(bullet, bullet);
+         }
+      }
+      
    }
    
 //   for (std::vector<Turret*>::iterator i = m_turrets.begin(); i != m_turrets.end(); i++) 
@@ -176,6 +199,7 @@ void WorldGrid::tic(uint64_t dt)
    
    if (quadrant != m_currentQuadrant) 
    {
+      std::cerr << "UPDATING LIKE A BAWS\n";
       m_currentQuadrant = quadrant;
       m_shouldUpdate = true;
    }
@@ -269,7 +293,7 @@ void WorldGrid::makeGrid()
          vec3 forward = currProp.fwd;
          vec3 up = currProp.up;
          
-         SceneObject* sceneObj = new SceneObject("models/" + currProp.name + ".obj", "textures/test3.bmp", position, forward, up, m_modules);
+         SceneObject* sceneObj = new SceneObject("models/" + currProp.name + ".obj", "textures/" + currProp.name + ".bmp", position, forward, up, m_modules);
          
          quad->m_obj3Ds.push_back(sceneObj);
       }

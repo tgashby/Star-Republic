@@ -24,6 +24,7 @@ public:
    PathPoint* getPreviousPointer();
    PathPoint* getCurrentPointer();
    int getSize();
+   int getNdx();
    WorldData* worldData;
    
  private:

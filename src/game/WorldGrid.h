@@ -11,7 +11,7 @@
 
 #include <list>
 #include "GameObject.h"
-#include "Cube.h"
+#include "Path.h"
 #include "SceneObject.h"
 #include "Turret.h"
 #include "Player.h"
@@ -101,7 +101,7 @@ public:
     * Updates all objects that are in the current quadrants.
     * @param dt the time passed since the last update.
     */
-   void tic(uint64_t dt);
+   void tic(uint64_t dt, Path* path);
    
    /**
     * Checks all objects in the current quadrants for collisions.

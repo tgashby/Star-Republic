@@ -61,6 +61,7 @@ private:
    WinState* m_win;
    WorldData *m_worldData;
    WorldGrid *m_worldGrid;
+   Path* m_path;
    Vector3<float> currentDirection;
    void InitData();
 
