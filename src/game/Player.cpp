@@ -13,10 +13,10 @@ Player::Player(string fileName, string textureName, Modules *modules,
 	Vector3<float> cam_pos, Vector3<float> cam_up, Vector3<float> cam_forw) 
    :  Object3d(), Flyer(), m_side(1,0,0), lastScreenX(0), lastScreenY(0), m_sideVelocity(0,0,0), m_upVelocity(0,0,0)
 {
-   m_forward = cam_forw;
-   m_up = cam_up;
-   m_position = cam_pos;
-   calculateSide();
+  m_forward = cam_forw.Normalized();
+  m_up = cam_up;
+  m_position = cam_pos + (cam_forw.Normalized() * PLAYER_DISTANCE_FROM_CAMERA);
+  calculateSide();
 
    m_shipMesh = new Mesh(fileName, textureName, modules);
    m_meshList.push_back(m_shipMesh);
