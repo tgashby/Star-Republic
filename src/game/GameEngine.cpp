@@ -53,7 +53,7 @@ m_modules, m_camera->getPosition(),
 m_camera->getForward(), m_camera->getUp());
    m_camera->setPlayer(m_player);
 
-   m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
+   m_reticle = new Reticle("models/reticle2.obj", "textures/white.bmp", 
 			 m_modules, m_player);
 
    createTurrets();
@@ -109,7 +109,7 @@ i != m_turrets.end(); i++)
    m_music = loadMusic("sound/ambient1.wav");
    m_boostSound = loadSound("sound/boost.wav");
    addAsteroids();
-   m_music->play(-1);
+   //m_music->play(-1);
 }
 
 void GameEngine::tic(uint64_t td) {
@@ -564,7 +564,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
 	    
 	    bulletOrigin += (m_player->getAimForward() * 8.0f);
 	    
-	    Missile *missile = new Missile("models/missile1.obj", "textures/test6.bmp",
+	    Missile *missile = new Missile("models/missile1.obj", "textures/missileTex.bmp",
 					   m_modules, 
 					   bulletOrigin, 
 					   m_player->getAimForward(), 
