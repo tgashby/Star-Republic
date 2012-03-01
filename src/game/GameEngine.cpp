@@ -274,20 +274,22 @@ exit(0);
       m_stateManager->pushState(m_lose);
       //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME.
    }
-
    int deathCount = 0;
-   for (std::vector<EnemyShip *>::iterator j = m_enemyShips.begin(); j != m_enemyShips.end(); j++) {
+   for (std::vector<EnemyShip *>::iterator j = m_enemyShips.begin();
+          j != m_enemyShips.end(); j++) {
       if ((*j)->isAlive() == false)
          deathCount++;
    }
-   for (std::vector<EnemyGunship *>::iterator j = m_enemyGunners.begin(); j != m_enemyGunners.end(); j++) {
+   for (std::vector<EnemyGunship *>::iterator j = m_enemyGunners.begin();
+          j != m_enemyGunners.end(); j++) {
       if ((*j)->isAlive() == false)
          deathCount++;
    }
-   if (deathCount == 100) {
+   if (deathCount == 20) {
       m_stateManager->pushState(m_win);
       //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME AS WELL.
    }   
+
 }
 }
 
