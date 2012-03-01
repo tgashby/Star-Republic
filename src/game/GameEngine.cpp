@@ -297,11 +297,13 @@ void GameEngine::cullObjects() {
   /**/
   
   vector<GameObject *> toCull;
+  vector<Object3d *> toCullD;
 
   for (std::vector<Missile *>::iterator missileIter = m_missileList.begin();
        missileIter != m_missileList.end(); missileIter++) {
     if (isCullable(*missileIter)) {
       toCull.push_back(*missileIter);
+      toCullD.push_back(*missileIter);
     }
   }
 
@@ -309,12 +311,14 @@ void GameEngine::cullObjects() {
        bulletIter != m_bulletList.end(); bulletIter++) {
     if (isCullable(*bulletIter)) {
       toCull.push_back(*bulletIter);
+      toCullD.push_back(*bulletIter);
     }
   }
 
-  for (vector<GameObject *>::iterator cullIter = toCull.begin();
-       cullIter != toCull.end(); cullIter++) {
-    cullObject(*cullIter);
+  std::vector<Object3d *>::iterator cullIterD = toCullD.begin();
+  for (std::vector<GameObject *>::iterator cullIter = toCull.begin();
+       cullIter != toCull.end(), cullIterD != toCullD.end(); cullIter++, cullIterD++) {
+    cullObject(*cullIter, *cullIterD);
   }
 }
 
@@ -334,7 +338,7 @@ bool GameEngine::isCullable(GameObject* obj) {
   return false;
 }
 
-void GameEngine::cullObject(GameObject* obj) {
+void GameEngine::cullObject(GameObject* obj, Object3d* second) {
   if (typeid(*obj) == typeid(Bullet)) {
     //remove(m_bulletList.begin(), m_bulletList.end(), obj);
     m_bulletList.erase(find(m_bulletList.begin(), m_bulletList.end(), obj));
@@ -348,17 +352,33 @@ void GameEngine::cullObject(GameObject* obj) {
     //remove(find(m_missileList.begin(), m_missileList.end(), obj));
   }
 
-
   //remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
   //m_objects.resize(m_objects.size() - 1);
   
-  for (list<IObject3d *>::iterator objIter = m_objects.begin();
+  cerr << "Before the second erase :" << m_objects.size() << "\n";
+  /*for (list<IObject3d *>::iterator objIter = m_objects.begin();
 	 objIter != m_objects.end(); objIter++) {
     if (((GameObject *)(*objIter))->getPosition() == obj->getPosition()) {
+      assert(false);
       m_objects.erase(objIter);
       break;
     }
-  }
+  }*/
+  /*ARE YOU RRRRREAAAAADY TO SUDOCODE
+  FIRST! YOU ADD A NEW LAST OBJECT3D  TO THE LIST THAT HAS NOTHING OF VALUE
+  THEN! YOU RUN FIND ON THE LIST FOR THE THINGY!
+  SECOND! YOU COMPARE THE RESULT OF THE FIND WITH THE LAST VALUE IN THE THINGY!
+  FINALLY! IF THEY ARE EQUAL, NOTHING OF VALUE WAS FOUND!
+  */
+  IObject3d* dummy = NULL;
+  std::_List_iterator<IObject3d *> temp;
+  m_objects.push_back(dummy);
+  temp = find(m_objects.begin(), m_objects.end(), second);
+  assert(temp != m_objects.end());
+  m_objects.pop_back();
+  m_objects.erase(find(m_objects.begin(), m_objects.end(), second));
+  
+  cerr << "After the second erase :" << m_objects.size() << "\n";
   
   //m_objects.erase(myfind(m_objects.begin(), m_objects.end(), obj));
 
@@ -367,7 +387,7 @@ void GameEngine::cullObject(GameObject* obj) {
   //m_
   m_gameObjects.erase(find(m_gameObjects.begin(), m_gameObjects.end(), obj));
 
-  //delete obj;
+   //delete obj;
   //cerr << "deleted the object\n";
 }
 
@@ -514,8 +534,8 @@ m_objects.push_back(bullet);
 m_bulletList.push_back(bullet);
       
       
-      m_modules->soundManager->playSound(PlayerGun); 
-	   //m_bulletSound->play(0);
+      //m_modules->soundManager->playSound(PlayerGun); 
+	   m_bulletSound->play(0);
       }
    }
    return running;

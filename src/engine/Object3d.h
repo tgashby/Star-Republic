@@ -9,6 +9,7 @@ public:
    Object3d();
    virtual ~Object3d();
    list<IMesh *>* getMeshes();
+   void setVisible(bool mood);
 protected:
    list<IMesh *> m_meshList;
 };
