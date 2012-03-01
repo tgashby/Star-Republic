@@ -157,7 +157,7 @@ exit(0);
       vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
       
       if (closestdir.Length() > dirToPlayer.Length() 
-          && dirToPlayer.Dot(m_player->getAimForward()) > 150
+          && dirToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96
           && (*i)->isAlive())
          closestdir = dirToPlayer;
 
@@ -188,7 +188,7 @@ exit(0);
      vec3 dirEnemyToPlayer = (*j)->getPosition() - m_player->getPosition();
 
      if (closestdir.Length() > dirEnemyToPlayer.Length()
-          && dirEnemyToPlayer.Dot(m_player->getAimForward()) > 150
+          && dirEnemyToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96
           && (*j)->isAlive())
          closestdir = dirEnemyToPlayer;
 
@@ -228,7 +228,7 @@ exit(0);
      vec3 dirEnemyToPlayer = (*j)->getPosition() - m_player->getPosition();
 
      if (closestdir.Length() > dirEnemyToPlayer.Length()
-          && dirEnemyToPlayer.Dot(m_player->getAimForward()) > 150
+          && dirEnemyToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96
           && (*j)->isAlive())
          closestdir = dirEnemyToPlayer;
 
@@ -271,8 +271,7 @@ exit(0);
    if (closestdir.x != 10000 && closestdir.y != 10000 && closestdir.z != 10000)
       m_player->setMagneticForward(closestdir.Normalized());
    else
-      m_player->setMagneticForward(m_player->getAimForward());
-
+      m_player->setMagneticForward(m_player->getAimForward().Normalized());
 
    int i = 0;
    //Use Iterators!
