@@ -277,12 +277,7 @@ exit(0);
 }
 
 void GameEngine::cullObjects() {
-  /*for (std::vector<Bullet *>::iterator bulletIter = m_bulletList.begin(); 
-       bulletIter != m_bulletList.end(); bulletIter++) {
-    if (isCullable(*bulletIter)) {
-      cullObject(*bulletIter);
-    }
-    }*/
+  /**/
   
   vector<GameObject *> toCull;
 
@@ -290,6 +285,13 @@ void GameEngine::cullObjects() {
        missileIter != m_missileList.end(); missileIter++) {
     if (isCullable(*missileIter)) {
       toCull.push_back(*missileIter);
+    }
+  }
+
+  for (std::vector<Bullet *>::iterator bulletIter = m_bulletList.begin(); 
+       bulletIter != m_bulletList.end(); bulletIter++) {
+    if (isCullable(*bulletIter)) {
+      toCull.push_back(*bulletIter);
     }
   }
 
@@ -301,11 +303,15 @@ void GameEngine::cullObjects() {
 
 bool GameEngine::isCullable(GameObject* obj) {
   if (typeid(*obj) == typeid(Bullet)) {
-    return true;
+    if ((m_player->getPosition() - obj->getPosition()).Length() > 2000) {
+      return true;
+    }
   }
 
   if (typeid(*obj) == typeid(Missile)) {
-    return true;
+    if (((Missile *)obj)->getTotalTime() > 2000) {
+      return true;
+    }
   }
 
   return false;
@@ -319,18 +325,28 @@ void GameEngine::cullObject(GameObject* obj) {
   
   if (typeid(*obj) == typeid(Missile)) {
     //remove(m_missileList.begin(), m_missileList.end(), obj);
+    cerr << "Before the first erase :" << m_missileList.size() << "\n";
     //m_missileList.resize(m_missileList.size() - 1);
     m_missileList.erase(find(m_missileList.begin(), m_missileList.end(), obj));
+    cerr << "After the first erase :" << m_missileList.size() << "\n";
   }
 
-  //remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
-  //m_objects.resize(m_objects.size() - 1);
-  m_objects.erase(find(m_objects.begin(), m_objects.end(), (Object3d*) obj));
+//cerr << "Before the second erase :" << m_objects.size() << "\n";
+  remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
+  m_objects.resize(m_objects.size() - 1);
+  //cerr << "After the second erase :" << m_objects.size() << "\n";
+  
+  //m_objects.erase(find(m_objects.begin(), m_objects.end(), (Object3d*) obj));
+
+
   //remove(m_gameObjects.begin(), m_gameObjects.end(), obj);
   //m_
+  cerr << "Before the third erase :" << m_gameObjects.size() << "\n";
   m_gameObjects.erase(find(m_gameObjects.begin(), m_gameObjects.end(), obj));
+  cerr << "After the third erase :" << m_gameObjects.size() << "\n";
 
-  delete obj;
+  //delete obj;
+  //cerr << "deleted the object\n";
 }
 
 void GameEngine::render() {
