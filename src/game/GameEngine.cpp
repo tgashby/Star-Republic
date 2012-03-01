@@ -326,7 +326,7 @@ bool GameEngine::isCullable(GameObject* obj) {
   }
 
   if (typeid(*obj) == typeid(Missile)) {
-    if (((Missile *)obj)->getTotalTime() > 3500) {
+    if (((Missile *)obj)->getTotalTime() > 4000) {
       return true;
     }
   }
@@ -603,7 +603,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
 	    
 	    bulletOrigin += (m_player->getAimForward() * 8.0f);
 	    
-	    Missile *missile = new Missile("models/missile1.obj", "textures/test6.bmp",
+	    Missile *missile = new Missile("models/missile1.obj", "textures/missileTex.bmp",
 					   m_modules, 
 					   bulletOrigin, 
 					   m_player->getAimForward(), 
