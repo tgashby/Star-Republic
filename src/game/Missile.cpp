@@ -89,6 +89,7 @@ void Missile::tic(uint64_t time) {
       
       modelMtx = mat4::Magic(m_forward, m_up, m_position);
       m_mesh->setModelMtx(modelMtx);
+      modelMtx = mat4::Rotate(-90, vec3(0,0,1)) * modelMtx;
       m_exhaustMesh->setModelMtx(modelMtx);
    }
    else {
