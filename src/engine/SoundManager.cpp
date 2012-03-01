@@ -18,7 +18,7 @@ void SoundManager::playSound(SoundEvent event){
    if(m_sounds[event].size() != 0){
       m_sounds[event][0]->play(0);     
       if(event == PlayerGun){
-         cerr << "This totally ran? Size is?"<<m_sounds[event].size() << "\n";
+         //cerr << "This totally ran? Size is?"<<m_sounds[event].size() << "\n";
       }
    }
 
