@@ -53,7 +53,7 @@ m_modules, m_camera->getPosition(),
 m_camera->getForward(), m_camera->getUp());
    m_camera->setPlayer(m_player);
 
-   m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
+   m_reticle = new Reticle("models/reticle2.obj", "textures/white.bmp", 
 			 m_modules, m_player);
 
    createTurrets();
@@ -438,7 +438,7 @@ void GameEngine::addAsteroids() {
       if (pntIndex % 2 == 0) {
 	tempShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", m_modules, *m_player);
 
-	tempShip->setPosition(current.getPosition());
+	tempShip->setSpawnPosition(current.getPosition());
         tempShip->tic(0);
 	m_modules->renderingEngine->addObject3d(tempShip);
 	m_gameObjects.push_back(tempShip);
@@ -448,7 +448,7 @@ void GameEngine::addAsteroids() {
       }
       else {
 	tempGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj", "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp", m_modules, *m_player);
-	tempGunner->setPosition(current.getPosition());
+	tempGunner->setSpawnPosition(current.getPosition());
         tempGunner->tic(0);
 	m_modules->renderingEngine->addObject3d(tempGunner);
 	m_gameObjects.push_back(tempGunner);
