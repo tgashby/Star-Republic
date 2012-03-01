@@ -371,7 +371,6 @@ void GameEngine::cullObject(GameObject* obj, Object3d* second) {
   
   if (typeid(*obj) == typeid(Missile)) {
     //remove(m_missileList.begin(), m_missileList.end(), obj);
-    cerr << "Before the first erase :" << m_missileList.size() << "\n";
     //m_missileList.resize(m_missileList.size() - 1);
     m_missileList.erase(find(m_missileList.begin(), m_missileList.end(), obj));
     //remove(find(m_missileList.begin(), m_missileList.end(), obj));
@@ -380,7 +379,6 @@ void GameEngine::cullObject(GameObject* obj, Object3d* second) {
   //remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
   //m_objects.resize(m_objects.size() - 1);
   
-  cerr << "Before the second erase :" << m_objects.size() << "\n";
   /*for (list<IObject3d *>::iterator objIter = m_objects.begin();
 	 objIter != m_objects.end(); objIter++) {
     if (((GameObject *)(*objIter))->getPosition() == obj->getPosition()) {
@@ -402,8 +400,6 @@ void GameEngine::cullObject(GameObject* obj, Object3d* second) {
   assert(temp != m_objects.end());
   m_objects.pop_back();
   m_objects.erase(find(m_objects.begin(), m_objects.end(), second));
-  
-  cerr << "After the second erase :" << m_objects.size() << "\n";
   
   //m_objects.erase(myfind(m_objects.begin(), m_objects.end(), obj));
 

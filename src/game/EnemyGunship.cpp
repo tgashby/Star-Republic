@@ -77,7 +77,7 @@ EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
        TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
   m_turretbasemesh2->setModelMtx(modelMtx4);
 
-  m_health = 25;
+  m_health = 20;
 }
 
 EnemyGunship::~EnemyGunship()
