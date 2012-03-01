@@ -140,7 +140,7 @@ void RenderingEngine::removeObject3d(IObject3d *obj) {
 }
 
 void RenderingEngine::clearScreen() {
-   glClearColor(0,0,0,0);
+   glClearColor(0,0,0,1);
    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
