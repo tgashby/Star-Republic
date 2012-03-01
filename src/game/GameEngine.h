@@ -59,7 +59,6 @@ private:
    GameState* m_game;
    LoseState* m_lose;
    WinState* m_win;
-   Path *m_path;
    WorldData *m_worldData;
    WorldGrid *m_worldGrid;
    Vector3<float> currentDirection;

@@ -44,7 +44,7 @@ void GameEngine::InitData()
    PathPoint currPath = m_worldGrid->getCurrentQuadrant().m_Point;
    PathPoint prevPath = m_worldGrid->getNextQuadrant().m_Point;
    
-   m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
+   m_camera = new Camera(&currPath, &prevPath);
    m_skybox = new SkyBox("models/box3.obj", "textures/box3.bmp", m_modules, m_camera->getPosition());
    m_player = new Player("models/spaceship.obj", "textures/spaceship_pp.bmp",
 m_modules, m_camera->getPosition(),
@@ -97,37 +97,29 @@ void GameEngine::tic(uint64_t td) {
       gameOver += td;
       
       /*
-   if (gameOver >= 40000)
-   {
-   cout << "YOU WIN!\n";
-   exit(0);
-   }
-   if (!m_player->isAlive()) {
-   cout << "YOU LOSE!\n";
-   exit(0);
-   }*/
-      m_reticle->tic(td);
-
-      m_skybox->tic(td, m_player->getPosition());
+      if (gameOver >= 40000)
+      {
+      cout << "YOU WIN!\n";
+      exit(0);
+      }
+      if (!m_player->isAlive()) {
+      cout << "YOU LOSE!\n";
+      exit(0);
+      }*/
       
-         
+      m_worldGrid->tic(td);
+      
       PathPointData currPPD = m_worldGrid->getCurrentQuadrant().m_Point;
       
       PathPoint m_currentPoint(currPPD);
       
-      // Update functions go here
-
-   //      m_enemyShip->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
-   //      m_enemyShip->tic(td);
-   //
-   //      m_enemyGunner->setBearing(m_currentPoint.getPosition(), m_currentPoint.getUp());
-   //      m_enemyGunner->tic(td);
-      
       m_camera->checkPath(&m_currentPoint);
-      m_camera->tic(td);
       
-      m_worldGrid->tic(td);
+      m_camera->tic(td);
+
       m_reticle->tic(td);
+      
+      m_skybox->tic(td, m_player->getPosition());
 
       m_worldGrid->checkCollisions();
    }

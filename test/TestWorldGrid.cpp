@@ -382,7 +382,7 @@ SUITE(ComplexCourse)
    
    TEST_FIXTURE(cwgf, complexDetQuad5)
    {
-      CHECK_EQUAL(5, m_worldGrid->determineQuadrant(vec3(-250,-250,0)));
+      CHECK_EQUAL(5, m_worldGrid->determineQuadrant(vec3(-450,-450,0)));
    }
    
    /*
@@ -421,45 +421,45 @@ SUITE(ComplexCourse)
       quad = m_worldGrid->placeInGridDEBUG(&obj, &obj);
       
       CHECK_EQUAL(1, quad);
-//      CHECK(std::find(m_worldGrid->m_quadrants.at(1)->m_gameObjects.begin(),  
-//                      m_worldGrid->m_quadrants.at(1)->m_gameObjects.end(), &obj) 
-//            != m_worldGrid->m_quadrants.at(1)->m_gameObjects.end());
+      CHECK(std::find(m_worldGrid->m_quadrants.at(1)->m_gameObjects.begin(),  
+                      m_worldGrid->m_quadrants.at(1)->m_gameObjects.end(), &obj) 
+            != m_worldGrid->m_quadrants.at(1)->m_gameObjects.end());
       
       obj.setPosition(vec3(750, -750, 0));
       
       quad = m_worldGrid->placeInGridDEBUG(&obj, &obj);
       
       CHECK_EQUAL(2, quad);
-//      CHECK(std::find(m_worldGrid->m_quadrants.at(2)->m_gameObjects.begin(),  
-//                      m_worldGrid->m_quadrants.at(2)->m_gameObjects.end(), &obj) 
-//            != m_worldGrid->m_quadrants.at(2)->m_gameObjects.end());
+      CHECK(std::find(m_worldGrid->m_quadrants.at(2)->m_gameObjects.begin(),  
+                      m_worldGrid->m_quadrants.at(2)->m_gameObjects.end(), &obj) 
+            != m_worldGrid->m_quadrants.at(2)->m_gameObjects.end());
       
       obj.setPosition(vec3(250, -1000, 0));
       
       quad = m_worldGrid->placeInGridDEBUG(&obj, &obj);
       
       CHECK_EQUAL(3, quad);
-//      CHECK(std::find(m_worldGrid->m_quadrants.at(3)->m_gameObjects.begin(),  
-//                      m_worldGrid->m_quadrants.at(3)->m_gameObjects.end(), &obj) 
-//            != m_worldGrid->m_quadrants.at(3)->m_gameObjects.end());
+      CHECK(std::find(m_worldGrid->m_quadrants.at(3)->m_gameObjects.begin(),  
+                      m_worldGrid->m_quadrants.at(3)->m_gameObjects.end(), &obj) 
+            != m_worldGrid->m_quadrants.at(3)->m_gameObjects.end());
       
       obj.setPosition(vec3(-250, -750, 0));
       
       quad = m_worldGrid->placeInGridDEBUG(&obj, &obj);
       
       CHECK_EQUAL(4, quad);
-//      CHECK(std::find(m_worldGrid->m_quadrants.at(4)->m_gameObjects.begin(),  
-//                      m_worldGrid->m_quadrants.at(4)->m_gameObjects.end(), &obj) 
-//            != m_worldGrid->m_quadrants.at(4)->m_gameObjects.end());
+      CHECK(std::find(m_worldGrid->m_quadrants.at(4)->m_gameObjects.begin(),  
+                      m_worldGrid->m_quadrants.at(4)->m_gameObjects.end(), &obj) 
+            != m_worldGrid->m_quadrants.at(4)->m_gameObjects.end());
       
-      obj.setPosition(vec3(-250, -250, 0));
+      obj.setPosition(vec3(-450, -450, 0));
       
       quad = m_worldGrid->placeInGridDEBUG(&obj, &obj);
       
       CHECK_EQUAL(5, quad);
-//      CHECK(std::find(m_worldGrid->m_quadrants.at(5)->m_gameObjects.begin(),  
-//                      m_worldGrid->m_quadrants.at(5)->m_gameObjects.end(), &obj) 
-//            != m_worldGrid->m_quadrants.at(5)->m_gameObjects.end());
+      CHECK(std::find(m_worldGrid->m_quadrants.at(5)->m_gameObjects.begin(),  
+                      m_worldGrid->m_quadrants.at(5)->m_gameObjects.end(), &obj) 
+            != m_worldGrid->m_quadrants.at(5)->m_gameObjects.end());
    }
    
    /*

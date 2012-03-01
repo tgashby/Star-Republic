@@ -18,7 +18,7 @@
  - Prob lots more...
  */
 
-const float Quadrant::SPHERE_RADIUS = 500.0f;
+const float Quadrant::SPHERE_RADIUS = 25000.0f;
 
 WorldGrid::WorldGrid(WorldData& world, Modules* modules)
    : m_world(world)
@@ -269,7 +269,7 @@ void WorldGrid::makeGrid()
          vec3 forward = currProp.fwd;
          vec3 up = currProp.up;
          
-         SceneObject* sceneObj = new SceneObject("models/" + currProp.name, "textures/test3.bmp", position, forward, up, m_modules);
+         SceneObject* sceneObj = new SceneObject("models/" + currProp.name + ".obj", "textures/test3.bmp", position, forward, up, m_modules);
          
          quad->m_obj3Ds.push_back(sceneObj);
       }
@@ -343,7 +343,7 @@ std::vector<Quadrant>::size_type WorldGrid::determineQuadrant(const Vector3<floa
 {
    // Checking for NaNs
    //assert(pos.x == pos.x && pos.y == pos.y && pos.z == pos.z);
-   if (!(pos.x == pos.x && pos.y == pos.y && pos.z == pos.z)) 
+   if (pos.x != pos.x || pos.y != pos.y || pos.z != pos.z)
    {
       std::cerr << "NaN" << "\n";
    }
