@@ -15,7 +15,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
 {
   m_forward = cam_forw.Normalized();
   m_up = cam_up;
-  m_position = cam_pos + (cam_forw.Normalized() * PLAYER_DISTANCE_FROM_CAMERA);
+  m_position = cam_pos;// + (cam_forw.Normalized() * PLAYER_DISTANCE_FROM_CAMERA);
   calculateSide();
 
    m_shipMesh = new Mesh(fileName, textureName, modules);

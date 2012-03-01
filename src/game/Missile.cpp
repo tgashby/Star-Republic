@@ -48,6 +48,11 @@ void Missile::tic(uint64_t time) {
 
    if (!m_detonated) {
       m_lifetime += time;
+
+      if (!m_target->isAlive()) {
+	m_lifetime = _MISSILE_REACH_DEST_TIME;
+      }
+
       if (m_lifetime >= _MISSILE_REACH_DEST_TIME) {
 	 m_lifetime = _MISSILE_REACH_DEST_TIME;
 	 m_detonated = true;
