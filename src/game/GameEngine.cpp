@@ -287,6 +287,7 @@ exit(0);
    }
    if (deathCount == 20) {
       m_stateManager->pushState(m_win);
+      cerr << "YAAAAY!\n";
       //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME AS WELL.
    }   
 
