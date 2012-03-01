@@ -26,7 +26,7 @@ void main(void)
    float sf = max(0.0, dot(N, H));
    sf = pow(sf, Shininess);
    
-   vec3 color = AmbientMaterial + df * DiffuseMaterial + sf * SpecularMaterial;
+   vec3 color = AmbientMaterial /*+ df * DiffuseMaterial*/ + sf * SpecularMaterial;
    
    DestinationColor = vec4(color, 1);
    gl_Position = Projection * Modelview * Position;

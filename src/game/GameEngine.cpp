@@ -47,6 +47,7 @@ void GameEngine::InitData()
    //m_world = new Path("maps/course.wf", m_modules);
    
    m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
+   m_skybox = new SkyBox("models/box3.obj", "textures/box3.bmp", m_modules, m_camera->getPosition());
    m_player = new Player("models/spaceship.obj", "textures/spaceship_pp.bmp",
 m_modules, m_camera->getPosition(),
 m_camera->getForward(), m_camera->getUp());
@@ -54,7 +55,6 @@ m_camera->getForward(), m_camera->getUp());
 
    m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
 			 m_modules, m_player);
-   m_skybox = new SkyBox("models/box3.obj", "textures/box3.bmp", m_modules, m_player->getPosition());
 
    createTurrets();
    createTerrain();
@@ -173,7 +173,8 @@ exit(0);
       }
    }
 
-   for (std::vector<EnemyShip *>::iterator j = m_enemyShips.begin(); j != m_enemyShips.end(); j++) {
+   for (std::vector<EnemyShip *>::iterator j = m_enemyShips.begin();
+          j != m_enemyShips.end(); j++) {
      (*j)->tic(td);
 
      vec3 dirEnemyToPlayer = (*j)->getPosition() - m_player->getPosition();
@@ -206,11 +207,12 @@ exit(0);
      }
    }
 
-   for (std::vector<EnemyGunship *>::iterator j = m_enemyGunners.begin(); j != m_enemyGunners.end(); j++) {
+   for (std::vector<EnemyGunship *>::iterator j = m_enemyGunners.begin();
+              j != m_enemyGunners.end(); j++) {
      (*j)->tic(td);
 
      vec3 dirEnemyToPlayer = (*j)->getPosition() - m_player->getPosition();
-     if (dirEnemyToPlayer.Length() < 900 &&
+     if (dirEnemyToPlayer.Length() < 1600 &&
         ((*j)->shouldFire1() || (*j)->shouldFire2()))
      {
         vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
@@ -318,7 +320,7 @@ void GameEngine::cullObject(GameObject* obj) {
   remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
   remove(m_gameObjects.begin(), m_gameObjects.end(), obj);
   
-  delete obj;
+//  delete obj;
 }
 
 void GameEngine::render() {
