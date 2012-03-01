@@ -48,7 +48,7 @@ public:
     * Updates all objects that are in the current quadrants.
     * @param dt the time passed since the last update.
     */
-   void tic(uint64_t dt, Path* path);
+   void tic(uint64_t dt, std::vector<Bullet*>* m_bulletList);
    
    /**
     * Checks all objects in the current quadrants for collisions.

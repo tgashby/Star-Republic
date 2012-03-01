@@ -37,7 +37,7 @@ Quadrant WorldGrid::getCurrentQuadrant()
    return m_path.getCurrentQuadrant();
 }
 
-void WorldGrid::tic(uint64_t dt, Path* path)
+void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
 {
    Quadrant quad = m_path.getCurrentQuadrant();
    
@@ -47,104 +47,128 @@ void WorldGrid::tic(uint64_t dt, Path* path)
       
       currObj->tic(dt);
       
-//      vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
-//      
-//      if (typeid(**i) == typeid(Turret)) 
-//      {
-//         Turret* turret = ((Turret*)*i);
-//         
-//         // Turret not currently firing, but I think it's because
-//         // the player starts too close to the turret
-//         if (turret->isAlive() && dirToPlayer.Length() < 1500 && turret->shouldFire())
-//         {
-//            vec3 dirToPlayerNorm = dirToPlayer.Normalized();
-//            
-//            Bullet* bullet = 
-//            new Bullet("models/lance.obj", "textures/test5.bmp", 
-//                       m_modules, turret->getHeadPosition(), 
-//                       -dirToPlayerNorm, 
-//                       dirToPlayerNorm.Cross(turret->getPosition()), *(turret));
-//            
-//            m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
-//         }
-//      }
+      vec3 closestdir = vec3(10000, 10000, 10000);
+      
+      vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
+      
+      if (typeid(**i) == typeid(Turret)) 
+      {
+         Turret* turret = ((Turret*)*i);
+         
+         if (closestdir.Length() > dirToPlayer.Length() 
+             && dirToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96
+             && (*i)->isAlive())
+            closestdir = dirToPlayer;
+         
+         // Turret not currently firing, but I think it's because
+         // the player starts too close to the turret
+         if ((*i)->isAlive() && dirToPlayer.Length() < 1500 && turret->shouldFire())
+         {
+            vec3 dirToPlayerNorm = dirToPlayer.Normalized();
+            
+            Bullet* bullet = 
+            new Bullet("models/lance.obj", "textures/red_texture.bmp", 
+                       m_modules, turret->getHeadPosition(), 
+                       -dirToPlayerNorm, 
+                       dirToPlayerNorm.Cross((*i)->getPosition()), *(*i),
+                       Bullet::defaultTimeToLive, 0.7f);
+            
+            m_modules->renderingEngine->addObject3d(bullet);
+            m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
+            m_bulletList->push_back(bullet);
+         }
+      }
+      
+      if (typeid(**i) == typeid(EnemyShip)) 
+      {
+         EnemyShip* enemyShip = ((EnemyShip*)*i);
+         
+         vec3 dirEnemyToPlayer = (*i)->getPosition() - m_player->getPosition();
+         
+         if (closestdir.Length() > dirEnemyToPlayer.Length()
+             && dirEnemyToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96
+             && (*i)->isAlive())
+            closestdir = dirEnemyToPlayer;
+         
+         if (dirEnemyToPlayer.Length() < 700 && enemyShip->shouldFire())
+         {
+            vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
+            
+            Bullet* bullet = 
+            new Bullet("models/lance.obj", "textures/red_texture.bmp", 
+                       m_modules, enemyShip->getLeftCannonPos(), 
+                       enemyShip->getAimForward(), 
+                       dirToPlayerNorm.Cross(enemyShip->getLeftCannonPos()), 
+                       *enemyShip, Bullet::defaultTimeToLive, 0.6f);
+            
+            m_modules->renderingEngine->addObject3d(bullet);
+            m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
+            m_bulletList->push_back(bullet);
+            
+            bullet = 
+            new Bullet("models/lance.obj", "textures/red_texture.bmp", 
+                       m_modules, enemyShip->getRightCannonPos(), 
+                       enemyShip->getAimForward(), 
+                       dirToPlayerNorm.Cross(enemyShip->getRightCannonPos()), 
+                       *enemyShip, Bullet::defaultTimeToLive, 0.6f);
+            
+            m_modules->renderingEngine->addObject3d(bullet);
+            m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
+            m_bulletList->push_back(bullet);
+         }
+      }
+      
+      if (typeid(**i) == typeid(EnemyGunship)) 
+      {
+         EnemyGunship* enemyShip = ((EnemyGunship*)*i);
+         
+         vec3 dirEnemyToPlayer = (*i)->getPosition() - m_player->getPosition();
+         
+         if (closestdir.Length() > dirEnemyToPlayer.Length()
+             && dirEnemyToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96
+             && enemyShip->isAlive())
+            closestdir = dirEnemyToPlayer;
+         
+         if (dirEnemyToPlayer.Length() < 1600 &&
+             (enemyShip->shouldFire1() || enemyShip->shouldFire2()))
+         {
+            vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
+            
+            if (enemyShip->shouldFire1())
+            {
+               Bullet* bullet = 
+               new Bullet("models/lance.obj", "textures/red_texture.bmp", 
+                          m_modules, enemyShip->getLeftCannonPos(), 
+                          enemyShip->getAimForward(), 
+                          dirToPlayerNorm.Cross(enemyShip->getLeftCannonPos()), 
+                          *enemyShip, Bullet::defaultTimeToLive, 0.6f);
+               
+               m_modules->renderingEngine->addObject3d(bullet);
+               m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
+               m_bulletList->push_back(bullet);
+            }
+            
+            if (enemyShip->shouldFire2())
+            {
+               Bullet* bullet = 
+               new Bullet("models/lance.obj", "textures/red_texture.bmp", 
+                          m_modules, enemyShip->getRightCannonPos(), 
+                          enemyShip->getAimForward(), 
+                          dirToPlayerNorm.Cross(enemyShip->getRightCannonPos()), 
+                          *enemyShip, Bullet::defaultTimeToLive, 0.5f);
+               
+               m_modules->renderingEngine->addObject3d(bullet);
+               m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
+               m_bulletList->push_back(bullet);
+            }
+         }
+      }   
+      
+      if (closestdir.x != 10000 && closestdir.y != 10000 && closestdir.z != 10000)
+         m_player->setMagneticForward(closestdir.Normalized());
+      else
+         m_player->setMagneticForward(m_player->getAimForward().Normalized());
    }
-   
-//   for (std::vector<Turret*>::iterator i = m_turrets.begin(); i != m_turrets.end(); i++) 
-//   {
-//      (*i)->tic(td);
-//      
-//      vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
-//      
-//      // Turret not currently firing, but I think it's because
-//      //  the player starts too close to the turret
-//      if ((*i)->isAlive() && dirToPlayer.Length() < 1000 && (*i)->shouldFire()) 
-//      {
-//         vec3 dirToPlayerNorm = dirToPlayer.Normalized();
-//         
-//         Bullet* bullet = 
-//         new Bullet("models/cube.obj", "textures/test5.bmp", 
-//                    m_modules, (*i)->getHeadPosition(), 
-//                    -dirToPlayerNorm, 
-//                    dirToPlayerNorm.Cross((*i)->getPosition()), *(*i));
-//         
-//         m_modules->renderingEngine->addObject3d(bullet);
-//         m_gameObjects.push_back(bullet);
-//         m_objects.push_back(bullet);
-//         m_bulletList.push_back(bullet);
-//      }
-//   }
-//   
-//   vec3 dirEnemyToPlayer = m_enemyShip->getPosition() - m_player->getPosition();
-//   if (dirEnemyToPlayer.Length() < 400 && m_enemyShip->shouldFire()) 
-//   {
-//      vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
-//      
-//      Bullet* bullet = 
-//      new Bullet("models/cube.obj", "textures/test5.bmp", 
-//                 m_modules, m_enemyShip->getLeftCannonPos(), 
-//                 m_enemyShip->getAimForward(), 
-//                 dirToPlayerNorm.Cross(m_enemyShip->getLeftCannonPos()), 
-//                 *m_enemyShip, Bullet::defaultTimeToLive, 0.2f);
-//      
-//      m_modules->renderingEngine->addObject3d(bullet);
-//      m_gameObjects.push_back(bullet);
-//      m_objects.push_back(bullet);
-//      m_bulletList.push_back(bullet);
-//      
-//      bullet = 
-//      new Bullet("models/cube.obj", "textures/test5.bmp", 
-//                 m_modules, m_enemyShip->getRightCannonPos(), 
-//                 m_enemyShip->getAimForward(), 
-//                 dirToPlayerNorm.Cross(m_enemyShip->getRightCannonPos()), 
-//                 *m_enemyShip, Bullet::defaultTimeToLive, 0.2f);
-//      
-//      m_modules->renderingEngine->addObject3d(bullet);
-//      m_gameObjects.push_back(bullet);
-//      m_objects.push_back(bullet);
-//      m_bulletList.push_back(bullet);
-//   }
-//   
-//   
-//   //Use Iterators!
-//   //for (int i = 0; i < m_bulletList.size(); i++) {
-//   for(std::vector<Bullet *>::iterator bulletIterator = m_bulletList.begin();
-//       bulletIterator != m_bulletList.end();
-//       bulletIterator++){ 
-//      (*bulletIterator)->tic(td);
-//      //Cull the bullet!
-//      if(!(*bulletIterator)->isAlive()){
-//         //m_bulletList.erase(bulletIterator);
-//      }
-//      
-//   }
-//   
-//   for (std::vector<Missile *>::iterator missileIterator = m_missileList.begin(); 
-//        missileIterator != m_missileList.end(); 
-//        missileIterator++) {
-//      (*missileIterator)->tic(td);
-//      //Cull the missile!
-//   }
 }
 
 void WorldGrid::checkCollisions()

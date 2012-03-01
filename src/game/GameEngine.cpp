@@ -116,7 +116,7 @@ void GameEngine::tic(uint64_t td) {
       
       m_skybox->tic(td, m_player->getPosition());
       
-      m_worldGrid->tic(td, m_path);
+      m_worldGrid->tic(td, &m_bulletList);
 
       m_worldGrid->checkCollisions();
       
