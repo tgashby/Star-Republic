@@ -25,3 +25,12 @@ Object3d::~Object3d() {
 list<IMesh *>* Object3d::getMeshes() {
    return &m_meshList;
 }
+
+void Object3d::setVisible(bool mood) {
+   list<IMesh *>::iterator mesh;
+   for (mesh = m_meshList.begin(); mesh != m_meshList.end(); ++mesh) {
+      IMesh* temp = *mesh;
+      
+      (*mesh)->setVisible(mood);
+   }
+}

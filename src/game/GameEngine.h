@@ -49,7 +49,7 @@ private:
    void createTerrain();
    void addAsteroids();
    void cullObjects();
-   void cullObject(GameObject* obj);
+   void cullObject(GameObject* obj, Object3d* second);
    bool isCullable(GameObject* obj);
    
    Player *m_player;
