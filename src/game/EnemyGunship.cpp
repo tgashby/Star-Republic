@@ -5,7 +5,7 @@
 
 #define VCHANGE 0.8
 #define VINTENS 0.5
-#define SIZE 40
+#define SIZE 100
 #define MOTIONTIME 2000
 #define FIRINGTIME 400
 #define TURRETSIDEOFFSET 20
