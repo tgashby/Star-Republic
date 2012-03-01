@@ -162,14 +162,9 @@ SUITE(SimpleCourse)
    TEST_FIXTURE(swgf, simpleInitStartEndLocs)
    {
       // Starts
-      CHECK_EQUAL(vec3(0,0,0), m_worldGrid->m_quadrants.at(0)->m_startPt.loc);
-      CHECK_EQUAL(vec3(500,0,0), m_worldGrid->m_quadrants.at(1)->m_startPt.loc);
-      CHECK_EQUAL(vec3(1000,0,0), m_worldGrid->m_quadrants.at(2)->m_startPt.loc);
-      
-      // Ends
-      CHECK_EQUAL(vec3(500,0,0), m_worldGrid->m_quadrants.at(0)->m_endPt.loc);
-      CHECK_EQUAL(vec3(1000,0,0), m_worldGrid->m_quadrants.at(1)->m_endPt.loc);
-      CHECK_EQUAL(vec3(0,0,0), m_worldGrid->m_quadrants.at(2)->m_endPt.loc);
+      CHECK_EQUAL(vec3(0,0,0), m_worldGrid->m_quadrants.at(0)->m_Point.loc);
+      CHECK_EQUAL(vec3(500,0,0), m_worldGrid->m_quadrants.at(1)->m_Point.loc);
+      CHECK_EQUAL(vec3(1000,0,0), m_worldGrid->m_quadrants.at(2)->m_Point.loc);
    }
    
    TEST_FIXTURE(swgf, simpleInitGameObjs)
@@ -309,20 +304,12 @@ SUITE(ComplexCourse)
    TEST_FIXTURE(cwgf, complexInitStartEndLocs)
    {
       // Starts
-      CHECK_EQUAL(vec3(0,0,0), m_worldGrid->m_quadrants.at(0)->m_startPt.loc);
-      CHECK_EQUAL(vec3(500,0,0), m_worldGrid->m_quadrants.at(1)->m_startPt.loc);
-      CHECK_EQUAL(vec3(1000,-500,0), m_worldGrid->m_quadrants.at(2)->m_startPt.loc);
-      CHECK_EQUAL(vec3(500,-1000,0), m_worldGrid->m_quadrants.at(3)->m_startPt.loc);
-      CHECK_EQUAL(vec3(0,-1000,0), m_worldGrid->m_quadrants.at(4)->m_startPt.loc);
-      CHECK_EQUAL(vec3(-500,-500,0), m_worldGrid->m_quadrants.at(5)->m_startPt.loc);
-      
-      // Ends
-      CHECK_EQUAL(vec3(500,0,0), m_worldGrid->m_quadrants.at(0)->m_endPt.loc);
-      CHECK_EQUAL(vec3(1000,-500,0), m_worldGrid->m_quadrants.at(1)->m_endPt.loc);
-      CHECK_EQUAL(vec3(500,-1000,0), m_worldGrid->m_quadrants.at(2)->m_endPt.loc);
-      CHECK_EQUAL(vec3(0,-1000,0), m_worldGrid->m_quadrants.at(3)->m_endPt.loc);
-      CHECK_EQUAL(vec3(-500,-500,0), m_worldGrid->m_quadrants.at(4)->m_endPt.loc);
-      CHECK_EQUAL(vec3(0,0,0), m_worldGrid->m_quadrants.at(5)->m_endPt.loc);
+      CHECK_EQUAL(vec3(0,0,0), m_worldGrid->m_quadrants.at(0)->m_Point.loc);
+      CHECK_EQUAL(vec3(500,0,0), m_worldGrid->m_quadrants.at(1)->m_Point.loc);
+      CHECK_EQUAL(vec3(1000,-500,0), m_worldGrid->m_quadrants.at(2)->m_Point.loc);
+      CHECK_EQUAL(vec3(500,-1000,0), m_worldGrid->m_quadrants.at(3)->m_Point.loc);
+      CHECK_EQUAL(vec3(0,-1000,0), m_worldGrid->m_quadrants.at(4)->m_Point.loc);
+      CHECK_EQUAL(vec3(-500,-500,0), m_worldGrid->m_quadrants.at(5)->m_Point.loc);
    }
    
    TEST_FIXTURE(cwgf, complexInitGameObjs)

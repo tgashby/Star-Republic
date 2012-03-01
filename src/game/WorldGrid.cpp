@@ -18,8 +18,7 @@
  - Prob lots more...
  */
 
-const float VEC_OFFSET = 200.0f;
-const int QUADS_TO_CHECK = 4;
+const float Quadrant::SPHERE_RADIUS = 500.0f;
 
 WorldGrid::WorldGrid(WorldData& world, Modules* modules)
    : m_world(world)
@@ -213,6 +212,11 @@ const Quadrant& WorldGrid::getCurrentQuadrant()
    return *m_quadrants.at(m_currentQuadrant);
 }
 
+const Quadrant& WorldGrid::getNextQuadrant()
+{
+   return *m_quadrants.at(m_currentQuadrant + 1);
+}
+
 std::list<IObject3d*> WorldGrid::getDrawableObjects()
 {
    updateObjects();
@@ -222,13 +226,6 @@ std::list<IObject3d*> WorldGrid::getDrawableObjects()
 
 void WorldGrid::makeGrid()
 {
-   Plane lftPlane;
-   Plane rtPlane;
-   Plane downPlane;
-   Plane upPlane;
-   Plane nearPlane;
-   Plane farPlane;
-   
    // Connect the points into quadrants
    for (std::vector<PathPointData>::iterator i = m_world.path.begin(); i < m_world.path.end(); i++) 
    {
@@ -238,34 +235,6 @@ void WorldGrid::makeGrid()
                                     *(m_world.path.begin()) : *(i + 1);
       
       Quadrant* quad = new Quadrant(currPathPoint, nextPathPoint);
-      
-      // Determine planes for later determining where enemies go
-      vec3 avgUp = ((currPathPoint.up + nextPathPoint.up) / 2).Normalized();
-      vec3 direction = (currPathPoint.loc - nextPathPoint.fwd).Normalized();
-      vec3 sideVec = avgUp.Cross(direction).Normalized();
-      
-      vec3 leftPt  = quad->m_startPt.loc + (-sideVec * VEC_OFFSET);
-      vec3 rightPt = quad->m_startPt.loc + (sideVec * VEC_OFFSET);
-      vec3 downPt  = quad->m_startPt.loc + (-avgUp * VEC_OFFSET);
-      vec3 upPt    = quad->m_startPt.loc + (avgUp * VEC_OFFSET);
-      vec3 nearPt  = quad->m_startPt.loc;
-      vec3 farPt   = quad->m_endPt.loc;
-      
-      lftPlane  = Plane::MakePlane(-sideVec, leftPt);
-      rtPlane   = Plane::MakePlane(sideVec, rightPt);
-      downPlane = Plane::MakePlane(-avgUp, downPt);
-      upPlane   = Plane::MakePlane(avgUp, upPt);
-      nearPlane = Plane::MakePlane(-direction, nearPt);
-      farPlane  = Plane::MakePlane(direction, farPt);
-      
-//      std::cout << "L: " << leftPt << "\n";
-//      std::cout << "R: " << rightPt << "\n";
-//      std::cout << "D: " << downPt << "\n";
-//      std::cout << "U: " << upPt << "\n";
-//      std::cout << "N: " << nearPt << "\n";
-//      std::cout << "F: " << farPt << "\n";
-      
-      quad->m_bounds = new Cube(lftPlane, rtPlane, upPlane, downPlane, nearPlane, farPlane);
       
       // For all the units in the quadrant
       for (std::vector<UnitData>::iterator j = (*i).units.begin(); j != (*i).units.end(); j++) 
@@ -321,14 +290,23 @@ void WorldGrid::updateObjects()
       
       // Starting at the current quadrant, add all game objects in that and 
       // the next few quadrants
-      for (std::vector<Quadrant*>::size_type i = m_currentQuadrant; 
-           i < m_currentQuadrant + QUADS_TO_CHECK && i < m_quadrants.size(); i++) 
+      for (std::vector<Quadrant*>::size_type i = m_currentQuadrant; i < m_quadrants.size(); i++) 
       {
-         Quadrant* currQuad = m_quadrants.at(i);
+         float dist = abs((m_quadrants.at(i)->m_Point.loc - getCurrentQuadrant().m_Point.loc).Length());
          
-         for (std::list<IObject3d*>::iterator j = currQuad->m_obj3Ds.begin(); j != currQuad->m_obj3Ds.end(); j++) 
+         if (dist < Quadrant::SPHERE_RADIUS) 
          {
-            //m_modules->renderingEngine->removeObject3d(*j);
+            Quadrant* currQuad = m_quadrants.at(i);
+            
+            for (std::list<IObject3d*>::iterator j = currQuad->m_obj3Ds.begin(); j != currQuad->m_obj3Ds.end(); j++) 
+            {
+               //m_modules->renderingEngine->removeObject3d(*j);
+            }
+         }
+         else 
+         {
+            // No longer in the sphere we're rendering
+            break;
          }
       }
       
@@ -336,18 +314,27 @@ void WorldGrid::updateObjects()
       
       // Starting at the current quadrant, add all game objects in that and 
       // the next few quadrants
-      for (std::vector<Quadrant*>::size_type i = m_currentQuadrant; 
-           i < m_currentQuadrant + QUADS_TO_CHECK && i < m_quadrants.size(); i++) 
+      for (std::vector<Quadrant*>::size_type i = m_currentQuadrant; i < m_quadrants.size(); i++) 
       {
-         Quadrant* currQuad = m_quadrants.at(i);
+         float dist = abs((m_quadrants.at(i)->m_Point.loc - getCurrentQuadrant().m_Point.loc).Length());
          
-         for (std::list<IObject3d*>::iterator j = currQuad->m_obj3Ds.begin(); j != currQuad->m_obj3Ds.end(); j++)
+         if (dist < Quadrant::SPHERE_RADIUS) 
          {
-            m_modules->renderingEngine->addObject3d(*j);
+            Quadrant* currQuad = m_quadrants.at(i);
+            
+            for (std::list<IObject3d*>::iterator j = currQuad->m_obj3Ds.begin(); j != currQuad->m_obj3Ds.end(); j++)
+            {
+               m_modules->renderingEngine->addObject3d(*j);
+            }
+            
+            m_updateableObjs.merge(m_quadrants.at(i)->m_gameObjects);
+            m_drawableObjs.merge(m_quadrants.at(i)->m_obj3Ds);
          }
-         
-         m_updateableObjs.merge(m_quadrants.at(i)->m_gameObjects);
-         m_drawableObjs.merge(m_quadrants.at(i)->m_obj3Ds);
+         else 
+         {
+            // No longer in the sphere we're rendering
+            break;
+         }
       }
    }
 }
@@ -364,7 +351,9 @@ std::vector<Quadrant>::size_type WorldGrid::determineQuadrant(const Vector3<floa
    std::vector<Quadrant>::size_type i;
    for (i = 0; i < m_quadrants.size(); i++) 
    {
-      if (m_quadrants.at(i)->m_bounds->checkPoint(pos)) 
+      float dist = abs((m_quadrants.at(i)->m_Point.loc - pos).Length());
+      
+      if (dist < Quadrant::SPHERE_RADIUS)
       {
          break;
       }

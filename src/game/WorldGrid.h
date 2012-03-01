@@ -30,29 +30,24 @@ struct Quadrant
     * @param endPt the second point
     */
    Quadrant(PathPointData startPt, PathPointData endPt)
-   : m_startPt(startPt), m_endPt(endPt)
+   : m_Point(startPt), m_bounds(SPHERE_RADIUS)
    {
+      
    }
    
-   /**
-    * Cleans up the Cube*
-    */
-   ~Quadrant()
-   {
-      delete m_bounds;
-   }
-   
+   PathPointData m_Point;
    std::list<GameObject*> m_gameObjects;
    std::list<IObject3d*> m_obj3Ds;
-   PathPointData m_startPt;
-   PathPointData m_endPt;
    
    /**
-    * Cube representing the space between the two points.
+    * BoundingSphere representing the space around a single point we wish to draw.
     * Used in calculating whether an object is in the quadrant or not.
     */
-   Cube* m_bounds;
+   BoundingSphere m_bounds;
+   
+   static const float SPHERE_RADIUS;
 };
+
 
 /**
  * WorldGrid represents the world as a uniform spatial subdivision.
@@ -117,6 +112,11 @@ public:
     * Returns the current quadrant, used to get at starting and ending points
     */
    const Quadrant& getCurrentQuadrant();
+   
+   /**
+    * Returns the next quadrant, really only used for Camera initialization
+    */
+   const Quadrant& getNextQuadrant();
    
    /**
     * Returns the list of Object3Ds that will be needed

@@ -41,8 +41,8 @@ void GameEngine::InitData()
    m_worldData = m_modules->resourceManager->readWorldData("maps/Course1.wf");
    
    m_worldGrid = new WorldGrid(*m_worldData, m_modules);
-   PathPoint currPath = m_worldGrid->getCurrentQuadrant().m_startPt;
-   PathPoint prevPath = m_worldGrid->getCurrentQuadrant().m_endPt;
+   PathPoint currPath = m_worldGrid->getCurrentQuadrant().m_Point;
+   PathPoint prevPath = m_worldGrid->getNextQuadrant().m_Point;
    
    m_camera = new Camera(&currPath, &prevPath);
    m_player = new Player("models/spaceship.obj", "textures/test3.bmp", 
@@ -119,7 +119,7 @@ void GameEngine::tic(uint64_t td) {
       }
        */
       
-      PathPointData currPPD = m_worldGrid->getCurrentQuadrant().m_startPt;
+      PathPointData currPPD = m_worldGrid->getCurrentQuadrant().m_Point;
       
       PathPoint m_currentPoint(currPPD);
       
