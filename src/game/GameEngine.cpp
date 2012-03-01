@@ -335,6 +335,13 @@ bool GameEngine::isCullable(GameObject* obj) {
 }
 
 void GameEngine::cullObject(GameObject* obj) {
+//IS NOW HERE
+cerr << "Before the second erase :" << m_objects.size() << "\n";
+  remove(m_objects.begin(), m_objects.end(), (IObject3d*) obj);
+  m_objects.resize(m_objects.size() - 1);
+    //m_objects.erase(find(m_objects.begin(), m_objects.end(), (IObject3d*) obj));
+  cerr << "After the second erase :" << m_objects.size() << "\n";
+//TO HERE
   if (typeid(*obj) == typeid(Bullet)) {
     //remove(m_bulletList.begin(), m_bulletList.end(), obj);
     m_bulletList.erase(find(m_bulletList.begin(), m_bulletList.end(), obj));
@@ -348,10 +355,7 @@ void GameEngine::cullObject(GameObject* obj) {
     cerr << "After the first erase :" << m_missileList.size() << "\n";
   }
 
-//cerr << "Before the second erase :" << m_objects.size() << "\n";
-  remove(m_objects.begin(), m_objects.end(), (Object3d*) obj);
-  m_objects.resize(m_objects.size() - 1);
-  //cerr << "After the second erase :" << m_objects.size() << "\n";
+//WAS ONCE HERE
   
   //m_objects.erase(find(m_objects.begin(), m_objects.end(), (Object3d*) obj));
 
@@ -362,7 +366,7 @@ void GameEngine::cullObject(GameObject* obj) {
   m_gameObjects.erase(find(m_gameObjects.begin(), m_gameObjects.end(), obj));
   cerr << "After the third erase :" << m_gameObjects.size() << "\n";
 
-  //delete obj;
+   //delete obj;
   //cerr << "deleted the object\n";
 }
 
