@@ -5,7 +5,7 @@
 #include "ResourceManager.h"
 #include "GameEngine.h"
 #include "RenderingEngine.h"
-#include "SoundManager.cpp"
+#include "SoundManager.h"
 
 bool handleEvents(float dt, SDL_Event& evt);
 bool handleKeyUp(SDLKey key);

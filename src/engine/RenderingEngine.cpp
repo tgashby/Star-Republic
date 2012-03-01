@@ -584,7 +584,7 @@ void RenderingEngine::useProgram(SHADER_TYPE type) {
 void RenderingEngine::loadMesh(IMesh *newMesh) {
    // Check if the mesh was already loaded
    IRef *ref = newMesh->getMeshRef();
-   cout << "load: " << ref->fileName << "\n";
+   //cout << "load: " << ref->fileName << "\n";
    if (!ref->loaded && !ref->loading) {
       map<string, MeshRef*>::iterator meshIter = m_meshMap.find(ref->fileName);
       if (meshIter != m_meshMap.end()) {

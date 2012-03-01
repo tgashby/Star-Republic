@@ -25,7 +25,7 @@ ResourceManager::ResourceManager() {
    CFRelease(resourcesURL);
    chdir(path);
    std::cout << "Current Path: " << path << std::endl;
-#endif*/       
+#endif*/
 }
 
 
