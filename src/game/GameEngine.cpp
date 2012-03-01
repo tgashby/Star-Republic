@@ -258,9 +258,7 @@ exit(0);
       //Cull the bullet!
       i++;   
    }
-   printf("%d\n", i);
-
-
+   
    for (std::vector<Missile *>::iterator missileIterator = m_missileList.begin();
 	missileIterator != m_missileList.end();
 	missileIterator++) {
@@ -285,15 +283,20 @@ void GameEngine::cullObjects() {
       cullObject(*bulletIter);
     }
     }*/
+  
+  vector<GameObject *> toCull;
 
   for (std::vector<Missile *>::iterator missileIter = m_missileList.begin();
        missileIter != m_missileList.end(); missileIter++) {
     if (isCullable(*missileIter)) {
-      cullObject(*missileIter);
+      toCull.push_back(*missileIter);
     }
   }
 
-  //Add missile as well
+  for (vector<GameObject *>::iterator cullIter = toCull.begin();
+       cullIter != toCull.end(); cullIter++) {
+    cullObject(*cullIter);
+  }
 }
 
 bool GameEngine::isCullable(GameObject* obj) {
