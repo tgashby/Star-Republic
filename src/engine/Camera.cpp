@@ -29,7 +29,7 @@ m_tail->getPosition()).Normalized();
 }
 
 Camera::~Camera() {
-
+   
 }
 
 vec3 Camera::getPosition()
