@@ -57,12 +57,12 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
          
          if (closestdir.Length() > dirToPlayer.Length() 
              && dirToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96
-             && (*i)->isAlive())
+             && turret->isAlive())
             closestdir = dirToPlayer;
          
          // Turret not currently firing, but I think it's because
          // the player starts too close to the turret
-         if ((*i)->isAlive() && dirToPlayer.Length() < 1500 && turret->shouldFire())
+         if (turret->isAlive() && dirToPlayer.Length() < 1500 && turret->shouldFire())
          {
             vec3 dirToPlayerNorm = dirToPlayer.Normalized();
             
@@ -70,7 +70,7 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
             new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                        m_modules, turret->getHeadPosition(), 
                        -dirToPlayerNorm, 
-                       dirToPlayerNorm.Cross((*i)->getPosition()), *(*i),
+                       dirToPlayerNorm.Cross(turret->getPosition()), *(*i),
                        Bullet::defaultTimeToLive, 0.7f);
             
             m_modules->renderingEngine->addObject3d(bullet);
@@ -83,11 +83,11 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
       {
          EnemyShip* enemyShip = ((EnemyShip*)*i);
          
-         vec3 dirEnemyToPlayer = (*i)->getPosition() - m_player->getPosition();
+         vec3 dirEnemyToPlayer = enemyShip->getPosition() - m_player->getPosition();
          
          if (closestdir.Length() > dirEnemyToPlayer.Length()
              && dirEnemyToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96
-             && (*i)->isAlive())
+             && enemyShip->isAlive())
             closestdir = dirEnemyToPlayer;
          
          if (dirEnemyToPlayer.Length() < 700 && enemyShip->shouldFire())
@@ -122,7 +122,7 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
       {
          EnemyGunship* enemyShip = ((EnemyGunship*)*i);
          
-         vec3 dirEnemyToPlayer = (*i)->getPosition() - m_player->getPosition();
+         vec3 dirEnemyToPlayer = enemyShip->getPosition() - m_player->getPosition();
          
          if (closestdir.Length() > dirEnemyToPlayer.Length()
              && dirEnemyToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96
@@ -163,6 +163,7 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
             }
          }
       }   
+      
       
       if (closestdir.x != 10000 && closestdir.y != 10000 && closestdir.z != 10000)
          m_player->setMagneticForward(closestdir.Normalized());

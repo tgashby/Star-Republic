@@ -52,7 +52,7 @@ m_camera->getForward(), m_camera->getUp());
    
    m_worldGrid = new WorldGrid(*m_path, *m_worldData, m_modules, m_player);
 
-   m_reticle = new Reticle("models/reticle2.obj", "textures/test3.bmp", 
+   m_reticle = new Reticle("models/reticle2.obj", "textures/white.bmp", 
                            m_modules, m_player);
    
 //   m_enemyShip = new EnemyShip("models/enemy.obj", "textures/test3.bmp", 
@@ -115,6 +115,11 @@ void GameEngine::tic(uint64_t td) {
       m_reticle->tic(td);
       
       m_skybox->tic(td, m_player->getPosition());
+      
+      for (std::vector<Missile*>::iterator i = m_missileList.begin(); i != m_missileList.end(); i++) 
+      {
+         (*i)->tic(td);
+      }
       
       m_worldGrid->tic(td, &m_bulletList);
 
