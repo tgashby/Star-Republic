@@ -43,7 +43,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_exhaustMesh->setModelMtx(modelMtx);
    
    // god mode much?
-   m_health = 200;
+   m_health = 2000;
 
    magnet = true;
 }

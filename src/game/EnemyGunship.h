@@ -34,7 +34,8 @@ class EnemyGunship : public Flyer, public Enemy, public Explodeable {
     */
    EnemyGunship(string fileName, string turretFileName1, string turretFileName2,
       string bodyTextureName, string baseTextureName, 
-      string headTextureName,  Modules *modules, Player &p);
+      string headTextureName,  Modules *modules, Player *p);
+   
    ~EnemyGunship();
    
    /**

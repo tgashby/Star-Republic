@@ -16,7 +16,8 @@
 #include <assert.h>
 #include "Bullet.h"
 #include "EnemyShip.h"
-#include "EnemyGunship.h"
+//#include "EnemyGunship.h"
+#include "WorldGrid.h"
 #include "Explodeable.h"
 #include <algorithm>
 #include "Missile.h"
@@ -42,6 +43,7 @@ public:
    void handleMouseMotion(Uint16 x, Uint16 y);
    float angleBetween(vec3 one, vec3 two);
    std::vector<GameObject*> acquireMissileTargets();
+   ICamera& getCamera();
    
 private:
    void runCollisions();
@@ -62,19 +64,16 @@ private:
    GameState* m_game;
    LoseState* m_lose;
    WinState* m_win;
-   Path *m_path;
    WorldData *m_worldData;
-   PathPoint *m_currentPoint;
-   PathPoint *m_previousPoint;
+   WorldGrid *m_worldGrid;
+   Path* m_path;
    Vector3<float> currentDirection;
    void InitData();
 
    std::vector<Bullet *> m_bulletList;
    std::vector<Turret *> m_turrets;
    std::vector<Missile *> m_missileList;
-   std::vector<GameObject *> m_enemies;
-   list<IObject3d *> m_objects;
-   list<GameObject *> m_gameObjects;
+
    std::vector<EnemyShip *> m_enemyShips;
    std::vector<EnemyGunship*> m_enemyGunners;
    
@@ -83,7 +82,6 @@ private:
    Sound* m_music;
    Sound* m_boostSound;
    
-   //Explodeable* explosion;
    uint64_t gameOver;
 };
 

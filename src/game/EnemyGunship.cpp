@@ -24,10 +24,10 @@ const float TURRETHEAD_SCALE = 0.2f;
 const float ROTATE_CONSTANT = -90;
 
 /** Gunner Enemy: Takes in the mesh info and a reference to the player to aim at **/
-EnemyGunship::EnemyGunship(string fileName, string turretFileName1, 
+EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
 			   string turretFileName2, string bodyTextureName,
                            string baseTextureName, string headTextureName, 
-			   Modules *modules, Player &p) 
+			   Modules *modules, Player *p) 
   : Flyer(), Enemy(p), 
     Explodeable(vec3(0,0,0), _ENEMY_GUNSHIP_EXPLOSION_RADIUS, modules), 
     side(1,0,0), currentAngle(0), prevAngle(0)
@@ -44,7 +44,7 @@ EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
   m_meshList.push_back(m_turretheadmesh2);
  
   /** aim vector **/
-  dpos = (m_playerRef.getPosition() - m_position).Normalized();
+  dpos = (m_playerRef->getPosition() - m_position).Normalized();
 
   /** Setting the size of the bounding structure **/
   setBounds(SIZE);
@@ -89,14 +89,14 @@ EnemyGunship::~EnemyGunship()
 //All Vectors are updated in here
 void EnemyGunship::tic(uint64_t time)
 {
-  dpos = (m_playerRef.getPosition() - m_position);
+  dpos = (m_playerRef->getPosition() - m_position);
   if (isAlive() && (dpos.Length() < UPDATEDISTANCE)) {
     /** the normalized vector between the player and the enemy **/
     dpos = dpos.Normalized();
     
     // moving based on the player's direction
-    m_forward = m_playerRef.getMForward();
-    m_up = m_playerRef.getAimUp();
+    m_forward = m_playerRef->getMForward();
+    m_up = m_playerRef->getAimUp();
     
     /** gunship AI -> movement first (the last term is there to simulate acceleration) **/
     m_position += m_forward * PATHVELOCITY;
@@ -145,7 +145,7 @@ void EnemyGunship::tic(uint64_t time)
     firingTimer2 += time;
 
     /** to shoot? **/
-    if (firingTimer1 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getForward())) > 90)
+    if (firingTimer1 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 90)
       {
 	firing1 = true;
 	firingTimer1 %= FIRINGTIME;
@@ -157,7 +157,7 @@ void EnemyGunship::tic(uint64_t time)
     firing1 = firing1 && isAlive();
     
     /** to shoot? **/
-    if (firingTimer2 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef.getForward())) > 90)
+    if (firingTimer2 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 90)
       {
 	firing2 = true;
 	firingTimer2 %= FIRINGTIME;
@@ -199,8 +199,8 @@ void EnemyGunship::tic(uint64_t time)
      dpos = dpos.Normalized();
     
     // moving based on the player's direction
-    m_forward = m_playerRef.getMForward();
-    m_up = m_playerRef.getAimUp();
+    m_forward = m_playerRef->getMForward();
+    m_up = m_playerRef->getAimUp();
 
      mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
                     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));

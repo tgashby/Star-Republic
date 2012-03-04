@@ -22,10 +22,15 @@ public:
     * reference
     * @param player the player reference
     */
-   Enemy(Player& player);
+   Enemy(Player* player);
    
+   void setPlayer(Player* player);
+
+#ifndef GAME_DEBUG
 protected:
-   Player& m_playerRef;
+#endif
+   
+   Player* m_playerRef;
 };
 
 #endif

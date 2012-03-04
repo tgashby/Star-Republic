@@ -12,7 +12,7 @@ ResourceManager::ResourceManager() {
    chdir("../assets");
    
    m_image = NULL;
-
+ /*  
 #ifdef __APPLE__
    CFBundleRef mainBundle = CFBundleGetMainBundle();
    CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
@@ -25,6 +25,7 @@ ResourceManager::ResourceManager() {
    chdir(path);
    std::cout << "Current Path: " << path << std::endl;
 #endif
+   */
 }
 
 
@@ -156,7 +157,8 @@ MeshData* loadMesh(const string fileName, LOAD_NORMAL_TYPE type, float scale)
    } 
    else
    {
-      throw("Could not open file ");
+      std::cerr << "Could not open file: " << fileName << "\n";
+      exit(EXIT_FAILURE);
    }
    
    MeshData *meshData = new MeshData();

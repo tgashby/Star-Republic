@@ -79,6 +79,10 @@ struct Vector3 {
     Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
     void Normalize()
     {
+       if (x != x) x = 0;
+       if (y != y) y = 0;
+       if (z != z) z = 0;
+       
         float s = 1.0f / Length();
         x *= s;
         y *= s;
@@ -150,6 +154,12 @@ struct Vector3 {
     {
         return x == v.x && y == v.y && z == v.z;
     }
+   
+   friend std::ostream& operator<<(std::ostream& output, const Vector3& v) 
+   {
+      output << "(" <<  v.x << ", " << v.y << ", " << v.z << ")";
+      return output;  // for multiple << operators.
+   }
     Vector3 Lerp(float t, const Vector3& v) const
     {
         return Vector3(x * (1 - t) + v.x * t,
