@@ -164,6 +164,7 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
          }
       }   
       
+      std::cerr << closestdir << "\n";
       
       if (closestdir.x != 10000 && closestdir.y != 10000 && closestdir.z != 10000)
          m_player->setMagneticForward(closestdir.Normalized());

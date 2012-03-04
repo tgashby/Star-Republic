@@ -125,6 +125,8 @@ void GameEngine::tic(uint64_t td) {
 
       m_worldGrid->checkCollisions();
       
+      cullObjects();
+      
       if(m_player->getAlive() == false) {
          m_stateManager->pushState(m_lose);
          //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME.
