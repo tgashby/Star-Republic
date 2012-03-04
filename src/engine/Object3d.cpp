@@ -31,6 +31,6 @@ void Object3d::setVisible(bool mood) {
    for (mesh = m_meshList.begin(); mesh != m_meshList.end(); ++mesh) {
       IMesh* temp = *mesh;
       
-      (*mesh)->setVisible(mood);
+      temp->setVisible(mood);
    }
 }
