@@ -192,7 +192,14 @@ void WorldGrid::checkCollisions()
                 && currObj->collidesWith(*toCheck)) 
             {
                currObj->doCollision(*toCheck);
-            }         
+               toCheck->doCollision(*currObj);
+            }
+            
+            if (toCheck->isAlive() && m_player->collidesWith(*toCheck)) 
+            {
+               m_player->doCollision(*toCheck);
+               toCheck->doCollision(*m_player);
+            }
          }
       }
    }
