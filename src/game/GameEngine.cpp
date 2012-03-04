@@ -342,7 +342,7 @@ void GameEngine::cullObjects() {
 
   std::vector<Object3d *>::iterator cullIterD = toCullD.begin();
   for (std::vector<GameObject *>::iterator cullIter = toCull.begin();
-       cullIter != toCull.end(), cullIterD != toCullD.end(); cullIter++, cullIterD++) {
+       cullIter != toCull.end() && cullIterD != toCullD.end(); cullIter++, cullIterD++) {
     cullObject(*cullIter, *cullIterD);
   }
 }
