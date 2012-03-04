@@ -12,7 +12,7 @@ ResourceManager::ResourceManager() {
    chdir("../assets");
    
    m_image = NULL;
-   
+ /*  
 #ifdef __APPLE__
    CFBundleRef mainBundle = CFBundleGetMainBundle();
    CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
@@ -25,6 +25,7 @@ ResourceManager::ResourceManager() {
    chdir(path);
    std::cout << "Current Path: " << path << std::endl;
 #endif
+   */
 }
 
 
