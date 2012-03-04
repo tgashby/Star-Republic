@@ -41,13 +41,13 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
 {
    Quadrant quad = m_path.getCurrentQuadrant();
    
+   vec3 closestdir = vec3(10000, 10000, 10000);
+   
    for (std::list<GameObject*>::iterator i = quad.m_gameObjects.begin(); i != quad.m_gameObjects.end(); i++) 
    {
       GameObject* currObj = *i;
       
       currObj->tic(dt);
-      
-      vec3 closestdir = vec3(10000, 10000, 10000);
       
       vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
       
@@ -163,14 +163,12 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
             }
          }
       }   
-      
-      std::cerr << closestdir << "\n";
-      
-      if (closestdir.x != 10000 && closestdir.y != 10000 && closestdir.z != 10000)
-         m_player->setMagneticForward(closestdir.Normalized());
-      else
-         m_player->setMagneticForward(m_player->getAimForward().Normalized());
    }
+   
+   if (closestdir.x != 10000 && closestdir.y != 10000 && closestdir.z != 10000)
+      m_player->setMagneticForward(closestdir.Normalized());
+   else
+      m_player->setMagneticForward(m_player->getAimForward().Normalized());
 }
 
 void WorldGrid::checkCollisions()
