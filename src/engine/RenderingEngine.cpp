@@ -272,10 +272,6 @@ void RenderingEngine::drawMesh(IMesh *mesh, mat4 projection) {
    mat3 normalMtx = mesh->getModelMtx().ToMat3();
    glUniformMatrix3fv(m_curShaderProgram->uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
    
-   // Set the diffuse color.
-   vec4 color = vec4(0.8, 0.8, 0.8, 1.0);
-   glVertexAttrib4f(m_curShaderProgram->attributes.diffuseMaterial, color.x, color.y, color.z, color.w);
-   
    // Draw the surface.
    int stride = 11 * sizeof(GLfloat);
    const GLvoid* normalOffset = (const GLvoid*) (3 * sizeof(GLfloat));
