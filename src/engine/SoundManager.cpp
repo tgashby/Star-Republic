@@ -3,6 +3,8 @@
 
 
 SoundManager::SoundManager(){ 
+   cerr << "Loading Sound Manager \n";
+   initSound();
    m_sounds[PlayerGun].push_back(loadSound("sound/weapon1.wav"));
    m_sounds[PlayerMissile].push_back(loadSound("sound/missileLaunch.wav"));
 }

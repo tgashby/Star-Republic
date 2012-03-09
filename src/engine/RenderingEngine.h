@@ -12,6 +12,7 @@
 #include "Mesh.h"
 #include <cassert>
 #include <map>
+#include <cstring>
 
 class RenderingEngine : public IRenderingEngine {
 public:

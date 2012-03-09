@@ -17,8 +17,11 @@
 #include "Object3d.h"
 #include "Mesh.h"
 #include "Interfaces.h"
+//Stupid hack
+#include "ResourceManager.h"
 
 using namespace std;
+//NO! NEVER DO THIS!! ^^^^
 
 /**
  * Explodable is an interface for things that can explode
@@ -90,6 +93,7 @@ private:
     * The radius of the explosion
     */
    float m_radius;
+
 };
 
 #endif
