@@ -73,6 +73,8 @@ private:
    vector<Bullet*>* m_bulletList;
    vector<Quadrant*>::size_type m_currentQuadrant;
    vector<Missile*>* m_missileList;
+   int magneticTimer;
+   GameObject* prevClosest;
    
    /**
     * Runs through the inital WorldData and creates all the Quadrants with and objects

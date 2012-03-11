@@ -10,6 +10,8 @@
 
 #include "WorldGrid.h"
 
+#define MAGNETIC_TIME_MOVEMENT 500
+
 /*
  TODO:
  - Figure out why determineQuadrant isn't working...
@@ -41,6 +43,8 @@ Quadrant WorldGrid::getCurrentQuadrant()
 
 void WorldGrid::tic(uint64_t dt)
 {
+   GameObject* currentClosest = NULL;
+
    Quadrant quad = m_path.getCurrentQuadrant();
    
    vec3 closestdir = vec3(10000, 10000, 10000);
@@ -69,9 +73,12 @@ void WorldGrid::tic(uint64_t dt)
          Turret* turret = ((Turret*)*i);
          
          if (closestdir.Length() > dirToPlayer.Length() 
-             && dirToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96
-             && turret->isAlive())
+             && dirToPlayer.Normalized()
+	     .Dot(m_player->getAimForward().Normalized()) > 0.96
+             && turret->isAlive()) {
             closestdir = dirToPlayer;
+	    currentClosest = turret;
+	 }
          
          // Turret not currently firing, but I think it's because
          // the player starts too close to the turret
@@ -100,6 +107,7 @@ void WorldGrid::tic(uint64_t dt)
 	 if (closestdir.Length() > dirObjToPlayer.Length()
 	     && dirObjToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > .96 && objective->isAlive()) {
 	    closestdir = dirObjToPlayer;
+	    currentClosest = objective;
 	 }
       }
       
@@ -112,8 +120,10 @@ void WorldGrid::tic(uint64_t dt)
          
          if (closestdir.Length() > dirEnemyToPlayer.Length()
              && dirEnemyToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96
-             && enemyShip->isAlive())
+             && enemyShip->isAlive()) {
             closestdir = dirEnemyToPlayer;
+	    currentClosest = enemyShip;
+	 }
          
          if (dirEnemyToPlayer.Length() < 700 && enemyShip->shouldFire())
          {
@@ -151,8 +161,10 @@ void WorldGrid::tic(uint64_t dt)
          
          if (closestdir.Length() > dirEnemyToPlayer.Length()
              && dirEnemyToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96
-             && enemyShip->isAlive())
+             && enemyShip->isAlive()) {
             closestdir = dirEnemyToPlayer;
+	    currentClosest = enemyShip;
+	 }
          
          if (dirEnemyToPlayer.Length() < 1600 &&
              (enemyShip->shouldFire1() || enemyShip->shouldFire2()))
@@ -190,10 +202,36 @@ void WorldGrid::tic(uint64_t dt)
       }   
    }
    
-   if (closestdir.x != 10000 && closestdir.y != 10000 && closestdir.z != 10000)
+   if (currentClosest != prevClosest) {
+      magneticTimer = 0;
+   }
+   
+   magneticTimer += dt;
+   if (magneticTimer > MAGNETIC_TIME_MOVEMENT) {
+      magneticTimer = MAGNETIC_TIME_MOVEMENT;
+   }
+
+   float percentTimer = (magneticTimer * 1.0) / (MAGNETIC_TIME_MOVEMENT * 1.0);
+   vec3 prevForward = m_player->getMagneticForward();
+   vec3 currForward;
+   
+   if (closestdir.x != 10000 && closestdir.y != 10000 && closestdir.z != 10000) {
+      currForward = closestdir.Normalized();
+   }
+   else {
+      currForward = m_player->getAimForward().Normalized();
+   }
+   
+   vec3 tempForward = (prevForward * (1.0 - percentTimer)) + (currForward * percentTimer);
+
+   m_player->setMagneticForward(tempForward);
+
+   prevClosest = currentClosest;
+
+   /*if (closestdir.x != 10000 && closestdir.y != 10000 && closestdir.z != 10000)
       m_player->setMagneticForward(closestdir.Normalized());
    else
-      m_player->setMagneticForward(m_player->getAimForward().Normalized());
+   m_player->setMagneticForward(m_player->getAimForward().Normalized());*/
 }
 
 void WorldGrid::checkCollisions()

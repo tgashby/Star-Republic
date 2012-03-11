@@ -402,7 +402,8 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 	 Bullet *bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
 				     m_modules, m_player->getPosition() 
 				     + (m_player->getSide() * 8),
-				     m_player->getMagneticForward(), m_player->getAimUp(), 
+				     m_player->getMagneticForward(), 
+				     m_player->getAimUp(), 
 				     *m_player, Bullet::defaultTimeToLive, 1.0f);
 	 
          //m_path->addToQuadrants(bullet->getPosition(), bullet, bullet);
