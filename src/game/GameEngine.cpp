@@ -324,8 +324,17 @@ void GameEngine::addAsteroids() {
    //TEMPORARY!!!
    Objective* objective = new Objective("models/sphere.obj", 
       "textures/test6.bmp", m_modules, 
-      (vec3(.0868337, 0.995747, -0.0307775) * 1300.0f) 
+      (vec3(.0868337, 0.995747, -0.0307775) * 2000.0f) 
 					 + vec3(-266.174, 1759.54, -204.056),
+					 vec3 (0, 0, 1), vec3(0, 1, 0));
+   m_modules->renderingEngine->addObject3d(objective);
+   m_objectives.push_back(objective);
+   m_path->addToQuadrants(objective->getPosition(), objective, objective);
+
+   objective = new Objective("models/sphere.obj", 
+				     "textures/test6.bmp", m_modules, 
+      (vec3(0.642882, -0.695466, -0.320984) * 1300.0f) 
+					 + vec3(1373.04, -1224.47, -6905.99),
 					 vec3 (0, 0, 1), vec3(0, 1, 0));
    m_modules->renderingEngine->addObject3d(objective);
    m_objectives.push_back(objective);
