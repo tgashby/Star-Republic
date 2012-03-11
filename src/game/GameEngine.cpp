@@ -50,7 +50,7 @@ m_camera->getForward(), m_camera->getUp());
    
    m_camera->setPlayer(m_player);
    
-   m_worldGrid = new WorldGrid(*m_path, *m_worldData, m_modules, m_player);
+   m_worldGrid = new WorldGrid(*m_path, *m_worldData, m_modules, m_player, &m_bulletList);
 
    m_reticle = new Reticle("models/reticle2.obj", "textures/white.bmp", 
                            m_modules, m_player);
@@ -116,12 +116,12 @@ void GameEngine::tic(uint64_t td) {
       
       m_skybox->tic(td, m_player->getPosition());
       
-      for (std::vector<Missile*>::iterator i = m_missileList.begin(); i != m_missileList.end(); i++) 
+      for (vector<Missile*>::iterator i = m_missileList.begin(); i != m_missileList.end(); i++) 
       {
          (*i)->tic(td);
       }
       
-      m_worldGrid->tic(td, &m_bulletList);
+      m_worldGrid->tic(td);
 
       m_worldGrid->checkCollisions();
       
@@ -369,7 +369,8 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 				     m_player->getMagneticForward(), m_player->getAimUp(), 
 				     *m_player, Bullet::defaultTimeToLive, 1.0f);
 	 
-         m_path->addToQuadrants(bullet->getPosition(), bullet, bullet);
+         //m_path->addToQuadrants(bullet->getPosition(), bullet, bullet);
+	 m_bulletList.push_back(bullet);
          m_modules->renderingEngine->addObject3d(bullet);
          
 	 bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
@@ -378,8 +379,8 @@ bool GameEngine::handleKeyDown(SDLKey key) {
 			     m_player->getMagneticForward(), m_player->getAimUp(), 
 			     *m_player, Bullet::defaultTimeToLive, 1.0f);
       
-      
-         m_path->addToQuadrants(bullet->getPosition(), bullet, bullet);
+	 m_bulletList.push_back(bullet);
+         //m_path->addToQuadrants(bullet->getPosition(), bullet, bullet);
          m_modules->renderingEngine->addObject3d(bullet);
       
       
@@ -400,7 +401,8 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
    
    for (list<GameObject *>::iterator it = quad.m_gameObjects.begin(); 
         it != quad.m_gameObjects.end(); it++) {
-      if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) && typeid(**it) != typeid(Missile)) {
+      if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) 
+	  && typeid(**it) != typeid(Missile)) {
          playerToObjVec = (*it)->getPosition() - m_player->getPosition();
          if (playerToObjVec.Length() > 350 && 
              playerToObjVec.Length() < 1500 && 

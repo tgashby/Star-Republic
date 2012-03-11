@@ -18,9 +18,10 @@
  - Prob lots more...
  */
 
-WorldGrid::WorldGrid(Path& path, WorldData& world, Modules* modules, Player* player)
+WorldGrid::WorldGrid(Path& path, WorldData& world, Modules* modules, Player* player, vector<Bullet*>* bulletList)
    : m_path(path), m_world(world), m_modules(modules), m_player(player)
 {
+   m_bulletList = bulletList;
    m_currentQuadrant = 0;
    m_shouldUpdate = true;
    
@@ -37,13 +38,19 @@ Quadrant WorldGrid::getCurrentQuadrant()
    return m_path.getCurrentQuadrant();
 }
 
-void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
+void WorldGrid::tic(uint64_t dt)
 {
    Quadrant quad = m_path.getCurrentQuadrant();
    
    vec3 closestdir = vec3(10000, 10000, 10000);
+
+   for (vector<Bullet*>::iterator i = m_bulletList->begin();
+	i != m_bulletList->end(); i++) {
+      (*i)->tic(dt);
+   }
    
-   for (std::list<GameObject*>::iterator i = quad.m_gameObjects.begin(); i != quad.m_gameObjects.end(); i++) 
+   for (list<GameObject*>::iterator i = quad.m_gameObjects.begin(); 
+	i != quad.m_gameObjects.end(); i++) 
    {
       GameObject* currObj = *i;
       
@@ -74,7 +81,7 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
                        Bullet::defaultTimeToLive, 0.7f);
             
             m_modules->renderingEngine->addObject3d(bullet);
-            m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
+            //m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
             m_bulletList->push_back(bullet);
          }
       }
@@ -102,7 +109,7 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
                        *enemyShip, Bullet::defaultTimeToLive, 0.6f);
             
             m_modules->renderingEngine->addObject3d(bullet);
-            m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
+            //m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
             m_bulletList->push_back(bullet);
             
             bullet = 
@@ -113,7 +120,7 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
                        *enemyShip, Bullet::defaultTimeToLive, 0.6f);
             
             m_modules->renderingEngine->addObject3d(bullet);
-            m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
+            //m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
             m_bulletList->push_back(bullet);
          }
       }
@@ -144,7 +151,7 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
                           *enemyShip, Bullet::defaultTimeToLive, 0.6f);
                
                m_modules->renderingEngine->addObject3d(bullet);
-               m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
+               //m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
                m_bulletList->push_back(bullet);
             }
             
@@ -158,7 +165,7 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
                           *enemyShip, Bullet::defaultTimeToLive, 0.5f);
                
                m_modules->renderingEngine->addObject3d(bullet);
-               m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
+               //m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
                m_bulletList->push_back(bullet);
             }
          }
@@ -174,12 +181,20 @@ void WorldGrid::tic(uint64_t dt, std::vector<Bullet*>* m_bulletList)
 void WorldGrid::checkCollisions()
 {
    Quadrant quad = m_path.getCurrentQuadrant();
+   vector<GameObject *> temp;
+
+   //Creates a new list of the items in the quad
+   temp.insert(temp.end(), quad.m_gameObjects.begin(), 
+	       quad.m_gameObjects.end());
+   //Adds the bullets to the list to check
+   temp.insert(temp.end(), m_bulletList->begin(),
+	       m_bulletList->end());
    
-   for (std::list<GameObject*>::iterator i = quad.m_gameObjects.begin(); i != quad.m_gameObjects.end(); i++) 
+   for (vector<GameObject*>::iterator i = temp.begin(); i != temp.end(); i++) 
    {
       GameObject* currObj = *i;
       
-      for (std::list<GameObject*>::iterator j = i; j != quad.m_gameObjects.end(); j++) 
+      for (vector<GameObject*>::iterator j = i; j != temp.end(); j++) 
       {
          // HACK to get iterators to work
          if (j != i) 
@@ -206,7 +221,13 @@ void WorldGrid::checkCollisions()
 
 std::list<IObject3d*> WorldGrid::getDrawableObjects()
 {
-   return m_path.getCurrentQuadrant().m_obj3Ds;
+
+   list<IObject3d*> temp;
+   list<IObject3d*> objs = m_path.getCurrentQuadrant().m_obj3Ds;
+   temp.insert(temp.end(), objs.begin(), objs.end());
+   temp.insert(temp.end(), m_bulletList->begin(), m_bulletList->end());
+   return temp;
+   //return m_path.getCurrentQuadrant().m_obj3Ds;
 }
 
 void WorldGrid::makeGrid()

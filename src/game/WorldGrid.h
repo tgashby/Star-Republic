@@ -30,7 +30,8 @@ public:
     * Constructs a WorldGrid with the given side length.
     * This will be used for all dimensions of the grid.
     */
-   WorldGrid(Path& path, WorldData& world, Modules* modules, Player* player);
+   WorldGrid(Path& path, WorldData& world, Modules* modules, Player* player,
+	     vector<Bullet*>* bulletList);
    
    /**
     * Frees the grid in memory.
@@ -48,7 +49,7 @@ public:
     * Updates all objects that are in the current quadrants.
     * @param dt the time passed since the last update.
     */
-   void tic(uint64_t dt, std::vector<Bullet*>* m_bulletList);
+   void tic(uint64_t dt);
    
    /**
     * Checks all objects in the current quadrants for collisions.
@@ -67,7 +68,8 @@ private:
    Path& m_path;
    Player* m_player;
    Modules* m_modules;
-   bool m_shouldUpdate;   
+   bool m_shouldUpdate;
+   vector<Bullet*>* m_bulletList;
    std::vector<Quadrant*>::size_type m_currentQuadrant;
    
    /**
