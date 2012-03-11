@@ -131,6 +131,18 @@ void GameEngine::tic(uint64_t td) {
          m_stateManager->pushState(m_lose);
          //SHOULD PUT CODE HERE TO FREE MOST EVERYTHING IN THE GAME.
       }
+      
+      bool allObjsDead = true;
+      for (vector<Objective*>::iterator objIter = m_objectives.begin();
+	   objIter != m_objectives.end(); objIter++) {
+	 if ((*objIter)->isAlive()) {
+	    allObjsDead = false;
+	 }
+      }
+      
+      if (allObjsDead) {
+	 m_stateManager->pushState(m_win);
+      }
    }
 }
 
@@ -310,13 +322,14 @@ void GameEngine::addAsteroids() {
    PathPoint current(vec3(0,0,0), vec3(0,0,0), vec3(0,0,0), vec3(0,0,0));
 
    //TEMPORARY!!!
-   Objective* objective1 = new Objective("models/sphere.obj", 
+   Objective* objective = new Objective("models/sphere.obj", 
       "textures/test6.bmp", m_modules, 
       (vec3(.0868337, 0.995747, -0.0307775) * 1300.0f) 
 					 + vec3(-266.174, 1759.54, -204.056),
 					 vec3 (0, 0, 1), vec3(0, 1, 0));
-   m_modules->renderingEngine->addObject3d(objective1);
-   m_path->addToQuadrants(objective1->getPosition(), objective1, objective1);
+   m_modules->renderingEngine->addObject3d(objective);
+   m_objectives.push_back(objective);
+   m_path->addToQuadrants(objective->getPosition(), objective, objective);
    
 
    for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex+=1) {

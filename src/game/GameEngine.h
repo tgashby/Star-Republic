@@ -55,6 +55,7 @@ private:
    void cullObject(GameObject* obj, Object3d* second);
    bool isCullable(GameObject* obj);
    
+   vector<Objective*> m_objectives;
    Player *m_player;
    Reticle *m_reticle;
    Camera *m_camera;
