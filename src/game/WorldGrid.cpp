@@ -10,7 +10,7 @@
 
 #include "WorldGrid.h"
 
-#define MAGNETIC_TIME_MOVEMENT 500
+#define MAGNETIC_TIME_MOVEMENT 3000
 
 /*
  TODO:
