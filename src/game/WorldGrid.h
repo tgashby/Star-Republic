@@ -32,7 +32,7 @@ public:
     * This will be used for all dimensions of the grid.
     */
    WorldGrid(Path& path, WorldData& world, Modules* modules, Player* player,
-	     vector<Bullet*>* bulletList);
+	     vector<Bullet*>* bulletList, vector<Missile*>* missileList);
    
    /**
     * Frees the grid in memory.
@@ -71,7 +71,8 @@ private:
    Modules* m_modules;
    bool m_shouldUpdate;
    vector<Bullet*>* m_bulletList;
-   std::vector<Quadrant*>::size_type m_currentQuadrant;
+   vector<Quadrant*>::size_type m_currentQuadrant;
+   vector<Missile*>* m_missileList;
    
    /**
     * Runs through the inital WorldData and creates all the Quadrants with and objects

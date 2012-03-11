@@ -18,9 +18,10 @@
  - Prob lots more...
  */
 
-WorldGrid::WorldGrid(Path& path, WorldData& world, Modules* modules, Player* player, vector<Bullet*>* bulletList)
+WorldGrid::WorldGrid(Path& path, WorldData& world, Modules* modules, Player* player, vector<Bullet*>* bulletList, vector<Missile*>* missileList)
    : m_path(path), m_world(world), m_modules(modules), m_player(player)
 {
+   m_missileList = missileList;
    m_bulletList = bulletList;
    m_currentQuadrant = 0;
    m_shouldUpdate = true;
@@ -49,6 +50,11 @@ void WorldGrid::tic(uint64_t dt)
       (*i)->tic(dt);
    }
    
+   for (vector<Missile*>::iterator i = m_missileList->begin();
+	i != m_missileList->end(); i++) {
+      (*i)->tic(dt);
+   }
+
    for (list<GameObject*>::iterator i = quad.m_gameObjects.begin(); 
 	i != quad.m_gameObjects.end(); i++) 
    {
@@ -201,6 +207,10 @@ void WorldGrid::checkCollisions()
    //Adds the bullets to the list to check
    temp.insert(temp.end(), m_bulletList->begin(),
 	       m_bulletList->end());
+
+   //Adds the missiles to the list to check
+   temp.insert(temp.end(), m_missileList->begin(),
+	       m_missileList->end());
    
    for (vector<GameObject*>::iterator i = temp.begin(); i != temp.end(); i++) 
    {
@@ -238,6 +248,7 @@ std::list<IObject3d*> WorldGrid::getDrawableObjects()
    list<IObject3d*> objs = m_path.getCurrentQuadrant().m_obj3Ds;
    temp.insert(temp.end(), objs.begin(), objs.end());
    temp.insert(temp.end(), m_bulletList->begin(), m_bulletList->end());
+   temp.insert(temp.end(), m_missileList->begin(), m_missileList->end());
    return temp;
    //return m_path.getCurrentQuadrant().m_obj3Ds;
 }

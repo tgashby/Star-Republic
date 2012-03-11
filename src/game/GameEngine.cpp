@@ -50,7 +50,7 @@ m_camera->getForward(), m_camera->getUp());
    
    m_camera->setPlayer(m_player);
    
-   m_worldGrid = new WorldGrid(*m_path, *m_worldData, m_modules, m_player, &m_bulletList);
+   m_worldGrid = new WorldGrid(*m_path, *m_worldData, m_modules, m_player, &m_bulletList, &m_missileList);
 
    m_reticle = new Reticle("models/reticle2.obj", "textures/white.bmp", 
                            m_modules, m_player);
@@ -522,17 +522,16 @@ bool GameEngine::handleKeyUp(SDLKey key)
 	    
 	    bulletOrigin += (m_player->getAimForward() * 8.0f);
 	    
-	    Missile *missile = new Missile("models/missile1.obj", "textures/missileTex.bmp",
-					   m_modules, 
-					   bulletOrigin, 
-					   m_player->getAimForward(), 
-					   curveDir,
-					   m_player, 
-					   targets.at(index));
+	    Missile *missile = new Missile("models/missile1.obj", 
+					   "textures/missileTex.bmp", 
+					   m_modules, bulletOrigin, 
+					   m_player->getAimForward(), curveDir, 
+					   m_player, targets.at(index));
 	    
 	    // HACK so that I can use it as both a GameObject and an Object3d
-       m_path->addToQuadrants(bulletOrigin, missile, missile);
-       m_modules->renderingEngine->addObject3d(missile);
+	    //m_path->addToQuadrants(bulletOrigin, missile, missile);
+	    m_missileList.push_back(missile);
+	    m_modules->renderingEngine->addObject3d(missile);
 	 }
       }
    }
