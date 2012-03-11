@@ -101,10 +101,10 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    y += vy * time;
    updateVelocity(lastScreenX, lastScreenY);
 
-   cout << "Position : " << m_position.x << ", " << m_position.y << ", " <<
-      m_position.z << "\n";
-   cout << "Forward : " << m_forward.x << ", " << m_forward.y << ", " <<
-      m_forward.z << "\n";
+   //cout << "Position : " << m_position.x << ", " << m_position.y << ", " <<
+   //   m_position.z << "\n";
+   //cout << "Forward : " << m_forward.x << ", " << m_forward.y << ", " <<
+   //   m_forward.z << "\n";
 }
 
 void Player::updateVelocity(float diffX, float diffY)
