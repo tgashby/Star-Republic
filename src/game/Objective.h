@@ -41,6 +41,11 @@ class Objective : public Explodeable, public GameObject {
     */
    void doCollision(GameObject & other);
 
+   /**
+    * getPosition is required because of conflicting functions
+    */
+   vec3 getPosition();
+
  private:
    /**
     * The object's mesh

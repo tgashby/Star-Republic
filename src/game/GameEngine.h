@@ -22,6 +22,7 @@
 #include <algorithm>
 #include "Missile.h"
 #include "GameState.h"
+#include "Objective.h"
 #include "MenuState.h"
 #include "WinState.h"
 #include "LoseState.h"

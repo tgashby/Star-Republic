@@ -18,6 +18,7 @@
 #include "Reticle.h"
 #include "EnemyShip.h"
 #include "EnemyGunship.h"
+#include "Objective.h"
 
 /**
  * WorldGrid represents the world as a uniform spatial subdivision.

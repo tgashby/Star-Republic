@@ -85,12 +85,24 @@ void WorldGrid::tic(uint64_t dt)
             m_bulletList->push_back(bullet);
          }
       }
+
+      if (typeid(**i) == typeid(Objective)) {
+	 Objective* objective = ((Objective*)*i);
+	 vec3 dirObjToPlayer = objective->getPosition() 
+	    - m_player->getPosition();
+	 
+	 if (closestdir.Length() > dirObjToPlayer.Length()
+	     && dirObjToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > .96 && objective->isAlive()) {
+	    closestdir = dirObjToPlayer;
+	 }
+      }
       
       if (typeid(**i) == typeid(EnemyShip)) 
       {
          EnemyShip* enemyShip = ((EnemyShip*)*i);
          
-         vec3 dirEnemyToPlayer = enemyShip->getPosition() - m_player->getPosition();
+         vec3 dirEnemyToPlayer = enemyShip->getPosition() 
+	    - m_player->getPosition();
          
          if (closestdir.Length() > dirEnemyToPlayer.Length()
              && dirEnemyToPlayer.Normalized().Dot(m_player->getAimForward().Normalized()) > 0.96

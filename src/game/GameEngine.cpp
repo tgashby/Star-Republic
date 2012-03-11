@@ -309,6 +309,16 @@ void GameEngine::addAsteroids() {
    EnemyGunship* tempGunner;
    PathPoint current(vec3(0,0,0), vec3(0,0,0), vec3(0,0,0), vec3(0,0,0));
 
+   //TEMPORARY!!!
+   Objective* objective1 = new Objective("models/sphere.obj", 
+      "textures/test6.bmp", m_modules, 
+      (vec3(.0868337, 0.995747, -0.0307775) * 1300.0f) 
+					 + vec3(-266.174, 1759.54, -204.056),
+					 vec3 (0, 0, 1), vec3(0, 1, 0));
+   m_modules->renderingEngine->addObject3d(objective1);
+   m_path->addToQuadrants(objective1->getPosition(), objective1, objective1);
+   
+
    for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex+=1) {
       current = m_path->getAt(pntIndex);
 
@@ -408,7 +418,7 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
       if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) 
 	  && typeid(**it) != typeid(Missile)) {
          playerToObjVec = (*it)->getPosition() - m_player->getPosition();
-         if (playerToObjVec.Length() > 350 && 
+         if (playerToObjVec.Length() > 500 && 
              playerToObjVec.Length() < 1500 && 
              angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) {
             temp.push_back(*it);
