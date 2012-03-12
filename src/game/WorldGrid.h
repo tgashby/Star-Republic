@@ -18,6 +18,7 @@
 #include "Reticle.h"
 #include "EnemyShip.h"
 #include "EnemyGunship.h"
+#include "Objective.h"
 
 /**
  * WorldGrid represents the world as a uniform spatial subdivision.
@@ -30,7 +31,8 @@ public:
     * Constructs a WorldGrid with the given side length.
     * This will be used for all dimensions of the grid.
     */
-   WorldGrid(Path& path, WorldData& world, Modules* modules, Player* player);
+   WorldGrid(Path& path, WorldData& world, Modules* modules, Player* player,
+	     vector<Bullet*>* bulletList, vector<Missile*>* missileList);
    
    /**
     * Frees the grid in memory.
@@ -48,7 +50,7 @@ public:
     * Updates all objects that are in the current quadrants.
     * @param dt the time passed since the last update.
     */
-   void tic(uint64_t dt, std::vector<Bullet*>* m_bulletList);
+   void tic(uint64_t dt);
    
    /**
     * Checks all objects in the current quadrants for collisions.
@@ -67,8 +69,12 @@ private:
    Path& m_path;
    Player* m_player;
    Modules* m_modules;
-   bool m_shouldUpdate;   
-   std::vector<Quadrant*>::size_type m_currentQuadrant;
+   bool m_shouldUpdate;
+   vector<Bullet*>* m_bulletList;
+   vector<Quadrant*>::size_type m_currentQuadrant;
+   vector<Missile*>* m_missileList;
+   int magneticTimer;
+   GameObject* prevClosest;
    
    /**
     * Runs through the inital WorldData and creates all the Quadrants with and objects

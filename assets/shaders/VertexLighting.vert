@@ -1,6 +1,5 @@
 attribute vec4 Position;
 attribute vec3 Normal;
-attribute vec3 DiffuseMaterial;
 attribute vec2 TextureCoord;
 
 uniform mat4 Projection;

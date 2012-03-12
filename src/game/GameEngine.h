@@ -22,6 +22,7 @@
 #include <algorithm>
 #include "Missile.h"
 #include "GameState.h"
+#include "Objective.h"
 #include "MenuState.h"
 #include "WinState.h"
 #include "LoseState.h"
@@ -54,6 +55,7 @@ private:
    void cullObject(GameObject* obj, Object3d* second);
    bool isCullable(GameObject* obj);
    
+   vector<Objective*> m_objectives;
    Player *m_player;
    Reticle *m_reticle;
    Camera *m_camera;

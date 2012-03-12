@@ -75,16 +75,16 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
 
    if (m_isFlashing) {
       m_count++;
-      int temp = m_count % 20;
-      if (temp < 10 && temp > 0) {
+      int temp = m_count % 4;
+      if (temp < 2 && temp > 0) {
          m_shipMesh->setVisible(false);
          m_exhaustMesh->setVisible(false);
       }
-      else if (temp < 20) {
+      else if (temp < 4) {
          m_shipMesh->setVisible(true);
          m_exhaustMesh->setVisible(true);
       }
-      if (m_count == 60) {
+      if (m_count == 20) {
          m_count = 0;
          m_isFlashing = false;
       }
@@ -100,6 +100,11 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    x += vx * time;
    y += vy * time;
    updateVelocity(lastScreenX, lastScreenY);
+
+   //cout << "Position : " << m_position.x << ", " << m_position.y << ", " <<
+   //   m_position.z << "\n";
+   //cout << "Forward : " << m_forward.x << ", " << m_forward.y << ", " <<
+   //   m_forward.z << "\n";
 }
 
 void Player::updateVelocity(float diffX, float diffY)

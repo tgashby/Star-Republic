@@ -88,13 +88,21 @@ void RenderingEngine::removeObject3d(IObject3d *obj) {
 }
 
 void RenderingEngine::render(list<IObject3d *> &objects) {
+   list<IMesh *> bloomedMeshes(0);
+   
    addLoaded();
    
-   setFrameBuffer(FRAME_BUFFER_PASS0);
+   setFrameBuffer(FRAME_BUFFER_PASS1);
    clearScreen();
    
    // Get the projection * view matrix from the camera.
-   mat4 projectionViewMatrix = m_camera->getProjectionViewMtx();
+   mat4 projectionViewMatrix1 = m_camera->getProjectionViewMtx();
+   mat4 projectionViewMatrix2 = mat4::Parallel(-400, 400, -300, 300, 1, 10);
+   TextureRef *texture0 = (TextureRef*)(*m_planeTextures)[0];
+   TextureRef *texture1 = (TextureRef*)(*m_planeTextures)[1];
+   TextureRef *texture2 = (TextureRef*)(*m_planeTextures)[2];
+   TextureRef *texture3 = (TextureRef*)(*m_planeTextures)[3];
+   TextureRef *texture4 = (TextureRef*)(*m_planeTextures)[4];
    
    list<IObject3d *>::iterator obj;
    list<IMesh *> *objMeshes;
@@ -109,50 +117,66 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
          if (!(*mesh)->isVisible() || !(*mesh)->checkLoaded())
             continue;
          
+         // Check if the mesh is a bloom mesh. put into list for the second pass.
+         if ((*mesh)->getShaderType() == SHADER_BLOOM) {
+            bloomedMeshes.push_back(*mesh);
+            continue;
+         }
+         
          // Draw the mesh
-         drawMesh((*mesh), projectionViewMatrix);
+         drawMesh((*mesh), projectionViewMatrix1);
       }
    }
    
    glDisable(GL_DEPTH);
    glEnable(GL_BLEND);
    
-   projectionViewMatrix = mat4::Parallel(-400, 400, -300, 300, 1, 10);
-   TextureRef *texture0 = (TextureRef*)(*m_planeTextures)[0];
-   TextureRef *texture1 = (TextureRef*)(*m_planeTextures)[1];
-   TextureRef *texture2 = (TextureRef*)(*m_planeTextures)[2];
-   TextureRef *texture3 = (TextureRef*)(*m_planeTextures)[3];
-   TextureRef *texture4 = (TextureRef*)(*m_planeTextures)[4];
-   
-   setFrameBuffer(FRAME_BUFFER_PASS1);
+   setFrameBuffer(FRAME_BUFFER_PASS0);
    clearScreen();
-   m_planeMesh->setShaderType(SHADER_BLOOM_CULL);
-   texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_PASS0].texture;
-   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix);
+   m_planeMesh->setShaderType(SHADER_NO_LIGHT);
+   texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_PASS1].texture;
+   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix2);
+   
+   glEnable(GL_DEPTH);
+   glDisable(GL_BLEND);
+   
+   // Clear only the color buffer. Keep the depth for occluding bloomed meshes.
+   setFrameBuffer(FRAME_BUFFER_PASS1);
+   glClearColor(0,0,0,1);
+   glClear(GL_COLOR_BUFFER_BIT); // clear only the color buffer.
+   
+   // Draw the bloomed meshes.
+   for (mesh = bloomedMeshes.begin(); mesh != bloomedMeshes.end(); ++mesh) {      
+      // Draw the mesh
+      drawMesh((*mesh), projectionViewMatrix1);
+   }
+   
+   glDisable(GL_DEPTH);
+   glEnable(GL_BLEND);
    
    setFrameBuffer(FRAME_BUFFER_REDUCE0);
    clearScreen();
    m_planeMesh->setShaderType(SHADER_NO_LIGHT);
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_PASS1].texture;
-   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix);
+   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix2);
    
    setFrameBuffer(FRAME_BUFFER_REDUCE1);
    clearScreen();
    m_planeMesh->setShaderType(SHADER_NO_LIGHT);
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE0].texture;
-   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix);
+   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix2);
 
    setFrameBuffer(FRAME_BUFFER_REDUCE2);
    clearScreen();
    m_planeMesh->setShaderType(SHADER_NO_LIGHT);
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE1].texture;
-   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix);
+   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix2);
    
    setFrameBuffer(FRAME_BUFFER_REDUCE3);
    clearScreen();
    m_planeMesh->setShaderType(SHADER_NO_LIGHT);
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE2].texture;
-   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix);
+   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix2);
    
    setFrameBuffer(FRAME_BUFFER_SCREEN);
    clearScreen();
@@ -162,7 +186,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    texture2->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE1].texture;
    texture3->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE2].texture;
    texture4->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE3].texture;
-   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix);
+   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix2);
    
    glEnable(GL_DEPTH);
    glDisable(GL_BLEND);
@@ -271,10 +295,6 @@ void RenderingEngine::drawMesh(IMesh *mesh, mat4 projection) {
    // Set the normal matrix
    mat3 normalMtx = mesh->getModelMtx().ToMat3();
    glUniformMatrix3fv(m_curShaderProgram->uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
-   
-   // Set the diffuse color.
-   vec4 color = vec4(0.8, 0.8, 0.8, 1.0);
-   glVertexAttrib4f(m_curShaderProgram->attributes.diffuseMaterial, color.x, color.y, color.z, color.w);
    
    // Draw the surface.
    int stride = 11 * sizeof(GLfloat);

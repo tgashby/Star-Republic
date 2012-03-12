@@ -14,8 +14,8 @@
 #define _ENEMY_GUNSHIP_EXPLOSION_RADIUS 60.0f
 #define UPDATEDISTANCE 2000.0
 #define RADTODEG 180 / 3.1415
-const float PATHVELOCITY = 5.0f;
-const float AIMVELOCITY = 0.003f;
+const float PATHVELOCITY = 0.03f;
+const float AIMVELOCITY = 0.00016f;
 const float x_SCALAR = 0.0005f; 
 const float y_SCALAR = 0.0005f; 
 const float mODEL_SCALE = 0.05f;
@@ -77,7 +77,7 @@ EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
        TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
   m_turretbasemesh2->setModelMtx(modelMtx4);
 
-  m_health = 25;
+  m_health = 20;
 }
 
 EnemyGunship::~EnemyGunship()
@@ -99,11 +99,11 @@ void EnemyGunship::tic(uint64_t time)
     m_up = m_playerRef->getAimUp();
     
     /** gunship AI -> movement first (the last term is there to simulate acceleration) **/
-    m_position += m_forward * PATHVELOCITY;
+    m_position += m_forward * PATHVELOCITY * time;
     m_position += m_up * ydir * AIMVELOCITY * 
-      ((1 + MOTIONTIME / 2 - abs((float)motionTimer - (MOTIONTIME / 2)))); 
+      ((1 + MOTIONTIME / 2 - abs((float)motionTimer - (MOTIONTIME / 2)))) * time; 
     m_position += getMSide() * xdir * AIMVELOCITY * 
-      ((1 + MOTIONTIME / 2 - abs((float)motionTimer - (MOTIONTIME / 2)))); 
+      ((1 + MOTIONTIME / 2 - abs((float)motionTimer - (MOTIONTIME / 2)))) * time; 
 
     /** setting the modelmatrix based on a constant scale and rotation,
      *  and the forward, up and position (aka Magic) **/
