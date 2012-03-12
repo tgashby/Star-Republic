@@ -94,6 +94,15 @@ private:
     */
    float m_radius;
 
+   /**
+    * Refrence to modules (used for later access to SoundManager)
+    */
+   Modules* m_modules;
+
+   /**
+    * Set to true after the explosion starts
+    */
+   bool m_running;
 };
 
 #endif

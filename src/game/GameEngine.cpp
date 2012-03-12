@@ -130,13 +130,13 @@ void GameEngine::tic(uint64_t td) {
       bool allObjsDead = true;
       for (vector<Objective*>::iterator objIter = m_objectives.begin();
 	   objIter != m_objectives.end(); objIter++) {
-	 if ((*objIter)->isAlive()) {
-	    allObjsDead = false;
-	 }
+         if ((*objIter)->isAlive()) {
+            allObjsDead = false;
+         }
       }
       
       if (allObjsDead) {
-	 m_stateManager->pushState(m_win);
+         m_stateManager->pushState(m_win);
       }
    }
 }

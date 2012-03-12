@@ -9,6 +9,7 @@ SoundManager::SoundManager(){
    m_sounds[PlayerGun].push_back(loadSound("sound/weapon4.wav"));
    m_sounds[PlayerGun].push_back(loadSound("sound/weapon5.wav"));
    m_sounds[PlayerMissile].push_back(loadSound("sound/missileLaunch.wav"));
+   m_sounds[Explosion].push_back(loadSound("sound/explosion1.wav"));
    
    m_backgroundSounds[Boost] = loadSound("sound/boost.wav");
    m_backgroundPlaying[Boost] = false;
