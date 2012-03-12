@@ -168,7 +168,7 @@ exit(0);
          vec3 dirToPlayerNorm = dirToPlayer.Normalized();
          
          Bullet* bullet = 
-            new Bullet("models/lance.obj", "textures/test5.bmp", 
+            new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                        m_modules, (*i)->getHeadPosition(), 
                        -dirToPlayerNorm, 
                        dirToPlayerNorm.Cross((*i)->getPosition()), *(*i),
@@ -197,7 +197,7 @@ exit(0);
         vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
       
         Bullet* bullet = 
-          new Bullet("models/lance.obj", "textures/test5.bmp", 
+          new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                     m_modules, (*j)->getLeftCannonPos(), 
                     (*j)->getAimForward(), 
                     dirToPlayerNorm.Cross((*j)->getLeftCannonPos()), 
@@ -208,7 +208,7 @@ exit(0);
         m_objects.push_back(bullet);
         m_bulletList.push_back(bullet);
         bullet = 
-          new Bullet("models/lance.obj", "textures/test5.bmp", 
+          new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                     m_modules, (*j)->getRightCannonPos(), 
                     (*j)->getAimForward(), 
                     dirToPlayerNorm.Cross((*j)->getRightCannonPos()), 
@@ -240,7 +240,7 @@ exit(0);
         if ((*j)->shouldFire1())
         {
            Bullet* bullet = 
-              new Bullet("models/lance.obj", "textures/test5.bmp", 
+              new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                       m_modules, (*j)->getLeftCannonPos(), 
                       (*j)->getAimForward(), 
                       dirToPlayerNorm.Cross((*j)->getLeftCannonPos()), 
@@ -254,7 +254,7 @@ exit(0);
         if ((*j)->shouldFire2())
         {
            Bullet* bullet = 
-               new Bullet("models/lance.obj", "textures/test5.bmp", 
+               new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                       m_modules, (*j)->getRightCannonPos(), 
                       (*j)->getAimForward(), 
                       dirToPlayerNorm.Cross((*j)->getRightCannonPos()), 
@@ -576,7 +576,7 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
 	playerToObjVec = (*it)->getPosition() - m_player->getPosition();
 	if (playerToObjVec.Length() > 500 && 
 	    playerToObjVec.Length() < 4000 && 
-	    angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f &&
+	    angleBetween(m_player->getAimForward(), playerToObjVec) < 45.0f &&
        (*it)->isAlive()) {
 	   temp.push_back(*it);
 	   count++;

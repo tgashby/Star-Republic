@@ -15,7 +15,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
 {
   m_forward = cam_forw.Normalized();
   m_up = cam_up;
-  m_position = cam_pos + (cam_forw.Normalized() * PLAYER_DISTANCE_FROM_CAMERA);
+  m_position = cam_pos;// + (cam_forw.Normalized() * PLAYER_DISTANCE_FROM_CAMERA);
   calculateSide();
 
    m_shipMesh = new Mesh(fileName, textureName, modules);
@@ -24,6 +24,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_exhaustMesh = new Mesh("models/spaceship_exhaust.obj", "textures/test4.bmp", modules);
    m_exhaustMesh->setShaderType(SHADER_BLOOM);
    m_meshList.push_back(m_exhaustMesh);
+   m_isFlashing = false;
    
 
    // these are relative to the 'forward' vector
@@ -42,7 +43,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_exhaustMesh->setModelMtx(modelMtx);
    
    // god mode much?
-   m_health = 20;
+   m_health = 200;
 
    magnet = true;
 }
@@ -71,6 +72,23 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    m_upVelocity = (((m_up * lastScreenY)) - (m_position - tempPos)) * Y_SCALAR;
    m_offsetPosition += (m_sideVelocity * time) + (m_upVelocity * time);
    m_position = m_offsetPosition + tempPos;
+
+   if (m_isFlashing) {
+      m_count++;
+      int temp = m_count % 4;
+      if (temp < 2 && temp > 0) {
+         m_shipMesh->setVisible(false);
+         m_exhaustMesh->setVisible(false);
+      }
+      else if (temp < 4) {
+         m_shipMesh->setVisible(true);
+         m_exhaustMesh->setVisible(true);
+      }
+      if (m_count == 20) {
+         m_count = 0;
+         m_isFlashing = false;
+      }
+   }
 
    /** set the model matrix based on a constant scale and rotate and
 * the forward, up and position (aka magic) **/
@@ -171,12 +189,14 @@ void Player::doCollision(GameObject & other)
       if (&((Bullet&)other).getParent() != this)
       {
          m_health -= 2;
+         m_isFlashing = true;
       }
    }
    
    if (typeid(other) == typeid(Turret))
    {
      m_health -= 10;
+     m_isFlashing = true;
    }
    
    if (m_health <= 0) {
