@@ -124,6 +124,12 @@ enum SoundEvent {
    PlayerMissile,
 };
 
+const int numBackgroundSounds = 2;
+enum BackgroundSound {
+   Boost = 0,
+   Idle
+};
+
 class ISoundManager {
 public:
    virtual ~ISoundManager(){}; 
