@@ -72,7 +72,7 @@ void EnemyShip::tic(uint64_t time)
     dpos = dpos.Normalized();
 
     // moving based on the player's direction and it's aiming direction
-    m_position += m_playerRef->getMForward() * PATHVELOCITY + getAimForward() * AIMVELOCITY; 
+    m_position += m_playerRef->getMForward() * PATHVELOCITY * time + getAimForward() * AIMVELOCITY * time; 
     
     /** 'scared ship' AI **/
     float aimAngle;
@@ -102,7 +102,7 @@ void EnemyShip::tic(uint64_t time)
 	vec3 motionDir = getScaredSide() / (aimAngle / MAXSCAREDANGLE) * MAXSCAREDSPEED * dodgedir *
 	  ((DISTANCESCALE / distance) * (DISTANCESCALE / distance));
 	/** move and dodge **/
-	m_position += motionDir;
+	m_position += motionDir * time;
 	dodging = true;
 	/** count down - you can't dodge in the same direction forever **/
 	dodgecounter--;

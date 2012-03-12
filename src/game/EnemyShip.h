@@ -13,8 +13,8 @@
 #include "Explodeable.h"
 #include "Missile.h"
 
-const float PATHVELOCITY = 1.2f;
-const float AIMVELOCITY = 3.3f;
+const float PATHVELOCITY = 0.2f;
+const float AIMVELOCITY = 0.12f;
 const float x_SCALAR = 0.0005f; 
 const float y_SCALAR = 0.0005f; 
 const float mODEL_SCALE = 0.05f;
