@@ -45,7 +45,7 @@ public:
    void stopBackgroundSound(BackgroundSound sound); 
 private:
    vector<Sound*>  m_sounds[numSoundEvents]; 
-   Sound m_backgroundSounds[numBackgroundSounds];
+   Sound* m_backgroundSounds[numBackgroundSounds];
    bool m_backgroundPlaying[numBackgroundSounds];
     
 };

@@ -134,6 +134,9 @@ class ISoundManager {
 public:
    virtual ~ISoundManager(){}; 
    virtual void playSound(SoundEvent event) = 0;
+
+   virtual void playBackgroundSound(BackgroundSound sound) = 0;
+   virtual void stopBackgroundSound(BackgroundSound sound) = 0; 
 };
 
 const int INVALID_CHANNEL = -2;
