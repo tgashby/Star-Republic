@@ -6,59 +6,11 @@
 #include "Interfaces.h"
 #include "SDL_include.h"
 #include "SDL_thread.h"
+#include <sstream>
 
 #define VERTEX_STRIDE 11
 #define NORMAL_OFFSET 3
 #define TEXTURE_OFFSET 9
-
-struct ViewPort {
-   ivec2 loc;
-   ivec2 size;
-};
-
-struct Surface {
-   ivec2 size;
-   ViewPort viewport;
-   vec4 clearColor;
-   mat4 modelView;
-   mat4 projection;
-   GLuint texture;
-   GLuint depth;
-   GLuint fbo;
-};
-
-struct UniformHandles {
-   GLuint modelview;
-   GLuint projection;
-   GLuint normalMatrix;
-   GLuint lightPosition;
-   GLuint ambientMaterial;
-   GLuint specularMaterial;
-   GLuint shininess;
-   GLuint sampler0;
-   GLuint sampler1;
-   GLuint sampler2;
-   GLuint sampler3;
-   GLuint sampler4;
-};
-
-struct AttributeHandles {
-   GLuint position;
-   GLuint normal;
-   GLuint diffuseMaterial;
-   GLuint textureCoord;
-};
-
-struct ShaderProgram {
-   SHADER_TYPE type;
-   GLuint program;
-   GLuint vertexShader;
-   GLuint fragmentShader;
-   UniformHandles uniforms;
-   AttributeHandles attributes;
-};
-
-
 
 
 struct MeshRef: public IRef {
@@ -81,47 +33,60 @@ struct TextureRef: public IRef {
    int count;
 };
 
-// used by the loading thread
-enum LOAD_JOB_TYPE {
-   LOAD_JOB_MESH,
-   LOAD_JOB_TEXTURE,
+enum FRAME_BUFFER_TYPE {
+   FRAME_BUFFER_SCREEN,
+   FRAME_BUFFER_PASS0,
+   FRAME_BUFFER_PASS1,
+   FRAME_BUFFER_REDUCE0,
+   FRAME_BUFFER_REDUCE1,
+   FRAME_BUFFER_REDUCE2,
+   FRAME_BUFFER_REDUCE3,
 };
 
-struct LoadingJob {
-   LoadingJob(LOAD_JOB_TYPE t, IRef *r) {
-      data = NULL;
-      type = t;
-      ref = r;
-   }
-   void *data;
-   LOAD_JOB_TYPE type;
-   IRef *ref;
+struct FrameBuffer {
+   ivec2 bufferSize;
+   ivec2 viewSize;
+   ivec2 viewLoc;
+   vec4 clearColor;
+   GLuint texture;
+   GLuint depth;
+   GLuint fbo;
+   FRAME_BUFFER_TYPE type;
 };
 
-class LoadingJobs {
-public:
-   LoadingJobs(IResourceManager *resourceManager);
-   ~LoadingJobs();
-   IResourceManager* GetResourceManager();
-   void AddJob(LoadingJob *job);
-   LoadingJob* GetJob();
-   LoadingJob* GetJobIn();
-   void AddJobOut(LoadingJob *job);
-private:
-   SDL_mutex *lockIn;
-   SDL_mutex *lockOut;
-   SDL_cond *newJob;
-   list<LoadingJob*> in;
-   list<LoadingJob*> out;
-   SDL_Thread *m_loaderThread;
-   IResourceManager *m_resourceManager;
+struct UniformHandles {
+   GLuint modelview;
+   GLuint projection;
+   GLuint normalMatrix;
+   GLuint ambientMaterial;
+   GLuint specularMaterial;
+   GLuint shininess;
+   GLuint *samplers;
 };
 
-int loader_thread(void *jobs);
-void CreateSurface(Surface *surface, bool depth);
-void BindSurface(Surface *surface);
-void ClearSurface();
-void CheckFBO();
-void CheckError(string call);
+struct AttributeHandles {
+   GLuint position;
+   GLuint normal;
+   GLuint diffuseMaterial;
+   GLuint textureCoord;
+};
+
+struct ShaderProgram {
+   SHADER_TYPE type;
+   GLuint program;
+   GLuint vertexShader;
+   GLuint fragmentShader;
+   int numTextures;
+   UniformHandles uniforms;
+   AttributeHandles attributes;
+};
+
+GLuint buildShader(const char* source, GLenum shaderType);
+ShaderProgram buildProgram(const char* vShader, const char* fShader, ShaderProgram &program);
+void createFrameBuffer(FrameBuffer &fb, bool depth);
+void checkFBO();
+void checkError(string call);
+void addMesh(MeshData *meshData, MeshRef *meshRef);
+void addTexture(TextureData *textureData, TextureRef *textureRef);
 
 #endif

@@ -5,7 +5,7 @@
 #define MID_BUFFER_WIDTH 2
 #include <cmath>
 
-Path::Path(WorldData *data) {
+Path::Path(WorldData* data) {
    worldData = data;
    currentPoint = 1;
    previousPoint = 0;
@@ -188,4 +188,22 @@ PathPoint Path::update(Vector3<float> refPos, Vector3<float> playerPos)
 
 int Path::getSize() {
   return points.size();
+}
+
+int Path::getNdx()
+{
+   return currentPoint;
+}
+
+void Path::addToQuadrants(vec3 position, GameObject* gameObj, Object3d* obj3D) 
+{
+  for (vector<PathPoint>::iterator pointIter = points.begin(); pointIter != points.end(); pointIter++) {
+    if ((*pointIter).fitsQuadrant(position)) {
+      (*pointIter).addToQuadrant(gameObj, obj3D);
+    }
+  }
+}
+
+Quadrant Path::getCurrentQuadrant() {
+  return getCurrent().getQuadrant();
 }

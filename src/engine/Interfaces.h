@@ -16,6 +16,13 @@
 #include <string>
 #include <iostream>
 
+// Used for unit testing
+#define GAME_DEBUG
+
+// Uncomment this line for production
+// #undef GAME_DEBUG
+
+
 using namespace std;
 
 
@@ -145,6 +152,7 @@ struct IGameEngine {
    virtual bool handleEvents() = 0;
    virtual bool handleKeyUp(SDLKey key) = 0;
    virtual void handleMouseMotion(Uint16 x, Uint16 y) = 0;
+   virtual ICamera& getCamera() = 0;
 };
 
 

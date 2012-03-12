@@ -43,7 +43,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_exhaustMesh->setModelMtx(modelMtx);
    
    // god mode much?
-   m_health = 200;
+   m_health = 2000;
 
    magnet = true;
 }
@@ -100,6 +100,11 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    x += vx * time;
    y += vy * time;
    updateVelocity(lastScreenX, lastScreenY);
+
+   //cout << "Position : " << m_position.x << ", " << m_position.y << ", " <<
+   //   m_position.z << "\n";
+   //cout << "Forward : " << m_forward.x << ", " << m_forward.y << ", " <<
+   //   m_forward.z << "\n";
 }
 
 void Player::updateVelocity(float diffX, float diffY)

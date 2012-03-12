@@ -24,6 +24,11 @@ public:
    PathPoint* getPreviousPointer();
    PathPoint* getCurrentPointer();
    int getSize();
+   int getNdx();
+
+   void addToQuadrants(vec3 position, GameObject* gameObj, Object3d* obj3D);
+   Quadrant getCurrentQuadrant();
+
    WorldData* worldData;
    
  private:
@@ -33,6 +38,7 @@ public:
   int currentPoint;
   //TODO
   int previousPoint;
+
 };
 
 #endif

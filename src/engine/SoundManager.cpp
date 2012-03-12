@@ -9,7 +9,7 @@ SoundManager::SoundManager(){
 
 
 SoundManager::~SoundManager(){
-   for(int ii; ii < numSoundEvents; ii++){
+   for(int ii = 0; ii < numSoundEvents; ii++){
       m_sounds[ii].clear();
    }
 }

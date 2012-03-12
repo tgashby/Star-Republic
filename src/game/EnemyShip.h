@@ -35,7 +35,7 @@ public:
     * @param modules the Modules pointer
     * @param p the player reference to pass to Enemy
     */
-   EnemyShip(string fileName, string textureName, Modules *modules, Player &p);
+   EnemyShip(string fileName, string textureName, Modules *modules, Player *p);
    ~EnemyShip();
    
    /**
