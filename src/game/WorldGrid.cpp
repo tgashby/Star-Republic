@@ -85,7 +85,7 @@ void WorldGrid::tic(uint64_t dt)
          if (turret->isAlive() && dirToPlayer.Length() < 1500 && turret->shouldFire())
          {
             vec3 dirToPlayerNorm = dirToPlayer.Normalized();
-            
+
             Bullet* bullet = 
             new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                        m_modules, turret->getHeadPosition(), 
@@ -125,10 +125,10 @@ void WorldGrid::tic(uint64_t dt)
 	    currentClosest = enemyShip;
 	 }
          
-         if (dirEnemyToPlayer.Length() < 700 && enemyShip->shouldFire())
+         if (dirEnemyToPlayer.Length() < 700 && enemyShip->shouldFire() && enemyShip->isAlive())
          {
             vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
-            
+
             Bullet* bullet = 
             new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                        m_modules, enemyShip->getLeftCannonPos(), 
@@ -167,8 +167,9 @@ void WorldGrid::tic(uint64_t dt)
 	 }
          
          if (dirEnemyToPlayer.Length() < 1600 &&
-             (enemyShip->shouldFire1() || enemyShip->shouldFire2()))
+             (enemyShip->shouldFire1() || enemyShip->shouldFire2()) && enemyShip->isAlive())
          {
+
             vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
             
             if (enemyShip->shouldFire1())
