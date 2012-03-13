@@ -62,16 +62,18 @@ EnemyShip::~EnemyShip()
 //All Vectors are updated in here
 void EnemyShip::tic(uint64_t time)
 {
-
-  if ((m_playerRef->getPosition() - m_position).Length() > LODDISTANCE)
+  if (isAlive())
   {
-     m_mesh->setVisible(false);
-     m_LODmesh->setVisible(true);
-  }
-  else
-  {
-     m_mesh->setVisible(true);
-     m_LODmesh->setVisible(false);
+    if ((m_playerRef->getPosition() - m_position).Length() > LODDISTANCE)
+    {
+       m_mesh->setVisible(false);
+       m_LODmesh->setVisible(true);
+    }
+    else
+    {
+       m_mesh->setVisible(true);
+       m_LODmesh->setVisible(false);
+    }
   }
 
   if (time == 0)
@@ -263,6 +265,7 @@ void EnemyShip::doCollision(GameObject & other)
      {
        m_alive = false;
        m_mesh->setVisible(false);
+       m_LODmesh->setVisible(false);
        setExplosionPosition(m_position);
      }
 }

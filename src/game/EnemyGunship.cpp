@@ -93,15 +93,18 @@ EnemyGunship::~EnemyGunship()
 //All Vectors are updated in here
 void EnemyGunship::tic(uint64_t time)
 {
-  if ((m_playerRef->getPosition() - m_position).Length() > LODDISTANCE)
+  if (isAlive())
   {
-     m_mesh->setVisible(false);
-     m_LODmesh->setVisible(true);
-  }
-  else
-  {
-     m_mesh->setVisible(true);
-     m_LODmesh->setVisible(false);
+    if ((m_playerRef->getPosition() - m_position).Length() > LODDISTANCE)
+    {
+       m_mesh->setVisible(false);
+       m_LODmesh->setVisible(true);
+    }
+    else
+    {
+       m_mesh->setVisible(true);
+       m_LODmesh->setVisible(false);
+    }
   }
 
   dpos = (m_playerRef->getPosition() - m_position);
@@ -342,6 +345,7 @@ void EnemyGunship::doCollision(GameObject & other)
      {
        m_alive = false;
        m_mesh->setVisible(false);
+       m_LODmesh->setVisible(false);
        m_turretbasemesh1->setVisible(false);
        m_turretheadmesh1->setVisible(false);
        m_turretbasemesh2->setVisible(false);
