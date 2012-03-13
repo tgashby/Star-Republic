@@ -42,6 +42,10 @@ void GameEngine::InitData()
    
    m_path = new Path(m_worldData);
    
+   m_main = new Menu("models/menupanel.obj", "textures/mainmenu.bmp", m_modules);
+   m_victory = new Menu("models/menupanel.obj", "textures/victory.bmp", m_modules);
+   m_gameover = new Menu("models/menupanel.obj", "textures/gameover.bmp", m_modules);
+
    m_camera = new Camera(m_path->getCurrentPointer(), m_path->getPreviousPointer());
    m_skybox = new SkyBox("models/box3.obj", "textures/box3.bmp", m_modules, m_camera->getPosition());
    m_player = new Player("models/spaceship.obj", "textures/spaceship2.bmp",
@@ -73,6 +77,7 @@ m_camera->getForward(), m_camera->getUp());
    m_modules->renderingEngine->addObject3d(m_player);
    m_modules->renderingEngine->addObject3d(m_skybox);
    m_modules->renderingEngine->addObject3d(m_reticle);
+   m_modules->renderingEngine->addObject3d(m_main);
    //m_modules->renderingEngine->addObject3d(explosion);
    
 //   m_worldGrid->placeInGrid(m_enemyShip, m_enemyShip);
@@ -258,6 +263,11 @@ void GameEngine::render() {
       m_modules->renderingEngine->clearScreen();
       m_modules->renderingEngine->drawText("STAR REPUBLIC", ivec2(-350,0), ivec2(800,100));
       m_modules->renderingEngine->drawText("Press Any Button To Begin", ivec2(-350, -100), ivec2(500,50));
+
+      /*list<IObject3d*> objs;
+      objs.push_back(m_main);
+      m_modules->renderingEngine->render(objs);
+      m_modules->renderingEngine->drawMesh(m_main->m_mesh, m_main->modelMtx);*/
    }
    if (m_stateManager->getCurrentState() == m_lose)
    {
