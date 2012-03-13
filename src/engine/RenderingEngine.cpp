@@ -213,7 +213,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    //glDisable(GL_CULL_FACE);
    //glDisable(GL_TEXTURE_2D);
    //glDisable(GL_LIGHTING);
-   //glClear(GL_COLOR_BUFFER_BIT);// | GL_DEPTH_BUFFER_BIT);
+   //glClear(GL_COLOR_BUFFER_BIT);//| GL_DEPTH_BUFFER_BIT);
    //glFlush();
    //glEnable(GL_LIGHTING);
    glColor4f(0.5, 0.5, 0.5, 1.0);
@@ -224,7 +224,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
 
    //glDisable(GL_COLOR_MATERIAL);
    
-   SDL_GL_SwapBuffers();
+   //SDL_GL_SwapBuffers();
    glPopMatrix();
    //glEnable(GL_DEPTH_TEST);
 
