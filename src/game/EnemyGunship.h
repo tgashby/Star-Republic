@@ -144,6 +144,7 @@ private:
    uint64_t motionTimer;
    // for moving 
    int xdir, ydir, pxdir, pydir;
+   int flashtimer;
 };
 
 #endif

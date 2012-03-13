@@ -9,12 +9,10 @@ Menu::Menu(string fileName, string textureName, Modules *modules)
   m_mesh->setModelMtx(modelMtx);
 
   m_mesh->setVisible(true);
-
 }
 
 Menu::~Menu()
 {
-   delete m_mesh;
 }
 
 

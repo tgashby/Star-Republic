@@ -24,7 +24,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_exhaustMesh = new Mesh("models/spaceship_exhaust.obj", "textures/test4.bmp", modules);
    m_exhaustMesh->setShaderType(SHADER_BLOOM);
    m_meshList.push_back(m_exhaustMesh);
-   m_isFlashing = false;
+   //m_isFlashing = false;
    
 
    // these are relative to the 'forward' vector
@@ -44,6 +44,8 @@ Player::Player(string fileName, string textureName, Modules *modules,
    
    // god mode much?
    m_health = 2000;
+
+   m_flashtimer = 0;
 
    magnet = true;
 }
@@ -73,7 +75,7 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    m_offsetPosition += (m_sideVelocity * time) + (m_upVelocity * time);
    m_position = m_offsetPosition + tempPos;
 
-   if (m_isFlashing) {
+   /*if (m_isFlashing) {
       m_count++;
       int temp = m_count % 4;
       if (temp < 2 && temp > 0) {
@@ -88,6 +90,17 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
          m_count = 0;
          m_isFlashing = false;
       }
+   }*/
+   if (m_flashtimer != 0)
+   {
+      m_shipMesh->setVisible(false);
+      m_exhaustMesh->setVisible(false);
+      m_flashtimer--;
+   }
+   else
+   {
+      m_shipMesh->setVisible(true);
+      m_exhaustMesh->setVisible(true);
    }
 
    /** set the model matrix based on a constant scale and rotate and
@@ -194,14 +207,16 @@ void Player::doCollision(GameObject & other)
       if (&((Bullet&)other).getParent() != this)
       {
          m_health -= 2;
-         m_isFlashing = true;
+         if (m_flashtimer == 0)
+            m_flashtimer = 3;
       }
    }
    
    if (typeid(other) == typeid(Turret))
    {
      m_health -= 10;
-     m_isFlashing = true;
+     if (m_flashtimer == 0)
+        m_flashtimer = 3;
    }
    
    if (m_health <= 0) {

@@ -83,7 +83,7 @@ private:
    void collideWith(Player& player);
    void collideWith(Enemy& enemy);
    void collideWith(Missile& missile);
-   
+   int flashtimer;
 //   std::list<Bullet*> m_bullets;
 };
 
