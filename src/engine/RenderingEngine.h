@@ -39,11 +39,9 @@ private:
    ICamera *m_camera;
    ResourceLoader *m_loader;
    
-   // plane stuff (remove when there is a dedicated IMesh class for this)
-   GLuint m_planeVert;
-   GLuint m_planeInt;
    Mesh *m_planeMesh;
    vector<IRef*> *m_planeTextures;
+   mat4 m_screenMtx;
    
    map<string, MeshRef*> m_meshMap;
    map<string, TextureRef*> m_textureMap;
