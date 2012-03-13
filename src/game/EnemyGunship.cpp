@@ -14,6 +14,7 @@
 #define _ENEMY_GUNSHIP_EXPLOSION_RADIUS 60.0f
 #define UPDATEDISTANCE 2000.0
 #define RADTODEG 180 / 3.1415
+#define LODDISTANCE 2500
 const float PATHVELOCITY = 0.03f;
 const float AIMVELOCITY = 0.00016f;
 const float x_SCALAR = 0.0005f; 
@@ -24,7 +25,7 @@ const float TURRETHEAD_SCALE = 0.2f;
 const float ROTATE_CONSTANT = -90;
 
 /** Gunner Enemy: Takes in the mesh info and a reference to the player to aim at **/
-EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
+EnemyGunship::EnemyGunship(string fileName, string LODname, string turretFileName1,
 			   string turretFileName2, string bodyTextureName,
                            string baseTextureName, string headTextureName, 
 			   Modules *modules, Player *p) 
@@ -34,6 +35,8 @@ EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
 {
   m_mesh = new Mesh(fileName, bodyTextureName, modules);
   m_meshList.push_back(m_mesh);
+  m_LODmesh = new Mesh(LODname, bodyTextureName, modules);
+  m_meshList.push_back(m_LODmesh);
   m_turretbasemesh1 = new Mesh(turretFileName1, baseTextureName, modules);
   m_meshList.push_back(m_turretbasemesh1);
   m_turretheadmesh1 = new Mesh(turretFileName2, headTextureName, modules);
@@ -64,6 +67,7 @@ EnemyGunship::EnemyGunship(string fileName, string turretFileName1,
   mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
      mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1)) * mat4::Magic(-getForward(), getUp(), getPosition());
   m_mesh->setModelMtx(modelMtx);
+  m_LODmesh->setModelMtx(modelMtx);
 
   /** first turret **/
   mat4 modelMtx2 = mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(90, vec3(0,0,1)) *
@@ -89,6 +93,17 @@ EnemyGunship::~EnemyGunship()
 //All Vectors are updated in here
 void EnemyGunship::tic(uint64_t time)
 {
+  if ((m_playerRef->getPosition() - m_position).Length() > LODDISTANCE)
+  {
+     m_mesh->setVisible(false);
+     m_LODmesh->setVisible(true);
+  }
+  else
+  {
+     m_mesh->setVisible(true);
+     m_LODmesh->setVisible(false);
+  }
+
   dpos = (m_playerRef->getPosition() - m_position);
   if (isAlive() && (dpos.Length() < UPDATEDISTANCE)) {
     /** the normalized vector between the player and the enemy **/
@@ -111,6 +126,7 @@ void EnemyGunship::tic(uint64_t time)
                     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
     modelMtx *= mat4::Magic(m_forward, m_up, m_position);
     m_mesh->setModelMtx(modelMtx);
+    m_LODmesh->setModelMtx(modelMtx);
 
     /** first turret **/
     mat4 modelMtx2 =  mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *
@@ -206,7 +222,8 @@ void EnemyGunship::tic(uint64_t time)
                     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
     modelMtx *= mat4::Magic(m_forward, m_up, m_position);
     m_mesh->setModelMtx(modelMtx);
-    m_mesh->setVisible(true);
+    m_LODmesh->setModelMtx(modelMtx);
+    m_LODmesh->setVisible(true);
 
     /** first turret **/
     mat4 modelMtx2 =  mat4::Scale(TURRETBASE_SCALE) * mat4::Rotate(-90, vec3(0,1,0)) *

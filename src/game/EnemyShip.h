@@ -31,11 +31,12 @@ public:
     * and the texture file path respectively, a Modules pointer, and a 
     * player reference.
     * @param fileName the object file, i.e. the model
+    * @param LODname the smaller object file, i.e. the distant, LOD-model
     * @param textureName the texture file
     * @param modules the Modules pointer
     * @param p the player reference to pass to Enemy
     */
-   EnemyShip(string fileName, string textureName, Modules *modules, Player *p);
+   EnemyShip(string fileName, string LODname, string textureName, Modules *modules, Player *p);
    ~EnemyShip();
    
    /**
@@ -118,6 +119,7 @@ public:
    vec3 getPosition();
 private:
    Mesh *m_mesh;
+   Mesh *m_LODmesh;
    Vector3<float> side;
    Vector3<float> dpos;
    Vector3<float> spawnpos;

@@ -342,7 +342,7 @@ void GameEngine::addAsteroids() {
 
       //ADD AN ASTEROID
       if (pntIndex % 2 == 0) {
-	tempShip = new EnemyShip("models/enemyship.obj", "textures/enemyshiptexture.bmp", m_modules, m_player);
+	tempShip = new EnemyShip("models/enemyship.obj", "models/enemysmaller.obj", "textures/enemyshiptexture.bmp", m_modules, m_player);
 
 	tempShip->setSpawnPosition(current.getPosition());
         tempShip->tic(0);
@@ -354,7 +354,7 @@ void GameEngine::addAsteroids() {
     m_enemyShips.push_back(tempShip);
       }
       else {
-	tempGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2turretbase.obj", "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp", m_modules, m_player);
+	tempGunner = new EnemyGunship("models/enemy2.obj", "models/enemy2smaller.obj", "models/enemy2turretbase.obj", "models/enemy2turrethead.obj", "textures/enemy2texture.bmp", "textures/enemy2turretbasetex.bmp", "textures/enemy2turretheadtex.bmp", m_modules, m_player);
 	tempGunner->setSpawnPosition(current.getPosition());
         tempGunner->tic(0);
          

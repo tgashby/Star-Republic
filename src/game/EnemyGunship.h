@@ -24,6 +24,7 @@ class EnemyGunship : public Flyer, public Enemy, public Explodeable {
     * and the texture file path respectively, a Modules pointer, and a 
     * player reference.
     * @param fileName the object file, i.e. the model
+    * @param LODname the smaller object file, i.e. the distant, LOD-model
     * @param turretFileName1 an object file for the turretbase
     * @param turretFileName2 an object file for the turrethead
     * @param bodyTextureName the texture file for the main part of the model
@@ -32,7 +33,7 @@ class EnemyGunship : public Flyer, public Enemy, public Explodeable {
     * @param modules the Modules pointer
     * @param p the player reference to pass to Enemy
     */
-   EnemyGunship(string fileName, string turretFileName1, string turretFileName2,
+   EnemyGunship(string fileName, string LODname, string turretFileName1, string turretFileName2,
       string bodyTextureName, string baseTextureName, 
       string headTextureName,  Modules *modules, Player *p);
    
@@ -128,6 +129,7 @@ class EnemyGunship : public Flyer, public Enemy, public Explodeable {
 
 private:
    Mesh *m_mesh;
+   Mesh *m_LODmesh;
    /** two turrets, each consisting of 2 parts **/
    Mesh *m_turretbasemesh1, *m_turretbasemesh2;
    Mesh *m_turretheadmesh1, *m_turretheadmesh2;

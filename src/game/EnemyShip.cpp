@@ -12,14 +12,17 @@
 #define DODGETIME 50
 #define SIZE 40
 #define EXPLOSION_SIZE 40
+#define LODDISTANCE 2500
 
 /** Scared Enemy: Takes in the mesh info and a reference to the player to aim at **/
-EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Player *p) 
+EnemyShip::EnemyShip(string fileName, string LODname, string textureName, Modules *modules, Player *p) 
   :  Explodeable(vec3(0,0,0), EXPLOSION_SIZE, modules), 
      Flyer(), Enemy(p), side(1,0,0), currentAngle(0), prevAngle(0)
 {
   m_mesh = new Mesh(fileName, textureName, modules);
   m_meshList.push_back(m_mesh);
+  m_LODmesh = new Mesh(LODname, textureName, modules);
+  m_meshList.push_back(m_LODmesh);
 
   /** aim vector **/
   dpos = (m_playerRef->getPosition() - m_position).Normalized();
@@ -41,6 +44,10 @@ EnemyShip::EnemyShip(string fileName, string textureName, Modules *modules, Play
      mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1)) *
      mat4::Magic(-getForward(), getUp(), getPosition());
   m_mesh->setModelMtx(modelMtx);
+  m_LODmesh->setModelMtx(modelMtx);
+
+  m_mesh->setVisible(false);
+  m_LODmesh->setVisible(true);
 
   m_health = 20;
 
@@ -55,13 +62,26 @@ EnemyShip::~EnemyShip()
 //All Vectors are updated in here
 void EnemyShip::tic(uint64_t time)
 {
+
+  if ((m_playerRef->getPosition() - m_position).Length() > LODDISTANCE)
+  {
+     m_mesh->setVisible(false);
+     m_LODmesh->setVisible(true);
+  }
+  else
+  {
+     m_mesh->setVisible(true);
+     m_LODmesh->setVisible(false);
+  }
+
   if (time == 0)
   {
      mat4 modelMtx = mat4::Scale(mODEL_SCALE) * mat4::Rotate(ROTATE_CONSTANT, vec3(0,1,0)) *
                     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
      modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
      m_mesh->setModelMtx(modelMtx);
-     m_mesh->setVisible(true);
+     m_LODmesh->setModelMtx(modelMtx);
+     m_LODmesh->setVisible(true);
   }
 
   //printf("WT");
@@ -122,6 +142,7 @@ void EnemyShip::tic(uint64_t time)
                     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
     modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
     m_mesh->setModelMtx(modelMtx);
+    m_LODmesh->setModelMtx(modelMtx);
     
     /** update the timer for shooting **/
     firingTimer += time;
