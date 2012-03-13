@@ -58,6 +58,7 @@ struct UniformHandles {
    GLuint modelview;
    GLuint projection;
    GLuint normalMatrix;
+   GLuint textureMatrix;
    GLuint ambientMaterial;
    GLuint specularMaterial;
    GLuint shininess;

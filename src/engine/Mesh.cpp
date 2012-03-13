@@ -6,6 +6,7 @@ Mesh::Mesh(string meshName, string textureName, Modules *modules) {
    
    m_modules = modules;
    m_modelMatrix = mat4::Identity();
+   m_textureMatrix = mat4::Identity();
    m_color = vec4(0.8f, 0.8f, 0.8f, 1.0f);
    m_visible = true;
    m_scale = vec3(DEFAULT_SCALE, DEFAULT_SCALE, DEFAULT_SCALE);
@@ -67,6 +68,14 @@ void Mesh::setScale3v(vec3 scale) {
 
 vec3 Mesh::getScale() {
    return m_scale;
+}
+
+mat4 Mesh::getTextureMtx() {
+   return m_textureMatrix;
+}
+
+void Mesh::setTextureMtx(mat4 textureMtx) {
+   m_textureMatrix = textureMtx;
 }
 
 vec4 Mesh::getColor() {
