@@ -127,7 +127,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
          // Draw the mesh
          drawMesh((*mesh), projectionViewMatrix1);
       }
-   }
+      }
    
    glDisable(GL_DEPTH);
    glEnable(GL_BLEND);
@@ -191,7 +191,8 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    
    glEnable(GL_DEPTH);
    glDisable(GL_BLEND);
-
+   
+   
    //MY CODE BELOW HERE
    //glBegin(GL_POLYGON);
    //glMatrixMode(GL_MODELVIEW);
@@ -199,18 +200,36 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    glMatrixMode(GL_PROJECTION);
    glPushMatrix();
    glLoadIdentity();
-   glOrtho(0, 800, 0, 500, -1, 1);
+   //glOrtho(0, 800, 0, 500, -1, 1);
+
+   glEnable(GL_BLEND);
+   glDisable(GL_DEPTH);
    glDisable(GL_DEPTH_TEST);
+
+   //glClear(GL_COLOR_BUFFER_BIT);
+   //glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
+   //glEnable(GL_COLOR_MATERIAL);
+   
    //glDisable(GL_CULL_FACE);
    //glDisable(GL_TEXTURE_2D);
    //glDisable(GL_LIGHTING);
    //glClear(GL_COLOR_BUFFER_BIT);// | GL_DEPTH_BUFFER_BIT);
-   glColor3f(1.0, 1.0, 1.0);
+   //glFlush();
+   //glEnable(GL_LIGHTING);
+   glColor4f(0.5, 0.5, 0.5, 1.0);
    glRectf(.05, .04, .6, .09);
-   glColor3f(.24, 1.0, .69);
-   glRectf(.08, .05, .57, .08);
+   glColor4f(.24, 1.0, .69, 1.0);
+   //glRectf(.08, .05, .57, .08);
+   glRectf(.08, .05, .08 + (.49 * getPercentHealth()), .08);
+
+   //glDisable(GL_COLOR_MATERIAL);
+   
    SDL_GL_SwapBuffers();
    glPopMatrix();
+   //glEnable(GL_DEPTH_TEST);
+
+   glDisable(GL_BLEND);
+   glEnable(GL_DEPTH);
    glEnable(GL_DEPTH_TEST);
    //glEnd();
    //SDL_GL_SwapBuffers();
@@ -218,6 +237,10 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    //glEnd();
    //glutSwapBuffers();
    //END MY CODE
+}
+
+float RenderingEngine::getPercentHealth() {
+   return .5;
 }
 
 void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
