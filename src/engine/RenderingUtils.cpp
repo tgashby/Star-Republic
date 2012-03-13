@@ -43,6 +43,7 @@ ShaderProgram buildProgram(const char* vertexShaderSource, const char* fragmentS
    program.uniforms.projection = glGetUniformLocation(program.program, "Projection");
    program.uniforms.modelview = glGetUniformLocation(program.program, "Modelview");
    program.uniforms.normalMatrix = glGetUniformLocation(program.program, "NormalMatrix");
+   program.uniforms.textureMatrix = glGetUniformLocation(program.program, "TextureMatrix");
    program.uniforms.ambientMaterial = glGetUniformLocation(program.program, "AmbientMaterial");
    program.uniforms.specularMaterial = glGetUniformLocation(program.program, "SpecularMaterial");
    program.uniforms.shininess = glGetUniformLocation(program.program, "Shininess");

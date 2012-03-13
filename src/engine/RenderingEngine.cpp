@@ -88,6 +88,7 @@ void RenderingEngine::removeObject3d(IObject3d *obj) {
 }
 
 void RenderingEngine::render(list<IObject3d *> &objects) {
+
    list<IMesh *> bloomedMeshes(0);
    
    addLoaded();
@@ -190,6 +191,57 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    
    glEnable(GL_DEPTH);
    glDisable(GL_BLEND);
+   
+   //MY CODE BELOW HERE
+   //glBegin(GL_POLYGON);
+   //glMatrixMode(GL_MODELVIEW);
+   //glLoadIdentity();
+   glMatrixMode(GL_PROJECTION);
+   glPushMatrix();
+   glLoadIdentity();
+   //glOrtho(0, 800, 0, 500, -1, 1);
+
+   glEnable(GL_BLEND);
+   glDisable(GL_DEPTH);
+   
+   
+   glDisable(GL_DEPTH_TEST);
+
+   //glClear(GL_COLOR_BUFFER_BIT);
+   //glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
+   //glEnable(GL_COLOR_MATERIAL);
+   
+   //glDisable(GL_CULL_FACE);
+   //glDisable(GL_TEXTURE_2D);
+   //glDisable(GL_LIGHTING);
+   //glClear(GL_COLOR_BUFFER_BIT);//| GL_DEPTH_BUFFER_BIT);
+   //glFlush();
+   //glEnable(GL_LIGHTING);
+   glColor4f(0.5, 0.5, 0.5, 1.0);
+   glRectf(.05, .04, .6, .09);
+   glColor4f(.24, 1.0, .69, 1.0);
+   //glRectf(.08, .05, .57, .08);
+   glRectf(.08, .05, .08 + (.49 * getPercentHealth()), .08);
+
+   //glDisable(GL_COLOR_MATERIAL);
+   
+   //SDL_GL_SwapBuffers();
+   glPopMatrix();
+   //glEnable(GL_DEPTH_TEST);
+
+   glDisable(GL_BLEND);
+   glEnable(GL_DEPTH);
+   glEnable(GL_DEPTH_TEST);
+   //glEnd();
+   //SDL_GL_SwapBuffers();
+   
+   //glEnd();
+   //glutSwapBuffers();
+   //END MY CODE
+}
+
+float RenderingEngine::getPercentHealth() {
+   return .5;
 }
 
 void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
@@ -239,6 +291,10 @@ void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
    // Set the normal matrix
    mat3 normalMtx = modelMtx.ToMat3();
    glUniformMatrix3fv(m_curShaderProgram->uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
+   
+   // Set the texture matrix
+   mat4 textureMtx = mat4::Identity();
+   glUniformMatrix4fv(m_curShaderProgram->uniforms.textureMatrix, 1, 0, textureMtx.Pointer());
    
    
 	int stride = 11 * sizeof(GLfloat);
@@ -295,6 +351,10 @@ void RenderingEngine::drawMesh(IMesh *mesh, mat4 projection) {
    // Set the normal matrix
    mat3 normalMtx = mesh->getModelMtx().ToMat3();
    glUniformMatrix3fv(m_curShaderProgram->uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
+   
+   // Set the texture matrix
+   mat4 textureMtx = mesh->getTextureMtx();
+   glUniformMatrix4fv(m_curShaderProgram->uniforms.textureMatrix, 1, 0, textureMtx.Pointer());
    
    // Draw the surface.
    int stride = 11 * sizeof(GLfloat);

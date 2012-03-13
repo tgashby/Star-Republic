@@ -33,6 +33,7 @@ private:
    void setShaderProgram(SHADER_TYPE type);
    void createFrameBuffers();
    void setFrameBuffer(FRAME_BUFFER_TYPE fb);
+   float getPercentHealth();
    ivec2 m_screenSize;
    Modules *m_modules;
    ICamera *m_camera;

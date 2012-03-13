@@ -5,6 +5,7 @@ attribute vec2 TextureCoord;
 uniform mat4 Projection;
 uniform mat4 Modelview;
 uniform mat3 NormalMatrix;
+uniform mat4 TextureMatrix;
 uniform vec3 AmbientMaterial;
 uniform vec3 SpecularMaterial;
 uniform float Shininess;
@@ -17,7 +18,6 @@ void main(void)
    vec3 normal = normalize(Normal);
    vec3 N = normalize(NormalMatrix * normal);
    vec3 L = normalize(gl_LightSource[0].position.xyz);
-   //vec3 L = normalize(vec3(1, 1, 1));
    vec3 E = vec3(0, 0, 1);
    vec3 H = normalize(L + E);
    
@@ -31,5 +31,5 @@ void main(void)
    
    DestinationColor = vec4(color, 1);
    gl_Position = Projection * Modelview * Position;
-   TextureCoordOut = TextureCoord;
+   TextureCoordOut = vec2(TextureMatrix * vec4(TextureCoord, 1, 1));
 }
