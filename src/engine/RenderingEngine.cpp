@@ -1,17 +1,5 @@
 #include "RenderingEngine.h"
 
-float planeVertices[] = {
-   0, 0, -1,   0, 0, 1,   0, 0, 0,   0, 0,
-   0, 1, -1,   0, 0, 1,   0, 0, 0,   0, 1,
-   1, 1, -1,   0, 0, 1,   0, 0, 0,   1, 1,
-   1, 0, -1,   0, 0, 1,   0, 0, 0,   1, 0
-};
-
-unsigned short planeIndices[] = {
-   0, 1, 2,
-   0, 2, 3
-};
-
 RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
    m_screenSize = screenSize;
    m_modules = modules;
@@ -29,21 +17,16 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
       exit(1);
    }
    
-   // Setup the plane (remove when deligated to its own class)
-   glGenBuffers(1, &m_planeVert);
-   glBindBuffer(GL_ARRAY_BUFFER, m_planeVert);
-   glBufferData(GL_ARRAY_BUFFER, 4 * VERTEX_STRIDE * sizeof(GLfloat), planeVertices, GL_STATIC_DRAW);
-   glGenBuffers(1, &m_planeInt);
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_planeInt);
-   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLushort), planeIndices, GL_STATIC_DRAW);
-   m_planeMesh = new Mesh("plane", "planeTexture", m_modules);
-   m_planeMesh->setScale3v(vec3(800, 600, 1));
-   m_planeMesh->setModelMtx(mat4::Translate(-400, -300, 0));
-   MeshRef *meshRef = new MeshRef("plane");
-   meshRef->vertexBuffer = m_planeVert;
-   meshRef->indexBuffer = m_planeInt;
-   meshRef->indexCount = 6;
-   m_planeMesh->setMeshRef(meshRef);
+   m_planeMesh = new Mesh("models/plane.obj", "", m_modules);
+   loadMesh(m_planeMesh);
+   
+   m_planeMesh->setScale3v(vec3(m_screenSize.x, m_screenSize.y, 1));
+   ivec2 halfScreen = screenSize / 2;
+   m_planeMesh->setModelMtx(mat4::Translate(-halfScreen.x, -halfScreen.y, 0));
+   
+   m_screenMtx = mat4::Parallel(-halfScreen.x, halfScreen.x, -halfScreen.y, halfScreen.y, 1, 10);
+   
+   // add the rest of the textures.
    m_planeTextures = m_planeMesh->getTextureRefs();
    (*m_planeTextures)[0] = (IRef*) new TextureRef("texture0");
    m_planeTextures->push_back(new TextureRef("texture1"));
@@ -97,8 +80,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    clearScreen();
    
    // Get the projection * view matrix from the camera.
-   mat4 projectionViewMatrix1 = m_camera->getProjectionViewMtx();
-   mat4 projectionViewMatrix2 = mat4::Parallel(-400, 400, -300, 300, 1, 10);
+   mat4 projectionViewMatrix = m_camera->getProjectionViewMtx();
    TextureRef *texture0 = (TextureRef*)(*m_planeTextures)[0];
    TextureRef *texture1 = (TextureRef*)(*m_planeTextures)[1];
    TextureRef *texture2 = (TextureRef*)(*m_planeTextures)[2];
@@ -125,7 +107,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
          }
          
          // Draw the mesh
-         drawMesh((*mesh), projectionViewMatrix1);
+         drawMesh((*mesh), projectionViewMatrix);
       }
    }
    
@@ -136,7 +118,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    clearScreen();
    m_planeMesh->setShaderType(SHADER_NO_LIGHT);
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_PASS1].texture;
-   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix2);
+   drawMesh((IMesh*) m_planeMesh, m_screenMtx);
    
    glEnable(GL_DEPTH);
    glDisable(GL_BLEND);
@@ -148,8 +130,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    
    // Draw the bloomed meshes.
    for (mesh = bloomedMeshes.begin(); mesh != bloomedMeshes.end(); ++mesh) {      
-      // Draw the mesh
-      drawMesh((*mesh), projectionViewMatrix1);
+      drawMesh((*mesh), projectionViewMatrix);
    }
    
    glDisable(GL_DEPTH);
@@ -159,25 +140,25 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    clearScreen();
    m_planeMesh->setShaderType(SHADER_NO_LIGHT);
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_PASS1].texture;
-   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix2);
+   drawMesh((IMesh*) m_planeMesh, m_screenMtx);
    
    setFrameBuffer(FRAME_BUFFER_REDUCE1);
    clearScreen();
    m_planeMesh->setShaderType(SHADER_NO_LIGHT);
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE0].texture;
-   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix2);
+   drawMesh((IMesh*) m_planeMesh, m_screenMtx);
 
    setFrameBuffer(FRAME_BUFFER_REDUCE2);
    clearScreen();
    m_planeMesh->setShaderType(SHADER_NO_LIGHT);
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE1].texture;
-   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix2);
+   drawMesh((IMesh*) m_planeMesh, m_screenMtx);
    
    setFrameBuffer(FRAME_BUFFER_REDUCE3);
    clearScreen();
    m_planeMesh->setShaderType(SHADER_NO_LIGHT);
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE2].texture;
-   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix2);
+   drawMesh((IMesh*) m_planeMesh, m_screenMtx);
    
    setFrameBuffer(FRAME_BUFFER_SCREEN);
    clearScreen();
@@ -187,7 +168,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    texture2->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE1].texture;
    texture3->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE2].texture;
    texture4->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE3].texture;
-   drawMesh((IMesh*) m_planeMesh, projectionViewMatrix2);
+   drawMesh((IMesh*) m_planeMesh, m_screenMtx);
    
    glEnable(GL_DEPTH);
    glDisable(GL_BLEND);
@@ -252,6 +233,8 @@ void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
    // get a font
    SDL_Color color = {255, 255, 255};
    
+   addLoaded();
+   
 	/* Use SDL_TTF to render our text */
 	initial = TTF_RenderText_Blended(m_font, text.c_str(), color);
 	assert(initial != NULL);
@@ -303,14 +286,15 @@ void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
    GLint position = m_curShaderProgram->attributes.position;
    GLint normal = m_curShaderProgram->attributes.normal;
    GLint texCoord = m_curShaderProgram->attributes.textureCoord;
+   MeshRef *meshRef = (MeshRef *) m_planeMesh->getMeshRef();
    
    glBindTexture(GL_TEXTURE_2D, textureBuffer);
-   glBindBuffer(GL_ARRAY_BUFFER, m_planeVert );
+   glBindBuffer(GL_ARRAY_BUFFER, meshRef->vertexBuffer);
    glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, 0);
    glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, normalOffset);
    glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, stride, texCoordOffset);
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_planeInt);
-   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshRef->indexBuffer);
+   glDrawElements(GL_TRIANGLES, meshRef->indexCount, GL_UNSIGNED_SHORT, 0);
 	
 	/* Bad things happen if we delete the texture before it finishes */
 	glFinish();
@@ -431,7 +415,7 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
    while (refIter != refs->end()) {
       ref = *refIter;
       
-      if (!ref->loaded && !ref->loading) {
+      if (!ref->loaded && !ref->loading && ref->fileName != "") {
          map<string, TextureRef*>::iterator textureIter = m_textureMap.find(ref->fileName);
          if (textureIter != m_textureMap.end()) {
             *refIter = textureIter->second;
