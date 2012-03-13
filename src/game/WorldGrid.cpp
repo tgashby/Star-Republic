@@ -330,10 +330,16 @@ void WorldGrid::makeGrid()
          vec3 forward = currProp.fwd;
          vec3 up = currProp.up;
          
-         SceneObject* sceneObj = new SceneObject("models/" + currProp.name + ".obj", "textures/" + currProp.name + ".bmp", position, forward, up, m_modules);
-         
-         m_path.addToQuadrants(position, NULL, sceneObj);
-         m_modules->renderingEngine->addObject3d(sceneObj);
+         if (currProp.name.find("Path") != string::npos) {
+            PathObject* pathObj = new PathObject("models/" + currProp.name + ".obj", "textures/" + currProp.name + ".bmp", m_modules, position, forward, up);
+            m_path.addToQuadrants(position, pathObj, pathObj);
+            m_modules->renderingEngine->addObject3d(pathObj);
+         }
+         else {
+            SceneObject* sceneObj = new SceneObject("models/" + currProp.name + ".obj", "textures/" + currProp.name + ".bmp", position, forward, up, m_modules);
+            m_path.addToQuadrants(position, NULL, sceneObj);
+            m_modules->renderingEngine->addObject3d(sceneObj);
+         }
       }
    }
 }

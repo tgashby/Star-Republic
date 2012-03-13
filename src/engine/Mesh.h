@@ -19,6 +19,8 @@ public:
    mat4 getModelMtx();
    void setScale(float scale);
    void setScale3v(vec3 scale);
+   mat4 getTextureMtx();
+   void setTextureMtx(mat4 textureMtx);
    vec3 getScale();
    vec4 getColor();
    void setColor(vec4 color);
@@ -33,6 +35,7 @@ private:
    IRef *m_meshRef;
    vector<IRef*> m_textureRefs;
    mat4 m_modelMatrix;
+   mat4 m_textureMatrix;
    vec4 m_color;
    MeshBounds m_bounds;
    Modules *m_modules;
