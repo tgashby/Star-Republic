@@ -88,6 +88,7 @@ void RenderingEngine::removeObject3d(IObject3d *obj) {
 }
 
 void RenderingEngine::render(list<IObject3d *> &objects) {
+
    list<IMesh *> bloomedMeshes(0);
    
    addLoaded();
@@ -190,6 +191,33 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    
    glEnable(GL_DEPTH);
    glDisable(GL_BLEND);
+
+   //MY CODE BELOW HERE
+   //glBegin(GL_POLYGON);
+   //glMatrixMode(GL_MODELVIEW);
+   //glLoadIdentity();
+   glMatrixMode(GL_PROJECTION);
+   glPushMatrix();
+   glLoadIdentity();
+   glOrtho(0, 800, 0, 500, -1, 1);
+   glDisable(GL_DEPTH_TEST);
+   //glDisable(GL_CULL_FACE);
+   //glDisable(GL_TEXTURE_2D);
+   //glDisable(GL_LIGHTING);
+   //glClear(GL_COLOR_BUFFER_BIT);// | GL_DEPTH_BUFFER_BIT);
+   glColor3f(1.0, 1.0, 1.0);
+   glRectf(.05, .04, .6, .09);
+   glColor3f(.24, 1.0, .69);
+   glRectf(.08, .05, .57, .08);
+   SDL_GL_SwapBuffers();
+   glPopMatrix();
+   glEnable(GL_DEPTH_TEST);
+   //glEnd();
+   //SDL_GL_SwapBuffers();
+   
+   //glEnd();
+   //glutSwapBuffers();
+   //END MY CODE
 }
 
 void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
