@@ -192,7 +192,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    glEnable(GL_DEPTH);
    glDisable(GL_BLEND);
    
-   
+   /*
    //MY CODE BELOW HERE
    //glBegin(GL_POLYGON);
    //glMatrixMode(GL_MODELVIEW);
@@ -238,7 +238,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    
    //glEnd();
    //glutSwapBuffers();
-   //END MY CODE
+   //END MY CODE*/
 }
 
 float RenderingEngine::getPercentHealth() {
