@@ -79,13 +79,8 @@ m_camera->getForward(), m_camera->getUp());
 //   m_worldGrid->placeInGrid(m_enemyGunner, m_enemyGunner);
    //m_objects.push_back(explosion);
    
-   initSound();
-   m_bulletSound = loadSound("sound/weapon1.wav");
-   m_missileSound = loadSound("sound/missileLaunch.wav");;
-   m_music = loadMusic("sound/ambient1.wav");
-   m_boostSound = loadSound("sound/boost.wav");
+   m_modules->soundManager->playBackgroundSound(Idle); 
    addAsteroids();
-   m_music->play(-1);
 }
 
 void GameEngine::tic(uint64_t td) {
@@ -135,13 +130,13 @@ void GameEngine::tic(uint64_t td) {
       bool allObjsDead = true;
       for (vector<Objective*>::iterator objIter = m_objectives.begin();
 	   objIter != m_objectives.end(); objIter++) {
-	 if ((*objIter)->isAlive()) {
-	    allObjsDead = false;
-	 }
+         if ((*objIter)->isAlive()) {
+            allObjsDead = false;
+         }
       }
       
       if (allObjsDead) {
-	 m_stateManager->pushState(m_win);
+         m_stateManager->pushState(m_win);
       }
    }
 }
@@ -383,7 +378,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    }
    if (key == SDLK_SPACE) {
       if(!m_camera->isBoosting()){
-         m_boostSound->play(-1);
+         m_modules->soundManager->playBackgroundSound(Boost); 
       }
       m_camera->setBoosting(true);
       m_reticle->setVisible(false);
@@ -418,8 +413,8 @@ bool GameEngine::handleKeyDown(SDLKey key) {
       
       
       
-      //m_modules->soundManager->playSound(PlayerGun); 
-	   m_bulletSound->play(0);
+      m_modules->soundManager->playSound(PlayerGun); 
+	   //m_bulletSound->play(0);
       }
    }
    return running;
@@ -551,7 +546,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
    
    if (key == SDLK_SPACE) {
       m_camera->setBoosting(false);
-      m_boostSound->stop();
+      m_modules->soundManager->stopBackgroundSound(Boost); 
       m_reticle->setVisible(true);
    }
    

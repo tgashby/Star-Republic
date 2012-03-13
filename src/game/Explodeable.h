@@ -17,8 +17,11 @@
 #include "Object3d.h"
 #include "Mesh.h"
 #include "Interfaces.h"
+//Stupid hack
+#include "ResourceManager.h"
 
 using namespace std;
+//NO! NEVER DO THIS!! ^^^^
 
 /**
  * Explodable is an interface for things that can explode
@@ -90,6 +93,16 @@ private:
     * The radius of the explosion
     */
    float m_radius;
+
+   /**
+    * Refrence to modules (used for later access to SoundManager)
+    */
+   Modules* m_modules;
+
+   /**
+    * Set to true after the explosion starts
+    */
+   bool m_running;
 };
 
 #endif

@@ -483,6 +483,7 @@ void initSound()
  */
 Sound* loadSound(string fileName)
 {
+   Mix_Chunk *chunk;
    Sound* sound = new Sound();
    
    string::size_type extBegin = fileName.find(".") + 1;
@@ -495,11 +496,19 @@ Sound* loadSound(string fileName)
        (SDL_strcasecmp(extension.c_str(), "ogg") == 0) ||
        (SDL_strcasecmp(extension.c_str(), "voc") == 0))
    {
-      sound->setChunk(Mix_LoadWAV(fileName.c_str()));
+      chunk =Mix_LoadWAV(fileName.c_str()); 
+      //chunk =Mix_LoadWAV("/home/amusselm/projects/476/476-Project/assets/sound/weapon1.wav"); 
+      if(!chunk){
+         fprintf(stderr,"Couldn't Load %s, Mix_LoadWav Error: %s \n",
+                  fileName.c_str(),Mix_GetError());
+      }
+      else {
+         sound->setChunk(chunk);
+      }
    }
    else
    {
-      printf("Bad file format: %s\n", extension.c_str());
+      printf("Bad file extension: %s\n", extension.c_str());
    }
    
    return sound;

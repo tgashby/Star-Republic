@@ -32,9 +32,21 @@ public:
     * will play a random sound assoicated with this event once. 
     */
    void playSound(SoundEvent event);
-   
+
+   /**
+    * playBackgroundSound - Plays a background sound. This should be used
+    * for short, repeating sounds, not background music.
+    */
+   void playBackgroundSound(BackgroundSound sound);
+
+   /** 
+    * stopBackgroundSound - Stops a background that's already playing. 
+    */
+   void stopBackgroundSound(BackgroundSound sound); 
 private:
    vector<Sound*>  m_sounds[numSoundEvents]; 
+   Sound* m_backgroundSounds[numBackgroundSounds];
+   bool m_backgroundPlaying[numBackgroundSounds];
     
 };
 
