@@ -551,10 +551,8 @@ bool GameEngine::handleKeyUp(SDLKey key)
                                            "textures/missileTex.bmp", 
                                            m_modules, bulletOrigin, 
                                            m_player->getAimForward(), curveDir, 
-                                           m_player, targets.at(index));
+                                           m_player, targets.at(index));            
             
-            // HACK so that I can use it as both a GameObject and an Object3d
-            //m_path->addToQuadrants(bulletOrigin, missile, missile);
             m_missileList.push_back(missile);
             m_modules->renderingEngine->addObject3d(missile);
          }

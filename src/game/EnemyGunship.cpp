@@ -210,9 +210,6 @@ void EnemyGunship::tic(uint64_t time)
 	motionTimer = 0;
       }
   }
-  else if (dpos.Length() < UPDATEDISTANCE) {
-    explosionTic(time);
-  }
   else if (isAlive())
   {
      dpos = dpos.Normalized();
@@ -264,6 +261,10 @@ void EnemyGunship::tic(uint64_t time)
 
     
     m_position = spawnpos;
+  }
+  else if (!isAlive())
+  {
+     explosionTic(time);
   }
 }
 
