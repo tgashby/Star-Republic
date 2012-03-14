@@ -34,7 +34,7 @@ void PathObject::tic(uint64_t time) {
    if (m_textureOffset > 1.0) {
       m_textureOffset -= 1.0;
    }
-   m_mesh->setTextureMtx(mat4::Translate(m_textureOffset, 0, 0));
+   m_mesh->setTextureMtx(mat4::Translate(-m_textureOffset, 0, 0));
 }
 
 void PathObject::doCollision(GameObject & other) {
