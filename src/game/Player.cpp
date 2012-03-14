@@ -7,6 +7,8 @@
 #define SCREENX 400
 #define SCREENY 300
 
+const int Player::health = 200;
+
 /** Constructor **/
 
 Player::Player(string fileName, string textureName, Modules *modules, 
@@ -43,8 +45,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_shipMesh->setModelMtx(modelMtx);
    m_exhaustMesh->setModelMtx(modelMtx);
    
-   // god mode much?
-   m_health = 2000;
+   m_health = Player::health;
 
    magnet = true;
 }

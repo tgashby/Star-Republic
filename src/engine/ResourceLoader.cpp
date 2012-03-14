@@ -62,6 +62,13 @@ LoadingJob* ResourceLoader::getJobOut() {
    return job;
 }
 
+void ResourceLoader::waitForThreads()
+{
+   while (!m_inList.empty()) 
+   {
+   }
+}
+
 int loader_thread(void *loader) {
    ResourceLoader *resourceLoader = (ResourceLoader *) loader;
    IResourceManager *resourceManager = resourceLoader->getResourceManager();
