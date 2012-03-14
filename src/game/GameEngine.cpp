@@ -112,6 +112,9 @@ void GameEngine::InitData()
 
 void GameEngine::tic(uint64_t td) {
    //CHECKS TO MAKE SURE THE CURRENT STATE IS A GAME STATE. THIS SHOULD PROBABLY BE MODIFIED TO SOMETHING MORE ELEGANT.
+   if (td > 100) {
+      td = 25;
+   }
    if (m_stateManager->getCurrentState() == m_game)
    {
       gameOver += td;
