@@ -43,6 +43,23 @@ public:
     * stopBackgroundSound - Stops a background that's already playing. 
     */
    void stopBackgroundSound(BackgroundSound sound); 
+   
+   /**
+    * startMusic - Starts the background music. From here, the soundManager
+    * will automatically load and play addational tracks until stopMusic is called
+    */
+   //void startMusic();
+
+   /**
+    * stopMusic - Stops all background music.
+    */
+   //void stopMusic();
+
+   /**
+    * tic - 
+    */
+      
+
 private:
    vector<Sound*>  m_sounds[numSoundEvents]; 
    Sound* m_backgroundSounds[numBackgroundSounds];
