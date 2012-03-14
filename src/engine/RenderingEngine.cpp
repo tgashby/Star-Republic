@@ -40,8 +40,12 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
    vec4 lightPos(1, 1, 1, 1);
    glLightfv(GL_LIGHT0, GL_POSITION, lightPos.Pointer());
    
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   //glBlendFunc(GL_ONE, GL_ONE);
+   glDisable(GL_BLEND);
+   
    glEnable(GL_DEPTH_TEST);
-   glBlendFunc(GL_ONE, GL_ONE);
    //glEnable(GL_CULL_FACE);
    //glCullFace(GL_BACK);
 }
@@ -70,7 +74,7 @@ void RenderingEngine::removeObject3d(IObject3d *obj) {
    }
 }
 
-void RenderingEngine::render(list<IObject3d *> &objects) {
+void RenderingEngine::render(list<IObject3d *> &objects3d, list<IObject3d *> &objects2d) {
 
    list<IMesh *> bloomedMeshes(0);
    
@@ -93,7 +97,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    
    vec3 scale;
    
-   for (obj = objects.begin(); obj != objects.end(); ++obj) {
+   for (obj = objects3d.begin(); obj != objects3d.end(); ++obj) {
       objMeshes = (*obj)->getMeshes();
       for (mesh = objMeshes->begin(); mesh != objMeshes->end(); ++mesh) {
          // Skip the mesh if it is not visible or is not loaded yet.
@@ -112,7 +116,22 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    }
    
    glDisable(GL_DEPTH);
+   glDisable(GL_DEPTH_TEST);
    glEnable(GL_BLEND);
+   
+   /*
+   // draw the 2d objects
+   for (obj = objects2d.begin(); obj != objects2d.end(); ++obj) {
+      objMeshes = (*obj)->getMeshes();
+      for (mesh = objMeshes->begin(); mesh != objMeshes->end(); ++mesh) {
+         // Skip the mesh if it is not visible or is not loaded yet.
+         if (!(*mesh)->isVisible() || !(*mesh)->checkLoaded())
+            continue;
+         
+         // Draw the mesh
+         drawMesh((*mesh), m_screenMtx);
+      }
+   }*/
    
    setFrameBuffer(FRAME_BUFFER_PASS0);
    clearScreen();
@@ -120,8 +139,9 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_PASS1].texture;
    drawMesh((IMesh*) m_planeMesh, m_screenMtx);
    
-   glEnable(GL_DEPTH);
    glDisable(GL_BLEND);
+   glEnable(GL_DEPTH_TEST);
+   glEnable(GL_DEPTH);
    
    // Clear only the color buffer. Keep the depth for occluding bloomed meshes.
    setFrameBuffer(FRAME_BUFFER_PASS1);
@@ -134,6 +154,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    }
    
    glDisable(GL_DEPTH);
+   glDisable(GL_DEPTH_TEST);
    glEnable(GL_BLEND);
    
    setFrameBuffer(FRAME_BUFFER_REDUCE0);
@@ -162,6 +183,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    
    setFrameBuffer(FRAME_BUFFER_SCREEN);
    clearScreen();
+   
    m_planeMesh->setShaderType(SHADER_COMBINE);
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_PASS0].texture;
    texture1->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE0].texture;
@@ -170,9 +192,24 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    texture4->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE3].texture;
    drawMesh((IMesh*) m_planeMesh, m_screenMtx);
    
+   // draw the 2d objects
+   for (obj = objects2d.begin(); obj != objects2d.end(); ++obj) {
+      objMeshes = (*obj)->getMeshes();
+      for (mesh = objMeshes->begin(); mesh != objMeshes->end(); ++mesh) {
+         // Skip the mesh if it is not visible or is not loaded yet.
+         if (!(*mesh)->isVisible() || !(*mesh)->checkLoaded())
+            continue;
+         
+         // Draw the mesh
+         drawMesh((*mesh), m_screenMtx);
+      }
+   }
+   
+   glEnable(GL_DEPTH_TEST);
    glEnable(GL_DEPTH);
    glDisable(GL_BLEND);
    
+   /*
    //MY CODE BELOW HERE
    //glBegin(GL_POLYGON);
    //glMatrixMode(GL_MODELVIEW);
@@ -218,7 +255,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    
    //glEnd();
    //glutSwapBuffers();
-   //END MY CODE
+   //END MY CODE*/
 }
 
 float RenderingEngine::getPercentHealth() {

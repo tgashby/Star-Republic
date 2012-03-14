@@ -21,7 +21,7 @@ public:
    void setCamera(ICamera *camera);
    void addObject3d(IObject3d *obj);
    void removeObject3d(IObject3d *obj);
-   void render(list<IObject3d *> &objects);
+   void render(list<IObject3d *> &objects3d, list<IObject3d *> &objects2d);
    void drawText(string text, ivec2 loc, ivec2 size);
    void clearScreen();
 private:

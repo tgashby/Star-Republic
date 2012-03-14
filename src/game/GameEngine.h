@@ -77,7 +77,7 @@ private:
    std::vector<Missile *> m_missileList;
 
    std::vector<EnemyShip *> m_enemyShips;
-   std::vector<EnemyGunship*> m_enemyGunners;
+   std::vector<EnemyGunship *> m_enemyGunners;
    
    Sound* m_bulletSound;
    Sound* m_missileSound;
@@ -85,6 +85,9 @@ private:
    Sound* m_boostSound;
    
    uint64_t gameOver;
+   
+   IObject3d *m_test1;
+   IObject3d *m_test2;
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include "GameEngine.h"
 #include "Object3d.h"
+#include "Object2d.h"
 #include "Player.h"
 #include "SceneObject.h"
 
@@ -20,6 +21,12 @@ GameEngine::GameEngine(Modules *modules) {
    m_win->initialize();
    m_stateManager->pushState(m_game);
    m_stateManager->pushState(m_menu);
+   
+   m_test1 = new Object2d("textures/test7.bmp", ivec2(-16, -16), ivec2(64, 64), m_modules);
+   m_modules->renderingEngine->addObject3d(m_test1);
+   
+   m_test2 = new Object2d("textures/test5.bmp", ivec2(-48, -48), ivec2(64, 64), m_modules);
+   m_modules->renderingEngine->addObject3d(m_test2);
    
    //INIT DATA not being called, only called when the menu is left.
    //InitData();
@@ -243,15 +250,19 @@ void GameEngine::render() {
    //Checks if the current state is the game state. This could be made more elegant.
    if (m_stateManager->getCurrentState() == m_game)
    {
-      list<IObject3d*> objs = m_worldGrid->getDrawableObjects();
+      list<IObject3d*> objs3d = m_worldGrid->getDrawableObjects();
       
       //      std::cerr << "List Size: " << objs.size() << "\n";
       
-      objs.push_back(m_skybox);
-      objs.push_back(m_reticle);
-      objs.push_back(m_player);
+      objs3d.push_back(m_skybox);
+      objs3d.push_back(m_reticle);
+      objs3d.push_back(m_player);
       
-      m_modules->renderingEngine->render(objs);
+      list<IObject3d*> objs2d = list<IObject3d*>(0);
+      //objs2d.push_back(m_test2);
+      //objs2d.push_back(m_test1);
+      
+      m_modules->renderingEngine->render(objs3d, objs2d);
    }
    if (m_stateManager->getCurrentState() == m_menu)
    {

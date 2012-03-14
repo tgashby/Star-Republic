@@ -170,7 +170,7 @@ struct IGameEngine {
 // All OpenGL calls should be implemented in the RenderingEngine.
 struct IRenderingEngine {
    virtual ~IRenderingEngine() {}
-   virtual void render(list<IObject3d *> &objects) = 0;
+   virtual void render(list<IObject3d *> &objects3d, list<IObject3d *> &objects2d) = 0;
    virtual void setCamera(ICamera *camera) = 0;
    virtual void addObject3d(IObject3d *obj) = 0;
    virtual void removeObject3d(IObject3d *obj) = 0;
