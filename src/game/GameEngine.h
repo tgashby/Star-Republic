@@ -89,8 +89,9 @@ private:
    
    uint64_t gameOver;
    
-   IObject3d *m_test1;
-   IObject3d *m_test2;
+   IObject3d *m_menuImage;
+   IObject3d *m_victoryImage;
+   IObject3d *m_gameOverImage;
 };
 
 #endif

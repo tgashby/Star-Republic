@@ -22,11 +22,23 @@ GameEngine::GameEngine(Modules *modules) {
    m_stateManager->pushState(m_game);
    m_stateManager->pushState(m_menu);
    
+   m_menuImage = new Object2d("textures/mainmenu.bmp", ivec2(-300, -200), ivec2(600, 400), m_modules);
+   m_modules->renderingEngine->addObject3d(m_menuImage);
+   
+   m_victoryImage = new Object2d("textures/victory.bmp", ivec2(-300, -200), ivec2(600, 400), m_modules);
+   m_modules->renderingEngine->addObject3d(m_victoryImage);
+   
+   m_gameOverImage = new Object2d("textures/gameover.bmp", ivec2(-300, -200), ivec2(600, 400), m_modules);
+   m_modules->renderingEngine->addObject3d(m_gameOverImage);
+   
+   m_modules->renderingEngine->setCamera(new Camera());
+   
+   /*
    m_test1 = new Object2d("textures/test7.bmp", ivec2(-16, -16), ivec2(64, 64), m_modules);
    m_modules->renderingEngine->addObject3d(m_test1);
    
    m_test2 = new Object2d("textures/test5.bmp", ivec2(-48, -48), ivec2(64, 64), m_modules);
-   m_modules->renderingEngine->addObject3d(m_test2);
+   m_modules->renderingEngine->addObject3d(m_test2);*/
    
    //INIT DATA not being called, only called when the menu is left.
    //InitData();
@@ -252,28 +264,30 @@ void GameEngine::cullObject(GameObject* obj, Object3d* second) {
 }
 
 void GameEngine::render() {
+   list<IObject3d*> objs3d = list<IObject3d*>(0);
+   list<IObject3d*> objs2d = list<IObject3d*>(0);
+   
    //Checks if the current state is the game state. This could be made more elegant.
    if (m_stateManager->getCurrentState() == m_game)
    {
-      list<IObject3d*> objs3d = m_worldGrid->getDrawableObjects();
+      objs3d = m_worldGrid->getDrawableObjects();
       
       //      std::cerr << "List Size: " << objs.size() << "\n";
       
       objs3d.push_back(m_skybox);
       objs3d.push_back(m_reticle);
       objs3d.push_back(m_player);
-      
-      list<IObject3d*> objs2d = list<IObject3d*>(0);
-      //objs2d.push_back(m_test2);
-      //objs2d.push_back(m_test1);
-      
       m_modules->renderingEngine->render(objs3d, objs2d);
    }
    if (m_stateManager->getCurrentState() == m_menu)
    {
+      /*
       m_modules->renderingEngine->clearScreen();
       m_modules->renderingEngine->drawText("STAR REPUBLIC", ivec2(-350,0), ivec2(800,100));
       m_modules->renderingEngine->drawText("Press Any Button To Begin", ivec2(-350, -100), ivec2(500,50));
+       */
+      objs2d.push_back(m_menuImage);
+      m_modules->renderingEngine->render(objs3d, objs2d);
 
       /*list<IObject3d*> objs;
       objs.push_back(m_main);
@@ -282,15 +296,21 @@ void GameEngine::render() {
    }
    if (m_stateManager->getCurrentState() == m_lose)
    {
+      /*
       m_modules->renderingEngine->clearScreen();
       m_modules->renderingEngine->drawText("YOU LOSE", ivec2(-350,0), ivec2(800,100));
-      m_modules->renderingEngine->drawText("Close The Window", ivec2(-350, -100), ivec2(500,50));
+      m_modules->renderingEngine->drawText("Close The Window", ivec2(-350, -100), ivec2(500,50));*/
+      objs2d.push_back(m_gameOverImage);
+      m_modules->renderingEngine->render(objs3d, objs2d);
    }
    if (m_stateManager->getCurrentState() == m_win)
    {
+      /*
       m_modules->renderingEngine->clearScreen();
       m_modules->renderingEngine->drawText("CONGRAGULATIONS", ivec2(-350,0), ivec2(800,100));
-      m_modules->renderingEngine->drawText("You've Won", ivec2(-350, -100), ivec2(500,50));
+      m_modules->renderingEngine->drawText("You've Won", ivec2(-350, -100), ivec2(500,50));*/
+      objs2d.push_back(m_victoryImage);
+      m_modules->renderingEngine->render(objs3d, objs2d);
    }
 }
 

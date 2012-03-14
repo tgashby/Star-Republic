@@ -36,8 +36,6 @@ MeshData* ResourceManager::readMeshData(string fileName, LOAD_NORMAL_TYPE normal
 
 TextureData* ResourceManager::loadBMPImage(string fileName) {
 //   cout << "Load Texture: " << fileName << "\n";
-   //if (m_image != NULL)
-      //delete m_image; 
    
    m_image = SDL_LoadBMP(fileName.c_str());
    if (!m_image) {

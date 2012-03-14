@@ -7,6 +7,7 @@ Object2d::Object2d(string textureName, ivec2 loc, ivec2 size, Modules *modules) 
    Mesh *mesh = new Mesh(PLANE_MESH_FILE, textureName, modules);
    mesh->setScale3v(vec3(size.x, size.y, 1));
    mesh->setModelMtx(mat4::Translate(loc.x, loc.y, 0));
+   mesh->setTextureMtx(mat4::Scale(1, -1, 1));
    mesh->setShaderType(SHADER_NO_LIGHT);
    m_meshList.push_back(mesh);
 }

@@ -1,5 +1,11 @@
 #include "Camera.h"
 
+Camera::Camera() {
+   m_eye = vec3(0, 0, 0);
+   m_ref = vec3(0, 0, 0);
+   m_up = vec3(0, 0, 0);
+}
+
 Camera::Camera(PathPoint* head, PathPoint* tail)
    : m_pathPos(0,0,0), m_pathRef(0,0,1), m_pathUp(0,1,0), m_pathSide (1, 0, 0),
      m_eye(0,0,0), m_ref(0,0,1), m_up(0,1,0), cameraType(_MOTION_CAMERA),
