@@ -27,6 +27,8 @@ class Player;
 class Camera: public ICamera {
  public:
 
+   Camera();
+  
   /**
    * Camera constructor.  Builds the camera based on the starting point and the
    * head.
