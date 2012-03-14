@@ -41,7 +41,7 @@ GameEngine::GameEngine(Modules *modules) {
    m_modules->renderingEngine->addObject3d(m_test2);*/
    
    //INIT DATA not being called, only called when the menu is left.
-   //InitData();
+   InitData();
    m_modules->soundManager->startMusic();
 }
 
@@ -542,7 +542,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
    if (m_stateManager->getCurrentState() == m_menu)
    {
       m_stateManager->popState();
-      InitData();
+      //InitData();
       return running;
    }
    if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() == m_lose || m_stateManager->getCurrentState() == m_win)
