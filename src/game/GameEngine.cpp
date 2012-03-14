@@ -473,7 +473,7 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
    for (list<GameObject *>::iterator it = quad.m_gameObjects.begin(); 
         it != quad.m_gameObjects.end(); it++) {
       if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) 
-          && typeid(**it) != typeid(Missile)) {
+          && typeid(**it) != typeid(Missile) && (*it)->isAlive()) {
          playerToObjVec = (*it)->getPosition() - m_player->getPosition();
          if (playerToObjVec.Length() > 500 && 
              playerToObjVec.Length() < 1500 && 
