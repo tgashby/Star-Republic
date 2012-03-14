@@ -68,6 +68,7 @@ int main(int argc, char** argv)
       running = modules->gameEngine->handleEvents();
       then2 = SDL_GetTicks();
       now = then2 - then1;
+      modules->soundManager->tic(now);
       modules->gameEngine->tic(now);
       modules->gameEngine->render();
       SDL_GL_SwapBuffers();

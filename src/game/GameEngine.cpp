@@ -42,6 +42,7 @@ GameEngine::GameEngine(Modules *modules) {
    
    //INIT DATA not being called, only called when the menu is left.
    //InitData();
+   m_modules->soundManager->startMusic();
 }
 
 GameEngine::~GameEngine() {

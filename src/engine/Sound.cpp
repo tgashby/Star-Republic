@@ -79,3 +79,16 @@ void Sound::stop()
    }
    m_channel = INVALID_CHANNEL;
 }
+
+bool Sound::isPlaying(){
+   int result;
+   if (m_chunk != NULL && m_channel != INVALID_CHANNEL) 
+   {
+      result = Mix_Playing(m_channel); 
+   }
+   else
+   {
+      result = Mix_PlayingMusic();
+   }  
+   return (result != 0);
+}

@@ -541,7 +541,7 @@ Sound* loadMusic(string fileName)
    }
    else
    {
-      printf("Bad file format: %s\n", extension.c_str());
+      fprintf(stderr,"Bad file format: %s\n", extension.c_str());
    }
    
    return sound;
