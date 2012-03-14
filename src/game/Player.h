@@ -152,8 +152,9 @@ private:
    Mesh *m_exhaustMesh;
 
    //LOOK AT ME AND MY FANCY SHMANCY COMMENTS
-   int m_count;
-   bool m_isFlashing;
+   //int m_count;
+   //bool m_isFlashing;
+   int m_flashtimer;
 
    /**
     * The forward velocity of the ship

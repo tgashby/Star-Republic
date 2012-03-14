@@ -22,10 +22,10 @@ public:
    void addObject3d(IObject3d *obj);
    void removeObject3d(IObject3d *obj);
    void render(list<IObject3d *> &objects);
+   void drawMesh(IMesh *mesh, mat4 projection);
    void drawText(string text, ivec2 loc, ivec2 size);
    void clearScreen();
 private:
-   void drawMesh(IMesh *mesh, mat4 projection);
    void addLoaded();
    void loadMesh(IMesh *newMesh);
    void unLoadMesh(IMesh *rmvMesh);
@@ -39,11 +39,9 @@ private:
    ICamera *m_camera;
    ResourceLoader *m_loader;
    
-   // plane stuff (remove when there is a dedicated IMesh class for this)
-   GLuint m_planeVert;
-   GLuint m_planeInt;
    Mesh *m_planeMesh;
    vector<IRef*> *m_planeTextures;
+   mat4 m_screenMtx;
    
    map<string, MeshRef*> m_meshMap;
    map<string, TextureRef*> m_textureMap;

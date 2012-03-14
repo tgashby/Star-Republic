@@ -49,7 +49,8 @@ EnemyShip::EnemyShip(string fileName, string LODname, string textureName, Module
   m_mesh->setVisible(false);
   m_LODmesh->setVisible(true);
 
-  m_health = 20;
+  flashtimer = 0;
+  m_health = 150;
 
 }
 
@@ -66,13 +67,31 @@ void EnemyShip::tic(uint64_t time)
   {
     if ((m_playerRef->getPosition() - m_position).Length() > LODDISTANCE)
     {
-       m_mesh->setVisible(false);
-       m_LODmesh->setVisible(true);
+       if (flashtimer != 0)
+       {
+          m_LODmesh->setVisible(false);
+          m_mesh->setVisible(false);
+          flashtimer--;
+       }
+       else
+       {
+          m_mesh->setVisible(false);
+          m_LODmesh->setVisible(true);
+       }
     }
     else
     {
-       m_mesh->setVisible(true);
-       m_LODmesh->setVisible(false);
+       if (flashtimer != 0)
+       {
+          m_LODmesh->setVisible(false);
+          m_mesh->setVisible(false);
+          flashtimer--;
+       }
+       else
+       {
+          m_mesh->setVisible(true);
+          m_LODmesh->setVisible(false);
+       }
     }
   }
 
@@ -170,6 +189,7 @@ void EnemyShip::tic(uint64_t time)
                     mat4::Rotate(ROTATE_CONSTANT, vec3(0,0,1));
      modelMtx *= mat4::Magic(getAimForward(), getAimUp(), getPosition());
      m_mesh->setModelMtx(modelMtx);
+     m_LODmesh->setModelMtx(modelMtx);
 
      m_position = spawnpos;
   }
@@ -253,12 +273,16 @@ void EnemyShip::doCollision(GameObject & other)
    {
       if (&((Bullet&)other).getParent() != this) 
       {
-         m_health -= 25;    
+         m_health -= 25; 
+         if (flashtimer == 0)
+            flashtimer = 2;  
       }
    }
 
    if (typeid(other) == typeid(Missile)) {
      m_health -= 100;
+     if (flashtimer == 0)
+            flashtimer = 2;   
    }
    
    if (m_health <= 0) 

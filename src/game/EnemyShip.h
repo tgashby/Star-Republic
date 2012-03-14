@@ -127,6 +127,7 @@ private:
    float currentAngle;
    bool dodging;
    int dodgedir, dodgecounter;
+   int flashtimer;
 
    bool firing;
    uint64_t firingTimer;
