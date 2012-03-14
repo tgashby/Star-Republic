@@ -350,6 +350,10 @@ void RenderingEngine::clearScreen() {
    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
+void RenderingEngine::waitForThreads()
+{
+   m_loader->waitForThreads();
+}
 
 void RenderingEngine::drawMesh(IMesh *mesh, mat4 projection) {
    

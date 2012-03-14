@@ -211,6 +211,8 @@ private:
     * The current angle taken
     */
    float currentAngle;
+   
+   static const int health;
 };
 
 #endif

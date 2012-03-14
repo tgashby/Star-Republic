@@ -106,6 +106,8 @@ void GameEngine::InitData()
    
    m_modules->soundManager->playBackgroundSound(Idle); 
    addAsteroids();
+   
+   m_modules->renderingEngine->waitForThreads();
 }
 
 void GameEngine::tic(uint64_t td) {
@@ -418,7 +420,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    if (m_stateManager->getCurrentState() == m_menu)
    {
       m_stateManager->popState();
-      InitData();
+      //InitData();
       return running;
    }
    if (key == SDLK_SPACE) {
