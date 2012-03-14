@@ -25,7 +25,6 @@ public:
    void drawText(string text, ivec2 loc, ivec2 size);
    void clearScreen();
 private:
-   void drawMesh(IMesh *mesh, mat4 projection);
    void addLoaded();
    void loadMesh(IMesh *newMesh);
    void unLoadMesh(IMesh *rmvMesh);

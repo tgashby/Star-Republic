@@ -60,6 +60,10 @@ Turret::Turret(Player* player, Modules *modules) : Enemy(player), Explodeable(ve
    
    firing = false;
    firingTimer = 0;
+
+   flashtimer = 0;
+
+   m_health = 150;
 }
 
 Turret::~Turret()
@@ -70,6 +74,23 @@ Turret::~Turret()
 
 void Turret::tic(uint64_t time)
 {
+  if (isAlive())
+  {
+     if (flashtimer != 0)
+     {
+        m_footMesh->setVisible(false);
+        m_midMesh->setVisible(false);
+        m_headMesh->setVisible(false);
+        flashtimer--;
+     }
+     else
+     {
+        m_footMesh->setVisible(true);
+        m_midMesh->setVisible(true);
+        m_headMesh->setVisible(true);
+     }
+  }
+
    // Rotate head toward player
    // aim
    // fire
@@ -154,7 +175,9 @@ bool Turret::shouldFire() {
 
 void Turret::collideWith(Bullet& bullet) {
    if (&bullet.getParent() != this) {
-      m_health -= 100;
+      m_health -= 25;
+      if (flashtimer == 0)
+         flashtimer = 2; 
    }
 }
 
@@ -168,6 +191,8 @@ void Turret::collideWith(Enemy& enemy) {
 
 void Turret::collideWith(Missile& missile) {
   m_health -= 100;
+  if (flashtimer == 0)
+     flashtimer = 2; 
 }
 
 vec3 Turret::getPosition() {

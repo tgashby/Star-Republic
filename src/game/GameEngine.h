@@ -28,6 +28,7 @@
 #include "LoseState.h"
 #include "Asteroid.h"
 #include "SkyBox.h"
+#include "Menu.h"
 #include <vector>
 
 
@@ -83,6 +84,8 @@ private:
    Sound* m_missileSound;
    Sound* m_music;
    Sound* m_boostSound;
+
+   Menu *m_main, *m_victory, *m_gameover;
    
    uint64_t gameOver;
    

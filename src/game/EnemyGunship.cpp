@@ -81,7 +81,8 @@ EnemyGunship::EnemyGunship(string fileName, string LODname, string turretFileNam
        TURRETUPOFFSET + m_position.y, TURRETFORWARDOFFSET + m_position.z);
   m_turretbasemesh2->setModelMtx(modelMtx4);
 
-  m_health = 20;
+  flashtimer = 0;
+  m_health = 250;
 }
 
 EnemyGunship::~EnemyGunship()
@@ -97,13 +98,48 @@ void EnemyGunship::tic(uint64_t time)
   {
     if ((m_playerRef->getPosition() - m_position).Length() > LODDISTANCE)
     {
-       m_mesh->setVisible(false);
-       m_LODmesh->setVisible(true);
+       if (flashtimer != 0)
+       {
+          m_LODmesh->setVisible(false);
+          m_mesh->setVisible(false);
+          m_turretbasemesh1->setVisible(false);
+          m_turretbasemesh2->setVisible(false);
+          m_turretheadmesh1->setVisible(false);
+          m_turretheadmesh2->setVisible(false);
+          
+          flashtimer--;
+       }
+       else
+       {
+          m_mesh->setVisible(false);
+          m_LODmesh->setVisible(true);
+          m_turretbasemesh1->setVisible(true);
+          m_turretbasemesh2->setVisible(true);
+          m_turretheadmesh1->setVisible(true);
+          m_turretheadmesh2->setVisible(true);
+       }
     }
     else
     {
-       m_mesh->setVisible(true);
-       m_LODmesh->setVisible(false);
+       if (flashtimer != 0)
+       {
+          m_LODmesh->setVisible(false);
+          m_mesh->setVisible(false);
+          m_turretbasemesh1->setVisible(false);
+          m_turretbasemesh2->setVisible(false);
+          m_turretheadmesh1->setVisible(false);
+          m_turretheadmesh2->setVisible(false);
+          flashtimer--;
+       }
+       else
+       {
+          m_mesh->setVisible(true);
+          m_LODmesh->setVisible(false);
+          m_turretbasemesh1->setVisible(true);
+          m_turretbasemesh2->setVisible(true);
+          m_turretheadmesh1->setVisible(true);
+          m_turretheadmesh2->setVisible(true);
+       }
     }
   }
 
@@ -336,10 +372,14 @@ void EnemyGunship::doCollision(GameObject & other)
       if (&((Bullet&)other).getParent() != this) 
       {
          m_health -= 25;
+         if (flashtimer == 0)
+            flashtimer = 2;   
       }
    }
    if (typeid(other) == typeid(Missile)) {
      m_health -= 100;
+     if (flashtimer == 0)
+         flashtimer = 2;   
    }
    
    if (m_health <= 0) 
