@@ -25,6 +25,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_exhaustMesh->setShaderType(SHADER_BLOOM);
    m_meshList.push_back(m_exhaustMesh);
    m_isFlashing = false;
+   m_count = 0;
    
 
    // these are relative to the 'forward' vector
@@ -84,7 +85,7 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
          m_shipMesh->setVisible(true);
          m_exhaustMesh->setVisible(true);
       }
-      if (m_count == 20) {
+      if (m_count >= 20) {
          m_count = 0;
          m_isFlashing = false;
       }

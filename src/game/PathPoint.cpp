@@ -1,6 +1,6 @@
 #include "PathPoint.h"
 
-const float Quadrant::SPHERE_RADIUS = 15000.0f;
+const float Quadrant::SPHERE_RADIUS = 20000.0f;
 
 PathPoint::PathPoint(PathPointData pointData) 
   : m_quadrant(pointData)
