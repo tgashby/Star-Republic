@@ -31,6 +31,9 @@ GameEngine::GameEngine(Modules *modules) {
    m_gameOverImage = new Object2d("textures/gameover.bmp", ivec2(-300, -200), ivec2(600, 400), m_modules);
    m_modules->renderingEngine->addObject3d(m_gameOverImage);
    
+   m_healthBar = new HealthBar(m_modules);
+   m_modules->renderingEngine->addObject3d(m_healthBar);
+   
    m_modules->renderingEngine->setCamera(new Camera());
    
    /*
@@ -41,7 +44,7 @@ GameEngine::GameEngine(Modules *modules) {
    m_modules->renderingEngine->addObject3d(m_test2);*/
    
    //INIT DATA not being called, only called when the menu is left.
-   //InitData();
+   InitData();
    m_modules->soundManager->startMusic();
 }
 
@@ -106,10 +109,15 @@ void GameEngine::InitData()
    
    m_modules->soundManager->playBackgroundSound(Idle); 
    addAsteroids();
+   
+   m_modules->renderingEngine->waitForThreads();
 }
 
 void GameEngine::tic(uint64_t td) {
    //CHECKS TO MAKE SURE THE CURRENT STATE IS A GAME STATE. THIS SHOULD PROBABLY BE MODIFIED TO SOMETHING MORE ELEGANT.
+   if (td > 100) {
+      td = 25;
+   }
    if (m_stateManager->getCurrentState() == m_game)
    {
       gameOver += td;
@@ -278,6 +286,9 @@ void GameEngine::render() {
       objs3d.push_back(m_skybox);
       objs3d.push_back(m_reticle);
       objs3d.push_back(m_player);
+      
+      objs2d.push_back(m_healthBar);
+      
       m_modules->renderingEngine->render(objs3d, objs2d);
    }
    if (m_stateManager->getCurrentState() == m_menu)
@@ -415,7 +426,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    if (m_stateManager->getCurrentState() == m_menu)
    {
       m_stateManager->popState();
-      InitData();
+      //InitData();
       return running;
    }
    if (key == SDLK_SPACE) {
@@ -542,7 +553,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
    if (m_stateManager->getCurrentState() == m_menu)
    {
       m_stateManager->popState();
-      InitData();
+      //InitData();
       return running;
    }
    if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() == m_lose || m_stateManager->getCurrentState() == m_win)

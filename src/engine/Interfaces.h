@@ -181,6 +181,7 @@ struct IRenderingEngine {
    virtual void drawMesh(IMesh *mesh, mat4 projection) = 0;
    virtual void drawText(string text, ivec2 loc, ivec2 size) = 0;
    virtual void clearScreen() = 0;
+   virtual void waitForThreads() = 0;
 };
 
 // Any resurces from the file system should be accessed

@@ -29,6 +29,7 @@ public:
    LoadingJob* getJobIn();
    void addJobOut(LoadingJob *job);
    LoadingJob* getJobOut();
+   void waitForThreads();
 private:
    SDL_mutex *m_lockIn;
    SDL_mutex *m_lockOut;

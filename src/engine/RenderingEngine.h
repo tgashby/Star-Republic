@@ -24,6 +24,8 @@ public:
    void render(list<IObject3d *> &objects3d, list<IObject3d *> &objects2d);
    void drawText(string text, ivec2 loc, ivec2 size);
    void clearScreen();
+   void waitForThreads();
+   
 private:
    void drawMesh(IMesh *mesh, mat4 projection);
    void addLoaded();
