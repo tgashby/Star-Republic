@@ -470,6 +470,7 @@ void initSound()
    {
       cerr << "Mix_OpenAudio: "<< Mix_GetError() << "\n";
    }
+   Mix_AllocateChannels(32); 
 }
 
 /**

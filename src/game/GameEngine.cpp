@@ -487,7 +487,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
             m_modules->renderingEngine->addObject3d(bullet);
          }
          
-         m_modules->soundManager->playSound(PlayerGun); 
+         m_modules->soundManager->playSound(PlayerShotgun); 
          //m_bulletSound->play(0);
       }
    }
