@@ -48,6 +48,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_health = Player::health;
 
    magnet = true;
+   m_modules = modules;
 }
 
 Player::~Player()
@@ -191,12 +192,14 @@ void Player::calculateSide() {
 
 void Player::doCollision(GameObject & other)
 {
+   //DO Collision stuff
    if (typeid(other) == typeid(Bullet))
    {
       if (&((Bullet&)other).getParent() != this)
       {
          m_health -= 2;
          m_isFlashing = true;
+         m_modules->soundManager->playSound(PlayerHit); 
       }
    }
    
@@ -211,7 +214,6 @@ void Player::doCollision(GameObject & other)
        m_shipMesh->setVisible(false);
        m_exhaustMesh->setVisible(false);
    }
-   //DO Collision stuff
 }
 
 bool Player::getAlive() {
