@@ -377,10 +377,13 @@ void EnemyGunship::doCollision(GameObject & other)
             flashtimer = 2;   
       }
    }
-   if (typeid(other) == typeid(Missile)) {
+   else if (typeid(other) == typeid(Missile)) {
      m_health -= 100;
      if (flashtimer == 0)
          flashtimer = 2;   
+   }
+   else if (typeid(other) == typeid(Player)) {
+      m_health = 0;
    }
    
    if (m_health <= 0) 

@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "Bullet.h"
 #include "Turret.h"
+#include "EnemyShip.h"
+#include "EnemyGunship.h"
 
 #define VCHANGE 0.8
 #define VINTENS 0.5
@@ -48,6 +50,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_health = Player::health;
 
    magnet = true;
+   m_modules = modules;
 }
 
 Player::~Player()
@@ -137,6 +140,10 @@ void Player::toggleMagnetic()
    magnet = !magnet;
 }
 
+float Player::getHealthPercent() {
+  return (m_health * 1.0f) / (health * 1.0f);
+}
+
 Vector3<float> Player::getAimForward()
 {
    /** make sure the velocity in X and Y aren't to great -
@@ -191,19 +198,28 @@ void Player::calculateSide() {
 
 void Player::doCollision(GameObject & other)
 {
+   //DO Collision stuff
    if (typeid(other) == typeid(Bullet))
    {
       if (&((Bullet&)other).getParent() != this)
       {
          m_health -= 2;
          m_isFlashing = true;
+         m_modules->soundManager->playSound(PlayerHit); 
       }
    }
-   
-   if (typeid(other) == typeid(Turret))
+   else if (typeid(other) == typeid(Turret))
    {
-     m_health -= 10;
-     m_isFlashing = true;
+      m_health -= 10;
+      m_isFlashing = true;
+   }
+   else if (typeid(other) == typeid(EnemyGunship)){
+      m_health -= 15;
+      m_isFlashing = true;
+   }
+   else if (typeid(other) == typeid(EnemyGunship)){
+      m_health -= 15;
+      m_isFlashing = true;
    }
    
    if (m_health <= 0) {
@@ -211,7 +227,6 @@ void Player::doCollision(GameObject & other)
        m_shipMesh->setVisible(false);
        m_exhaustMesh->setVisible(false);
    }
-   //DO Collision stuff
 }
 
 bool Player::getAlive() {

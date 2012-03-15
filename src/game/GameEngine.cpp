@@ -152,7 +152,8 @@ void GameEngine::tic(uint64_t td) {
       m_worldGrid->tic(td);
       
       m_worldGrid->checkCollisions();
-      
+      m_healthBar->updateBar(m_player->getHealthPercent());
+
       cullObjects();
       
       if(m_player->getAlive() == false) {
@@ -498,7 +499,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
             m_modules->renderingEngine->addObject3d(bullet);
          }
          
-         m_modules->soundManager->playSound(PlayerGun); 
+         m_modules->soundManager->playSound(PlayerShotgun); 
          //m_bulletSound->play(0);
       }
    }
@@ -556,7 +557,8 @@ bool GameEngine::handleKeyUp(SDLKey key)
       //InitData();
       return running;
    }
-   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() == m_lose || m_stateManager->getCurrentState() == m_win)
+   
+   if (key == SDLK_ESCAPE)
    {
       running = false;
    }
@@ -608,6 +610,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
             
             m_missileList.push_back(missile);
             m_modules->renderingEngine->addObject3d(missile);
+            m_modules->soundManager->playSound(PlayerMissile); 
          }
       }
    }
