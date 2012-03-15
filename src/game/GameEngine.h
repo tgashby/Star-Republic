@@ -29,6 +29,7 @@
 #include "Asteroid.h"
 #include "SkyBox.h"
 #include "Menu.h"
+#include "HealthBar.h"
 #include <vector>
 
 
@@ -92,6 +93,8 @@ private:
    IObject3d *m_menuImage;
    IObject3d *m_victoryImage;
    IObject3d *m_gameOverImage;
+   
+   HealthBar *m_healthBar;
 };
 
 #endif

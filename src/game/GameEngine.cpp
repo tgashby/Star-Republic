@@ -31,6 +31,9 @@ GameEngine::GameEngine(Modules *modules) {
    m_gameOverImage = new Object2d("textures/gameover.bmp", ivec2(-300, -200), ivec2(600, 400), m_modules);
    m_modules->renderingEngine->addObject3d(m_gameOverImage);
    
+   m_healthBar = new HealthBar(m_modules);
+   m_modules->renderingEngine->addObject3d(m_healthBar);
+   
    m_modules->renderingEngine->setCamera(new Camera());
    
    /*
@@ -283,6 +286,9 @@ void GameEngine::render() {
       objs3d.push_back(m_skybox);
       objs3d.push_back(m_reticle);
       objs3d.push_back(m_player);
+      
+      objs2d.push_back(m_healthBar);
+      
       m_modules->renderingEngine->render(objs3d, objs2d);
    }
    if (m_stateManager->getCurrentState() == m_menu)
