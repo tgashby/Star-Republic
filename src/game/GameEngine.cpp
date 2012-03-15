@@ -608,6 +608,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
             
             m_missileList.push_back(missile);
             m_modules->renderingEngine->addObject3d(missile);
+            m_modules->soundManager->playSound(PlayerMissile); 
          }
       }
    }
