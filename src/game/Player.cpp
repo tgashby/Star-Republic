@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "Bullet.h"
 #include "Turret.h"
+#include "EnemyShip.h"
+#include "EnemyGunship.h"
 
 #define VCHANGE 0.8
 #define VINTENS 0.5
@@ -211,8 +213,12 @@ void Player::doCollision(GameObject & other)
       m_health -= 10;
       m_isFlashing = true;
    }
-   else if (typeid(other) == typeid(Turret)){
-      m_health -= 10;
+   else if (typeid(other) == typeid(EnemyGunship)){
+      m_health -= 15;
+      m_isFlashing = true;
+   }
+   else if (typeid(other) == typeid(EnemyGunship)){
+      m_health -= 15;
       m_isFlashing = true;
    }
    

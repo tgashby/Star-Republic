@@ -16,6 +16,7 @@
 #define FLASH_DURATION 30
 #define TOTAL_FLASH_DURATION 120
 
+//Forward declrations for enemnies
 /**
  * Player class to handle the player
  */
