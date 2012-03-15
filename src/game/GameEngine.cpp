@@ -367,23 +367,36 @@ void GameEngine::addAsteroids() {
    PathPoint current(vec3(0,0,0), vec3(0,0,0), vec3(0,0,0), vec3(0,0,0));
    
    //TEMPORARY!!!
-   Objective* objective = new Objective("models/sphere.obj", 
-                                        "textures/test6.bmp", m_modules, 
-                                        (vec3(.0868337, 0.995747, -0.0307775) * 2000.0f) 
-                                        + vec3(-266.174, 1759.54, -204.056),
-                                        vec3 (0, 0, 1), vec3(0, 1, 0));
-   m_modules->renderingEngine->addObject3d(objective);
-   m_objectives.push_back(objective);
-   m_path->addToQuadrants(objective->getPosition(), objective, objective);
    
-   objective = new Objective("models/sphere.obj", 
-                             "textures/test6.bmp", m_modules, 
-                             (vec3(0.642882, -0.695466, -0.320984) * 1300.0f) 
-                             + vec3(1373.04, -1224.47, -6905.99),
-                             vec3 (0, 0, 1), vec3(0, 1, 0));
-   m_modules->renderingEngine->addObject3d(objective);
-   m_objectives.push_back(objective);
-   m_path->addToQuadrants(objective->getPosition(), objective, objective);
+   for (int i = 0; i < m_path->getSize(); i++) 
+   {
+      if (i % 5 == 0) 
+      {
+         Objective* objective = new Objective("models/sphere.obj", 
+                                              "textures/test6.bmp", m_modules, 
+                                              m_path->getAt(i).getPosition(),
+                                              vec3 (0, 0, 1), vec3(0, 1, 0));
+         m_modules->renderingEngine->addObject3d(objective);
+         m_objectives.push_back(objective);
+         m_path->addToQuadrants(objective->getPosition(), objective, objective);
+      }
+   }
+//   
+//   Objective* objective = new Objective("models/sphere.obj", 
+//                                        "textures/test6.bmp", m_modules, 
+//                                        m_path->getAt(3).getPosition(),
+//                                        vec3 (0, 0, 1), vec3(0, 1, 0));
+//   m_modules->renderingEngine->addObject3d(objective);
+//   m_objectives.push_back(objective);
+//   m_path->addToQuadrants(objective->getPosition(), objective, objective);
+//   
+//   objective = new Objective("models/sphere.obj", 
+//                             "textures/test6.bmp", m_modules, 
+//                             m_path->getAt(5).getPosition(),
+//                             vec3 (0, 0, 1), vec3(0, 1, 0));
+//   m_modules->renderingEngine->addObject3d(objective);
+//   m_objectives.push_back(objective);
+//   m_path->addToQuadrants(objective->getPosition(), objective, objective);
    
    
    for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex+=1) {
