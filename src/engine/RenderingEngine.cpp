@@ -45,8 +45,6 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
    glDisable(GL_BLEND);
    
    glEnable(GL_DEPTH_TEST);
-   //glEnable(GL_CULL_FACE);
-   //glCullFace(GL_FRONT);
 }
 
 RenderingEngine::~RenderingEngine() {
@@ -203,89 +201,6 @@ void RenderingEngine::render(list<IObject3d *> &objects3d, list<IObject3d *> &ob
 
 float RenderingEngine::getPercentHealth() {
    return .5;
-}
-
-void RenderingEngine::drawText(string text, ivec2 loc, ivec2 size) {
-   SDL_Surface *initial;
-	SDL_Surface *intermediary;
-	int w,h;
-	
-   // get a font
-   SDL_Color color = {255, 255, 255};
-   
-   addLoaded();
-   
-	/* Use SDL_TTF to render our text */
-	initial = TTF_RenderText_Blended(m_font, text.c_str(), color);
-	assert(initial != NULL);
-	/* Convert the rendered text to a known format */
-	w = 512;
-	h = 35;
-   
-	intermediary = SDL_CreateRGBSurface(0, w, h, 32, 
-                                       0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
-   assert(intermediary != NULL);
-	SDL_BlitSurface(initial, NULL, intermediary, NULL);
-   assert(intermediary != NULL);
-   
-   // Load a new texture.
-   GLuint textureBuffer;
-   glGenTextures(1, &textureBuffer);
-   glBindTexture(GL_TEXTURE_2D, textureBuffer);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   glTexImage2D(GL_TEXTURE_2D, 0, 4, w, h, 0,
-                GL_BGRA, GL_UNSIGNED_BYTE, intermediary->pixels);
-   
-   setShaderProgram(SHADER_NO_LIGHT);
-   
-   // Draw the Text
-   glDisable(GL_DEPTH);
-   glEnable(GL_BLEND);
-   
-   mat4 projection = mat4::Parallel(-400, 400, -300, 300, 1, 10);
-   glUniformMatrix4fv(m_curShaderProgram->uniforms.projection, 1, 0, projection.Pointer());
-   
-   // Set the model view matrix
-   mat4 modelMtx = mat4::Scale(size.x, -size.y, 1);
-   modelMtx = modelMtx * mat4::Translate(loc.x, loc.y, 0);
-   glUniformMatrix4fv(m_curShaderProgram->uniforms.modelview, 1, 0, modelMtx.Pointer());
-   
-   // Set the normal matrix
-   mat3 normalMtx = modelMtx.ToMat3();
-   glUniformMatrix3fv(m_curShaderProgram->uniforms.normalMatrix, 1, 0, normalMtx.Pointer());
-   
-   // Set the texture matrix
-   mat4 textureMtx = mat4::Identity();
-   glUniformMatrix4fv(m_curShaderProgram->uniforms.textureMatrix, 1, 0, textureMtx.Pointer());
-   
-   
-	int stride = 11 * sizeof(GLfloat);
-   const GLvoid* normalOffset = (const GLvoid*) (3 * sizeof(GLfloat));
-   const GLvoid* texCoordOffset = (const GLvoid*) (3 * sizeof(vec3));
-   GLint position = m_curShaderProgram->attributes.position;
-   GLint normal = m_curShaderProgram->attributes.normal;
-   GLint texCoord = m_curShaderProgram->attributes.textureCoord;
-   MeshRef *meshRef = (MeshRef *) m_planeMesh->getMeshRef();
-   
-   glBindTexture(GL_TEXTURE_2D, textureBuffer);
-   glBindBuffer(GL_ARRAY_BUFFER, meshRef->vertexBuffer);
-   glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, 0);
-   glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, normalOffset);
-   glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, stride, texCoordOffset);
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshRef->indexBuffer);
-   glDrawElements(GL_TRIANGLES, meshRef->indexCount, GL_UNSIGNED_SHORT, 0);
-	
-	/* Bad things happen if we delete the texture before it finishes */
-	glFinish();
-	
-	/* Clean up */
-	SDL_FreeSurface(initial);
-	SDL_FreeSurface(intermediary);
-	glDeleteTextures(1, &textureBuffer);
-   
-   glEnable(GL_DEPTH);
-   glDisable(GL_BLEND);
 }
 
 void RenderingEngine::clearScreen() {

@@ -182,7 +182,6 @@ struct IRenderingEngine {
    virtual void addObject3d(IObject3d *obj) = 0;
    virtual void removeObject3d(IObject3d *obj) = 0;
    virtual void drawMesh(IMesh *mesh, mat4 projection) = 0;
-   virtual void drawText(string text, ivec2 loc, ivec2 size) = 0;
    virtual void clearScreen() = 0;
    virtual void waitForThreads() = 0;
 };
