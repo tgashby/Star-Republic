@@ -70,6 +70,8 @@ public:
    bool shouldFire();
 
    vec3 getPosition();
+     
+   bool viewCull(vector<vec4> *planes);
    
 private:
    Mesh *m_headMesh;

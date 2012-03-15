@@ -37,3 +37,7 @@ void Object2d::setVisible(bool vis) {
       temp->setVisible(vis);
    }
 }
+
+bool Object2d::viewCull(vector<vec4> *planes) {
+   return true;
+}

@@ -4,6 +4,8 @@ Camera::Camera() {
    m_eye = vec3(0, 0, 0);
    m_ref = vec3(0, 0, 0);
    m_up = vec3(0, 0, 0);
+   
+   m_planes = vector<vec4>(6);
 }
 
 Camera::Camera(PathPoint* head, PathPoint* tail)
@@ -24,6 +26,7 @@ Camera::Camera(PathPoint* head, PathPoint* tail)
    m_pathForw = (m_head->getPosition() -
 m_tail->getPosition()).Normalized();
    calculateSide();
+   m_planes = vector<vec4>(6);
 
    //Calculate the angle between them
    m_pathAngle = angleBetween(m_head->getUp(), m_tail->getUp());
@@ -203,4 +206,46 @@ void Camera::setBoosting(bool boostStatus) {
 
 bool Camera::isBoosting() {
    return m_boosting;
+}
+
+vector<vec4>* Camera::getPlanes() {
+   mat4 projMtx = getProjectionViewMtx();
+   
+   m_planes[0].x = projMtx.x.w + projMtx.x.x;
+   m_planes[0].y = projMtx.y.w + projMtx.y.x;
+   m_planes[0].z = projMtx.z.w + projMtx.z.x;
+   m_planes[0].w = projMtx.w.w + projMtx.w.x;
+   m_planes[0].NormalizePlane();
+   
+   m_planes[1].x = projMtx.x.w - projMtx.x.x;
+   m_planes[1].y = projMtx.y.w - projMtx.y.x;
+   m_planes[1].z = projMtx.z.w - projMtx.z.x;
+   m_planes[1].w = projMtx.w.w - projMtx.w.x;
+   m_planes[1].NormalizePlane();
+   
+   m_planes[2].x = projMtx.x.w + projMtx.x.y;
+   m_planes[2].y = projMtx.y.w + projMtx.y.y;
+   m_planes[2].z = projMtx.z.w + projMtx.z.y;
+   m_planes[2].w = projMtx.w.w + projMtx.w.y;
+   m_planes[2].NormalizePlane();
+   
+   m_planes[3].x = projMtx.x.w - projMtx.x.y;
+   m_planes[3].y = projMtx.y.w - projMtx.y.y;
+   m_planes[3].z = projMtx.z.w - projMtx.z.y;
+   m_planes[3].w = projMtx.w.w - projMtx.w.y;
+   m_planes[3].NormalizePlane();
+   
+   m_planes[4].x = projMtx.x.w + projMtx.x.z;
+   m_planes[4].y = projMtx.y.w + projMtx.y.z;
+   m_planes[4].z = projMtx.z.w + projMtx.z.z;
+   m_planes[4].w = projMtx.w.w + projMtx.w.z;
+   m_planes[4].NormalizePlane();
+   
+   m_planes[5].x = projMtx.x.w - projMtx.x.z;
+   m_planes[5].y = projMtx.y.w - projMtx.y.z;
+   m_planes[5].z = projMtx.z.w - projMtx.z.z;
+   m_planes[5].w = projMtx.w.w - projMtx.w.z;
+   m_planes[5].NormalizePlane();
+   
+   return &m_planes;
 }

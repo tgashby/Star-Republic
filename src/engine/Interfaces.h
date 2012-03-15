@@ -109,12 +109,14 @@ struct IMesh {
 struct ICamera {
    virtual ~ICamera() {}
    virtual mat4 getProjectionViewMtx() = 0;
+   virtual vector<vec4>* getPlanes() = 0;
 };
 
 // Each object needs to provide the RenderingEngine a list of meshes.
 struct IObject3d {
    virtual ~IObject3d() {}
    virtual list<IMesh *>* getMeshes() = 0;
+   virtual bool viewCull(vector<vec4> *planes) = 0;
 };
 
 // Sound

@@ -39,6 +39,8 @@ public:
    void doCollision(GameObject & other);
    
    GameObject& getParent() { return m_parent; }
+   
+   bool viewCull(vector<vec4> *planes);
 
  private:
 

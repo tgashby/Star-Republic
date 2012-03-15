@@ -117,6 +117,13 @@ public:
     * getPosition is required since otherwise it is ambiguous.
     */
    vec3 getPosition();
+   
+   /**
+    * determines if visible with in the given planes.
+    * @param a vector of vec4s for planes definining a view frustum. 
+    */
+   bool viewCull(vector<vec4> *planes);
+   
 private:
    Mesh *m_mesh;
    Mesh *m_LODmesh;

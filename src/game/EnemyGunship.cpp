@@ -11,6 +11,7 @@
 #define TURRETSIDEOFFSET 20
 #define TURRETFORWARDOFFSET -25
 #define TURRETUPOFFSET 0
+#define GUNSHIP_RADIUS 40
 #define _ENEMY_GUNSHIP_EXPLOSION_RADIUS 60.0f
 #define UPDATEDISTANCE 2000.0
 #define RADTODEG 180 / 3.1415
@@ -412,4 +413,20 @@ vec3 EnemyGunship::getPosition() {
 vec3 EnemyGunship::getMSide()
 {
   return m_forward.Cross(m_up);
+}
+
+bool EnemyGunship::viewCull(vector<vec4> *planes) {
+   vector<vec4>::iterator plane = planes->begin();
+   float val;
+   
+   for (; plane != planes->end(); ++plane) {
+      val = plane->x * m_position.x +
+      plane->y * m_position.y +
+      plane->z * m_position.z +
+      plane->w;
+      if (val < -GUNSHIP_RADIUS) {
+         return false;
+      }
+   }
+   return true;
 }

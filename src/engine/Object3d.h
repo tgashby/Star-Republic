@@ -10,6 +10,7 @@ public:
    virtual ~Object3d();
    list<IMesh *>* getMeshes();
    void setVisible(bool mood);
+   virtual bool viewCull(vector<vec4> *planes);
 protected:
    list<IMesh *> m_meshList;
 };
