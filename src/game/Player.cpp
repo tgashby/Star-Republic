@@ -30,6 +30,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_meshList.push_back(m_exhaustMesh);
    m_isFlashing = false;
    m_count = 0;
+   m_missileCooldown = 0.0;
    
 
    // these are relative to the 'forward' vector
@@ -107,6 +108,10 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    x += vx * time;
    y += vy * time;
    updateVelocity(lastScreenX, lastScreenY);
+
+   if (m_missileCooldown > 0) {
+      m_missileCooldown -= time;
+   }
 
    //cout << "Position : " << m_position.x << ", " << m_position.y << ", " <<
    //   m_position.z << "\n";
@@ -196,6 +201,14 @@ Vector3<float> Player::getSide()
 
 void Player::calculateSide() {
    m_side = m_up.Cross(m_forward).Normalized();
+}
+
+float Player::getMissileCooldown() {
+   return m_missileCooldown;
+}
+
+void Player::setMissileCooldown(float cooldown) {
+   m_missileCooldown = cooldown;
 }
 
 void Player::doCollision(GameObject & other)

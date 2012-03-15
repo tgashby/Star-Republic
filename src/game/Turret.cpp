@@ -101,7 +101,7 @@ void Turret::tic(uint64_t time)
     m_footMesh->setModelMtx(modelMtx);
    
     vec3 target = getTargetPosition();
-    vec3 dirToPlayer = (target - m_position).Normalized();
+    vec3 dirToPlayer = (target - getHeadPosition()).Normalized();
     vec3 intermed = dirToPlayer.Cross(m_up);
     vec3 dirToPlayerFlat = intermed.Cross(m_up);
    
@@ -138,11 +138,12 @@ Vector3<float> Turret::getHeadPosition()
 
 Vector3<float> Turret::getTargetPosition()
 {
-   float distance = (m_playerRef->getPosition() - m_position).Length();
-   float time = distance/0.7f;
+   float distance = (m_playerRef->getPosition() - getHeadPosition()).Length();
+   float time = (distance/0.6f)/2.0f;
    vec3 target = m_playerRef->getPosition() + (m_playerRef->getShipVelocity() * time);
-   cerr << "A PLAYER GOES X: " << m_playerRef->getPosition().x << " Y: " << m_playerRef->getPosition().y << " Z: " << m_playerRef->getPosition().z << "\n";
+  /* cerr << "A PLAYER GOES X: " << m_playerRef->getPosition().x << " Y: " << m_playerRef->getPosition().y << " Z: " << m_playerRef->getPosition().z << "\n";
    cerr << "A TARGET GOES X: " << target.x << " Y: " << target.y << " Z: " << target.z << "\n";
+   cerr << "TIME IS: " << time << "\n"; */
    return target;
 }
 

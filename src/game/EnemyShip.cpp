@@ -5,12 +5,12 @@
 #define VINTENS 0.5
 #define SCREENX 400
 #define SCREENY 300
-#define MAXDISTANCE 1200
+#define MAXDISTANCE 2200
 #define MAXSCAREDANGLE 20
 #define MAXSCAREDSPEED 0.35
 #define DISTANCESCALE 100
 #define DODGETIME 50
-#define SIZE 40
+#define SIZE 20
 #define EXPLOSION_SIZE 40
 #define LODDISTANCE 2500
 #define ENEMYSHIP_RADIUS 40
@@ -170,7 +170,7 @@ void EnemyShip::tic(uint64_t time)
     firingTimer += time;
     
     /** if it's time to shoot, let loose the cannons! (provided you're not behing the player) **/
-    if (firingTimer > 600 && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 80)
+    if (firingTimer > 600 /*&& 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 80*/)
       {
 	firing = true;
 	firingTimer = 0;

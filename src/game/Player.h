@@ -118,7 +118,10 @@ public:
     *  returns the m_forward of the player (used in enemies)
    **/
    vec3 getMForward();
+
+   void setMissileCooldown(float cooldown);
    
+   float getMissileCooldown();
    bool getAlive();
 private:
    /**
@@ -222,6 +225,8 @@ private:
     * Pointer to modules
     */
    Modules* m_modules;
+
+   float m_missileCooldown;
    
    static const int health;
 };

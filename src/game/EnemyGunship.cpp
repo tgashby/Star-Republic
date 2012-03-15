@@ -5,7 +5,7 @@
 
 #define VCHANGE 0.8
 #define VINTENS 0.5
-#define SIZE 100
+#define SIZE 25
 #define MOTIONTIME 2000
 #define FIRINGTIME 400
 #define TURRETSIDEOFFSET 20
@@ -13,7 +13,7 @@
 #define TURRETUPOFFSET 0
 #define GUNSHIP_RADIUS 40
 #define _ENEMY_GUNSHIP_EXPLOSION_RADIUS 60.0f
-#define UPDATEDISTANCE 2000.0
+#define UPDATEDISTANCE 3000.0
 #define RADTODEG 180 / 3.1415
 #define LODDISTANCE 2500
 const float PATHVELOCITY = 0.03f;
@@ -201,7 +201,7 @@ void EnemyGunship::tic(uint64_t time)
     firingTimer2 += time;
 
     /** to shoot? **/
-    if (firingTimer1 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 90)
+    if (firingTimer1 > FIRINGTIME /*&& 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 90*/)
       {
 	firing1 = true;
 	firingTimer1 %= FIRINGTIME;
@@ -213,7 +213,7 @@ void EnemyGunship::tic(uint64_t time)
     firing1 = firing1 && isAlive();
     
     /** to shoot? **/
-    if (firingTimer2 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 90)
+    if (firingTimer2 > FIRINGTIME /*&& 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 90*/)
       {
 	firing2 = true;
 	firingTimer2 %= FIRINGTIME;

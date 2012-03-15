@@ -94,7 +94,7 @@ void GameEngine::InitData()
                       m_path->getCurrentPointer()->getUp(), m_path->getPreviousPointer()->getPosition(), 
                       m_path->getPreviousPointer()->getUp());
    m_player->calculateSide();
-   
+   m_player->setBounds(20.0f);
    m_modules->renderingEngine->setCamera(m_camera);
    
    m_modules->renderingEngine->addObject3d(m_player);
@@ -457,12 +457,13 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    if (key == SDLK_z)
    {
       if (!m_camera->isBoosting()) {
+         for (int bulletCount = 0; bulletCount < 2; bulletCount++) {
          Bullet *bullet = new Bullet("models/lance.obj", "textures/test4.bmp", 
                                      m_modules, m_player->getPosition() 
                                      + (m_player->getSide() * 8),
                                      m_player->getMagneticForward(), 
                                      m_player->getAimUp(), 
-                                     *m_player, Bullet::defaultTimeToLive, 1.0f);
+                                     *m_player, Bullet::defaultTimeToLive, 1.7f);
          
          //m_path->addToQuadrants(bullet->getPosition(), bullet, bullet);
          m_bulletList.push_back(bullet);
@@ -472,14 +473,14 @@ bool GameEngine::handleKeyDown(SDLKey key) {
                              m_modules, m_player->getPosition() 
                              - (m_player->getSide() * 8),
                              m_player->getMagneticForward(), m_player->getAimUp(), 
-                             *m_player, Bullet::defaultTimeToLive, 1.0f);
+                             *m_player, Bullet::defaultTimeToLive, 1.7f);
          
          m_bulletList.push_back(bullet);
          //m_path->addToQuadrants(bullet->getPosition(), bullet, bullet);
          m_modules->renderingEngine->addObject3d(bullet);
          
          
-         
+         }
          m_modules->soundManager->playSound(PlayerGun); 
          //m_bulletSound->play(0);
       }
@@ -490,7 +491,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    {
       if (!m_camera->isBoosting()) {
          
-         for (int currBullet = 0; currBullet < 6; currBullet++) 
+         for (int currBullet = 0; currBullet < 11; currBullet++) 
          {
             int multiplier = (currBullet % 2) == 0 ? -1 : 1;
             
@@ -505,7 +506,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
                                         m_player->getPosition() + ((m_player->getSide() * 8) * multiplier),
                                         bFwd, 
                                         m_player->getAimUp(), 
-                                        *m_player, Bullet::defaultTimeToLive, 1.0f);
+                                        *m_player, Bullet::defaultTimeToLive, 0.93f);
             
             //m_path->addToQuadrants(bullet->getPosition(), bullet, bullet);
             m_bulletList.push_back(bullet);
@@ -583,7 +584,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
    }
    
    if (key == SDLK_x) {
-      if (!m_camera->isBoosting()) {
+      if (!m_camera->isBoosting() && m_player->getMissileCooldown() <= 0) {
          targets = acquireMissileTargets();
          
          //For each target
@@ -630,6 +631,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
             m_missileList.push_back(missile);
             m_modules->renderingEngine->addObject3d(missile);
             m_modules->soundManager->playSound(PlayerMissile); 
+            m_player->setMissileCooldown(3500);
          }
       }
    }

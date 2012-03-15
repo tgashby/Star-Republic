@@ -81,17 +81,18 @@ void WorldGrid::tic(uint64_t dt)
          
          // Turret not currently firing, but I think it's because
          // the player starts too close to the turret
-         if (turret->isAlive() && dirToPlayer.Length() < 1500 && turret->shouldFire())
+         if (turret->isAlive() && dirToPlayer.Length() < 2500 && turret->shouldFire()
+             && turret->getHeadPosition().Dot(m_player->getMForward()) > m_player->getPosition().Dot(m_player->getMForward()))
          {
             //vec3 dirToPlayerNorm = dirToPlayer.Normalized();
-            vec3 dirToPlayerNorm = (turret->getPosition() - turret->getTargetPosition()).Normalized();
+            vec3 dirToPlayerNorm = (turret->getHeadPosition() - turret->getTargetPosition()).Normalized();
 
             Bullet* bullet = 
             new Bullet("models/lance.obj", "textures/red_texture.bmp", 
                        m_modules, turret->getHeadPosition(), 
                        -dirToPlayerNorm, 
                        dirToPlayerNorm.Cross(turret->getPosition()), *(*i),
-                       Bullet::defaultTimeToLive, 0.7f);
+                       Bullet::defaultTimeToLive, 0.6f);
             
             m_modules->renderingEngine->addObject3d(bullet);
             //m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);
@@ -125,7 +126,8 @@ void WorldGrid::tic(uint64_t dt)
 	    currentClosest = enemyShip;
 	 }
          
-         if (dirEnemyToPlayer.Length() < 700 && enemyShip->shouldFire() && enemyShip->isAlive())
+         if (dirEnemyToPlayer.Length() < 1700 && enemyShip->shouldFire() && enemyShip->isAlive() && 
+             enemyShip->getPosition().Dot(m_player->getMForward()) > m_player->getPosition().Dot(m_player->getMForward()))
          {
             vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
 
@@ -166,8 +168,9 @@ void WorldGrid::tic(uint64_t dt)
 	    currentClosest = enemyShip;
 	 }
          
-         if (dirEnemyToPlayer.Length() < 1600 &&
-             (enemyShip->shouldFire1() || enemyShip->shouldFire2()) && enemyShip->isAlive())
+         if (dirEnemyToPlayer.Length() < 2600 &&
+             (enemyShip->shouldFire1() || enemyShip->shouldFire2()) && enemyShip->isAlive()
+             && enemyShip->getPosition().Dot(m_player->getMForward()) > m_player->getPosition().Dot(m_player->getMForward()))
          {
 
             vec3 dirToPlayerNorm = dirEnemyToPlayer.Normalized();
