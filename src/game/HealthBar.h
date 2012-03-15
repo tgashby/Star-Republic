@@ -10,6 +10,7 @@
 #define StarRepub_HealthBar_h
 
 #define HEALTH_BAR_TEXTURE1 "textures/HealthBar.bmp"
+#define HEALTH_BAR_TEXTURE2 "textures/HealthBarStable.bmp"
 
 #include "Interfaces.h"
 #include "Object2d.h"
@@ -19,6 +20,7 @@ class HealthBar: public Object2d {
 public:
    HealthBar(Modules *modules);
    ~HealthBar();
+   void updateBar(float healthPercentage);
 private:
    Mesh *m_mainMesh;
 };
