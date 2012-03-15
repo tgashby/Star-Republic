@@ -75,6 +75,8 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    m_offsetPosition += (m_sideVelocity * time) + (m_upVelocity * time);
    m_position = m_offsetPosition + tempPos;
 
+   m_shipVelocity = m_upVelocity + m_sideVelocity + (m_forward * 0.5f);
+
    /*if (m_isFlashing) {
       m_count++;
       int temp = m_count % 4;
@@ -243,4 +245,9 @@ vec3 Player::getOffSet() {
 vec3 Player::getMForward()
 {
   return m_forward;
+}
+
+Vector3<float> Player::getShipVelocity()
+{
+   return m_shipVelocity;
 }

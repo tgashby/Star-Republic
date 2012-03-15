@@ -70,6 +70,7 @@ public:
    bool shouldFire();
 
    vec3 getPosition();
+   vec3 getTargetPosition();
    
 private:
    Mesh *m_headMesh;

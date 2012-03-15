@@ -67,7 +67,6 @@ void WorldGrid::tic(uint64_t dt)
       currObj->tic(dt);
       
       vec3 dirToPlayer = (*i)->getPosition() - m_player->getPosition();
-      
       if (typeid(**i) == typeid(Turret)) 
       {
          Turret* turret = ((Turret*)*i);
@@ -84,7 +83,8 @@ void WorldGrid::tic(uint64_t dt)
          // the player starts too close to the turret
          if (turret->isAlive() && dirToPlayer.Length() < 1500 && turret->shouldFire())
          {
-            vec3 dirToPlayerNorm = dirToPlayer.Normalized();
+            //vec3 dirToPlayerNorm = dirToPlayer.Normalized();
+            vec3 dirToPlayerNorm = (turret->getPosition() - turret->getTargetPosition()).Normalized();
 
             Bullet* bullet = 
             new Bullet("models/lance.obj", "textures/red_texture.bmp", 
@@ -193,7 +193,7 @@ void WorldGrid::tic(uint64_t dt)
                           m_modules, enemyShip->getRightCannonPos(), 
                           enemyShip->getAimForward(), 
                           dirToPlayerNorm.Cross(enemyShip->getRightCannonPos()), 
-                          *enemyShip, Bullet::defaultTimeToLive, 0.5f);
+                          *enemyShip, Bullet::defaultTimeToLive, 0.6f);
                
                m_modules->renderingEngine->addObject3d(bullet);
                //m_path.addToQuadrants(bullet->getPosition(), bullet, bullet);

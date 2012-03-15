@@ -94,6 +94,9 @@ public:
    /** returns the direction to the nearest enemy **/
    Vector3<float> getMagneticForward();
 
+   /** returns the Ship Velocity **/
+   Vector3<float> getShipVelocity();
+
    /** sets the direction to the nearest enemy
     *  @param dir the direction to the enemy **/
    void setMagneticForward(vec3 dir);
