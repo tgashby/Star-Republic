@@ -11,6 +11,7 @@
 
 #define HEALTH_BAR_TEXTURE1 "textures/HealthBar.bmp"
 #define HEALTH_BAR_TEXTURE2 "textures/HealthBarStable.bmp"
+#define HEALTH_BAR_TEXTURE3 "textures/HealthSection.bmp"
 
 #include "Interfaces.h"
 #include "Object2d.h"
