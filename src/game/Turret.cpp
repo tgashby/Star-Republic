@@ -9,6 +9,7 @@
 #include "Turret.h"
 
 #define TURRETHEADHEIGHT 35
+#define TURRET_RADIUS 40
 
 /*
 Turret::Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules) 
@@ -197,4 +198,20 @@ void Turret::collideWith(Missile& missile) {
 
 vec3 Turret::getPosition() {
   return m_position;
+}
+
+bool Turret::viewCull(vector<vec4> *planes) {
+   vector<vec4>::iterator plane = planes->begin();
+   float val;
+   
+   for (; plane != planes->end(); ++plane) {
+      val = plane->x * m_position.x +
+      plane->y * m_position.y +
+      plane->z * m_position.z +
+      plane->w;
+      if (val < -TURRET_RADIUS) {
+         return false;
+      }
+   }
+   return true;
 }

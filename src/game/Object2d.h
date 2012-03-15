@@ -20,6 +20,7 @@ public:
    virtual ~Object2d();
    list<IMesh *>* getMeshes();
    void setVisible(bool vis);
+   bool viewCull(vector<vec4> *planes);
 protected:
    list<IMesh *> m_meshList;
 };
