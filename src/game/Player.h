@@ -85,6 +85,8 @@ public:
     */
    Vector3<float> getAimForward();
 
+   float getHealthPercent();
+   
    /**
     * Gives the up vector of the player
     * @return The up vector of the player's aim
