@@ -43,10 +43,38 @@ public:
     * stopBackgroundSound - Stops a background that's already playing. 
     */
    void stopBackgroundSound(BackgroundSound sound); 
+   
+   /**
+    * startMusic - Starts the background music. From here, the soundManager
+    * will automatically load and play addational tracks until stopMusic is called
+    */
+   void startMusic();
+   
+   void playNextTrack();
+
+   /**
+    * stopMusic - Stops all background music.
+    */
+   void stopMusic();
+
+   /**
+    * tic - Called once per frame
+    * @param dt - amount of time in milliseconds
+    */
+   void tic(uint64_t dt);
+      
+
 private:
+   /// The default amount of time to delay between tracks
+   static const int defaultDelay = 10000;
    vector<Sound*>  m_sounds[numSoundEvents]; 
    Sound* m_backgroundSounds[numBackgroundSounds];
    bool m_backgroundPlaying[numBackgroundSounds];
+   bool m_musicPlaying;
+   bool m_countdownRunning;
+   vector<Sound*> m_music;
+   vector<Sound*>::iterator m_currentTrack;
+   int m_delayCountdown;
     
 };
 

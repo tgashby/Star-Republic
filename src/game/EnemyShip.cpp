@@ -13,6 +13,7 @@
 #define SIZE 40
 #define EXPLOSION_SIZE 40
 #define LODDISTANCE 2500
+#define ENEMYSHIP_RADIUS 40
 
 /** Scared Enemy: Takes in the mesh info and a reference to the player to aim at **/
 EnemyShip::EnemyShip(string fileName, string LODname, string textureName, Modules *modules, Player *p) 
@@ -278,11 +279,13 @@ void EnemyShip::doCollision(GameObject & other)
             flashtimer = 2;  
       }
    }
-
-   if (typeid(other) == typeid(Missile)) {
+   else if (typeid(other) == typeid(Missile)) {
      m_health -= 100;
      if (flashtimer == 0)
             flashtimer = 2;   
+   }
+   else if (typeid(other) == typeid(Player)) {
+      m_health = 0;
    }
    
    if (m_health <= 0) 
@@ -301,4 +304,20 @@ bool EnemyShip::shouldFire()
 
 vec3 EnemyShip::getPosition() {
   return m_position;
+}
+
+bool EnemyShip::viewCull(vector<vec4> *planes) {
+   vector<vec4>::iterator plane = planes->begin();
+   float val;
+   
+   for (; plane != planes->end(); ++plane) {
+      val = plane->x * m_position.x +
+      plane->y * m_position.y +
+      plane->z * m_position.z +
+      plane->w;
+      if (val < -ENEMYSHIP_RADIUS) {
+         return false;
+      }
+   }
+   return true;
 }

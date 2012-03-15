@@ -126,7 +126,13 @@ class EnemyGunship : public Flyer, public Enemy, public Explodeable {
     * returns the cross of the m_forward and m_up vectors
     */
    vec3 getMSide();
-
+   
+   /**
+    * determines if visible with in the given planes.
+    * @param a vector of vec4s for planes definining a view frustum. 
+    */
+   bool viewCull(vector<vec4> *planes);
+   
 private:
    Mesh *m_mesh;
    Mesh *m_LODmesh;

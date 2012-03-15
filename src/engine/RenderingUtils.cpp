@@ -158,6 +158,8 @@ void addMesh(MeshData *meshData, MeshRef *meshRef) {
 
 void addTexture(TextureData *textureData, TextureRef *textureRef) {
    SDL_Surface *surface = (SDL_Surface *) textureData->data;
+
+   int byteSize = surface->format->BytesPerPixel;
    
    // add a new texture. (update for RGBA)
    GLuint textureBuffer;
@@ -165,8 +167,17 @@ void addTexture(TextureData *textureData, TextureRef *textureRef) {
    glBindTexture(GL_TEXTURE_2D, textureBuffer);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, surface->w, surface->h, 0,
-                GL_BGR, GL_UNSIGNED_BYTE, surface->pixels);
+   
+   if (byteSize == 3) {
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, surface->w, surface->h, 0,
+                   GL_BGR, GL_UNSIGNED_BYTE, surface->pixels);
+   }
+   else {
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0,
+                  GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
+   }
+   
+   
    glGenerateMipmapEXT(GL_TEXTURE_2D);
    
    // Update the texture reference

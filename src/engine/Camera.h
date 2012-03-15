@@ -27,6 +27,8 @@ class Player;
 class Camera: public ICamera {
  public:
 
+   Camera();
+  
   /**
    * Camera constructor.  Builds the camera based on the starting point and the
    * head.
@@ -116,6 +118,12 @@ class Camera: public ICamera {
    * @return True if the camera is accelerating; otherwise false
    */
   bool isBoosting();
+
+  /**
+   * getPlanes returns a vector of planes in the form of vec4s
+   * @return the planes for view frustum culling.
+   */
+  vector<vec4>* getPlanes();
 
  private:
 
@@ -211,6 +219,11 @@ class Camera: public ICamera {
    * Whether we are currently boosting or not
    */
   bool m_boosting;
+  
+  /**
+   * contains planes used for view frustum culling.
+   */
+  vector<vec4> m_planes;
    
 };
 

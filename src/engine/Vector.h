@@ -189,27 +189,39 @@ struct Vector3 {
 
 template <typename T>
 struct Vector4 {
-    Vector4() {}
-    Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
-    T Dot(const Vector4& v) const
-    {
-        return x * v.x + y * v.y + z * v.z + w * v.w;
-    }
-    Vector4 Lerp(float t, const Vector4& v) const
-    {
-        return Vector4(x * (1 - t) + v.x * t,
-                       y * (1 - t) + v.y * t,
-                       z * (1 - t) + v.z * t,
-                       w * (1 - t) + v.w * t);
-    }
-    const T* Pointer() const
-    {
-        return &x;
-    }
-    T x;
-    T y;
-    T z;
-    T w;
+   Vector4() {}
+   Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
+   T Dot(const Vector4& v) const
+   {
+      return x * v.x + y * v.y + z * v.z + w * v.w;
+   }
+   Vector4 operator*(T s) const
+   {
+      return Vector4(x * s, y * s, z * s, w * s);
+   }
+   void NormalizePlane()
+   {
+      float s = 1.0f / sqrtf(x*x + y*y + z*z);
+      x *= s;
+      y *= s;
+      z *= s;
+      w *= s;
+   }
+   Vector4 Lerp(float t, const Vector4& v) const
+   {
+      return Vector4(x * (1 - t) + v.x * t,
+                     y * (1 - t) + v.y * t,
+                     z * (1 - t) + v.z * t,
+                     w * (1 - t) + v.w * t);
+   }
+   const T* Pointer() const
+   {
+      return &x;
+   }
+   T x;
+   T y;
+   T z;
+   T w;
 };
 
 typedef Vector2<bool> bvec2;

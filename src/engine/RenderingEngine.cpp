@@ -40,10 +40,13 @@ RenderingEngine::RenderingEngine(ivec2 screenSize, Modules *modules) {
    vec4 lightPos(1, 1, 1, 1);
    glLightfv(GL_LIGHT0, GL_POSITION, lightPos.Pointer());
    
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   glDisable(GL_BLEND);
+   
    glEnable(GL_DEPTH_TEST);
-   glBlendFunc(GL_ONE, GL_ONE);
    //glEnable(GL_CULL_FACE);
-   //glCullFace(GL_BACK);
+   //glCullFace(GL_FRONT);
 }
 
 RenderingEngine::~RenderingEngine() {
@@ -70,7 +73,7 @@ void RenderingEngine::removeObject3d(IObject3d *obj) {
    }
 }
 
-void RenderingEngine::render(list<IObject3d *> &objects) {
+void RenderingEngine::render(list<IObject3d *> &objects3d, list<IObject3d *> &objects2d) {
 
    list<IMesh *> bloomedMeshes(0);
    
@@ -81,6 +84,8 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    
    // Get the projection * view matrix from the camera.
    mat4 projectionViewMatrix = m_camera->getProjectionViewMtx();
+   vector<vec4> *planes = m_camera->getPlanes();
+   
    TextureRef *texture0 = (TextureRef*)(*m_planeTextures)[0];
    TextureRef *texture1 = (TextureRef*)(*m_planeTextures)[1];
    TextureRef *texture2 = (TextureRef*)(*m_planeTextures)[2];
@@ -93,7 +98,11 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    
    vec3 scale;
    
-   for (obj = objects.begin(); obj != objects.end(); ++obj) {
+   for (obj = objects3d.begin(); obj != objects3d.end(); ++obj) {
+      if (!(*obj)->viewCull(planes)) {
+         // Skip the object if out side of view frustum.
+         continue;
+      }
       objMeshes = (*obj)->getMeshes();
       for (mesh = objMeshes->begin(); mesh != objMeshes->end(); ++mesh) {
          // Skip the mesh if it is not visible or is not loaded yet.
@@ -112,6 +121,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    }
    
    glDisable(GL_DEPTH);
+   glDisable(GL_DEPTH_TEST);
    glEnable(GL_BLEND);
    
    setFrameBuffer(FRAME_BUFFER_PASS0);
@@ -120,8 +130,9 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_PASS1].texture;
    drawMesh((IMesh*) m_planeMesh, m_screenMtx);
    
-   glEnable(GL_DEPTH);
    glDisable(GL_BLEND);
+   glEnable(GL_DEPTH_TEST);
+   glEnable(GL_DEPTH);
    
    // Clear only the color buffer. Keep the depth for occluding bloomed meshes.
    setFrameBuffer(FRAME_BUFFER_PASS1);
@@ -134,6 +145,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    }
    
    glDisable(GL_DEPTH);
+   glDisable(GL_DEPTH_TEST);
    glEnable(GL_BLEND);
    
    setFrameBuffer(FRAME_BUFFER_REDUCE0);
@@ -162,6 +174,7 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    
    setFrameBuffer(FRAME_BUFFER_SCREEN);
    clearScreen();
+   
    m_planeMesh->setShaderType(SHADER_COMBINE);
    texture0->textureBuffer = m_frameBuffers[FRAME_BUFFER_PASS0].texture;
    texture1->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE0].texture;
@@ -170,55 +183,22 @@ void RenderingEngine::render(list<IObject3d *> &objects) {
    texture4->textureBuffer = m_frameBuffers[FRAME_BUFFER_REDUCE3].texture;
    drawMesh((IMesh*) m_planeMesh, m_screenMtx);
    
-   glEnable(GL_DEPTH);
-   glDisable(GL_BLEND);
+   // draw the 2d objects
+   for (obj = objects2d.begin(); obj != objects2d.end(); ++obj) {
+      objMeshes = (*obj)->getMeshes();
+      for (mesh = objMeshes->begin(); mesh != objMeshes->end(); ++mesh) {
+         // Skip the mesh if it is not visible or is not loaded yet.
+         if (!(*mesh)->isVisible() || !(*mesh)->checkLoaded())
+            continue;
+         
+         // Draw the mesh
+         drawMesh((*mesh), m_screenMtx);
+      }
+   }
    
-   //MY CODE BELOW HERE
-   //glBegin(GL_POLYGON);
-   //glMatrixMode(GL_MODELVIEW);
-   //glLoadIdentity();
-   glMatrixMode(GL_PROJECTION);
-   glPushMatrix();
-   glLoadIdentity();
-   //glOrtho(0, 800, 0, 500, -1, 1);
-
-   glEnable(GL_BLEND);
-   glDisable(GL_DEPTH);
-   
-   
-   glDisable(GL_DEPTH_TEST);
-
-   //glClear(GL_COLOR_BUFFER_BIT);
-   //glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
-   //glEnable(GL_COLOR_MATERIAL);
-   
-   //glDisable(GL_CULL_FACE);
-   //glDisable(GL_TEXTURE_2D);
-   //glDisable(GL_LIGHTING);
-   //glClear(GL_COLOR_BUFFER_BIT);//| GL_DEPTH_BUFFER_BIT);
-   //glFlush();
-   //glEnable(GL_LIGHTING);
-   glColor4f(0.5, 0.5, 0.5, 1.0);
-   glRectf(.05, .04, .6, .09);
-   glColor4f(.24, 1.0, .69, 1.0);
-   //glRectf(.08, .05, .57, .08);
-   glRectf(.08, .05, .08 + (.49 * getPercentHealth()), .08);
-
-   //glDisable(GL_COLOR_MATERIAL);
-   
-   //SDL_GL_SwapBuffers();
-   glPopMatrix();
-   //glEnable(GL_DEPTH_TEST);
-
-   glDisable(GL_BLEND);
-   glEnable(GL_DEPTH);
    glEnable(GL_DEPTH_TEST);
-   //glEnd();
-   //SDL_GL_SwapBuffers();
-   
-   //glEnd();
-   //glutSwapBuffers();
-   //END MY CODE
+   glEnable(GL_DEPTH);
+   glDisable(GL_BLEND);
 }
 
 float RenderingEngine::getPercentHealth() {
@@ -313,6 +293,10 @@ void RenderingEngine::clearScreen() {
    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
+void RenderingEngine::waitForThreads()
+{
+   m_loader->waitForThreads();
+}
 
 void RenderingEngine::drawMesh(IMesh *mesh, mat4 projection) {
    

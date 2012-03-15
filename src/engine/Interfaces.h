@@ -109,19 +109,23 @@ struct IMesh {
 struct ICamera {
    virtual ~ICamera() {}
    virtual mat4 getProjectionViewMtx() = 0;
+   virtual vector<vec4>* getPlanes() = 0;
 };
 
 // Each object needs to provide the RenderingEngine a list of meshes.
 struct IObject3d {
    virtual ~IObject3d() {}
    virtual list<IMesh *>* getMeshes() = 0;
+   virtual bool viewCull(vector<vec4> *planes) = 0;
 };
 
 // Sound
-const int numSoundEvents = 4; 
+const int numSoundEvents = 6; 
 enum SoundEvent {
    Explosion = 0,
    PlayerGun,
+   PlayerShotgun,
+   PlayerRam,
    PlayerHit,
    PlayerMissile,
 };
@@ -139,6 +143,9 @@ public:
 
    virtual void playBackgroundSound(BackgroundSound sound) = 0;
    virtual void stopBackgroundSound(BackgroundSound sound) = 0; 
+   virtual void startMusic() = 0;
+   virtual void stopMusic() = 0;
+   virtual void tic(uint64_t dt) = 0;
 };
 
 const int INVALID_CHANNEL = -2;
@@ -170,13 +177,14 @@ struct IGameEngine {
 // All OpenGL calls should be implemented in the RenderingEngine.
 struct IRenderingEngine {
    virtual ~IRenderingEngine() {}
-   virtual void render(list<IObject3d *> &objects) = 0;
+   virtual void render(list<IObject3d *> &objects3d, list<IObject3d *> &objects2d) = 0;
    virtual void setCamera(ICamera *camera) = 0;
    virtual void addObject3d(IObject3d *obj) = 0;
    virtual void removeObject3d(IObject3d *obj) = 0;
    virtual void drawMesh(IMesh *mesh, mat4 projection) = 0;
    virtual void drawText(string text, ivec2 loc, ivec2 size) = 0;
    virtual void clearScreen() = 0;
+   virtual void waitForThreads() = 0;
 };
 
 // Any resurces from the file system should be accessed

@@ -34,3 +34,7 @@ void Object3d::setVisible(bool mood) {
       temp->setVisible(mood);
    }
 }
+
+bool Object3d::viewCull(vector<vec4> *planes) {
+   return true;
+}

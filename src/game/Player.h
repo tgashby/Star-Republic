@@ -16,6 +16,7 @@
 #define FLASH_DURATION 30
 #define TOTAL_FLASH_DURATION 120
 
+//Forward declrations for enemnies
 /**
  * Player class to handle the player
  */
@@ -85,6 +86,8 @@ public:
     */
    Vector3<float> getAimForward();
 
+   float getHealthPercent();
+   
    /**
     * Gives the up vector of the player
     * @return The up vector of the player's aim
@@ -155,9 +158,8 @@ private:
    Mesh *m_exhaustMesh;
 
    //LOOK AT ME AND MY FANCY SHMANCY COMMENTS
-   //int m_count;
-   //bool m_isFlashing;
-   int m_flashtimer;
+   int m_count;
+   bool m_isFlashing;
 
    /**
     * The forward velocity of the ship
@@ -215,6 +217,13 @@ private:
     * The current angle taken
     */
    float currentAngle;
+
+   /** 
+    * Pointer to modules
+    */
+   Modules* m_modules;
+   
+   static const int health;
 };
 
 #endif

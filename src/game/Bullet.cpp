@@ -10,6 +10,7 @@
 
 #define SCALE 0.7
 #define ROTATE 90
+#define BULLET_RADIUS 5
 
 const float Bullet::defaultSpeed = 0.4f;
 const float Bullet::defaultBulletRadius = 0.5f;
@@ -84,4 +85,20 @@ void Bullet::doCollision(GameObject & other) {
          m_mesh->setVisible(false);
       }
    }
+}
+
+bool Bullet::viewCull(vector<vec4> *planes) {
+   vector<vec4>::iterator plane = planes->begin();
+   float val;
+   
+   for (; plane != planes->end(); ++plane) {
+      val = plane->x * m_position.x +
+      plane->y * m_position.y +
+      plane->z * m_position.z +
+      plane->w;
+      if (val < -BULLET_RADIUS) {
+         return false;
+      }
+   }
+   return true;
 }

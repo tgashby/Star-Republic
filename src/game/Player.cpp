@@ -1,11 +1,15 @@
 #include "Player.h"
 #include "Bullet.h"
 #include "Turret.h"
+#include "EnemyShip.h"
+#include "EnemyGunship.h"
 
 #define VCHANGE 0.8
 #define VINTENS 0.5
 #define SCREENX 400
 #define SCREENY 300
+
+const int Player::health = 200;
 
 /** Constructor **/
 
@@ -24,7 +28,8 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_exhaustMesh = new Mesh("models/spaceship_exhaust.obj", "textures/test4.bmp", modules);
    m_exhaustMesh->setShaderType(SHADER_BLOOM);
    m_meshList.push_back(m_exhaustMesh);
-   //m_isFlashing = false;
+   m_isFlashing = false;
+   m_count = 0;
    
 
    // these are relative to the 'forward' vector
@@ -42,12 +47,10 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_shipMesh->setModelMtx(modelMtx);
    m_exhaustMesh->setModelMtx(modelMtx);
    
-   // god mode much?
-   m_health = 2000;
-
-   m_flashtimer = 0;
+   m_health = Player::health;
 
    magnet = true;
+   m_modules = modules;
 }
 
 Player::~Player()
@@ -77,7 +80,7 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
 
    m_shipVelocity = m_upVelocity + m_sideVelocity + (m_forward * 0.5f);
 
-   /*if (m_isFlashing) {
+   if (m_isFlashing) {
       m_count++;
       int temp = m_count % 4;
       if (temp < 2 && temp > 0) {
@@ -88,21 +91,10 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
          m_shipMesh->setVisible(true);
          m_exhaustMesh->setVisible(true);
       }
-      if (m_count == 20) {
+      if (m_count >= 20) {
          m_count = 0;
          m_isFlashing = false;
       }
-   }*/
-   if (m_flashtimer != 0)
-   {
-      m_shipMesh->setVisible(false);
-      m_exhaustMesh->setVisible(false);
-      m_flashtimer--;
-   }
-   else
-   {
-      m_shipMesh->setVisible(true);
-      m_exhaustMesh->setVisible(true);
    }
 
    /** set the model matrix based on a constant scale and rotate and
@@ -148,6 +140,10 @@ void Player::setMagneticForward(vec3 dir)
 void Player::toggleMagnetic()
 {
    magnet = !magnet;
+}
+
+float Player::getHealthPercent() {
+  return (m_health * 1.0f) / (health * 1.0f);
 }
 
 Vector3<float> Player::getAimForward()
@@ -204,21 +200,31 @@ void Player::calculateSide() {
 
 void Player::doCollision(GameObject & other)
 {
+   //DO Collision stuff
    if (typeid(other) == typeid(Bullet))
    {
       if (&((Bullet&)other).getParent() != this)
       {
          m_health -= 2;
-         if (m_flashtimer == 0)
-            m_flashtimer = 3;
+         m_isFlashing = true;
+         m_modules->soundManager->playSound(PlayerHit); 
       }
    }
-   
-   if (typeid(other) == typeid(Turret))
+   else if (typeid(other) == typeid(Turret))
    {
-     m_health -= 10;
-     if (m_flashtimer == 0)
-        m_flashtimer = 3;
+      m_health -= 10;
+      m_isFlashing = true;
+      m_modules->soundManager->playSound(PlayerRam); 
+   }
+   else if (typeid(other) == typeid(EnemyGunship)){
+      m_health -= 15;
+      m_isFlashing = true;
+      m_modules->soundManager->playSound(PlayerRam); 
+   }
+   else if (typeid(other) == typeid(EnemyShip)){
+      m_health -= 15;
+      m_isFlashing = true;
+      m_modules->soundManager->playSound(PlayerRam); 
    }
    
    if (m_health <= 0) {
@@ -226,7 +232,6 @@ void Player::doCollision(GameObject & other)
        m_shipMesh->setVisible(false);
        m_exhaustMesh->setVisible(false);
    }
-   //DO Collision stuff
 }
 
 bool Player::getAlive() {

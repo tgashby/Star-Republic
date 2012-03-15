@@ -1,5 +1,6 @@
 #include "GameEngine.h"
 #include "Object3d.h"
+#include "Object2d.h"
 #include "Player.h"
 #include "SceneObject.h"
 
@@ -21,8 +22,30 @@ GameEngine::GameEngine(Modules *modules) {
    m_stateManager->pushState(m_game);
    m_stateManager->pushState(m_menu);
    
+   m_menuImage = new Object2d("textures/mainmenu.bmp", ivec2(-300, -200), ivec2(600, 400), m_modules);
+   m_modules->renderingEngine->addObject3d(m_menuImage);
+   
+   m_victoryImage = new Object2d("textures/victory.bmp", ivec2(-300, -200), ivec2(600, 400), m_modules);
+   m_modules->renderingEngine->addObject3d(m_victoryImage);
+   
+   m_gameOverImage = new Object2d("textures/gameover.bmp", ivec2(-300, -200), ivec2(600, 400), m_modules);
+   m_modules->renderingEngine->addObject3d(m_gameOverImage);
+   
+   m_healthBar = new HealthBar(m_modules);
+   m_modules->renderingEngine->addObject3d(m_healthBar);
+   
+   m_modules->renderingEngine->setCamera(new Camera());
+   
+   /*
+   m_test1 = new Object2d("textures/test7.bmp", ivec2(-16, -16), ivec2(64, 64), m_modules);
+   m_modules->renderingEngine->addObject3d(m_test1);
+   
+   m_test2 = new Object2d("textures/test5.bmp", ivec2(-48, -48), ivec2(64, 64), m_modules);
+   m_modules->renderingEngine->addObject3d(m_test2);*/
+   
    //INIT DATA not being called, only called when the menu is left.
-   //InitData();
+   InitData();
+   m_modules->soundManager->startMusic();
 }
 
 GameEngine::~GameEngine() {
@@ -86,10 +109,15 @@ void GameEngine::InitData()
    
    m_modules->soundManager->playBackgroundSound(Idle); 
    addAsteroids();
+   
+   m_modules->renderingEngine->waitForThreads();
 }
 
 void GameEngine::tic(uint64_t td) {
    //CHECKS TO MAKE SURE THE CURRENT STATE IS A GAME STATE. THIS SHOULD PROBABLY BE MODIFIED TO SOMETHING MORE ELEGANT.
+   if (td > 100) {
+      td = 25;
+   }
    if (m_stateManager->getCurrentState() == m_game)
    {
       gameOver += td;
@@ -124,7 +152,8 @@ void GameEngine::tic(uint64_t td) {
       m_worldGrid->tic(td);
       
       m_worldGrid->checkCollisions();
-      
+      m_healthBar->updateBar(m_player->getHealthPercent());
+
       cullObjects();
       
       if(m_player->getAlive() == false) {
@@ -245,24 +274,33 @@ void GameEngine::cullObject(GameObject* obj, Object3d* second) {
 }
 
 void GameEngine::render() {
+   list<IObject3d*> objs3d = list<IObject3d*>(0);
+   list<IObject3d*> objs2d = list<IObject3d*>(0);
+   
    //Checks if the current state is the game state. This could be made more elegant.
    if (m_stateManager->getCurrentState() == m_game)
    {
-      list<IObject3d*> objs = m_worldGrid->getDrawableObjects();
+      objs3d = m_worldGrid->getDrawableObjects();
       
       //      std::cerr << "List Size: " << objs.size() << "\n";
       
-      objs.push_back(m_skybox);
-      objs.push_back(m_reticle);
-      objs.push_back(m_player);
+      objs3d.push_back(m_skybox);
+      objs3d.push_back(m_reticle);
+      objs3d.push_back(m_player);
       
-      m_modules->renderingEngine->render(objs);
+      objs2d.push_back(m_healthBar);
+      
+      m_modules->renderingEngine->render(objs3d, objs2d);
    }
    if (m_stateManager->getCurrentState() == m_menu)
    {
+      /*
       m_modules->renderingEngine->clearScreen();
       m_modules->renderingEngine->drawText("STAR REPUBLIC", ivec2(-350,0), ivec2(800,100));
       m_modules->renderingEngine->drawText("Press Any Button To Begin", ivec2(-350, -100), ivec2(500,50));
+       */
+      objs2d.push_back(m_menuImage);
+      m_modules->renderingEngine->render(objs3d, objs2d);
 
       /*list<IObject3d*> objs;
       objs.push_back(m_main);
@@ -271,15 +309,21 @@ void GameEngine::render() {
    }
    if (m_stateManager->getCurrentState() == m_lose)
    {
+      /*
       m_modules->renderingEngine->clearScreen();
       m_modules->renderingEngine->drawText("YOU LOSE", ivec2(-350,0), ivec2(800,100));
-      m_modules->renderingEngine->drawText("Close The Window", ivec2(-350, -100), ivec2(500,50));
+      m_modules->renderingEngine->drawText("Close The Window", ivec2(-350, -100), ivec2(500,50));*/
+      objs2d.push_back(m_gameOverImage);
+      m_modules->renderingEngine->render(objs3d, objs2d);
    }
    if (m_stateManager->getCurrentState() == m_win)
    {
+      /*
       m_modules->renderingEngine->clearScreen();
       m_modules->renderingEngine->drawText("CONGRAGULATIONS", ivec2(-350,0), ivec2(800,100));
-      m_modules->renderingEngine->drawText("You've Won", ivec2(-350, -100), ivec2(500,50));
+      m_modules->renderingEngine->drawText("You've Won", ivec2(-350, -100), ivec2(500,50));*/
+      objs2d.push_back(m_victoryImage);
+      m_modules->renderingEngine->render(objs3d, objs2d);
    }
 }
 
@@ -323,23 +367,36 @@ void GameEngine::addAsteroids() {
    PathPoint current(vec3(0,0,0), vec3(0,0,0), vec3(0,0,0), vec3(0,0,0));
    
    //TEMPORARY!!!
-   Objective* objective = new Objective("models/sphere.obj", 
-                                        "textures/test6.bmp", m_modules, 
-                                        (vec3(.0868337, 0.995747, -0.0307775) * 2000.0f) 
-                                        + vec3(-266.174, 1759.54, -204.056),
-                                        vec3 (0, 0, 1), vec3(0, 1, 0));
-   m_modules->renderingEngine->addObject3d(objective);
-   m_objectives.push_back(objective);
-   m_path->addToQuadrants(objective->getPosition(), objective, objective);
    
-   objective = new Objective("models/sphere.obj", 
-                             "textures/test6.bmp", m_modules, 
-                             (vec3(0.642882, -0.695466, -0.320984) * 1300.0f) 
-                             + vec3(1373.04, -1224.47, -6905.99),
-                             vec3 (0, 0, 1), vec3(0, 1, 0));
-   m_modules->renderingEngine->addObject3d(objective);
-   m_objectives.push_back(objective);
-   m_path->addToQuadrants(objective->getPosition(), objective, objective);
+   for (int i = 0; i < m_path->getSize(); i++) 
+   {
+      if (i % 5 == 0) 
+      {
+         Objective* objective = new Objective("models/sphere.obj", 
+                                              "textures/test6.bmp", m_modules, 
+                                              m_path->getAt(i).getPosition(),
+                                              vec3 (0, 0, 1), vec3(0, 1, 0));
+         m_modules->renderingEngine->addObject3d(objective);
+         m_objectives.push_back(objective);
+         m_path->addToQuadrants(objective->getPosition(), objective, objective);
+      }
+   }
+//   
+//   Objective* objective = new Objective("models/sphere.obj", 
+//                                        "textures/test6.bmp", m_modules, 
+//                                        m_path->getAt(3).getPosition(),
+//                                        vec3 (0, 0, 1), vec3(0, 1, 0));
+//   m_modules->renderingEngine->addObject3d(objective);
+//   m_objectives.push_back(objective);
+//   m_path->addToQuadrants(objective->getPosition(), objective, objective);
+//   
+//   objective = new Objective("models/sphere.obj", 
+//                             "textures/test6.bmp", m_modules, 
+//                             m_path->getAt(5).getPosition(),
+//                             vec3 (0, 0, 1), vec3(0, 1, 0));
+//   m_modules->renderingEngine->addObject3d(objective);
+//   m_objectives.push_back(objective);
+//   m_path->addToQuadrants(objective->getPosition(), objective, objective);
    
    
    for (int pntIndex = 1; pntIndex < m_path->getSize(); pntIndex+=1) {
@@ -383,7 +440,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
    if (m_stateManager->getCurrentState() == m_menu)
    {
       m_stateManager->popState();
-      InitData();
+      //InitData();
       return running;
    }
    if (key == SDLK_SPACE) {
@@ -455,7 +512,7 @@ bool GameEngine::handleKeyDown(SDLKey key) {
             m_modules->renderingEngine->addObject3d(bullet);
          }
          
-         m_modules->soundManager->playSound(PlayerGun); 
+         m_modules->soundManager->playSound(PlayerShotgun); 
          //m_bulletSound->play(0);
       }
    }
@@ -471,16 +528,22 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
    Quadrant quad = m_worldGrid->getCurrentQuadrant();
    
    for (list<GameObject *>::iterator it = quad.m_gameObjects.begin(); 
-        it != quad.m_gameObjects.end(); it++) {
+        it != quad.m_gameObjects.end(); it++) 
+   {
       if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) 
-          && typeid(**it) != typeid(Missile) && (*it)->isAlive()) {
+          && typeid(**it) != typeid(Missile) && typeid(**it) != typeid(PathObject) && (*it)->isAlive()) 
+      {
          playerToObjVec = (*it)->getPosition() - m_player->getPosition();
+         
          if (playerToObjVec.Length() > 500 && 
              playerToObjVec.Length() < 1500 && 
-             angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) {
+             angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) 
+         {
             temp.push_back(*it);
             count++;
-            if (count == 6) {
+            
+            if (count == 6) 
+            {
                return temp;
             }
          }
@@ -510,10 +573,11 @@ bool GameEngine::handleKeyUp(SDLKey key)
    if (m_stateManager->getCurrentState() == m_menu)
    {
       m_stateManager->popState();
-      InitData();
+      //InitData();
       return running;
    }
-   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() == m_lose || m_stateManager->getCurrentState() == m_win)
+   
+   if (key == SDLK_ESCAPE)
    {
       running = false;
    }
@@ -561,10 +625,11 @@ bool GameEngine::handleKeyUp(SDLKey key)
                                            "textures/missileTex.bmp", 
                                            m_modules, bulletOrigin, 
                                            m_player->getAimForward(), curveDir, 
-                                           m_player, targets.at(index));            
+                                           m_player, targets.at(index));
             
             m_missileList.push_back(missile);
             m_modules->renderingEngine->addObject3d(missile);
+            m_modules->soundManager->playSound(PlayerMissile); 
          }
       }
    }

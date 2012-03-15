@@ -59,6 +59,12 @@ public:
     */
    void stop();
    
+   /**
+    * Checks the current status of the this sound.
+    * @return true if this sound is playing
+    */
+   bool isPlaying();
+   
 private:
 };
 
