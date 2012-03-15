@@ -202,11 +202,14 @@ void Player::doCollision(GameObject & other)
          m_modules->soundManager->playSound(PlayerHit); 
       }
    }
-   
-   if (typeid(other) == typeid(Turret))
+   else if (typeid(other) == typeid(Turret))
    {
-     m_health -= 10;
-     m_isFlashing = true;
+      m_health -= 10;
+      m_isFlashing = true;
+   }
+   else if (typeid(other) == typeid(Turret)){
+      m_health -= 10;
+      m_isFlashing = true;
    }
    
    if (m_health <= 0) {
