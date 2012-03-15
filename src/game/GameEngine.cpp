@@ -515,16 +515,22 @@ std::vector<GameObject*> GameEngine::acquireMissileTargets() {
    Quadrant quad = m_worldGrid->getCurrentQuadrant();
    
    for (list<GameObject *>::iterator it = quad.m_gameObjects.begin(); 
-        it != quad.m_gameObjects.end(); it++) {
+        it != quad.m_gameObjects.end(); it++) 
+   {
       if (typeid(**it) != typeid(Bullet) && typeid(**it) != typeid(Player) 
-          && typeid(**it) != typeid(Missile) && (*it)->isAlive()) {
+          && typeid(**it) != typeid(Missile) && typeid(**it) != typeid(PathObject) && (*it)->isAlive()) 
+      {
          playerToObjVec = (*it)->getPosition() - m_player->getPosition();
+         
          if (playerToObjVec.Length() > 500 && 
              playerToObjVec.Length() < 1500 && 
-             angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) {
+             angleBetween(m_player->getAimForward(), playerToObjVec) < 60.0f) 
+         {
             temp.push_back(*it);
             count++;
-            if (count == 6) {
+            
+            if (count == 6) 
+            {
                return temp;
             }
          }
@@ -606,7 +612,7 @@ bool GameEngine::handleKeyUp(SDLKey key)
                                            "textures/missileTex.bmp", 
                                            m_modules, bulletOrigin, 
                                            m_player->getAimForward(), curveDir, 
-                                           m_player, targets.at(index));            
+                                           m_player, targets.at(index));
             
             m_missileList.push_back(missile);
             m_modules->renderingEngine->addObject3d(missile);
