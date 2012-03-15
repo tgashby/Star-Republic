@@ -118,11 +118,12 @@ struct IObject3d {
 };
 
 // Sound
-const int numSoundEvents = 5; 
+const int numSoundEvents = 6; 
 enum SoundEvent {
    Explosion = 0,
    PlayerGun,
    PlayerShotgun,
+   PlayerRam,
    PlayerHit,
    PlayerMissile,
 };

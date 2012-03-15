@@ -212,14 +212,17 @@ void Player::doCollision(GameObject & other)
    {
       m_health -= 10;
       m_isFlashing = true;
+      m_modules->soundManager->playSound(PlayerRam); 
    }
    else if (typeid(other) == typeid(EnemyGunship)){
       m_health -= 15;
       m_isFlashing = true;
+      m_modules->soundManager->playSound(PlayerRam); 
    }
-   else if (typeid(other) == typeid(EnemyGunship)){
+   else if (typeid(other) == typeid(EnemyShip)){
       m_health -= 15;
       m_isFlashing = true;
+      m_modules->soundManager->playSound(PlayerRam); 
    }
    
    if (m_health <= 0) {
