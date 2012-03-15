@@ -556,7 +556,8 @@ bool GameEngine::handleKeyUp(SDLKey key)
       //InitData();
       return running;
    }
-   if (key == SDLK_ESCAPE || m_stateManager->getCurrentState() == m_lose || m_stateManager->getCurrentState() == m_win)
+   
+   if (key == SDLK_ESCAPE)
    {
       running = false;
    }
