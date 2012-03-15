@@ -9,6 +9,7 @@
 #include "Turret.h"
 
 #define TURRETHEADHEIGHT 35
+#define TURRET_RADIUS 40
 
 /*
 Turret::Turret(Player& player, string headName, string headTexture, string midName, string midTexture, string footName, string footTexture, Modules *modules) 
@@ -99,7 +100,8 @@ void Turret::tic(uint64_t time)
      mat4 modelMtx = mat4::Rotate(90, vec3(1, 0, 0)) * mat4::Magic(m_forward, m_up, m_position);
     m_footMesh->setModelMtx(modelMtx);
    
-    vec3 dirToPlayer = (m_playerRef->getPosition() - m_position).Normalized();
+    vec3 target = getTargetPosition();
+    vec3 dirToPlayer = (target - getHeadPosition()).Normalized();
     vec3 intermed = dirToPlayer.Cross(m_up);
     vec3 dirToPlayerFlat = intermed.Cross(m_up);
    
@@ -132,6 +134,17 @@ Vector3<float> Turret::getHeadPosition()
    vec3 toRet = m_position + (m_up.Normalized() * TURRETHEADHEIGHT);
    
    return toRet;
+}
+
+Vector3<float> Turret::getTargetPosition()
+{
+   float distance = (m_playerRef->getPosition() - getHeadPosition()).Length();
+   float time = (distance/0.6f)/2.0f;
+   vec3 target = m_playerRef->getPosition() + (m_playerRef->getShipVelocity() * time);
+  /* cerr << "A PLAYER GOES X: " << m_playerRef->getPosition().x << " Y: " << m_playerRef->getPosition().y << " Z: " << m_playerRef->getPosition().z << "\n";
+   cerr << "A TARGET GOES X: " << target.x << " Y: " << target.y << " Z: " << target.z << "\n";
+   cerr << "TIME IS: " << time << "\n"; */
+   return target;
 }
 
 void Turret::doCollision(GameObject & other) {
@@ -197,4 +210,20 @@ void Turret::collideWith(Missile& missile) {
 
 vec3 Turret::getPosition() {
   return m_position;
+}
+
+bool Turret::viewCull(vector<vec4> *planes) {
+   vector<vec4>::iterator plane = planes->begin();
+   float val;
+   
+   for (; plane != planes->end(); ++plane) {
+      val = plane->x * m_position.x +
+      plane->y * m_position.y +
+      plane->z * m_position.z +
+      plane->w;
+      if (val < -TURRET_RADIUS) {
+         return false;
+      }
+   }
+   return true;
 }

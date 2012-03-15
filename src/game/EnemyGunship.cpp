@@ -5,14 +5,15 @@
 
 #define VCHANGE 0.8
 #define VINTENS 0.5
-#define SIZE 100
+#define SIZE 25
 #define MOTIONTIME 2000
 #define FIRINGTIME 400
 #define TURRETSIDEOFFSET 20
 #define TURRETFORWARDOFFSET -25
 #define TURRETUPOFFSET 0
+#define GUNSHIP_RADIUS 40
 #define _ENEMY_GUNSHIP_EXPLOSION_RADIUS 60.0f
-#define UPDATEDISTANCE 2000.0
+#define UPDATEDISTANCE 3000.0
 #define RADTODEG 180 / 3.1415
 #define LODDISTANCE 2500
 const float PATHVELOCITY = 0.03f;
@@ -200,7 +201,7 @@ void EnemyGunship::tic(uint64_t time)
     firingTimer2 += time;
 
     /** to shoot? **/
-    if (firingTimer1 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 90)
+    if (firingTimer1 > FIRINGTIME /*&& 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 90*/)
       {
 	firing1 = true;
 	firingTimer1 %= FIRINGTIME;
@@ -212,7 +213,7 @@ void EnemyGunship::tic(uint64_t time)
     firing1 = firing1 && isAlive();
     
     /** to shoot? **/
-    if (firingTimer2 > FIRINGTIME && 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 90)
+    if (firingTimer2 > FIRINGTIME /*&& 180.0f / 3.14159265f * acos(dpos.Dot(m_playerRef->getForward())) > 90*/)
       {
 	firing2 = true;
 	firingTimer2 %= FIRINGTIME;
@@ -376,10 +377,13 @@ void EnemyGunship::doCollision(GameObject & other)
             flashtimer = 2;   
       }
    }
-   if (typeid(other) == typeid(Missile)) {
+   else if (typeid(other) == typeid(Missile)) {
      m_health -= 100;
      if (flashtimer == 0)
          flashtimer = 2;   
+   }
+   else if (typeid(other) == typeid(Player)) {
+      m_health = 0;
    }
    
    if (m_health <= 0) 
@@ -412,4 +416,20 @@ vec3 EnemyGunship::getPosition() {
 vec3 EnemyGunship::getMSide()
 {
   return m_forward.Cross(m_up);
+}
+
+bool EnemyGunship::viewCull(vector<vec4> *planes) {
+   vector<vec4>::iterator plane = planes->begin();
+   float val;
+   
+   for (; plane != planes->end(); ++plane) {
+      val = plane->x * m_position.x +
+      plane->y * m_position.y +
+      plane->z * m_position.z +
+      plane->w;
+      if (val < -GUNSHIP_RADIUS) {
+         return false;
+      }
+   }
+   return true;
 }

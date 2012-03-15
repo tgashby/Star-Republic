@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "Bullet.h"
 #include "Turret.h"
+#include "EnemyShip.h"
+#include "EnemyGunship.h"
 
 #define VCHANGE 0.8
 #define VINTENS 0.5
@@ -28,6 +30,7 @@ Player::Player(string fileName, string textureName, Modules *modules,
    m_meshList.push_back(m_exhaustMesh);
    m_isFlashing = false;
    m_count = 0;
+   m_missileCooldown = 0.0;
    
 
    // these are relative to the 'forward' vector
@@ -76,6 +79,8 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    m_offsetPosition += (m_sideVelocity * time) + (m_upVelocity * time);
    m_position = m_offsetPosition + tempPos;
 
+   m_shipVelocity = m_upVelocity + m_sideVelocity + (m_forward * 0.5f);
+
    if (m_isFlashing) {
       m_count++;
       int temp = m_count % 4;
@@ -103,6 +108,10 @@ void Player::tic(uint64_t time, Vector3<float> cam_position, Vector3<float> cam_
    x += vx * time;
    y += vy * time;
    updateVelocity(lastScreenX, lastScreenY);
+
+   if (m_missileCooldown > 0) {
+      m_missileCooldown -= time;
+   }
 
    //cout << "Position : " << m_position.x << ", " << m_position.y << ", " <<
    //   m_position.z << "\n";
@@ -194,6 +203,14 @@ void Player::calculateSide() {
    m_side = m_up.Cross(m_forward).Normalized();
 }
 
+float Player::getMissileCooldown() {
+   return m_missileCooldown;
+}
+
+void Player::setMissileCooldown(float cooldown) {
+   m_missileCooldown = cooldown;
+}
+
 void Player::doCollision(GameObject & other)
 {
    //DO Collision stuff
@@ -206,11 +223,21 @@ void Player::doCollision(GameObject & other)
          m_modules->soundManager->playSound(PlayerHit); 
       }
    }
-   
-   if (typeid(other) == typeid(Turret))
+   else if (typeid(other) == typeid(Turret))
    {
-     m_health -= 10;
-     m_isFlashing = true;
+      m_health -= 10;
+      m_isFlashing = true;
+      m_modules->soundManager->playSound(PlayerRam); 
+   }
+   else if (typeid(other) == typeid(EnemyGunship)){
+      m_health -= 15;
+      m_isFlashing = true;
+      m_modules->soundManager->playSound(PlayerRam); 
+   }
+   else if (typeid(other) == typeid(EnemyShip)){
+      m_health -= 15;
+      m_isFlashing = true;
+      m_modules->soundManager->playSound(PlayerRam); 
    }
    
    if (m_health <= 0) {
@@ -236,4 +263,9 @@ vec3 Player::getOffSet() {
 vec3 Player::getMForward()
 {
   return m_forward;
+}
+
+Vector3<float> Player::getShipVelocity()
+{
+   return m_shipVelocity;
 }

@@ -24,5 +24,7 @@ HealthBar::~HealthBar() {
 }
 
 void HealthBar::updateBar(float healthPercentage) {
-  m_mainMesh->setScale3v(vec3(scale.x * healthPercentage, scale.y, 1));
+   ivec2 scale = ivec2(256, 32);
+   
+   m_mainMesh->setScale3v(vec3(scale.x * healthPercentage, scale.y, 1));
 }

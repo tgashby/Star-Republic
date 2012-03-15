@@ -16,6 +16,7 @@
 #define FLASH_DURATION 30
 #define TOTAL_FLASH_DURATION 120
 
+//Forward declrations for enemnies
 /**
  * Player class to handle the player
  */
@@ -85,6 +86,8 @@ public:
     */
    Vector3<float> getAimForward();
 
+   float getHealthPercent();
+   
    /**
     * Gives the up vector of the player
     * @return The up vector of the player's aim
@@ -93,6 +96,9 @@ public:
 
    /** returns the direction to the nearest enemy **/
    Vector3<float> getMagneticForward();
+
+   /** returns the Ship Velocity **/
+   Vector3<float> getShipVelocity();
 
    /** sets the direction to the nearest enemy
     *  @param dir the direction to the enemy **/
@@ -112,7 +118,10 @@ public:
     *  returns the m_forward of the player (used in enemies)
    **/
    vec3 getMForward();
+
+   void setMissileCooldown(float cooldown);
    
+   float getMissileCooldown();
    bool getAlive();
 private:
    /**
@@ -216,6 +225,8 @@ private:
     * Pointer to modules
     */
    Modules* m_modules;
+
+   float m_missileCooldown;
    
    static const int health;
 };
