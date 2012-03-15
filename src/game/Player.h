@@ -211,6 +211,11 @@ private:
     * The current angle taken
     */
    float currentAngle;
+
+   /** 
+    * Pointer to modules
+    */
+   Modules* m_modules;
    
    static const int health;
 };

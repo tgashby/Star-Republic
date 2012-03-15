@@ -9,6 +9,9 @@ SoundManager::SoundManager(){
    m_sounds[PlayerGun].push_back(loadSound("sound/weapon5.wav"));
    m_sounds[PlayerShotgun].push_back(loadSound("sound/shotgun1.wav"));
    m_sounds[PlayerMissile].push_back(loadSound("sound/missileLaunch.wav"));
+   m_sounds[PlayerHit].push_back(loadSound("sound/hitsound1.wav"));
+   m_sounds[PlayerHit].push_back(loadSound("sound/hitsound2.wav"));
+   m_sounds[PlayerHit].push_back(loadSound("sound/hitsound3.wav"));
    m_sounds[Explosion].push_back(loadSound("sound/explosion1.wav"));
    m_sounds[Explosion].push_back(loadSound("sound/explosion2.wav"));
    m_sounds[Explosion].push_back(loadSound("sound/explosion3.wav"));
