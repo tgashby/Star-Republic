@@ -138,6 +138,10 @@ void Player::toggleMagnetic()
    magnet = !magnet;
 }
 
+float Player::getHealthPercent() {
+  return (m_health * 1.0f) / (health * 1.0f);
+}
+
 Vector3<float> Player::getAimForward()
 {
    /** make sure the velocity in X and Y aren't to great -
