@@ -1,0 +1,15 @@
+Star Republic!
+
+This game requires SDL 1.2, OpenGL, and SCONs.
+
+It runs on Linux and OSX
+
+Build the game in the src folder with:
+
+scons .
+
+
+Made for an Advanced Graphics class at Cal Poly, SLO in 2012.
+
+Contributors:
+Tim Adam, Nick Alereza, Tag Ashby, Chad Brantley, Robert Crosby, and Andrew Musselman.
